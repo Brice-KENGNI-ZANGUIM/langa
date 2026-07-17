@@ -3,6 +3,7 @@ import { NgiemboonKeyboard } from "../keyboard/ngiemboon-keyboard.js";
 import { PredictNgiemboon } from "./predict.js";
 import { mountAudioPlayer } from "./audioplayer.js";
 import { sliceSamples, encodeWavBytes, detectSilenceBounds, samplesDuration } from "./audiotrim.js";
+import { sourceEn } from "./source_en.js";
 import { DB } from "./db.js";
 import { reconcile, checkServer, serverStats, modeGoogle, browseLibrary,
   fetchSuggestions, postSuggestion, postVote, postBug, fetchBugs,
@@ -311,10 +312,19 @@ function loadProposition() {
   _lastGroup = group;
   // Tirage AU HASARD parmi les restants du groupe.
   currentProp = restants[Math.floor(Math.random() * restants.length)];
-  $("#source").value = currentProp.texte;
-  $("#source").dispatchEvent(new Event("input", { bubbles: true }));
+  const src = $("#source");
+  src.dataset.canon = currentProp.texte;            // #48 : on STOCKE le mot canonique (français)…
+  src.value = sourceDisplay(currentProp.texte);     // …et on AFFICHE dans la langue d'interface (EN si l'utilisateur y est passé)
+  src.dispatchEvent(new Event("input", { bubbles: true }));
   $("#target").value = "";
   $("#target").focus();
+}
+/** #48 : texte de l'item source à AFFICHER, dans la langue d'interface. En anglais, on
+    montre l'équivalent connu (nombres, lettres, parenté…) ; sinon on garde le français
+    (aucune invention). Le mot canonique stocké reste le français, cf. loadProposition. */
+function sourceDisplay(fr) {
+  if (getUiLang() !== "en") return fr;
+  return sourceEn(fr) || fr;
 }
 function applyMode() {
   const proposer = mode === "proposer";
@@ -326,7 +336,7 @@ function applyMode() {
   $("#dir-toggle").hidden = proposer;
   if (proposer && direction !== "fr2nge") { direction = "fr2nge"; applyDirection(); }
   if (proposer) { refreshDoneTexts().then(() => loadProposition()); }
-  else { $("#source").value = ""; $("#source").placeholder = "Saisis ici…"; currentProp = null; }
+  else { const s = $("#source"); s.value = ""; delete s.dataset.canon; s.placeholder = "Saisis ici…"; currentProp = null; }
   localStorage.setItem("modeSaisie", mode);
 }
 
@@ -677,7 +687,10 @@ function initTrim() {
 
 // --- Sauvegarde locale ---------------------------------------------------
 async function saveContribution() {
-  const source = nfc($("#source").value.trim());
+  // #48 : en mode proposé, on enregistre le mot source CANONIQUE (français) même si
+  // l'interface l'affiche en anglais → le corpus reste cohérent (regroupement Explorer).
+  const srcEl = $("#source");
+  const source = nfc(((srcEl.dataset.canon || srcEl.value) + "").trim());
   const target = nfc($("#target").value.trim());
   const c = collectContributeur();
 
@@ -735,6 +748,7 @@ async function saveContribution() {
 
 function resetForm() {
   $("#source").value = "";
+  delete $("#source").dataset.canon;   // #48 : pas de mot canonique résiduel
   $("#target").value = "";
   $("#domaine").value = "";
   $("#note").value = "";
