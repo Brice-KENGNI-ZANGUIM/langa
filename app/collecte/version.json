@@ -1,6 +1,12 @@
 {
-  "version": "v192",
+  "version": "v193",
   "changelog": {
+    "v193": [
+      "Mode anglais complet : quand tu choisis l'anglais, tout le site s'affiche en anglais (boutons, menus, aide, visite guidée), et le mot ou la phrase à traduire s'affiche aussi en anglais. Les francophones gardent le français",
+      "Partager une traduction ou une prononciation crée un message clair avec un lien qui ouvre directement ce mot sur le site, pour inviter d'autres personnes à l'écouter, le vérifier ou l'enrichir",
+      "Nouveau bouton « Dis-le dans ta langue » sur chaque mot : d'un geste tu proposes le même mot dans ta propre langue (il t'aide à créer ton profil ou déclarer ta langue si besoin)",
+      "Transcription : une troisième consigne rappelle de parler lentement, à voix haute et posément, pour une prononciation bien claire"
+    ],
     "v192": [
       "Enregistrement : un outil pour ne garder qu'une partie de ta voix quand un bruit a gâché le reste (une porte, une radio). Tu délimites la bonne portion sur l'onde ou en secondes, tu l'écoutes, puis tu la gardes ; le reste est supprimé, sans tout refaire",
       "En anglais, le mot ou le nombre à traduire s'affiche en anglais pour mieux le comprendre avant de le traduire (le français reste pour les francophones)"
