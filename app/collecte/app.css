@@ -805,6 +805,11 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   border-radius: 10px; padding: 8px 12px; cursor: pointer; font: inherit; font-size: .82rem;
   font-weight: 600; transition: border-color .15s ease, box-shadow .15s ease, color .15s ease; }
 .entry-share:hover { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 14px -6px var(--gold); }
+/* CTA « Dis-le dans ta langue » : couleur de l'activité Traduire (vert), invite à contribuer. */
+.entry-saymine { border: 1px solid var(--green); background: var(--panel2); color: var(--green);
+  border-radius: 10px; padding: 8px 12px; cursor: pointer; font: inherit; font-size: .82rem;
+  font-weight: 600; transition: border-color .15s ease, box-shadow .15s ease, background .15s ease; }
+.entry-saymine:hover { background: var(--green); color: var(--bg); box-shadow: 0 0 16px -5px var(--green); }
 .entry-corr { margin-top: 12px; padding-top: 12px; border-top: 1px dashed var(--border); }
 .entry-corr[hidden] { display: none; }
 .corr-loading, .corr-empty { color: var(--muted); font-size: .84rem; padding: 6px 0; }

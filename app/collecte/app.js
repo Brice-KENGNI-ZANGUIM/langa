@@ -832,8 +832,15 @@ function viewToRoute(name) {
 }
 /** Route demandée par l'URL courante (ou null si aucune/inconnue). */
 function hashToRoute() {
-  const h = (location.hash || "").replace(/^#\/?/, "").trim();
+  const h = (location.hash || "").replace(/^#\/?/, "").split("?")[0].trim();
   return VIEW_OF_ROUTE[h] ? h : null;
+}
+/** Lit un paramètre de requête du hash (ex. #/explorer?w=eau&d=fr2nge). */
+function hashParam(key) {
+  const h = location.hash || "";
+  const i = h.indexOf("?");
+  if (i < 0) return null;
+  try { return new URLSearchParams(h.slice(i + 1)).get(key); } catch (e) { return null; }
 }
 /** Aligne l'URL sur la vue affichée. pushState en navigation normale, replaceState en rejeu. */
 function syncHash(name) {
@@ -1565,7 +1572,28 @@ function enterWork(act) {
   }
   showView("app");
 }
+/** #53 — « Dis-le dans ta langue » : depuis une entrée, propose le MÊME mot français dans la
+    langue de l'utilisateur. Redirige vers profil (si absent), écran des langues (si aucune choisie),
+    sinon ouvre Traduire en mode libre pré-rempli. Nouveau canal : regarder ce qu'ont fait les
+    autres, puis le refaire dans sa langue. */
+function startTranslateWord(frWord) {
+  const w = shareClean(frWord, 200);
+  if (!w) return;
+  if (!requireProfile(t("req.profile.translate"))) return;   // pas de profil → l'ouvre d'abord
+  if (!hasChosenLang()) { openLangChoice(); return; }         // pas de langue → écran des langues
+  mode = "libre";
+  enterWork("translate");
+  applyMode();                                                // applique le mode libre (source vidée)
+  if (direction !== "fr2nge") { direction = "fr2nge"; applyDirection(); }
+  const s = $("#source");
+  if (s) { delete s.dataset.canon; s.value = w; s.readOnly = false; s.dispatchEvent(new Event("input", { bubbles: true })); }
+  const tg = $("#target"); if (tg) { tg.value = ""; setTimeout(() => tg.focus(), 60); }
+  toast(ti("saymine.toast", { w }), "ok");
+}
+
 function enterExplore() {
+  // Capture le lien direct AVANT que showView n'aligne l'URL sur « #/explorer » (sans requête).
+  const w = hashParam("w"); if (w) { _deepWord = w; _deepDir = hashParam("d"); }
   if (!requireProfile("Crée ton profil pour explorer la bibliothèque de la communauté.")) return;
   ["#tab-traduire", "#tab-transcrire"].forEach((s) => { const el = $(s); if (el) el.classList.remove("is-active"); });
   const te = $("#tab-explorer"); if (te) te.classList.add("is-active");
@@ -1843,11 +1871,23 @@ function entryLang(e) {
 function canonLangId(id) {
   try { return resolveCanonicalId(id, knownLanguages()) || id; } catch (e) { return id; }
 }
-/** Partage une entrée (carte texte) : navigator.share si dispo, sinon presse-papiers. */
-async function shareEntry(src, tgt) {
+/** Nettoie un texte pour le partage (une ligne, borné). */
+function shareClean(s, max) { return (s || "").toString().replace(/\s+/g, " ").trim().slice(0, max || 120); }
+/** Lien DIRECT vers une entrée d'Explorer (rouvre le mot visé). */
+function entryDeepLink(src, dir) {
+  const base = location.origin + location.pathname;
+  const w = encodeURIComponent(shareClean(src, 80));
+  return base + "#/explorer?w=" + w + (dir ? "&d=" + encodeURIComponent(dir) : "");
+}
+/** Partage ADAPTATIF d'une entrée : texte marketing (mot, langues, question, CTA) + lien direct.
+    navigator.share si dispo, sinon presse-papiers. Le contenu s'adapte au sens et à ce qui existe. */
+async function shareEntry(src, tgt, dir, hasAudio) {
   const L = currentLang();
-  const appUrl = location.origin + location.pathname;
-  const text = shareCardText({ source_text: src, target_text: tgt }, L.nom, appUrl);
+  const s = shareClean(src), tg = shareClean(tgt);
+  const url = entryDeepLink(src, dir);
+  const q = dir === "nge2fr" ? ti("shareE.q.rev", { w: s, lang: L.nom }) : ti("shareE.q", { w: s, lang: L.nom });
+  const body = tg ? ti("shareE.has", { t: tg }) : (hasAudio ? t("shareE.audio") : t("shareE.none"));
+  const text = [q, body, t("shareE.cta"), url].join("\n");
   try {
     if (navigator.share) { await navigator.share({ title: shareTitle(L.nom), text }); return; }
   } catch (e) { if (e && e.name === "AbortError") return; /* sinon : on tente le presse-papiers */ }
@@ -1915,9 +1955,21 @@ async function loadLibrary() {
   } catch (e) {
     _exploreEntries = [];
     if (status) status.textContent = "";
-    if (list) list.innerHTML =
-      '<div class="explore-empty">La bibliothèque n\'a pas pu être chargée.<br>Vérifie ta connexion, puis rouvre l\'onglet Explorer.</div>';
+    if (list) list.innerHTML = `<div class="explore-empty">${t("exp.loadfail")}</div>`;
   }
+  applyExploreDeepLink();   // lien direct #/explorer?w=…&d=… → ouvre l'entrée visée
+}
+// Deep-link : si l'URL cible un mot précis, pré-remplit la recherche et OUVRE le groupe.
+let _deepWord = null, _deepDir = null;
+function applyExploreDeepLink() {
+  if (!_deepWord) return;
+  const w = _deepWord, d = _deepDir; _deepWord = _deepDir = null;
+  const sb = $("#explore-search"); if (sb) sb.value = w;
+  renderExplore();
+  const key = (d || "fr2nge") + "::" + _normKey(w);
+  let g = _exploreGroups.find((x) => x.key === key)
+       || _exploreGroups.find((x) => _normKey(x.source_text) === _normKey(w));
+  if (g) openGroup(g.key);
 }
 function populateExploreFilters() {
   const uniq = (key) => [...new Set(_exploreEntries.map((e) => e[key]).filter(Boolean))].sort();
@@ -2274,7 +2326,8 @@ function renderProposal(e) {
     <div class="entry-foot">${credit} ${date}</div>
     <div class="entry-actions">
       <button type="button" class="entry-improve" data-id="${escapeHtml(e.id)}" data-orig="${escapeHtml(e.target_text || "")}">${t("exp.improve")}</button>
-      <button type="button" class="entry-share" data-src="${escapeHtml(e.source_text || "")}" data-tgt="${escapeHtml(e.target_text || "")}" title="${t("exp.share.title")}" aria-label="${t("exp.share.aria")}">${t("exp.share")}</button>
+      <button type="button" class="entry-saymine" data-fr="${escapeHtml(e.direction === "nge2fr" ? (e.target_text || e.source_text || "") : (e.source_text || ""))}" title="${t("exp.saymine.title")}">${t("exp.saymine")}</button>
+      <button type="button" class="entry-share" data-src="${escapeHtml(e.source_text || "")}" data-tgt="${escapeHtml(e.target_text || "")}" data-dir="${escapeHtml(e.direction || "fr2nge")}" data-audio="${isPlayable(e.audio_url) ? "1" : "0"}" title="${t("exp.share.title")}" aria-label="${t("exp.share.aria")}">${t("exp.share")}</button>
     </div>
     <div class="entry-corr" hidden></div>
   </article>`;
@@ -2287,7 +2340,9 @@ function onExploreClick(e) {
   const imp = e.target.closest(".entry-improve");
   if (imp) { toggleCorrections(imp.closest(".entry"), imp.dataset.id, imp.dataset.orig); return; }
   const shr = e.target.closest(".entry-share");
-  if (shr) { shareEntry(shr.dataset.src, shr.dataset.tgt); return; }
+  if (shr) { shareEntry(shr.dataset.src, shr.dataset.tgt, shr.dataset.dir, shr.dataset.audio === "1"); return; }
+  const sm = e.target.closest(".entry-saymine");
+  if (sm) { startTranslateWord(sm.dataset.fr); return; }
   // clic sur un cadre de mot (mais pas sur un bouton interne) → détail
   const card = e.target.closest(".grp-card");
   if (card) { openGroup(card.dataset.key); return; }
