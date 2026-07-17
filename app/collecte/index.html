@@ -45,7 +45,7 @@
 <body>
   <header class="topbar">
     <div class="brand brand--home" id="brand-home" role="link" tabindex="0"
-         title="Revenir à l'accueil" aria-label="Revenir à l'accueil : Traduire, Transcrire, Explorer">
+         data-i18n-title="brand.home.title" title="Revenir à l'accueil" aria-label="Revenir à l'accueil : Traduire, Transcrire, Explorer">
       <span class="brand-mark"><img src="./icons/logo.svg" alt="LANGA" width="52" height="52" /></span>
       <div class="brand-txt">
         <h1>LANGA <span class="brand-sub">· Collecte</span></h1>
@@ -55,25 +55,25 @@
     <!-- Header en 2 niveaux : NAV (boutons d'action, avec texte) sur une ligne, MÉTA
          (état + version + langue + thème) sur l'autre. Cf. .topbar en grille. -->
     <div class="chips-nav">
-      <button id="home-link" class="chip chip--btn" type="button"
+      <button id="home-link" class="chip chip--btn" type="button" data-i18n-title="chip.home.title"
               title="Retour à l'accueil" aria-label="Retour à l'accueil"><img class="chip-ico" src="icons/ui/hi-home.svg" alt="" aria-hidden="true"><span data-i18n="chip.home">Accueil</span></button>
-      <button id="lang-chip" class="chip chip--btn" type="button" hidden
+      <button id="lang-chip" class="chip chip--btn" type="button" hidden data-i18n-title="chip.lang.title"
               title="Changer de langue" aria-label="Changer de langue"><img class="chip-ico" src="icons/ui/hi-lang.svg" alt="" aria-hidden="true"><span id="lang-chip-name">Langue</span></button>
-      <button id="about-link" class="chip chip--btn" type="button"
+      <button id="about-link" class="chip chip--btn" type="button" data-i18n-title="chip.about.title"
               title="À propos du projet" aria-label="À propos du projet"><img class="chip-ico" src="icons/ui/hi-about.svg" alt="" aria-hidden="true"><span data-i18n="chip.about">À propos</span></button>
-      <button id="help-btn" class="chip chip--btn" type="button"
+      <button id="help-btn" class="chip chip--btn" type="button" data-i18n-title="chip.help.title"
               title="Visite guidée de cette page" aria-label="Visite guidée"><img class="chip-ico" src="icons/ui/hi-help.svg" alt="" aria-hidden="true"><span data-i18n="chip.help">Aide</span></button>
-      <button id="bugs-link" class="chip chip--btn" type="button"
+      <button id="bugs-link" class="chip chip--btn" type="button" data-i18n-title="chip.bugs.title"
               title="Suivi des bugs" aria-label="Suivi des bugs"><img class="chip-ico" src="icons/ui/hi-bug.svg" alt="" aria-hidden="true"><span data-i18n="chip.bugs">Bugs</span></button>
       <button id="btn-open-profile" class="chip chip--btn" type="button" hidden><img class="chip-ico" src="icons/ui/hi-profile.svg" alt="" aria-hidden="true"><span data-i18n="chip.profile">Mon profil</span></button>
       <!-- Outils (version + langue d'interface + thème) : poussés À DROITE de la ligne
            de nav (margin-left:auto). Ils basculent proprement à la ligne suivante,
            toujours alignés à droite, quand la nav déborde. -->
       <div class="chips-tools">
-        <span id="app-ver" class="chip chip--ghost" title="Version de l'application"></span>
+        <span id="app-ver" class="chip chip--ghost" data-i18n-title="app.ver.title" title="Version de l'application"></span>
         <button id="ui-lang-toggle" class="chip chip--btn" type="button" data-i18n="chip.ui" data-i18n-title="chip.ui.title"
                 title="Switch to English" aria-label="Switch to English">EN</button>
-        <button id="theme-toggle" class="chip chip--btn" type="button"
+        <button id="theme-toggle" class="chip chip--btn" type="button" data-i18n-title="theme.title"
                 title="Basculer clair / sombre" aria-label="Basculer clair / sombre"><img class="chip-ico" src="icons/ui/hi-theme.svg" alt="" aria-hidden="true"></button>
       </div>
     </div>
@@ -110,7 +110,7 @@
         <div class="lang-search-row">
           <input id="lang-search" class="lang-search" type="search" autocomplete="off"
                  placeholder="Rechercher une langue (nom, région…)" data-i18n-ph="lang.search.ph"
-                 aria-label="Rechercher une langue" />
+                 data-i18n-title="lang.search.ph" aria-label="Rechercher une langue" />
           <button id="lang-search-btn" class="lang-btn lang-search-btn" type="button">
             <span aria-hidden="true">🔎</span>
             <span data-i18n="lang.search.go">Rechercher</span>
@@ -213,7 +213,7 @@
             <div class="combo" id="village-combo">
               <input id="c-village" type="text" autocomplete="off" data-i18n-ph="p.village.ph"
                      placeholder="Choisis dans la liste ou tape ton village / quartier" />
-              <button type="button" id="village-toggle" class="combo-toggle" aria-label="Voir la liste">▾</button>
+              <button type="button" id="village-toggle" class="combo-toggle" data-i18n-title="combo.see" aria-label="Voir la liste">▾</button>
               <ul id="village-list" class="combo-list" hidden></ul>
             </div>
           </div>
@@ -240,7 +240,7 @@
           <div class="field field--langs">
             <span data-i18n-html="p.langs">Mes langues d'appartenance
               <span class="hint-inline">(touche une langue pour l'ajouter, retouche-la pour en faire la principale)</span></span>
-            <div id="profile-langs" class="lang-chips" role="group" aria-label="Mes langues"></div>
+            <div id="profile-langs" class="lang-chips" role="group" data-i18n-title="p.langs.aria" aria-label="Mes langues"></div>
           </div>
           <label class="field field--check field--consent">
             <input id="c-consent" type="checkbox" />
@@ -333,7 +333,7 @@
           <select id="prop-cat" class="prop-cat"></select>
         </label>
         <span id="prop-progress" class="prop-progress"></span>
-        <button id="prop-next" class="btn btn--next" type="button">Prochain mot →</button>
+        <button id="prop-next" class="btn btn--next" type="button" data-i18n="wk.next">Prochain mot →</button>
       </div>
 
       <div class="dir-toggle" id="dir-toggle" role="group" aria-label="Sens de traduction">
@@ -344,7 +344,7 @@
       <div class="field zone zone--source" id="source-wrap">
         <span class="field-label"><span id="lbl-source">Mot / phrase</span>
           <span id="tag-source" class="lang-tag">FR</span></span>
-        <textarea id="source" rows="2" placeholder="Saisis ici…"
+        <textarea id="source" rows="2" placeholder="Saisis ici…" data-i18n-ph="wk.source.ph"
           spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
       </div>
 
@@ -352,13 +352,13 @@
         <span class="field-label"><span id="lbl-target">Traduction</span>
           <span id="tag-target" class="lang-tag">NGE</span>
           <button id="tr-guide-open-t" class="mini tr-guide-open" type="button" data-i18n="tr.guide.open">📋 Revoir les consignes</button></span>
-        <textarea id="target" rows="2" placeholder="Traduction…"
+        <textarea id="target" rows="2" placeholder="Traduction…" data-i18n-ph="wk.target.ph"
           spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
         <!-- Le clavier ngiemboon est déplacé ici ou sous #source selon le sens -->
         <div class="kb-block" id="kb-block">
           <!-- Clavier masqué par défaut : s'ouvre quand on touche le champ ngiemboon
                (ou via ce bouton), se referme en touchant ailleurs. -->
-          <button type="button" id="kb-open-btn" class="kb-open-btn">⌨ Ouvrir le clavier ngiemboon</button>
+          <button type="button" id="kb-open-btn" class="kb-open-btn" data-i18n="wk.kb.open">⌨ Ouvrir le clavier ngiemboon</button>
           <div class="kb-panel" id="kb-panel">
             <div class="kb-bar">
               <span id="kb-host-label" class="kb-label">Clavier ngiemboon</span>
@@ -367,7 +367,7 @@
                   <span class="switch"><input id="tips-toggle" type="checkbox" checked role="switch" />
                     <span class="slider"></span></span>
                 </label>
-                <button type="button" id="kb-close-btn" class="kb-close-btn" aria-label="Fermer le clavier">✕ Fermer</button>
+                <button type="button" id="kb-close-btn" class="kb-close-btn" aria-label="Fermer le clavier" data-i18n="wk.kb.close">✕ Fermer</button>
               </div>
             </div>
             <!-- Zone d'aide phonétique : affiche la lettre pressée (phonétique +
@@ -398,13 +398,13 @@
         <span class="field-label audio-label"><span id="lbl-audio">Transcription audio</span>
           <span id="tag-audio" class="lang-tag">NGE</span></span>
         <div class="audio-row">
-          <button id="btn-rec" class="btn btn--rec" type="button">🎙️ <span>Enregistrer l'audio</span></button>
+          <button id="btn-rec" class="btn btn--rec" type="button">🎙️ <span data-i18n="rec.start">Enregistrer l'audio</span></button>
           <span id="rec-timer" class="rec-timer" hidden aria-live="polite">00:00</span>
           <span id="rec-state" class="rec-state"></span>
           <div id="audio-preview" class="audio-preview"></div>
           <button id="btn-trim-audio" class="mini" type="button" hidden data-i18n="trim.open">✂️ Découper</button>
-          <button id="btn-clear-audio" class="mini" type="button" hidden>retirer</button>
-          <button id="btn-mic-test" class="mini" type="button">🔎 Tester le micro</button>
+          <button id="btn-clear-audio" class="mini" type="button" hidden data-i18n="wk.audio.remove">retirer</button>
+          <button id="btn-mic-test" class="mini" type="button" data-i18n="wk.mic.test">🔎 Tester le micro</button>
           <button id="tr-guide-open" class="mini tr-guide-open" type="button" data-i18n="tr.guide.open">📋 Revoir les consignes</button>
         </div>
         <div id="mic-diag" class="mic-diag" hidden></div>
@@ -412,7 +412,7 @@
 
       <div class="actions">
         <button id="btn-save" class="btn btn--primary" type="button" data-i18n="work.save">Enregistrer la contribution</button>
-        <p id="save-lock" class="lock-hint" hidden>🔒 Renseigne d'abord <b>ton profil</b> tout
+        <p id="save-lock" class="lock-hint" hidden data-i18n-html="save.lock">🔒 Renseigne d'abord <b>ton profil</b> tout
           en haut (tous les champs marqués <span class="req">*</span>) pour activer ce bouton.</p>
       </div>
     </div>
@@ -421,13 +421,13 @@
     <div class="card">
       <div class="send-row">
         <div class="counters">
-          <span class="counter counter--ok"><b id="count-sent">0</b> envoyés&nbsp;✓</span>
-          <span class="counter counter--todo"><b id="count-pending">0</b> à renvoyer</span>
-          <span class="counter"><b id="count-total">0</b> au total</span>
+          <span class="counter counter--ok"><b id="count-sent">0</b> <span data-i18n="count.sent">envoyés&nbsp;✓</span></span>
+          <span class="counter counter--todo"><b id="count-pending">0</b> <span data-i18n="count.pending">à renvoyer</span></span>
+          <span class="counter"><b id="count-total">0</b> <span data-i18n="count.total">au total</span></span>
         </div>
         <div class="send-actions">
           <span id="send-status" class="send-status"></span>
-          <button id="btn-send" class="btn btn--send" type="button" disabled>
+          <button id="btn-send" class="btn btn--send" type="button" disabled data-i18n="work.send">
             Envoyer les données →
           </button>
         </div>
@@ -591,29 +591,34 @@
         <h3 data-i18n="bugs.report.h">Signaler un bug</h3>
         <div class="bug-form">
           <label><span data-i18n="bugs.f.title">Titre court</span>
-            <input id="bug-titre" type="text" placeholder="ex. Le bouton « Envoyer » ne répond pas" maxlength="120" />
+            <input id="bug-titre" type="text" data-i18n-ph="bug.titre.ph" placeholder="ex. Le bouton « Envoyer » ne répond pas" maxlength="120" />
           </label>
           <label><span data-i18n="bugs.f.desc">Description</span>
-            <textarea id="bug-desc" rows="3" placeholder="Que s'est-il passé ? Sur quel écran ? Comment le reproduire ?"></textarea>
+            <textarea id="bug-desc" rows="3" data-i18n-ph="bug.desc.ph" placeholder="Que s'est-il passé ? Sur quel écran ? Comment le reproduire ?"></textarea>
           </label>
           <div class="bug-form-row">
-            <label>Gravité
+            <label><span data-i18n="bugs.f.sev">Gravité</span>
               <select id="bug-sev">
-                <option value="mineur">Mineur</option>
-                <option value="majeur">Majeur</option>
-                <option value="critique">Critique</option>
+                <option value="mineur" data-i18n="bug.sev.mineur">Mineur</option>
+                <option value="majeur" data-i18n="bug.sev.majeur">Majeur</option>
+                <option value="critique" data-i18n="bug.sev.critique">Critique</option>
               </select>
             </label>
-            <label>Zone concernée
+            <label><span data-i18n="bugs.f.zone">Zone concernée</span>
               <select id="bug-zone">
-                <option>Interface</option><option>Envoi / synchro</option><option>Audio</option>
-                <option>Clavier</option><option>Propositions</option><option>Explorer</option><option>Autre</option>
+                <option value="Interface" data-i18n="bugs.zone.interface">Interface</option>
+                <option value="Envoi / synchro" data-i18n="bugs.zone.sync">Envoi / synchro</option>
+                <option value="Audio" data-i18n="bugs.zone.audio">Audio</option>
+                <option value="Clavier" data-i18n="bugs.zone.keyboard">Clavier</option>
+                <option value="Propositions" data-i18n="bugs.zone.props">Propositions</option>
+                <option value="Explorer" data-i18n="bugs.zone.explore">Explorer</option>
+                <option value="Autre" data-i18n="bugs.zone.other">Autre</option>
               </select>
             </label>
           </div>
           <div class="send-actions">
             <span id="bug-status" class="send-status"></span>
-            <button id="bug-send" class="btn btn--primary" type="button">Envoyer le signalement →</button>
+            <button id="bug-send" class="btn btn--primary" type="button" data-i18n="bug.send">Envoyer le signalement →</button>
           </div>
         </div>
       </div>
@@ -628,7 +633,7 @@
       </div>
 
       <div class="about-cta">
-        <button class="btn btn--ghost" id="bugs-back" type="button">← Retour</button>
+        <button class="btn btn--ghost" id="bugs-back" type="button" data-i18n="btn.back">← Retour</button>
       </div>
     </section>
   </main>
@@ -636,7 +641,7 @@
   <footer class="site-footer">
     <div class="foot-inner">
       <div class="foot-brand foot-brand--home" id="foot-home" role="link" tabindex="0"
-           title="Revenir à l'accueil" aria-label="Revenir à l'accueil : Traduire, Transcrire, Explorer">
+           data-i18n-title="brand.home.title" title="Revenir à l'accueil" aria-label="Revenir à l'accueil : Traduire, Transcrire, Explorer">
         <span class="foot-mark"><img src="./icons/logo.svg" alt="LANGA" width="46" height="46" /></span>
         <div>
           <div class="foot-title">LANGA <span>· Collecte</span></div>
@@ -654,7 +659,7 @@
       <span class="share-lead" data-i18n="share.foot">Partage LANGA autour de toi :</span>
       <div class="share-mount" id="share-foot"></div>
     </div>
-    <div class="foot-copy">© 2026 Brice Kengni Zanguim · Merci à chaque contributeur de la langue</div>
+    <div class="foot-copy">© 2026 Brice Kengni Zanguim · <span data-i18n="foot.thanks">Merci à chaque contributeur de la langue</span></div>
   </footer>
 
   <!-- Visite guidée : projecteur sur un élément + bulle explicative -->
@@ -665,8 +670,8 @@
       <div class="tour-title" id="tour-title"></div>
       <div class="tour-text" id="tour-text"></div>
       <div class="tour-actions">
-        <button class="tour-skip" id="tour-skip" type="button">Passer</button>
-        <button class="tour-next" id="tour-next" type="button">Suivant</button>
+        <button class="tour-skip" id="tour-skip" type="button" data-i18n="tour.skip">Passer</button>
+        <button class="tour-next" id="tour-next" type="button" data-i18n="tour.next">Suivant</button>
       </div>
     </div>
   </div>

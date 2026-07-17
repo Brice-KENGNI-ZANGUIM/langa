@@ -110,7 +110,8 @@ export function mountShareBar(container, opts) {
     a.href = links[n];
     a.target = "_blank";
     a.rel = "noopener noreferrer";
-    const lbl = "Partager sur " + (NET_LABEL[n] || n);
+    const netName = NET_LABEL[n] || n;
+    const lbl = o.shareOnLabel ? o.shareOnLabel.split("{net}").join(netName) : "Partager sur " + netName;
     a.setAttribute("aria-label", lbl);
     a.title = lbl;
     a.innerHTML = NET_SVG[n];
@@ -122,8 +123,9 @@ export function mountShareBar(container, opts) {
   const ig = document.createElement("button");
   ig.type = "button";
   ig.className = "share-ico share-ico--instagram";
-  ig.setAttribute("aria-label", "Partager sur Instagram");
-  ig.title = "Partager sur Instagram";
+  const igLbl = o.shareOnLabel ? o.shareOnLabel.split("{net}").join("Instagram") : "Partager sur Instagram";
+  ig.setAttribute("aria-label", igLbl);
+  ig.title = igLbl;
   ig.innerHTML = NET_SVG.instagram;
   ig.addEventListener("click", function () {
     const go = function () {

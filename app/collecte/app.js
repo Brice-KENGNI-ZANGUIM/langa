@@ -129,6 +129,13 @@ let audioStartTs = 0;
 let audioDurationMs = 0;
 let _recDiscard = false;   // true → l'enregistrement en cours doit être JETÉ (pas gardé)
 
+// Interpolation d'une chaîne i18n : ti("dir.src.lang", {lang}) → remplace {lang} etc.
+function ti(key, subs) {
+  let s = t(key);
+  if (subs) for (const k in subs) s = s.split("{" + k + "}").join(subs[k]);
+  return s;
+}
+
 // --- Sens de traduction : quel champ est en ngiemboon --------------------
 function ngeField() {
   return direction === "fr2nge" ? $("#target") : $("#source");
@@ -137,11 +144,11 @@ function applyDirection() {
   const fr2nge = direction === "fr2nge";
   const L = currentLang();
   const dedicated = usesDedicatedKeyboard(L.id);   // clavier dédié (nge) vs clavier système
-  $("#lbl-source").textContent = fr2nge ? "Mot / phrase en français" : `Mot / phrase en ${L.nom}`;
-  $("#lbl-target").textContent = fr2nge ? `Traduction en ${L.nom}` : "Traduction en français";
+  $("#lbl-source").textContent = fr2nge ? t("dir.src.fr") : ti("dir.src.lang", { lang: L.nom });
+  $("#lbl-target").textContent = fr2nge ? ti("dir.tgt.lang", { lang: L.nom }) : t("dir.tgt.fr");
   $("#source").dir = "ltr";
   // badge langue sur chaque champ (libellé complet)
-  const FR = "Français (FR)";
+  const FR = t("dir.badge.fr");
   const TGT = `${L.nom} (${L.id.slice(0, 3).toUpperCase()})`;
   $("#tag-source").textContent = fr2nge ? FR : TGT;
   $("#tag-target").textContent = fr2nge ? TGT : FR;
@@ -154,8 +161,7 @@ function applyDirection() {
     // Langue à clavier DÉDIÉ (ngiemboon) : clavier à l'écran, OS supprimé.
     if (block) block.hidden = false;
     if (keyboard) keyboard.setTarget(nge);   // insère dans ce champ + inputmode=none
-    $("#kb-host-label").textContent =
-      `Clavier ${L.nom} → ` + (fr2nge ? "champ « traduction »" : "champ « mot/phrase »");
+    $("#kb-host-label").textContent = ti(fr2nge ? "kb.host.tgt" : "kb.host.src", { lang: L.nom });
     const anchor = fr2nge ? $("#target-wrap") : $("#source-wrap");
     if (block) anchor.appendChild(block);
     bindKeyboardReveal();   // relie l'ouverture au nouveau champ de la langue
@@ -174,10 +180,11 @@ function applyDirection() {
     de langue. */
 function applyLanguage() {
   const L = currentLang();
-  const b1 = $("#dir-fr2nge"); if (b1) b1.textContent = `Français → ${L.nom}`;
-  const b2 = $("#dir-nge2fr"); if (b2) b2.textContent = `${L.nom} → Français`;
-  const o1 = document.querySelector('#filter-direction option[value="fr2nge"]'); if (o1) o1.textContent = `Français → ${L.nom}`;
-  const o2 = document.querySelector('#filter-direction option[value="nge2fr"]'); if (o2) o2.textContent = `${L.nom} → Français`;
+  const dFr2 = ti("dir.fr2lang", { lang: L.nom }), dLang2 = ti("dir.lang2fr", { lang: L.nom });
+  const b1 = $("#dir-fr2nge"); if (b1) b1.textContent = dFr2;
+  const b2 = $("#dir-nge2fr"); if (b2) b2.textContent = dLang2;
+  const o1 = document.querySelector('#filter-direction option[value="fr2nge"]'); if (o1) o1.textContent = dFr2;
+  const o2 = document.querySelector('#filter-direction option[value="nge2fr"]'); if (o2) o2.textContent = dLang2;
   const dT = document.querySelector('.hub-card[data-go="translate"] .hub-desc');
   if (dT) dT.textContent = t("hub.desc.translate").replace("{lang}", L.nom);
   const dS = document.querySelector('.hub-card[data-go="transcribe"] .hub-desc');
@@ -249,6 +256,9 @@ function groupUndone(key) {
   return groupItems(key).filter((it) => !_doneTexts.has(it.norm || normTxt(it.texte)));
 }
 function groupLabel(key) {
+  const k = "grp." + key;
+  const s = t(k);
+  if (s !== k) return s;                        // libellé i18n connu (FR/EN)
   const c = (PROPOSITIONS.categories || []).find((x) => x.key === key);
   return c ? c.label : key;
 }
@@ -265,8 +275,8 @@ function resolveGroup() {
 }
 function initPropCategories() {
   const sel = $("#prop-cat");
-  const opts = [`<option value="auto">Automatique (dans l'ordre)</option>`].concat(
-    PROPOSITIONS.categories.map((c) => `<option value="${c.key}">${c.label} (${c.n})</option>`)
+  const opts = [`<option value="auto">${t("prop.auto")}</option>`].concat(
+    PROPOSITIONS.categories.map((c) => `<option value="${c.key}">${groupLabel(c.key)} (${c.n})</option>`)
   );
   sel.innerHTML = opts.join("");
   sel.value = propCat;
@@ -292,12 +302,12 @@ function loadProposition() {
     const s = $("#prop-cat"); if (s) { s.value = "auto"; refreshEnhancedSelects(); }
   }
   const group = resolveGroup();
-  const verb = activity === "transcribe" ? "transcrits" : "traduits";
+  const verb = activity === "transcribe" ? t("prog.verb.transcribe") : t("prog.verb.translate");
   if (!group) {                       // tous les groupes épuisés
     currentProp = null; _lastGroup = null;
     $("#prop-progress").textContent = "";
     $("#source").value = "";
-    $("#source").placeholder = "🎉 Tu as tout traité, un immense merci !";
+    $("#source").placeholder = t("wk.done.all");
     return;
   }
   const items = groupItems(group);
@@ -336,7 +346,7 @@ function applyMode() {
   $("#dir-toggle").hidden = proposer;
   if (proposer && direction !== "fr2nge") { direction = "fr2nge"; applyDirection(); }
   if (proposer) { refreshDoneTexts().then(() => loadProposition()); }
-  else { const s = $("#source"); s.value = ""; delete s.dataset.canon; s.placeholder = "Saisis ici…"; currentProp = null; }
+  else { const s = $("#source"); s.value = ""; delete s.dataset.canon; s.placeholder = t("wk.source.ph"); currentProp = null; }
   localStorage.setItem("modeSaisie", mode);
 }
 
@@ -376,7 +386,7 @@ async function startRecording() {
   // Le micro exige un contexte SÉCURISÉ (localhost ou HTTPS). Sur http://IP ou
   // file://, le navigateur bloque getUserMedia — cause n°1 des « je n'arrive pas ».
   if (!window.isSecureContext) {
-    rs.textContent = "Micro bloqué (pas en HTTPS/localhost)";
+    rs.textContent = t("rec.blocked");
     toast("L'enregistrement audio exige HTTPS ou localhost (sécurité du navigateur). "
       + "En local, ouvre http://localhost:8765/ ; une fois l'app en ligne (HTTPS), "
       + "le micro marchera sur les téléphones.", "warn");
@@ -384,7 +394,7 @@ async function startRecording() {
     return;
   }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
-    rs.textContent = "Enregistrement non supporté par ce navigateur";
+    rs.textContent = t("rec.unsupported");
     toast("Ce navigateur ne supporte pas l'enregistrement audio. Essaie Chrome ou Firefox à jour.", "warn");
     renderMicDiag(micStaticInfo(), "?", false, "");
     return;
@@ -405,17 +415,17 @@ async function startRecording() {
     audioStartTs = Date.now();
     mediaRecorder.start();
     $("#btn-rec").classList.add("is-recording");
-    const sp = $("#btn-rec").querySelector("span"); if (sp) sp.textContent = "Arrêter l'enregistrement";
+    const sp = $("#btn-rec").querySelector("span"); if (sp) sp.textContent = t("rec.stop");
     rs.textContent = "";
     startRecTimer();
   } catch (e) {
     const msg = e.name === "NotAllowedError" || e.name === "SecurityError"
-      ? "Autorisation micro refusée. Autorise le micro pour ce site (icône 🔒/🎙 dans la barre d'adresse), puis réessaie."
+      ? t("mic.err.denied")
       : e.name === "NotReadableError" || e.name === "TrackStartError"
-      ? "Micro occupé par une autre application (visio, enregistreur…). Ferme-la, puis réessaie."
+      ? t("mic.err.busy")
       : e.name === "NotFoundError" || e.name === "DevicesNotFoundError"
-      ? "Aucun micro détecté. Vérifie qu'un micro est branché/activé (et non coupé par le système), puis réessaie."
-      : "Micro indisponible (" + e.name + "). Réessaie, ou utilise Chrome/Firefox à jour.";
+      ? t("mic.err.none")
+      : ti("mic.err.other", { n: e.name });
     rs.textContent = msg;
     toast(msg, "warn");
     testMic();   // diagnostic COMPLET (nb de micros + autorisation navigateur)
@@ -424,7 +434,7 @@ async function startRecording() {
 function stopRecording() {
   if (mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
   $("#btn-rec").classList.remove("is-recording");
-  const sp = $("#btn-rec").querySelector("span"); if (sp) sp.textContent = "Enregistrer l'audio";
+  const sp = $("#btn-rec").querySelector("span"); if (sp) sp.textContent = t("rec.start");
   $("#rec-state").textContent = "";
   stopRecTimer();
 }
@@ -461,71 +471,56 @@ function isMobileDevice() {
 }
 /** Conseil ciblé selon la cause la plus probable (ordre = du plus bloquant au moins). */
 function micAdvice(errName, perm, nbInputs) {
-  if (!window.isSecureContext)
-    return "Ouvre le site en HTTPS (l'adresse doit commencer par https://). Hors HTTPS, le micro est bloqué par le navigateur.";
-  if (inAppBrowser())
-    return "Tu as ouvert le lien DANS une autre appli (WhatsApp, Facebook, Instagram…). Le micro y est bloqué. Ouvre le lien dans un vrai navigateur : menu « ⋯ » → « Ouvrir dans Chrome / Safari ».";
-  if (!window.MediaRecorder)
-    return "Ce navigateur ne gère pas l'enregistrement (MediaRecorder). Mets-le à jour, ou utilise Chrome / Safari récent.";
-  if (isStandalonePWA())
-    return "Sur iPhone, l'appli ajoutée à l'écran d'accueil bloque souvent le micro. Ouvre plutôt le site directement dans Safari (pas l'icône installée).";
-  if (perm === "denied" || errName === "NotAllowedError" || errName === "SecurityError")
-    return "Le micro est BLOQUÉ pour ce site dans ton navigateur. Touche l'icône 🔒/ⓘ à gauche de l'adresse (ou menu ⋮ → « Infos du site » / « Autorisations » → Micro) et mets « Autoriser », puis RECHARGE la page.";
-  if (Number(nbInputs) === 0 || errName === "NotFoundError" || errName === "DevicesNotFoundError") {
-    if (isMobileDevice())
-      return "Le navigateur ne voit AUCUN micro : c'est presque toujours l'autorisation micro du NAVIGATEUR au niveau du téléphone qui est coupée. "
-        + "Android : Réglages du téléphone → Applications → (ton navigateur : Chrome/Samsung Internet/Firefox…) → Autorisations → Micro → Autoriser. "
-        + "iPhone : Réglages → Confidentialité et sécurité → Microphone → active ton navigateur. Puis recharge la page.";
-    return "Aucun micro n'est branché ou disponible sur cet ordinateur. Un PC de bureau n'a pas de micro intégré : "
-      + "branche un micro ou un casque (prise micro, souvent rose, OU un micro/casque USB). "
-      + "Vérifie ensuite dans les réglages son du système qu'il n'est pas coupé (muet) et qu'il est bien choisi comme entrée par défaut, puis RECHARGE la page. "
-      + "Astuce : un micro USB est reconnu tout de suite ; une prise jack peut rester invisible si le système ne détecte aucune fiche branchée.";
-  }
-  if (errName === "NotReadableError" || errName === "TrackStartError")
-    return "Le micro est occupé par une autre appli (visio, dictaphone…). Ferme-la et réessaie.";
-  return "Cause non identifiée. Envoie-moi le détail affiché ci-dessus.";
+  if (!window.isSecureContext) return t("mic.adv.insecure");
+  if (inAppBrowser()) return t("mic.adv.inapp");
+  if (!window.MediaRecorder) return t("mic.adv.norecorder");
+  if (isStandalonePWA()) return t("mic.adv.pwa");
+  if (perm === "denied" || errName === "NotAllowedError" || errName === "SecurityError") return t("mic.adv.denied");
+  if (Number(nbInputs) === 0 || errName === "NotFoundError" || errName === "DevicesNotFoundError")
+    return isMobileDevice() ? t("mic.adv.none.mobile") : t("mic.adv.none.desktop");
+  if (errName === "NotReadableError" || errName === "TrackStartError") return t("mic.adv.busy");
+  return t("mic.adv.unknown");
 }
 function micStaticInfo() {
   const md = navigator.mediaDevices;
+  // { clé i18n → {val, inverse} } : `inverse` = « oui » est le mauvais signe.
   return {
-    "HTTPS / contexte sécurisé": !!window.isSecureContext,
-    "API micro (mediaDevices)": !!(md && md.getUserMedia),
-    "Enregistrement (MediaRecorder)": !!window.MediaRecorder,
-    "Appli installée (écran d'accueil)": isStandalonePWA(),
-    "Ouvert dans le navigateur d'une appli": inAppBrowser(),
+    "mic.diag.https": { val: !!window.isSecureContext },
+    "mic.diag.api": { val: !!(md && md.getUserMedia) },
+    "mic.diag.recorder": { val: !!window.MediaRecorder },
+    "mic.diag.installed": { val: isStandalonePWA(), inverse: true },
+    "mic.diag.inapp": { val: inAppBrowser(), inverse: true },
   };
 }
 function renderMicDiag(info, nbInputs, gumOK, errName, perm) {
   const box = $("#mic-diag");
   if (!box) return;
-  const li = Object.entries(info).map(([k, v]) => {
-    // Pour ces deux lignes, "oui" est le mauvais signe (à l'inverse des autres).
-    const inverse = k.includes("installée") || k.includes("navigateur d'une appli");
-    const bad = inverse ? v : !v;
-    return `<li>${k} : <span class="${bad ? "bad" : "ok"}">${v ? "oui" : "non"}</span></li>`;
+  const li = Object.entries(info).map(([k, o]) => {
+    const v = o.val, bad = o.inverse ? v : !v;
+    return `<li>${t(k)} : <span class="${bad ? "bad" : "ok"}">${v ? t("mic.yes") : t("mic.no")}</span></li>`;
   }).join("");
   const permLine = perm
-    ? `<li>Autorisation micro (navigateur) : <span class="${perm === "granted" ? "ok" : (perm === "denied" ? "bad" : "")}">${perm}</span></li>`
+    ? `<li>${t("mic.diag.perm")} : <span class="${perm === "granted" ? "ok" : (perm === "denied" ? "bad" : "")}">${perm}</span></li>`
     : "";
   const extra =
-    `<li>Micros détectés : <span class="${Number(nbInputs) > 0 ? "ok" : "bad"}">${nbInputs}</span></li>`
-    + `<li>Accès au micro : <span class="${gumOK ? "ok" : "bad"}">${gumOK ? "réussi ✅" : "échec" + (errName ? " (" + errName + ")" : "")}</span></li>`;
+    `<li>${t("mic.diag.detected")} : <span class="${Number(nbInputs) > 0 ? "ok" : "bad"}">${nbInputs}</span></li>`
+    + `<li>${t("mic.diag.access")} : <span class="${gumOK ? "ok" : "bad"}">${gumOK ? t("mic.ok") : t("mic.fail") + (errName ? " (" + errName + ")" : "")}</span></li>`;
   box.hidden = false;
-  box.innerHTML = "<h4>🔎 Diagnostic micro</h4><ul>" + li + permLine + extra + "</ul>"
+  box.innerHTML = "<h4>" + t("mic.diag.title") + "</h4><ul>" + li + permLine + extra + "</ul>"
     + (gumOK
-      ? '<div class="advice ok">Le micro fonctionne, tu peux enregistrer. ✅</div>'
+      ? '<div class="advice ok">' + t("mic.works") + "</div>"
       : '<div class="advice">' + micAdvice(errName, perm, nbInputs) + "</div>");
 }
 /** Lance un diagnostic complet (à la demande, bouton « Tester le micro »). */
 async function testMic() {
   const box = $("#mic-diag");
-  if (box) { box.hidden = false; box.innerHTML = "<h4>🔎 Diagnostic micro…</h4>"; }
+  if (box) { box.hidden = false; box.innerHTML = "<h4>" + t("mic.diag.title.wip") + "</h4>"; }
   const md = navigator.mediaDevices;
   let nbInputs = "?", gumOK = false, errName = "", perm = "";
   try {
     if (navigator.permissions && navigator.permissions.query)
       perm = (await navigator.permissions.query({ name: "microphone" })).state; // granted|denied|prompt
-  } catch (_) { perm = "non disponible"; }
+  } catch (_) { perm = t("mic.perm.na"); }
   try {
     if (md && md.enumerateDevices)
       nbInputs = (await md.enumerateDevices()).filter((d) => d.kind === "audioinput").length;
@@ -930,23 +925,29 @@ function saveLocalBug(bug) {
 }
 function bugCardHtml(bug) {
   const resolu = bug.statut === "resolu";
-  const sev = { critique: "Critique", majeur: "Majeur", mineur: "Mineur" }[bug.severite] || "";
-  const d = (x) => { try { return x ? new Date(x).toLocaleDateString("fr-FR") : ""; } catch (e) { return x || ""; } };
+  // Variante anglaise des champs textuels quand la langue d'interface est l'anglais.
+  const en = getUiLang() === "en";
+  const pick = (k) => (en && bug[k + "_en"]) ? bug[k + "_en"] : bug[k];
+  const titre = pick("titre"), description = pick("description"), correctif = pick("correctif"), zone = pick("zone");
+  const sevK = { critique: "bug.sev.critique", majeur: "bug.sev.majeur", mineur: "bug.sev.mineur" }[bug.severite];
+  const sev = sevK ? t(sevK) : "";
+  const locale = en ? "en-GB" : "fr-FR";
+  const d = (x) => { try { return x ? new Date(x).toLocaleDateString(locale) : ""; } catch (e) { return x || ""; } };
   return `<li class="bug ${resolu ? "bug--done" : "bug--open"}">` +
     `<div class="bug-top">` +
       `<span class="bug-id">${escapeHtml(bug.id)}</span>` +
-      `<span class="badge ${resolu ? "badge--sent" : "badge--local"}">${resolu ? "✓ résolu" : "⏳ en attente"}</span>` +
+      `<span class="badge ${resolu ? "badge--sent" : "badge--local"}">${resolu ? t("bug.done") : t("bug.pending")}</span>` +
       (sev ? `<span class="bug-sev bug-sev--${escapeHtml(bug.severite)}">${sev}</span>` : "") +
-      (bug.zone ? `<span class="bug-zone">${escapeHtml(bug.zone)}</span>` : "") +
+      (zone ? `<span class="bug-zone">${escapeHtml(zone)}</span>` : "") +
     `</div>` +
-    `<div class="bug-titre">${escapeHtml(bug.titre)}</div>` +
-    (bug.description ? `<div class="bug-desc">${escapeHtml(bug.description)}</div>` : "") +
-    (resolu && bug.correctif ? `<div class="bug-fix">✅ ${escapeHtml(bug.correctif)}</div>` : "") +
+    `<div class="bug-titre">${escapeHtml(titre)}</div>` +
+    (description ? `<div class="bug-desc">${escapeHtml(description)}</div>` : "") +
+    (resolu && correctif ? `<div class="bug-fix">✅ ${escapeHtml(correctif)}</div>` : "") +
     `<div class="bug-meta">` +
-      (bug.detecte_le ? `Détecté le ${d(bug.detecte_le)}` : "") +
-      (resolu && bug.resolu_le ? ` · résolu le ${d(bug.resolu_le)}` : "") +
+      (bug.detecte_le ? ti("bug.detected", { d: d(bug.detecte_le) }) : "") +
+      (resolu && bug.resolu_le ? ` · ${ti("bug.resolved", { d: d(bug.resolu_le) })}` : "") +
       (bug.version ? ` · ${escapeHtml(bug.version)}` : "") +
-      (bug.source === "utilisateur" ? " · signalé par un utilisateur" : "") +
+      (bug.source === "utilisateur" ? ` · ${t("bug.byuser")}` : "") +
     `</div>` +
   `</li>`;
 }
@@ -991,7 +992,7 @@ async function submitBug() {
   };
   saveLocalBug(bug);                     // visible tout de suite pour le rapporteur
   $("#bug-titre").value = ""; $("#bug-desc").value = "";
-  $("#bug-status").textContent = "Merci ! Signalement enregistré.";
+  $("#bug-status").textContent = t("bug.saved");
   await renderBugs();
   try { await postBug(bug); } catch (e) { /* best-effort ; resignalé à la prochaine ouverture */ }
   toast("Bug signalé, merci ! Tu peux suivre son avancement ici.", "ok");
@@ -1076,7 +1077,7 @@ function renderLangChoice() {
       <span class="lang-emblem" aria-hidden="true">${emb}</span>
       <span class="lang-name">${escapeHtml(l.nom)}</span>
       ${l.autonyme ? `<span class="lang-autonym">${escapeHtml(l.autonyme)}</span>` : ""}
-      ${l.region ? `<span class="lang-region">${escapeHtml(l.region)}</span>` : ""}
+      ${l.region ? `<span class="lang-region">${escapeHtml(getUiLang() === "en" && l.region_en ? l.region_en : l.region)}</span>` : ""}
       <span class="lang-kb">${kb}</span>
     </button>`;
   }).join("");
@@ -1434,8 +1435,8 @@ async function amorceRecToggle() {
     const st = $("#amorce-rec-status"); if (st) st.textContent = t("amorce.rec.wip");
   } catch (e) {
     const msg = e.name === "NotAllowedError" || e.name === "SecurityError"
-      ? "Autorisation micro refusée. Autorise le micro pour ce site, puis réessaie."
-      : "Micro indisponible (" + e.name + "). Réessaie, ou utilise Chrome/Firefox à jour.";
+      ? t("amorce.mic.denied")
+      : ti("mic.err.other", { n: e.name });
     toast(msg, "warn");
   }
 }
@@ -1467,8 +1468,7 @@ function amorceSkip() {
 function amorceFinish() {
   if (_amRec && _amRec.state === "recording") amorceStopRec();
   if (_amorceDone < AMORCE_MIN) {
-    const msg = `Tu as enregistré ${_amorceDone} mot${_amorceDone > 1 ? "s" : ""} sur ${AMORCE_MIN} conseillés. `
-      + `Ta langue « ${_amorceLang.nom} » est déjà créée et ce que tu as fait est gardé. Terminer quand même ?`;
+    const msg = ti("amorce.finish.confirm", { n: _amorceDone, min: AMORCE_MIN, lang: _amorceLang.nom });
     if (!window.confirm(msg)) return;
   }
   // La nouvelle langue devient la langue courante ; on recharge pour tout reconstruire
@@ -1535,9 +1535,7 @@ function setActivity(act) {
   const t2 = $("#work-title"); if (t2) t2.textContent = isT ? t("work.title.transcribe") : t("work.title.translate");
   const wico = $("#work-ico"); if (wico) wico.src = isT ? "icons/mic-real.png" : "icons/act-translate.svg";
   const h = $("#work-help");
-  if (h) h.innerHTML = isT
-    ? "Fais-toi <b>proposer</b> un mot (ou <b>écris</b> le tien), puis <b>enregistre ta voix</b> qui le prononce en ngiemboon. Ici, la <b>voix est obligatoire</b> ; la traduction écrite est facultative."
-    : "Fais-toi <b>proposer</b> un mot à traduire (ou <b>écris</b> le tien), puis donne sa <b>traduction</b>. Tu peux ajouter ta voix, c'est un plus.";
+  if (h) h.innerHTML = isT ? t("work.help.transcribe") : t("work.help.translate");
   const la = $("#lbl-audio"); if (la) la.textContent = isT ? t("work.audio.transcribe") : t("work.audio.translate");
   const pl = $("#prop-cat-label"); if (pl) pl.textContent = isT ? t("work.propcat.transcribe") : t("work.propcat.translate");
   const tl = $("#lbl-target"); if (tl) tl.textContent = isT ? t("work.lbltarget.transcribe") : t("work.lbltarget.translate");
@@ -1584,94 +1582,154 @@ function enterExplore() {
 // Le filtre de visibilité (startTour) écarte à l'exécution ce qui n'est pas affiché.
 // Style : pas de point final, pas de tiret cadratin baladeur ; « ↔ » autorisé.
 
-// Identité, présentée en ouverture de chaque visite.
+// Identité, présentée en ouverture de chaque visite. Chaque étape porte sa traduction
+// anglaise (`en:`) ; le rendu (tourGoto) choisit selon la langue d'interface.
 const TOUR_INTRO = [
-  { sel: ".brand", title: "LANGA, en deux mots", text: "Cette application rassemble les mots et les voix de nos langues pour en bâtir des dictionnaires, des claviers et des intelligences artificielles. Touche ce logo ou ce nom à tout moment pour revenir à l'accueil et ses trois portes : Traduire, Transcrire, Explorer" },
+  { sel: ".brand", title: "LANGA, en deux mots", text: "Cette application rassemble les mots et les voix de nos langues pour en bâtir des dictionnaires, des claviers et des intelligences artificielles. Touche ce logo ou ce nom à tout moment pour revenir à l'accueil et ses trois portes : Traduire, Transcrire, Explorer",
+    en: { title: "LANGA in a nutshell", text: "This app gathers the words and voices of our languages to build dictionaries, keyboards and artificial intelligences from them. Tap this logo or name at any time to go back to the home screen and its three doors: Translate, Transcribe, Explore" } },
 ];
 // Barre d'outils du header, disponible sur toutes les pages.
 const TOUR_TOOLS = [
-  { sel: "#net", title: "Tes voyants d'état", text: "Ici se lisent ta connexion et le lien avec la base, puis le nombre de contributions déjà rassemblées par toute la communauté. Hors connexion rien n'est perdu : tout est gardé sur l'appareil et repart tout seul dès que le réseau revient" },
-  { sel: "#app-ver", title: "Ta version", text: "Le numéro de la version que tu utilises. L'application se met à jour d'elle-même : quand une version plus récente existe, une bannière te prévient et un seul bouton l'installe, sans aucune manœuvre technique de ta part" },
-  { sel: "#home-link", title: "Revenir à l'accueil", text: "Te ramène à l'écran d'accueil, celui qui présente les trois portes : Traduire, Transcrire et Explorer. Pratique pour changer d'activité d'un seul geste, depuis n'importe quelle page. Le logo et le nom, en haut comme en bas, font la même chose" },
-  { sel: "#lang-chip", title: "Ta langue", text: "Indique la langue dans laquelle tu contribues, et permet d'en changer à tout moment. LANGA est communautaire : si ta langue n'existe pas encore, tu peux la déclarer d'ici, et elle deviendra aussitôt disponible pour tous ceux qui la parlent" },
-  { sel: "#about-link", title: "Découvrir le projet", text: "Ouvre la page qui raconte l'ambition de LANGA, pourquoi ta langue mérite d'exister dans le numérique et les trois manières d'y prendre part. C'est la page idéale à montrer à quelqu'un que tu veux convaincre de participer" },
-  { sel: "#help-btn", title: "Cette visite guidée", text: "Le bouton que tu viens d'utiliser. Sur n'importe quelle page il éclaire chaque zone l'une après l'autre et explique à quoi elle sert. Reviens-y sans crainte : rien ne s'enregistre et tu peux passer les étapes quand tu veux" },
-  { sel: "#bugs-link", title: "Signaler un souci", text: "Un bouton qui coince, une lettre absente du clavier, un envoi qui bloque : décris-le en quelques mots. Tu suis ensuite son traitement jusqu'à la correction, et tu vois la liste des problèmes déjà résolus" },
-  { sel: "#theme-toggle", title: "Clair ou sombre", text: "Bascule l'affichage entre fond clair et fond sombre, selon la lumière autour de toi ou simplement ton goût. Ton choix est retenu pour tes prochaines visites, sur cet appareil" },
-  { sel: "#btn-open-profile", title: "Modifier ton profil", text: "Reviens quand tu veux corriger ton nom, ton village ou tes coordonnées. C'est aussi ici que tu actives ou retires l'affichage de ton nom sur tes contributions rendues publiques" },
+  { sel: "#net", title: "Tes voyants d'état", text: "Ici se lisent ta connexion et le lien avec la base, puis le nombre de contributions déjà rassemblées par toute la communauté. Hors connexion rien n'est perdu : tout est gardé sur l'appareil et repart tout seul dès que le réseau revient",
+    en: { title: "Your status lights", text: "Here you can read your connection and the link to the database, then the number of contributions already gathered by the whole community. Offline nothing is lost: everything is kept on the device and leaves on its own as soon as the network is back" } },
+  { sel: "#app-ver", title: "Ta version", text: "Le numéro de la version que tu utilises. L'application se met à jour d'elle-même : quand une version plus récente existe, une bannière te prévient et un seul bouton l'installe, sans aucune manœuvre technique de ta part",
+    en: { title: "Your version", text: "The number of the version you're using. The app updates itself: when a newer version exists, a banner warns you and a single button installs it, with no technical step on your part" } },
+  { sel: "#home-link", title: "Revenir à l'accueil", text: "Te ramène à l'écran d'accueil, celui qui présente les trois portes : Traduire, Transcrire et Explorer. Pratique pour changer d'activité d'un seul geste, depuis n'importe quelle page. Le logo et le nom, en haut comme en bas, font la même chose",
+    en: { title: "Back to home", text: "Takes you back to the home screen, the one that presents the three doors: Translate, Transcribe and Explore. Handy to switch activity in one move, from any page. The logo and the name, at the top as at the bottom, do the same thing" } },
+  { sel: "#lang-chip", title: "Ta langue", text: "Indique la langue dans laquelle tu contribues, et permet d'en changer à tout moment. LANGA est communautaire : si ta langue n'existe pas encore, tu peux la déclarer d'ici, et elle deviendra aussitôt disponible pour tous ceux qui la parlent",
+    en: { title: "Your language", text: "Shows the language you're contributing in, and lets you change it at any time. LANGA is community-driven: if your language doesn't exist yet, you can declare it from here, and it becomes immediately available to everyone who speaks it" } },
+  { sel: "#about-link", title: "Découvrir le projet", text: "Ouvre la page qui raconte l'ambition de LANGA, pourquoi ta langue mérite d'exister dans le numérique et les trois manières d'y prendre part. C'est la page idéale à montrer à quelqu'un que tu veux convaincre de participer",
+    en: { title: "Discover the project", text: "Opens the page that tells LANGA's ambition, why your language deserves to exist in the digital world and the three ways to take part. It's the ideal page to show someone you want to convince to join" } },
+  { sel: "#help-btn", title: "Cette visite guidée", text: "Le bouton que tu viens d'utiliser. Sur n'importe quelle page il éclaire chaque zone l'une après l'autre et explique à quoi elle sert. Reviens-y sans crainte : rien ne s'enregistre et tu peux passer les étapes quand tu veux",
+    en: { title: "This guided tour", text: "The button you've just used. On any page it highlights each area one after another and explains what it's for. Come back to it without fear: nothing is saved and you can skip the steps whenever you want" } },
+  { sel: "#bugs-link", title: "Signaler un souci", text: "Un bouton qui coince, une lettre absente du clavier, un envoi qui bloque : décris-le en quelques mots. Tu suis ensuite son traitement jusqu'à la correction, et tu vois la liste des problèmes déjà résolus",
+    en: { title: "Report an issue", text: "A button that sticks, a letter missing from the keyboard, a send that stalls: describe it in a few words. You then follow its handling until it's fixed, and you see the list of problems already solved" } },
+  { sel: "#theme-toggle", title: "Clair ou sombre", text: "Bascule l'affichage entre fond clair et fond sombre, selon la lumière autour de toi ou simplement ton goût. Ton choix est retenu pour tes prochaines visites, sur cet appareil",
+    en: { title: "Light or dark", text: "Switches the display between light and dark background, depending on the light around you or simply your taste. Your choice is remembered for your next visits, on this device" } },
+  { sel: "#btn-open-profile", title: "Modifier ton profil", text: "Reviens quand tu veux corriger ton nom, ton village ou tes coordonnées. C'est aussi ici que tu actives ou retires l'affichage de ton nom sur tes contributions rendues publiques",
+    en: { title: "Edit your profile", text: "Come back whenever you want to fix your name, your village or your contact details. This is also where you turn on or off showing your name on your public contributions" } },
 ];
 // Navigation entre espaces (visible seulement sur Traduire/Transcrire/Explorer).
 const TOUR_NAV = [
-  { sel: "#tab-traduire", title: "Aller à Traduire", text: "Bascule vers l'atelier de traduction sans rien perdre de ton travail ailleurs. Pratique pour alterner à ton rythme : quelques traductions, puis quelques voix, puis un passage dans la bibliothèque" },
-  { sel: "#tab-transcrire", title: "Aller à Transcrire", text: "Passe à l'enregistrement des prononciations. Un même mot peut d'abord être traduit ici, puis prononcé là : les deux gestes se complètent pour documenter la langue en entier" },
-  { sel: "#tab-explorer", title: "Aller à Explorer", text: "Ouvre la bibliothèque commune pour voir, écouter et améliorer ce que d'autres ont déjà partagé. Un bon moyen de t'inspirer avant de proposer tes propres réponses" },
+  { sel: "#tab-traduire", title: "Aller à Traduire", text: "Bascule vers l'atelier de traduction sans rien perdre de ton travail ailleurs. Pratique pour alterner à ton rythme : quelques traductions, puis quelques voix, puis un passage dans la bibliothèque",
+    en: { title: "Go to Translate", text: "Switches to the translation workshop without losing any of your work elsewhere. Handy to alternate at your own pace: a few translations, then a few voices, then a stop in the library" } },
+  { sel: "#tab-transcrire", title: "Aller à Transcrire", text: "Passe à l'enregistrement des prononciations. Un même mot peut d'abord être traduit ici, puis prononcé là : les deux gestes se complètent pour documenter la langue en entier",
+    en: { title: "Go to Transcribe", text: "Moves to recording pronunciations. A single word can first be translated here, then pronounced there: the two gestures complement each other to document the whole language" } },
+  { sel: "#tab-explorer", title: "Aller à Explorer", text: "Ouvre la bibliothèque commune pour voir, écouter et améliorer ce que d'autres ont déjà partagé. Un bon moyen de t'inspirer avant de proposer tes propres réponses",
+    en: { title: "Go to Explore", text: "Opens the shared library to see, listen to and improve what others have already shared. A good way to get inspired before offering your own answers" } },
 ];
 // Pied de page (créateur + contact), présent partout.
 const TOUR_FOOT = [
-  { sel: ".site-footer", title: "Rester en contact", text: "Le projet est porté par Brice Kengni Zanguim. Une question, une idée, une correction sur ta langue : un e-mail ou un message WhatsApp suffit, chaque retour aide à améliorer l'application" },
+  { sel: ".site-footer", title: "Rester en contact", text: "Le projet est porté par Brice Kengni Zanguim. Une question, une idée, une correction sur ta langue : un e-mail ou un message WhatsApp suffit, chaque retour aide à améliorer l'application",
+    en: { title: "Stay in touch", text: "The project is led by Brice Kengni Zanguim. A question, an idea, a correction about your language: an email or a WhatsApp message is enough, every piece of feedback helps improve the app" } },
 ];
 // Compose une visite complète : identité, contenu de la vue, navigation, outils, pied.
 const withChrome = (content) => [...TOUR_INTRO, ...content, ...TOUR_NAV, ...TOUR_TOOLS, ...TOUR_FOOT];
 
 const TOURS = {
   profile: withChrome([
-    { sel: "#c-nom", title: "Qui es-tu", text: "Ton nom et ton prénom servent seulement à te créditer comme contributeur. Tu ne les saisis qu'une fois : ils restent sur cet appareil et te suivent d'une visite à l'autre, sans jamais t'être redemandés" },
-    { sel: "#village-combo", title: "D'où vient ta parole", text: "Le ngiemboon se dit un peu différemment d'un village à l'autre. Préciser le tien situe ta variante et évite qu'une réponse juste chez toi passe pour une erreur ailleurs. Choisis dans la liste ou tape ton quartier" },
-    { sel: "#c-role", title: "Comment tu connais la langue", text: "Locuteur natif, apprenant ou linguiste : cette nuance aide à interpréter tes propositions et à leur donner le bon poids. Un natif confirme l'usage courant ; un linguiste apporte la précision de l'écrit" },
-    { sel: "#c-email", title: "Pour te joindre si besoin", text: "E-mail et téléphone ne servent qu'en cas de doute sur une traduction, à rien d'autre. Ils restent sur ton appareil et ne sont jamais montrés au public. L'indicatif du pays se choisit juste à gauche du numéro" },
-    { sel: ".field--consent", title: "Ton accord, indispensable", text: "Cette case autorise l'usage de tes contributions pour documenter et outiller la langue. Sans elle impossible de continuer : c'est ce qui rend le partage légitime et respectueux de ton travail" },
-    { sel: ".field--credit", title: "Ton nom en public, ou pas", text: "Entièrement facultatif : si tu coches, ton nom apparaît près de tes contributions dans la bibliothèque publique, sous la forme que tu choisis (prénom seul ou sigle). Sinon tu restes tout à fait anonyme" },
-    { sel: "#btn-profile-continue", title: "Ouvrir les activités", text: "Une fois remplis les champs marqués d'une étoile, ce bouton déverrouille tout : traduire, transcrire et explorer. Tant qu'une information obligatoire manque, il reste grisé pour te montrer ce qui reste à faire" },
+    { sel: "#c-nom", title: "Qui es-tu", text: "Ton nom et ton prénom servent seulement à te créditer comme contributeur. Tu ne les saisis qu'une fois : ils restent sur cet appareil et te suivent d'une visite à l'autre, sans jamais t'être redemandés",
+      en: { title: "Who you are", text: "Your last and first name are only used to credit you as a contributor. You enter them once: they stay on this device and follow you from one visit to the next, never asked again" } },
+    { sel: "#village-combo", title: "D'où vient ta parole", text: "Le ngiemboon se dit un peu différemment d'un village à l'autre. Préciser le tien situe ta variante et évite qu'une réponse juste chez toi passe pour une erreur ailleurs. Choisis dans la liste ou tape ton quartier",
+      en: { title: "Where your speech comes from", text: "Ngiemboon is said a little differently from one village to another. Stating yours places your variant and prevents an answer that's right where you live from looking like a mistake elsewhere. Pick from the list or type your neighbourhood" } },
+    { sel: "#c-role", title: "Comment tu connais la langue", text: "Locuteur natif, apprenant ou linguiste : cette nuance aide à interpréter tes propositions et à leur donner le bon poids. Un natif confirme l'usage courant ; un linguiste apporte la précision de l'écrit",
+      en: { title: "How you know the language", text: "Native speaker, learner or linguist: this nuance helps interpret your suggestions and give them the right weight. A native confirms everyday usage; a linguist brings the precision of writing" } },
+    { sel: "#c-email", title: "Pour te joindre si besoin", text: "E-mail et téléphone ne servent qu'en cas de doute sur une traduction, à rien d'autre. Ils restent sur ton appareil et ne sont jamais montrés au public. L'indicatif du pays se choisit juste à gauche du numéro",
+      en: { title: "To reach you if needed", text: "Email and phone are only used in case of doubt about a translation, nothing else. They stay on your device and are never shown to the public. The country code is chosen just to the left of the number" } },
+    { sel: ".field--consent", title: "Ton accord, indispensable", text: "Cette case autorise l'usage de tes contributions pour documenter et outiller la langue. Sans elle impossible de continuer : c'est ce qui rend le partage légitime et respectueux de ton travail",
+      en: { title: "Your agreement, essential", text: "This box allows your contributions to be used to document and equip the language. Without it you can't continue: it's what makes sharing legitimate and respectful of your work" } },
+    { sel: ".field--credit", title: "Ton nom en public, ou pas", text: "Entièrement facultatif : si tu coches, ton nom apparaît près de tes contributions dans la bibliothèque publique, sous la forme que tu choisis (prénom seul ou sigle). Sinon tu restes tout à fait anonyme",
+      en: { title: "Your name in public, or not", text: "Entirely optional: if you tick it, your name appears next to your contributions in the public library, in the form you choose (first name only or initials). Otherwise you stay completely anonymous" } },
+    { sel: "#btn-profile-continue", title: "Ouvrir les activités", text: "Une fois remplis les champs marqués d'une étoile, ce bouton déverrouille tout : traduire, transcrire et explorer. Tant qu'une information obligatoire manque, il reste grisé pour te montrer ce qui reste à faire",
+      en: { title: "Open the activities", text: "Once the fields marked with a star are filled, this button unlocks everything: translate, transcribe and explore. As long as a required piece of information is missing, it stays greyed out to show you what's left to do" } },
   ]),
   hub: withChrome([
-    { sel: ".hub-card[data-go='translate']", title: "Traduire un mot", text: "Tu donnes l'équivalent d'un mot ou d'une phrase, dans un sens ou dans l'autre (français ↔ ngiemboon). Ajouter ta voix par-dessus est un bonus précieux, mais le texte seul suffit déjà pour commencer" },
-    { sel: ".hub-card[data-go='transcribe']", title: "Prêter ta voix", text: "Ici la prononciation est la vedette : tu enregistres comment un mot se dit vraiment. Le texte peut t'être soufflé, mais c'est ta voix qui capture ce qu'aucune orthographe ne rendra jamais tout à fait" },
-    { sel: ".hub-card[data-go='explore']", title: "Explorer la bibliothèque", text: "Tu parcours ce que la communauté a déjà rassemblé : lire, écouter les prononciations, et proposer une meilleure version quand tu en connais une. Le moyen idéal d'apprendre tout en contribuant" },
+    { sel: ".hub-card[data-go='translate']", title: "Traduire un mot", text: "Tu donnes l'équivalent d'un mot ou d'une phrase, dans un sens ou dans l'autre (français ↔ ngiemboon). Ajouter ta voix par-dessus est un bonus précieux, mais le texte seul suffit déjà pour commencer",
+      en: { title: "Translate a word", text: "You give the equivalent of a word or a sentence, one way or the other (French ↔ ngiemboon). Adding your voice on top is a precious bonus, but the text alone is already enough to start" } },
+    { sel: ".hub-card[data-go='transcribe']", title: "Prêter ta voix", text: "Ici la prononciation est la vedette : tu enregistres comment un mot se dit vraiment. Le texte peut t'être soufflé, mais c'est ta voix qui capture ce qu'aucune orthographe ne rendra jamais tout à fait",
+      en: { title: "Lend your voice", text: "Here pronunciation is the star: you record how a word is really said. The text can be suggested to you, but it's your voice that captures what no spelling will ever fully render" } },
+    { sel: ".hub-card[data-go='explore']", title: "Explorer la bibliothèque", text: "Tu parcours ce que la communauté a déjà rassemblé : lire, écouter les prononciations, et proposer une meilleure version quand tu en connais une. Le moyen idéal d'apprendre tout en contribuant",
+      en: { title: "Explore the library", text: "You browse what the community has already gathered: read, listen to pronunciations, and offer a better version when you know one. The ideal way to learn while contributing" } },
   ]),
   app: withChrome([
-    { sel: ".mode-toggle", title: "Deux façons de travailler", text: "« Se faire proposer un mot » déroule pour toi une file d'items à traiter, sans te demander quoi faire ensuite. « Écrire moi-même » te laisse saisir librement le mot ou la phrase qui te tient à cœur. Tu changes d'avis quand tu veux" },
-    { sel: "#prop-bar", title: "Ton fil de propositions", text: "En mode automatique les items arrivent groupe par groupe : d'abord les mots, puis les phrases, et le dictionnaire tout à la fin. Le compteur (par exemple « Mots · 7/335 ») marque ta progression ; « Prochain mot » avance sans jamais te resservir ce que tu as déjà traité" },
-    { sel: "#dir-toggle", title: "Le sens de traduction", text: "Choisis si tu pars du français vers le ngiemboon ou l'inverse. Les étiquettes FR et NGE des champs suivent ton choix, pour que tu saches toujours quelle langue va où. Bien utile selon la langue dans laquelle tu penses le mieux" },
-    { sel: "#source", title: "L'item de départ", text: "Le mot ou la phrase à traiter s'affiche ici. En mode proposé il est déjà rempli pour toi ; en mode libre c'est toi qui l'écris. C'est le point d'appui auquel ta réponse va répondre" },
-    { sel: "#target-wrap", title: "Ta réponse en ngiemboon", text: "Touche ce champ : le clavier ngiemboon s'ouvre, avec les lettres et les tons propres à la langue, absents des claviers ordinaires. Tu écris ta traduction avec les bons caractères plutôt qu'une approximation" },
-    { sel: "#tips-toggle", title: "L'aide à la prononciation", text: "Quand elle est active, chaque touche pressée montre comment la lettre se prononce, avec un exemple simple en français. Idéale si tu découvres l'alphabet ; tu pourras la couper une fois à l'aise" },
-    { sel: "#domaine", title: "Situer le mot (facultatif)", text: "Le domaine (parenté, nourriture, nature…) et la note (registre, contexte d'emploi) ne sont pas obligatoires, mais ils rendent ta contribution bien plus utile : deux mots proches se distinguent souvent par leur seul contexte" },
-    { sel: ".audio-row", title: "Enregistrer la voix", text: "Un appui lance l'enregistrement, un autre l'arrête ; tu peux réécouter puis recommencer autant que tu veux. En Traduire c'est un plus, en Transcrire c'est le cœur même de la contribution. « Tester le micro » vérifie d'abord que tout marche" },
-    { sel: "#btn-trim-audio", title: "Ne garder que le bon passage", text: "Si une partie seulement de ton enregistrement est réussie (une porte qui s'ouvre, une radio qui s'allume ont fait du bruit ailleurs), ce bouton ouvre un outil pour délimiter la portion à conserver, en glissant deux poignées sur l'onde ou en saisissant le début et la fin en secondes. Tu écoutes la sélection, puis tu la gardes : tout le reste est supprimé, sans avoir à tout réenregistrer" },
-    { sel: "#btn-save", title: "Garder ta contribution", text: "Ta réponse est d'abord rangée en sécurité sur ton appareil, même sans réseau. Rien ne part encore : tu peux enchaîner tranquillement plusieurs items, puis tout transmettre d'un coup un peu plus tard" },
-    { sel: ".send-row", title: "Transmettre à la base", text: "L'envoi regroupe tout ce qui attend. Il est conçu pour ne rien perdre : chaque contribution est renvoyée jusqu'à ce que la base confirme l'avoir bien reçue, même quand le réseau est capricieux" },
-    { sel: "#grp-pending", title: "Ce qui reste à confirmer", text: "La liste de ce que la base n'a pas encore confirmé. L'application y revient d'elle-même, en boucle, jusqu'à ce que tout soit parti ; « Renvoyer maintenant » force une nouvelle tentative si tu es pressé" },
-    { sel: "#grp-sent", title: "Ce qui est bien arrivé", text: "Tout ce que la base a confirmé avoir reçu, coché et à l'abri. Quand une contribution passe ici, tu as la certitude qu'elle est enregistrée pour de bon, pas seulement lancée dans le vide" },
+    { sel: ".mode-toggle", title: "Deux façons de travailler", text: "« Se faire proposer un mot » déroule pour toi une file d'items à traiter, sans te demander quoi faire ensuite. « Écrire moi-même » te laisse saisir librement le mot ou la phrase qui te tient à cœur. Tu changes d'avis quand tu veux",
+      en: { title: "Two ways to work", text: "“Get a word to work on” rolls out a queue of items to handle for you, without asking what to do next. “Write my own” lets you freely type the word or sentence you care about. You can change your mind anytime" } },
+    { sel: "#prop-bar", title: "Ton fil de propositions", text: "En mode automatique les items arrivent groupe par groupe : d'abord les mots, puis les phrases, et le dictionnaire tout à la fin. Le compteur (par exemple « Mots · 7/335 ») marque ta progression ; « Prochain mot » avance sans jamais te resservir ce que tu as déjà traité",
+      en: { title: "Your suggestion feed", text: "In automatic mode the items come group by group: first the words, then the sentences, and the dictionary right at the end. The counter (for example “Words · 7/335”) marks your progress; “Next word” moves on without ever serving you again what you've already handled" } },
+    { sel: "#dir-toggle", title: "Le sens de traduction", text: "Choisis si tu pars du français vers le ngiemboon ou l'inverse. Les étiquettes FR et NGE des champs suivent ton choix, pour que tu saches toujours quelle langue va où. Bien utile selon la langue dans laquelle tu penses le mieux",
+      en: { title: "The translation direction", text: "Choose whether you go from French to ngiemboon or the other way. The FR and NGE labels of the fields follow your choice, so you always know which language goes where. Quite useful depending on the language you think best in" } },
+    { sel: "#source", title: "L'item de départ", text: "Le mot ou la phrase à traiter s'affiche ici. En mode proposé il est déjà rempli pour toi ; en mode libre c'est toi qui l'écris. C'est le point d'appui auquel ta réponse va répondre",
+      en: { title: "The starting item", text: "The word or sentence to handle appears here. In suggested mode it's already filled in for you; in free mode you write it yourself. It's the anchor your answer will respond to" } },
+    { sel: "#target-wrap", title: "Ta réponse en ngiemboon", text: "Touche ce champ : le clavier ngiemboon s'ouvre, avec les lettres et les tons propres à la langue, absents des claviers ordinaires. Tu écris ta traduction avec les bons caractères plutôt qu'une approximation",
+      en: { title: "Your answer in ngiemboon", text: "Tap this field: the ngiemboon keyboard opens, with the letters and tones specific to the language, absent from ordinary keyboards. You write your translation with the right characters rather than an approximation" } },
+    { sel: "#tips-toggle", title: "L'aide à la prononciation", text: "Quand elle est active, chaque touche pressée montre comment la lettre se prononce, avec un exemple simple en français. Idéale si tu découvres l'alphabet ; tu pourras la couper une fois à l'aise",
+      en: { title: "The pronunciation help", text: "When it's on, each key you press shows how the letter is pronounced, with a simple example. Ideal if you're discovering the alphabet; you can turn it off once you're comfortable" } },
+    { sel: "#domaine", title: "Situer le mot (facultatif)", text: "Le domaine (parenté, nourriture, nature…) et la note (registre, contexte d'emploi) ne sont pas obligatoires, mais ils rendent ta contribution bien plus utile : deux mots proches se distinguent souvent par leur seul contexte",
+      en: { title: "Place the word (optional)", text: "The domain (kinship, food, nature…) and the note (register, context of use) are not required, but they make your contribution far more useful: two close words are often told apart by their context alone" } },
+    { sel: ".audio-row", title: "Enregistrer la voix", text: "Un appui lance l'enregistrement, un autre l'arrête ; tu peux réécouter puis recommencer autant que tu veux. En Traduire c'est un plus, en Transcrire c'est le cœur même de la contribution. « Tester le micro » vérifie d'abord que tout marche",
+      en: { title: "Record the voice", text: "One tap starts the recording, another stops it; you can listen back then start over as many times as you like. In Translate it's a plus, in Transcribe it's the very heart of the contribution. “Test the microphone” first checks that everything works" } },
+    { sel: "#btn-trim-audio", title: "Ne garder que le bon passage", text: "Si une partie seulement de ton enregistrement est réussie (une porte qui s'ouvre, une radio qui s'allume ont fait du bruit ailleurs), ce bouton ouvre un outil pour délimiter la portion à conserver, en glissant deux poignées sur l'onde ou en saisissant le début et la fin en secondes. Tu écoutes la sélection, puis tu la gardes : tout le reste est supprimé, sans avoir à tout réenregistrer",
+      en: { title: "Keep only the good part", text: "If only a part of your recording is good (a door opening, a radio switching on made noise elsewhere), this button opens a tool to delimit the portion to keep, by dragging two handles on the wave or typing the start and end in seconds. You listen to the selection, then keep it: all the rest is removed, without having to record everything again" } },
+    { sel: "#btn-save", title: "Garder ta contribution", text: "Ta réponse est d'abord rangée en sécurité sur ton appareil, même sans réseau. Rien ne part encore : tu peux enchaîner tranquillement plusieurs items, puis tout transmettre d'un coup un peu plus tard",
+      en: { title: "Keep your contribution", text: "Your answer is first stored safely on your device, even without network. Nothing leaves yet: you can calmly go through several items, then send them all at once a little later" } },
+    { sel: ".send-row", title: "Transmettre à la base", text: "L'envoi regroupe tout ce qui attend. Il est conçu pour ne rien perdre : chaque contribution est renvoyée jusqu'à ce que la base confirme l'avoir bien reçue, même quand le réseau est capricieux",
+      en: { title: "Send to the database", text: "Sending gathers everything that's waiting. It's designed to lose nothing: each contribution is resent until the database confirms it received it, even when the network is capricious" } },
+    { sel: "#grp-pending", title: "Ce qui reste à confirmer", text: "La liste de ce que la base n'a pas encore confirmé. L'application y revient d'elle-même, en boucle, jusqu'à ce que tout soit parti ; « Renvoyer maintenant » force une nouvelle tentative si tu es pressé",
+      en: { title: "What's left to confirm", text: "The list of what the database hasn't confirmed yet. The app comes back to it on its own, in a loop, until everything is gone; “Resend now” forces a new attempt if you're in a hurry" } },
+    { sel: "#grp-sent", title: "Ce qui est bien arrivé", text: "Tout ce que la base a confirmé avoir reçu, coché et à l'abri. Quand une contribution passe ici, tu as la certitude qu'elle est enregistrée pour de bon, pas seulement lancée dans le vide",
+      en: { title: "What arrived safely", text: "Everything the database confirmed receiving, checked and safe. When a contribution moves here, you're certain it's saved for good, not just thrown into the void" } },
   ]),
   explore: withChrome([
-    { sel: "#explore-search", title: "Chercher un mot", text: "Tape quelques lettres pour retrouver aussitôt un mot ou une phrase parmi tout ce qui a été partagé. Bien pratique pour vérifier si une réponse existe déjà avant d'en proposer une nouvelle" },
-    { sel: ".explore-filters", title: "Affiner la liste", text: "Filtre par sens de traduction, rôle du contributeur, variante de village ou domaine. En combinant ces filtres tu isoles par exemple les seules réponses des locuteurs natifs de ton propre village" },
-    { sel: "#explore-list .grp-card", title: "Un mot, toutes ses réponses", text: "Chaque cadre réunit toutes les propositions d'un même mot avec ses compteurs : nombre de réponses, de villages représentés, d'enregistrements. Touche-le pour ouvrir le détail et écouter les voix" },
-    { sel: "#explore-list .grp-card .grp-consensus", title: "La réponse qui fait consensus", text: "Lorsqu'une même réponse revient assez souvent dans ton village, elle ressort ici comme la variante de référence pour toi. Ce sont les usages de ta communauté qui priment, pas ceux d'un autre village" },
+    { sel: "#explore-search", title: "Chercher un mot", text: "Tape quelques lettres pour retrouver aussitôt un mot ou une phrase parmi tout ce qui a été partagé. Bien pratique pour vérifier si une réponse existe déjà avant d'en proposer une nouvelle",
+      en: { title: "Search a word", text: "Type a few letters to instantly find a word or a sentence among everything that's been shared. Quite handy to check whether an answer already exists before offering a new one" } },
+    { sel: ".explore-filters", title: "Affiner la liste", text: "Filtre par sens de traduction, rôle du contributeur, variante de village ou domaine. En combinant ces filtres tu isoles par exemple les seules réponses des locuteurs natifs de ton propre village",
+      en: { title: "Narrow the list", text: "Filter by translation direction, contributor role, village variant or domain. By combining these filters you isolate, for example, only the answers of native speakers from your own village" } },
+    { sel: "#explore-list .grp-card", title: "Un mot, toutes ses réponses", text: "Chaque cadre réunit toutes les propositions d'un même mot avec ses compteurs : nombre de réponses, de villages représentés, d'enregistrements. Touche-le pour ouvrir le détail et écouter les voix",
+      en: { title: "One word, all its answers", text: "Each frame gathers all the suggestions for a single word with its counters: number of answers, of villages represented, of recordings. Tap it to open the detail and listen to the voices" } },
+    { sel: "#explore-list .grp-card .grp-consensus", title: "La réponse qui fait consensus", text: "Lorsqu'une même réponse revient assez souvent dans ton village, elle ressort ici comme la variante de référence pour toi. Ce sont les usages de ta communauté qui priment, pas ceux d'un autre village",
+      en: { title: "The consensus answer", text: "When the same answer comes back often enough in your village, it stands out here as the reference variant for you. It's your community's usage that prevails, not that of another village" } },
   ]),
   about: withChrome([
-    { sel: ".about-head", title: "La page qui raconte le projet", text: "Un espace à part pour présenter LANGA : d'où vient son nom, quelle ambition le porte et comment n'importe qui peut y prendre part. C'est la page à partager pour donner à d'autres l'envie de contribuer" },
-    { sel: ".about-vision", title: "L'ambition de fond", text: "Bien plus qu'un simple dictionnaire : rassembler mots et voix pour donner à nos langues des claviers, des traducteurs et des IA qui les comprennent. Le ngiemboon montre la voie, l'horizon vise toutes nos langues" },
-    { sel: "#about-grid-why", title: "Ce que ça change vraiment", text: "Trois enjeux réunis : préserver ce qui pourrait se perdre, outiller la langue pour qu'elle vive dans les téléphones et les ordinateurs, et le faire ensemble, car une langue appartient à ceux qui la parlent" },
-    { sel: "#about-grid-how", title: "Par où mettre la main", text: "Trois portes d'entrée complémentaires : traduire pour le sens, transcrire pour le son, explorer pour affiner. Tu n'es tenu à aucune : même un seul mot par jour fait grossir le trésor commun" },
-    { sel: ".about-share", title: "Faire passer le mot", text: "Le projet grandit avec le nombre de contributeurs. Montre le QR code autour de toi ou récupère le flyer en image ou en PDF pour le diffuser : plus on est nombreux, plus la langue est richement documentée" },
-    { sel: ".about-cta", title: "Se lancer", text: "« Commencer à contribuer » t'emmène droit aux activités de collecte, « Retour » te ramène à l'écran d'où tu venais. Rien ne presse : tu peux explorer d'abord et contribuer quand tu te sens prêt" },
+    { sel: ".about-head", title: "La page qui raconte le projet", text: "Un espace à part pour présenter LANGA : d'où vient son nom, quelle ambition le porte et comment n'importe qui peut y prendre part. C'est la page à partager pour donner à d'autres l'envie de contribuer",
+      en: { title: "The page that tells the project", text: "A dedicated space to present LANGA: where its name comes from, what ambition drives it and how anyone can take part. It's the page to share to give others the urge to contribute" } },
+    { sel: ".about-vision", title: "L'ambition de fond", text: "Bien plus qu'un simple dictionnaire : rassembler mots et voix pour donner à nos langues des claviers, des traducteurs et des IA qui les comprennent. Le ngiemboon montre la voie, l'horizon vise toutes nos langues",
+      en: { title: "The underlying ambition", text: "Far more than a mere dictionary: gathering words and voices to give our languages keyboards, translators and AIs that understand them. Ngiemboon leads the way, the horizon aims at all our languages" } },
+    { sel: "#about-grid-why", title: "Ce que ça change vraiment", text: "Trois enjeux réunis : préserver ce qui pourrait se perdre, outiller la langue pour qu'elle vive dans les téléphones et les ordinateurs, et le faire ensemble, car une langue appartient à ceux qui la parlent",
+      en: { title: "What it really changes", text: "Three stakes brought together: preserving what could be lost, equipping the language so it lives in phones and computers, and doing it together, because a language belongs to those who speak it" } },
+    { sel: "#about-grid-how", title: "Par où mettre la main", text: "Trois portes d'entrée complémentaires : traduire pour le sens, transcrire pour le son, explorer pour affiner. Tu n'es tenu à aucune : même un seul mot par jour fait grossir le trésor commun",
+      en: { title: "Where to lend a hand", text: "Three complementary entry doors: translate for meaning, transcribe for sound, explore to refine. You're bound to none: even a single word a day grows the shared treasure" } },
+    { sel: ".about-share", title: "Faire passer le mot", text: "Le projet grandit avec le nombre de contributeurs. Montre le QR code autour de toi ou récupère le flyer en image ou en PDF pour le diffuser : plus on est nombreux, plus la langue est richement documentée",
+      en: { title: "Spread the word", text: "The project grows with the number of contributors. Show the QR code around you or grab the flyer as an image or PDF to spread it: the more we are, the more richly the language is documented" } },
+    { sel: ".about-cta", title: "Se lancer", text: "« Commencer à contribuer » t'emmène droit aux activités de collecte, « Retour » te ramène à l'écran d'où tu venais. Rien ne presse : tu peux explorer d'abord et contribuer quand tu te sens prêt",
+      en: { title: "Get started", text: "“Start contributing” takes you straight to the collection activities, “Back” returns you to the screen you came from. No rush: you can explore first and contribute when you feel ready" } },
   ]),
   lang: withChrome([
-    { sel: "#lang-search", title: "Chercher une langue", text: "Tape le nom d'une langue, une région ou un pays : la liste se filtre à mesure que tu écris. Bien pratique quand beaucoup de langues sont déjà déclarées, pour retrouver la tienne d'un coup d'œil" },
-    { sel: "#lang-declare-btn", title: "Déclarer ta langue", text: "Si ta langue n'apparaît pas encore dans la liste, ce bouton ouvre un court formulaire pour la créer. Elle devient aussitôt disponible pour toi et pour toute personne qui la parle : LANGA est fait pour accueillir toutes nos langues" },
-    { sel: "#lang-grid", title: "Choisir ta langue", text: "Chaque carte est une langue déjà présente : touche-la pour contribuer dans cette langue. Le ngiemboon a son clavier dédié avec les tons ; les autres s'écrivent avec le clavier habituel de ton téléphone en attendant le leur" },
-    { sel: "#lang-merge-panel", title: "Réunir les doublons", text: "Deux personnes ont parfois créé la même langue sous des écritures différentes. LANGA te le signale ici : tu peux confirmer une fusion qu'on te propose, accepter une ressemblance repérée automatiquement, ou choisir toi-même deux langues que tu sais identiques et proposer de les réunir. La fusion n'a lieu qu'avec l'accord des personnes concernées, et rien n'est perdu : les orthographes et les régions des deux sont conservées" },
-    { sel: "#ld-nom", title: "Le nom de la langue", text: "Écris le nom sous lequel ta langue est connue. Pendant que tu tapes, LANGA compare avec les langues déjà déclarées pour t'éviter de créer un doublon sous une orthographe un peu différente" },
-    { sel: "#ld-pays", title: "Le pays", text: "Le pays où la langue est parlée. On part du plus large, le pays, avant de préciser la région : cela situe d'emblée la langue sur la carte" },
-    { sel: "#ld-region", title: "Où on la parle", text: "La région ou la localité, plus précise que le pays. Deux langues de noms proches mais de régions éloignées sont sans doute distinctes, et cette précision aide à ne pas les confondre" },
-    { sel: "#ld-similar", title: "Éviter les doublons", text: "Si une langue déjà présente ressemble à la tienne (même écrite autrement), elle s'affiche ici. Si c'est bien la même, choisis-la plutôt que d'en créer une seconde : on garde ainsi une seule entrée par langue, plus riche" },
-    { sel: "#ld-submit", title: "Créer la langue", text: "Valide la déclaration une fois le nom et la région renseignés. Ta langue rejoint aussitôt la liste et devient la tienne pour contribuer ; tu pourras toujours l'affiner plus tard" },
+    { sel: "#lang-search", title: "Chercher une langue", text: "Tape le nom d'une langue, une région ou un pays : la liste se filtre à mesure que tu écris. Bien pratique quand beaucoup de langues sont déjà déclarées, pour retrouver la tienne d'un coup d'œil",
+      en: { title: "Search a language", text: "Type the name of a language, a region or a country: the list filters as you write. Quite handy when many languages are already declared, to find yours at a glance" } },
+    { sel: "#lang-declare-btn", title: "Déclarer ta langue", text: "Si ta langue n'apparaît pas encore dans la liste, ce bouton ouvre un court formulaire pour la créer. Elle devient aussitôt disponible pour toi et pour toute personne qui la parle : LANGA est fait pour accueillir toutes nos langues",
+      en: { title: "Declare your language", text: "If your language doesn't appear in the list yet, this button opens a short form to create it. It becomes immediately available to you and to anyone who speaks it: LANGA is made to welcome all our languages" } },
+    { sel: "#lang-grid", title: "Choisir ta langue", text: "Chaque carte est une langue déjà présente : touche-la pour contribuer dans cette langue. Le ngiemboon a son clavier dédié avec les tons ; les autres s'écrivent avec le clavier habituel de ton téléphone en attendant le leur",
+      en: { title: "Choose your language", text: "Each card is a language already present: tap it to contribute in that language. Ngiemboon has its dedicated keyboard with the tones; the others are written with your phone's usual keyboard while waiting for their own" } },
+    { sel: "#lang-merge-panel", title: "Réunir les doublons", text: "Deux personnes ont parfois créé la même langue sous des écritures différentes. LANGA te le signale ici : tu peux confirmer une fusion qu'on te propose, accepter une ressemblance repérée automatiquement, ou choisir toi-même deux langues que tu sais identiques et proposer de les réunir. La fusion n'a lieu qu'avec l'accord des personnes concernées, et rien n'est perdu : les orthographes et les régions des deux sont conservées",
+      en: { title: "Merge duplicates", text: "Two people sometimes created the same language under different spellings. LANGA flags it for you here: you can confirm a merge proposed to you, accept a resemblance spotted automatically, or pick two languages yourself that you know are identical and propose to merge them. The merge only happens with the agreement of the people concerned, and nothing is lost: the spellings and regions of both are kept" } },
+    { sel: "#ld-nom", title: "Le nom de la langue", text: "Écris le nom sous lequel ta langue est connue. Pendant que tu tapes, LANGA compare avec les langues déjà déclarées pour t'éviter de créer un doublon sous une orthographe un peu différente",
+      en: { title: "The language name", text: "Write the name your language is known by. As you type, LANGA compares with the languages already declared to save you from creating a duplicate under a slightly different spelling" } },
+    { sel: "#ld-pays", title: "Le pays", text: "Le pays où la langue est parlée. On part du plus large, le pays, avant de préciser la région : cela situe d'emblée la langue sur la carte",
+      en: { title: "The country", text: "The country where the language is spoken. We start from the broadest, the country, before narrowing to the region: it places the language on the map right away" } },
+    { sel: "#ld-region", title: "Où on la parle", text: "La région ou la localité, plus précise que le pays. Deux langues de noms proches mais de régions éloignées sont sans doute distinctes, et cette précision aide à ne pas les confondre",
+      en: { title: "Where it's spoken", text: "The region or locality, more precise than the country. Two languages with close names but distant regions are probably distinct, and this precision helps not to confuse them" } },
+    { sel: "#ld-similar", title: "Éviter les doublons", text: "Si une langue déjà présente ressemble à la tienne (même écrite autrement), elle s'affiche ici. Si c'est bien la même, choisis-la plutôt que d'en créer une seconde : on garde ainsi une seule entrée par langue, plus riche",
+      en: { title: "Avoid duplicates", text: "If a language already present resembles yours (even spelled differently), it shows up here. If it's really the same, pick it rather than create a second one: we thus keep a single, richer entry per language" } },
+    { sel: "#ld-submit", title: "Créer la langue", text: "Valide la déclaration une fois le nom et la région renseignés. Ta langue rejoint aussitôt la liste et devient la tienne pour contribuer ; tu pourras toujours l'affiner plus tard",
+      en: { title: "Create the language", text: "Confirm the declaration once the name and region are filled in. Your language joins the list right away and becomes yours to contribute in; you can always refine it later" } },
   ]),
   bugs: withChrome([
-    { sel: ".bug-report", title: "Décrire le problème", text: "Donne un titre clair puis raconte ce qui s'est passé : sur quel écran, à quel moment, comment le refaire apparaître. Précise la gravité et la zone concernée : plus c'est détaillé, plus la correction arrive vite" },
-    { sel: "#bugs-grp-open", title: "Les soucis en attente", text: "Tout ce qui n'est pas encore réglé, classé du plus gênant au plus léger. Ton signalement vient s'y ranger et tu peux suivre son avancement, du repérage jusqu'à la résolution" },
-    { sel: "#bugs-grp-done", title: "Les soucis déjà réglés", text: "L'historique des problèmes corrigés, avec la date et la nature du correctif. Un bon endroit pour vérifier qu'un souci que tu rencontres n'a pas déjà été traité dans une version plus récente" },
+    { sel: ".bug-report", title: "Décrire le problème", text: "Donne un titre clair puis raconte ce qui s'est passé : sur quel écran, à quel moment, comment le refaire apparaître. Précise la gravité et la zone concernée : plus c'est détaillé, plus la correction arrive vite",
+      en: { title: "Describe the problem", text: "Give a clear title then tell what happened: on which screen, at what moment, how to make it appear again. State the severity and the area concerned: the more detailed, the faster the fix arrives" } },
+    { sel: "#bugs-grp-open", title: "Les soucis en attente", text: "Tout ce qui n'est pas encore réglé, classé du plus gênant au plus léger. Ton signalement vient s'y ranger et tu peux suivre son avancement, du repérage jusqu'à la résolution",
+      en: { title: "Pending issues", text: "Everything not yet settled, sorted from the most annoying to the lightest. Your report lands here and you can follow its progress, from spotting to resolution" } },
+    { sel: "#bugs-grp-done", title: "Les soucis déjà réglés", text: "L'historique des problèmes corrigés, avec la date et la nature du correctif. Un bon endroit pour vérifier qu'un souci que tu rencontres n'a pas déjà été traité dans une version plus récente",
+      en: { title: "Issues already fixed", text: "The history of fixed problems, with the date and the nature of the fix. A good place to check that an issue you're hitting hasn't already been handled in a newer version" } },
   ]),
 };
 let _tourSteps = [], _tourIdx = 0;
@@ -1697,11 +1755,12 @@ function tourReposition() {
 function tourGoto() {
   const el = tourEl(); if (!el) { endTour(); return; }
   const s = _tourSteps[_tourIdx];
-  $("#tour-step").textContent = `Étape ${_tourIdx + 1} sur ${_tourSteps.length}`;
-  $("#tour-title").textContent = s.title;
-  $("#tour-text").textContent = s.text;
+  const loc = (getUiLang() === "en" && s.en) ? s.en : s;   // libellé dans la langue d'interface
+  $("#tour-step").textContent = t("tour.step").replace("{i}", _tourIdx + 1).replace("{n}", _tourSteps.length);
+  $("#tour-title").textContent = loc.title;
+  $("#tour-text").textContent = loc.text;
   $("#tour-card").dataset.sel = s.sel;   // repère de la zone visée (débogage + vérification)
-  $("#tour-next").textContent = _tourIdx === _tourSteps.length - 1 ? "Terminer" : "Suivant";
+  $("#tour-next").textContent = _tourIdx === _tourSteps.length - 1 ? t("tour.done") : t("tour.next");
   tourReposition();
   el.scrollIntoView({ behavior: "smooth", block: "center", inline: "nearest" });
 }
@@ -1748,6 +1807,12 @@ let _exploreGroups = [];
 let _openGroupKey = null;
 let _exploreInit = false;
 const ROLE_LBL = { natif: "Locuteur natif", apprenant: "Apprenant", linguiste: "Linguiste" };
+// Libellé de rôle dans la langue d'interface (réutilise les clés du profil).
+function roleLabel(role) {
+  const k = "p.role." + role;
+  const s = t(k);
+  return s !== k ? s : (ROLE_LBL[role] || role);
+}
 function initExploreOnce() {
   if (_exploreInit) return; _exploreInit = true;
   ["#filter-direction", "#filter-role", "#filter-variante", "#filter-domaine"].forEach((s) => {
@@ -1828,7 +1893,7 @@ function downloadDict(fmt) {
 async function loadLibrary() {
   initExploreOnce();
   const status = $("#explore-status"), list = $("#explore-list");
-  if (status) status.textContent = "Chargement de la bibliothèque…";
+  if (status) status.textContent = t("exp.loading");
   if (list) list.innerHTML = "";
   try {
     const data = await browseLibrary({ limit: 500 });
@@ -1863,8 +1928,8 @@ function populateExploreFilters() {
       values.map((v) => `<option value="${escapeHtml(v)}">${escapeHtml(v)}</option>`).join("");
     sel.value = values.includes(cur) ? cur : "";
   };
-  fill("#filter-variante", "Toutes les variantes", uniq("variante"));
-  fill("#filter-domaine", "Tous les domaines", uniq("domaine"));
+  fill("#filter-variante", t("exp.f.variante"), uniq("variante"));
+  fill("#filter-domaine", t("exp.f.domaine"), uniq("domaine"));
   refreshEnhancedSelects();               // les filtres sont déjà habillés (auto) → resync
 }
 /** Clé de normalisation (casse/espaces ignorés) pour regrouper un même mot. */
@@ -1938,7 +2003,7 @@ function renderVariantMap() {
   const known = items.filter(([v]) => VILLAGE_POS[v]);
   const autres = items.filter(([v]) => !VILLAGE_POS[v]).reduce((s, x) => s + x[1], 0);
   const raw = known.map(([v, c]) => [v, c, VILLAGE_POS[v]]);
-  if (autres > 0) raw.push(["Autres", autres, [16, 22]]);
+  if (autres > 0) raw.push([t("exp.vmap.others"), autres, [16, 22]]);
   const max = Math.max.apply(null, raw.map((x) => x[1]));
   const nodes = raw.map(([v, c, pos]) => ({ v: v, c: c, x: pos[0], y: pos[1], mine: v === mine }));
   const cx = (VILLAGE_POS["Bangang"] || [50, 58])[0], cy = (VILLAGE_POS["Bangang"] || [50, 58])[1];
@@ -1956,9 +2021,9 @@ function renderVariantMap() {
       <text x="0" y="${(+r + 3.8).toFixed(1)}" text-anchor="middle" font-size="3" font-weight="600" style="fill:var(--text)">${escapeHtml(n.v)}</text>
     </g>`;
   }).join("");
-  host.innerHTML = `<div class="vmap-head">📍 D'où viennent les contributions</div>
-    <div class="vmap-sub">Chaque losange = un village ; sa taille = le nombre de contributions${mine ? " · le tien ressort en doré" : ""}.</div>
-    <svg viewBox="0 0 100 82" class="vmap-svg" role="img" aria-label="Carte stylisée des contributions par village">
+  host.innerHTML = `<div class="vmap-head">${t("exp.vmap.head")}</div>
+    <div class="vmap-sub">${t("exp.vmap.sub")}${mine ? t("exp.vmap.sub.mine") : ""}.</div>
+    <svg viewBox="0 0 100 82" class="vmap-svg" role="img" aria-label="${t("exp.vmap.aria")}">
       ${links}${diamonds}
     </svg>`;
 }
@@ -1990,12 +2055,12 @@ function renderExplore() {
   const visKeys = new Set(_exploreEntries.filter(match).map((e) => e.direction + "::" + _normKey(e.source_text)));
   const groups = _exploreGroups.filter((g) => visKeys.has(g.key))
     .sort((a, b) => b.entries.length - a.entries.length || _normKey(a.source_text).localeCompare(_normKey(b.source_text)));
-  if (status) status.textContent = `${groups.length} mot${groups.length > 1 ? "s" : ""} / expression${groups.length > 1 ? "s" : ""}` +
-    (groups.length !== _exploreGroups.length ? ` (sur ${_exploreGroups.length})` : "");
+  if (status) status.textContent = ti(groups.length > 1 ? "exp.count.many" : "exp.count.one", { n: groups.length }) +
+    (groups.length !== _exploreGroups.length ? ti("exp.count.of", { t: _exploreGroups.length }) : "");
   if (groups.length === 0) {
     list.innerHTML = `<div class="explore-empty">${_exploreEntries.length === 0
-      ? `La bibliothèque du <b>${escapeHtml(currentLang().nom)}</b> est encore vide, sois parmi les premiers à l'enrichir en <b>Traduisant</b> ou <b>Transcrivant</b>.`
-      : "Aucun mot ne correspond à ta recherche."}</div>`;
+      ? ti("exp.empty.lang", { lang: escapeHtml(currentLang().nom) })
+      : t("exp.empty.search")}</div>`;
     return;
   }
   list.className = "explore-groups";
@@ -2094,27 +2159,27 @@ function renderGroupCard(g) {
   const vc = mineEntries.length ? villageConsensus(mineEntries) : null;
   let consensus;
   if (vc && vc.confirmed)
-    consensus = `<span class="grp-consensus is-ok">✅ ta variante (${escapeHtml(mine)}) : <b>${escapeHtml(vc.winner.text)}</b></span>`;
+    consensus = `<span class="grp-consensus is-ok">✅ ${t("exp.cons.your")} (${escapeHtml(mine)}) : <b>${escapeHtml(vc.winner.text)}</b></span>`;
   else if (st.villages.length > 1)
-    consensus = `<span class="grp-consensus">🔎 ${st.villages.length} variantes de village à comparer</span>`;
+    consensus = `<span class="grp-consensus">🔎 ${ti("exp.cons.compare", { n: st.villages.length })}</span>`;
   else
-    consensus = `<span class="grp-consensus">${st.props > 1 ? "propositions à départager" : "1 proposition, complète-la"}</span>`;
+    consensus = `<span class="grp-consensus">${st.props > 1 ? t("exp.cons.split") : t("exp.cons.one")}</span>`;
   const vils = st.villages.slice(0, 4).map((v) => `<span class="entry-chip">📍 ${escapeHtml(v)}</span>`).join(" ") +
     (st.villages.length > 4 ? ` <span class="entry-chip">+${st.villages.length - 4}</span>` : "");
   const m = [];
-  m.push(`<span class="grp-m" title="propositions">🗣 ${st.props}</span>`);
-  m.push(`<span class="grp-m" title="villages">📍 ${st.villages.length}</span>`);
-  if (st.translations) m.push(`<span class="grp-m" title="traductions écrites">✍️ ${st.translations}</span>`);
-  if (st.audios) m.push(`<span class="grp-m" title="prononciations audio">🎙 ${st.audios}</span>`);
+  m.push(`<span class="grp-m" title="${t("exp.m.props")}">🗣 ${st.props}</span>`);
+  m.push(`<span class="grp-m" title="${t("exp.m.villages")}">📍 ${st.villages.length}</span>`);
+  if (st.translations) m.push(`<span class="grp-m" title="${t("exp.m.written")}">✍️ ${st.translations}</span>`);
+  if (st.audios) m.push(`<span class="grp-m" title="${t("exp.m.audio")}">🎙 ${st.audios}</span>`);
   return `<article class="grp-card" data-key="${escapeHtml(g.key)}" role="button" tabindex="0"
-      aria-label="Ouvrir ${escapeHtml(g.source_text || "")}">
+      aria-label="${escapeHtml(ti("exp.open.aria", { x: g.source_text || "" }))}">
     <div class="grp-head">
       <span class="grp-word">${escapeHtml(g.source_text || "…")}</span>
       <span class="badge-dir">${dirLabel(g.direction)}</span>
     </div>
     <div class="grp-metrics">${m.join("")}</div>
     <div class="grp-villages">${vils}</div>
-    <div class="grp-foot">${consensus}<span class="grp-open">Ouvrir →</span></div>
+    <div class="grp-foot">${consensus}<span class="grp-open">${t("exp.open")}</span></div>
   </article>`;
 }
 /** Passe au NIVEAU 2 — détail d'un mot. */
@@ -2131,17 +2196,17 @@ function villageNote(village) {
   const mine = viewerVillage();
   if (!village) return "";
   if (!mine)
-    return `<div class="vil-note vil-neutral">📍 Variante <b>${escapeHtml(village)}</b>.</div>`;
+    return `<div class="vil-note vil-neutral">${ti("exp.vil.neutral", { v: escapeHtml(village) })}</div>`;
   if (_normKey(village) === _normKey(mine))
-    return `<div class="vil-note vil-same">📍 <b>${escapeHtml(village)}</b>, c'est ta variante.</div>`;
-  return `<div class="vil-note vil-diff">⚠️ Variante <b>${escapeHtml(village)}</b>, différente de la tienne (<b>${escapeHtml(mine)}</b>). Elle peut être <b>tout à fait juste</b> pour ce village, à ne pas prendre pour une erreur.</div>`;
+    return `<div class="vil-note vil-same">${ti("exp.vil.same", { v: escapeHtml(village) })}</div>`;
+  return `<div class="vil-note vil-diff">${ti("exp.vil.diff", { v: escapeHtml(village), mine: escapeHtml(mine) })}</div>`;
 }
 /** NIVEAU 2 — le détail d'un mot : propositions regroupées par village. */
 function renderGroupDetail(g) {
   const list = $("#explore-list"); if (!list) return;
   const byVil = new Map();
   for (const e of g.entries) {
-    const v = e.variante || "Village non précisé";
+    const v = e.variante || t("exp.vil.unspecified");
     if (!byVil.has(v)) byVil.set(v, []);
     byVil.get(v).push(e);
   }
@@ -2156,18 +2221,18 @@ function renderGroupDetail(g) {
   const hasAudio = g.entries.some((e) => isPlayable(e.audio_url));
   let missing = "";
   if (hasText && !hasAudio)
-    missing = `<div class="grp-missing">🎙 Aucune <b>prononciation audio</b> pour l'instant. Ouvre une proposition ci-dessous et choisis « Prononciation (voix) » pour l'ajouter.</div>`;
+    missing = `<div class="grp-missing">${t("exp.missing.audio")}</div>`;
   else if (hasAudio && !hasText)
-    missing = `<div class="grp-missing">✍️ Il n'y a que de l'audio. Ajoute une <b>traduction écrite</b> : ouvre une proposition et choisis « Traduction (texte) ».</div>`;
+    missing = `<div class="grp-missing">${t("exp.missing.text")}</div>`;
   const blocks = order.map((v) => renderVillageBlock(v, byVil.get(v))).join("");
   list.className = "explore-detail";
   list.innerHTML = `<div class="grp-detail">
-    <button type="button" class="grp-back">← Tous les mots</button>
+    <button type="button" class="grp-back">${t("exp.detail.back")}</button>
     <div class="grp-detail-head">
       <span class="grp-word">${escapeHtml(g.source_text || "…")}</span>
       <span class="badge-dir">${dirLabel(g.direction)}</span>
     </div>
-    <p class="grp-intro">Ce que différentes personnes ont proposé. Les variantes changent selon le <b>village</b>, c'est normal et attendu.</p>
+    <p class="grp-intro">${t("exp.detail.intro")}</p>
     ${missing}
     ${blocks}
   </div>`;
@@ -2176,15 +2241,15 @@ function renderGroupDetail(g) {
 /** Un village = son consensus (corroboration) + l'avertissement + ses propositions. */
 function renderVillageBlock(village, ents) {
   const vc = villageConsensus(ents);
-  const note = village === "Village non précisé" ? "" : villageNote(village);
+  const note = village === t("exp.vil.unspecified") ? "" : villageNote(village);
   const nTxt = ents.filter((e) => e.target_text).length;
   const consensus = vc.confirmed
-    ? `<div class="corr-consensus">✅ <b>Référence ${escapeHtml(village)}</b> :
+    ? `<div class="corr-consensus">${ti("exp.ref", { v: escapeHtml(village) })}
         <span class="corr-win">${escapeHtml(vc.winner.text)}</span>
-        <span class="corr-wvotes">${vc.winner.count} concordantes</span></div>`
-    : (nTxt > 1 ? `<div class="corr-noconsensus">Propositions encore divergentes pour ${escapeHtml(village)}, vote ou ajoute la tienne.</div>` : "");
+        <span class="corr-wvotes">${ti("exp.concordant", { n: vc.winner.count })}</span></div>`
+    : (nTxt > 1 ? `<div class="corr-noconsensus">${ti("exp.diverging", { v: escapeHtml(village) })}</div>` : "");
   return `<section class="vil-block">
-    <div class="vil-title">📍 ${escapeHtml(village)} <span class="vil-count">${ents.length} proposition${ents.length > 1 ? "s" : ""}</span></div>
+    <div class="vil-title">📍 ${escapeHtml(village)} <span class="vil-count">${ents.length} ${t("exp.props")}${ents.length > 1 ? "s" : ""}</span></div>
     ${note}
     ${consensus}
     ${ents.map(renderProposal).join("")}
@@ -2193,23 +2258,23 @@ function renderVillageBlock(village, ents) {
 /** Une proposition individuelle (réutilise le panneau de corrections v51). */
 function renderProposal(e) {
   const chips = [];
-  if (e.role) chips.push(`<span class="entry-chip">🗣 ${escapeHtml(ROLE_LBL[e.role] || e.role)}</span>`);
+  if (e.role) chips.push(`<span class="entry-chip">🗣 ${escapeHtml(roleLabel(e.role))}</span>`);
   if (e.domaine) chips.push(`<span class="entry-chip">🏷 ${escapeHtml(e.domaine)}</span>`);
   const audio = playableAudio(e.audio_url, e.audio_duree_ms);
   const note = e.note ? `<span class="entry-note">« ${escapeHtml(e.note)} »</span>` : "";
-  const credit = `<span class="entry-credit">✍️ ${e.credit ? escapeHtml(e.credit) : "anonyme"}</span>`;
+  const credit = `<span class="entry-credit">✍️ ${e.credit ? escapeHtml(e.credit) : t("exp.anon")}</span>`;
   const date = e.date ? `<span class="entry-date">${escapeHtml(e.date)}</span>` : "";
   const tgt = e.target_text
     ? `<span class="entry-tgt">${escapeHtml(e.target_text)}</span>`
-    : `<span class="entry-tgt entry-tgt--empty">audio seul, écoute ci-dessous</span>`;
+    : `<span class="entry-tgt entry-tgt--empty">${t("exp.audio.only")}</span>`;
   return `<article class="entry entry--prop">
     <div class="entry-pair">${tgt}</div>
     ${chips.length || note ? `<div class="entry-meta">${chips.join(" ")} ${note}</div>` : ""}
     ${audio}
     <div class="entry-foot">${credit} ${date}</div>
     <div class="entry-actions">
-      <button type="button" class="entry-improve" data-id="${escapeHtml(e.id)}" data-orig="${escapeHtml(e.target_text || "")}">💬 Améliorer / voter</button>
-      <button type="button" class="entry-share" data-src="${escapeHtml(e.source_text || "")}" data-tgt="${escapeHtml(e.target_text || "")}" title="Partager cette carte" aria-label="Partager">🔗 Partager</button>
+      <button type="button" class="entry-improve" data-id="${escapeHtml(e.id)}" data-orig="${escapeHtml(e.target_text || "")}">${t("exp.improve")}</button>
+      <button type="button" class="entry-share" data-src="${escapeHtml(e.source_text || "")}" data-tgt="${escapeHtml(e.target_text || "")}" title="${t("exp.share.title")}" aria-label="${t("exp.share.aria")}">${t("exp.share")}</button>
     </div>
     <div class="entry-corr" hidden></div>
   </article>`;
@@ -2280,47 +2345,47 @@ function renderCorrections(panel, id, origText, data) {
     .concat(textAlts.map((s) => ({ id: s.id, texte: s.texte, votes: s.votes })));
   const win = consensusOf(cands);
   const winHtml = win
-    ? `<div class="corr-consensus">✅ <b>Version retenue par la communauté</b> :
+    ? `<div class="corr-consensus">${t("corr.community")}
         <span class="corr-win">${escapeHtml(win.texte)}</span>
-        <span class="corr-wvotes">${win.votes} vote${win.votes > 1 ? "s" : ""}</span></div>`
-    : (textAlts.length ? `<div class="corr-noconsensus">Pas encore de consensus, vote pour la meilleure traduction.</div>` : "");
+        <span class="corr-wvotes">${win.votes} ${t("corr.vote")}${win.votes > 1 ? "s" : ""}</span></div>`
+    : (textAlts.length ? `<div class="corr-noconsensus">${t("corr.noconsensus")}</div>` : "");
   const candHtml = cands.length > 1
-    ? `<div class="corr-sub">Traductions</div>` + [...cands].sort((a, b) => b.votes - a.votes).map((c) =>
+    ? `<div class="corr-sub">${t("corr.sub.translations")}</div>` + [...cands].sort((a, b) => b.votes - a.votes).map((c) =>
         `<div class="corr-cand${win && c.id === win.id ? " is-win" : ""}">
-          <span class="corr-cand-txt">${escapeHtml(c.texte)}${c.isOrig ? ' <span class="corr-tag">original</span>' : ""}</span>
+          <span class="corr-cand-txt">${escapeHtml(c.texte)}${c.isOrig ? ` <span class="corr-tag">${t("corr.original")}</span>` : ""}</span>
           <button type="button" class="corr-vote" data-cible="${escapeHtml(c.id)}">👍 ${c.votes}</button>
         </div>`).join("")
     : "";
   const audioHtml = audioAlts.length
-    ? `<div class="corr-sub">Prononciations proposées</div>` + audioAlts.map((s) =>
+    ? `<div class="corr-sub">${t("corr.sub.audio")}</div>` + audioAlts.map((s) =>
         `<div class="corr-cand">
           <span class="corr-cand-txt">${playableAudio(s.audio, s.duree_ms || s.audio_duree_ms)}${s.credit ? ` <span class="corr-credit">· ${escapeHtml(s.credit)}</span>` : ""}</span>
           <button type="button" class="corr-vote" data-cible="${escapeHtml(s.id)}">👍 ${s.votes}</button>
         </div>`).join("")
     : "";
   const comHtml = comments.length
-    ? `<div class="corr-sub">Commentaires</div>` + comments.map((c) =>
+    ? `<div class="corr-sub">${t("corr.sub.comments")}</div>` + comments.map((c) =>
         `<div class="corr-com">💬 ${escapeHtml(c.texte)}${c.credit ? ` <span class="corr-credit">· ${escapeHtml(c.credit)}</span>` : ""}</div>`).join("")
     : "";
   const form = `<div class="corr-form">
-      <div class="corr-sub">Proposer une amélioration</div>
+      <div class="corr-sub">${t("corr.sub.propose")}</div>
       <div class="corr-form-row">
-        <select class="corr-type" data-role="corr-type" aria-label="Type de proposition">
-          <option value="texte">✍️ Traduction (texte)</option>
-          <option value="audio">🎙️ Prononciation (voix)</option>
-          <option value="commentaire">💬 Commentaire</option>
+        <select class="corr-type" data-role="corr-type" aria-label="${t("corr.type.aria")}">
+          <option value="texte">${t("corr.opt.text")}</option>
+          <option value="audio">${t("corr.opt.audio")}</option>
+          <option value="commentaire">${t("corr.opt.comment")}</option>
         </select>
       </div>
       <div class="corr-text-wrap" data-role="corr-text-wrap">
-        <input type="text" class="corr-text" data-role="corr-text" inputmode="none" placeholder="Ta traduction alternative…" autocomplete="off" />
-        <button type="button" class="corr-kb-btn" data-role="corr-kb">🔤 Clavier ngiemboon</button>
+        <input type="text" class="corr-text" data-role="corr-text" inputmode="none" placeholder="${t("corr.ph.alt")}" autocomplete="off" />
+        <button type="button" class="corr-kb-btn" data-role="corr-kb">${t("corr.kb")}</button>
       </div>
       <div class="corr-audio-wrap" data-role="corr-audio-wrap" hidden>
-        <button type="button" class="btn btn--rec corr-rec" data-role="corr-rec">🎙 Enregistrer</button>
+        <button type="button" class="btn btn--rec corr-rec" data-role="corr-rec">${t("corr.rec")}</button>
         <span class="rec-timer corr-rec-timer" data-role="corr-timer" hidden>00:00</span>
         <span class="corr-rec-preview" data-role="corr-preview"></span>
       </div>
-      <button type="button" class="corr-submit" data-entry="${escapeHtml(id)}">Envoyer</button>
+      <button type="button" class="corr-submit" data-entry="${escapeHtml(id)}">${t("corr.submit")}</button>
     </div>`;
   panel.innerHTML = winHtml + candHtml + audioHtml + comHtml + form;
   // Le <select> « type » est habillé automatiquement par l'observateur.
@@ -2389,7 +2454,7 @@ function applyCorrType(panel) {
   const kbBtn = panel.querySelector("[data-role='corr-kb']");
   const isComment = (type === "commentaire");
   if (inp) {
-    inp.placeholder = isComment ? "Ta remarque…" : "Ta traduction alternative…";
+    inp.placeholder = isComment ? t("corr.ph.comment") : t("corr.ph.alt");
     // Traduction ngiemboon → clavier ngiemboon (inputmode none) ; commentaire (FR)
     // → clavier normal du téléphone.
     if (isComment) {
@@ -2461,17 +2526,17 @@ function updateCreditUI() {
 
 /** Thème clair/sombre — clair par défaut ; choix mémorisé et appliqué dès le
     <head> (le bouton ne fait qu'inverser). */
-function applyTheme(t) {
-  document.documentElement.setAttribute("data-theme", t);
-  try { localStorage.setItem("ng-theme", t); } catch (e) { /* stockage indispo */ }
+function applyTheme(mode) {
+  document.documentElement.setAttribute("data-theme", mode);
+  try { localStorage.setItem("ng-theme", mode); } catch (e) { /* stockage indispo */ }
   const btn = $("#theme-toggle");
   if (btn) {
     // L'icône (soleil+lune) est statique = « basculer le thème » ; on n'ajuste que le libellé.
-    const lbl = t === "dark" ? "Passer en mode clair" : "Passer en mode sombre";
+    const lbl = mode === "dark" ? t("theme.toLight") : t("theme.toDark");
     btn.setAttribute("aria-label", lbl); btn.title = lbl;
   }
   const meta = document.querySelector('meta[name="theme-color"]');
-  if (meta) meta.setAttribute("content", t === "dark" ? "#0a0e14" : "#f4f8fc");
+  if (meta) meta.setAttribute("content", mode === "dark" ? "#0a0e14" : "#f4f8fc");
 }
 function initTheme() {
   const cur = document.documentElement.getAttribute("data-theme") === "dark" ? "dark" : "light";
@@ -2742,6 +2807,7 @@ function mountShareBars() {
     copyLabel: t("share.copy"),
     copiedMsg: t("share.copied"),
     igMsg: t("share.ig"),
+    shareOnLabel: t("share.on"),
   };
   ["share-hub", "share-about", "share-foot", "share-present"].forEach((id) => {
     const el = document.getElementById(id);
@@ -2988,12 +3054,12 @@ async function relevantNotes(dep) {
     un récapitulatif dynamique (« en retard de N versions »). */
 function renderUpdateNotes(groups, dep) {
   const box = $("#update-notes"); if (!box) return;
-  const list = (groups && groups.length) ? groups : [{ version: dep, notes: ["Améliorations et corrections diverses"] }];
+  const list = (groups && groups.length) ? groups : [{ version: dep, notes: [t("update.fallback.note")] }];
   const sub = $("#update-sub");
   if (sub) {
     sub.textContent = list.length > 1
-      ? `Ta version est en retard de ${list.length} versions. Voici toutes les améliorations, version par version :`
-      : "Ta version est en retard. Voici les améliorations de la mise à jour :";
+      ? ti("update.sub.multi", { n: list.length })
+      : t("update.sub.one");
   }
   box.innerHTML = "";
   const multi = list.length > 1;
@@ -3003,7 +3069,7 @@ function renderUpdateNotes(groups, dep) {
     if (multi) {
       const tag = document.createElement("div");
       tag.className = "update-vtag";
-      tag.textContent = "Version " + g.version;
+      tag.textContent = ti("update.vtag", { v: g.version });
       grp.appendChild(tag);
     }
     const ul = document.createElement("ul");
@@ -3050,7 +3116,7 @@ async function checkForUpdate() {
 // dès qu'il est installé (waiting OU installing→installed OU updatefound), sans
 // dépendre d'un instant précis.
 async function applyUpdate() {
-  const btn = $("#update-now"); if (btn) { btn.disabled = true; btn.textContent = "Mise à jour…"; }
+  const btn = $("#update-now"); if (btn) { btn.disabled = true; btn.textContent = t("update.wip"); }
   localStorage.removeItem("updateDismissed");   // on met vraiment à jour → oublie tout report
   let _reloaded = false;
   const hardReload = () => { if (_reloaded) return; _reloaded = true; location.reload(); };
@@ -3457,7 +3523,7 @@ function enhanceSelect(sel) {
   display.type = "button"; display.className = "combo-display";
   const toggle = document.createElement("button");
   toggle.type = "button"; toggle.className = "combo-toggle";
-  toggle.setAttribute("aria-label", "Voir la liste"); toggle.textContent = "▾";
+  toggle.setAttribute("aria-label", t("combo.see")); toggle.textContent = "▾";
   const list = document.createElement("ul");
   list.className = "combo-list"; list.hidden = true;
   sel.parentNode.insertBefore(combo, sel);
@@ -3728,9 +3794,7 @@ async function main() {
   _replayingHistory = false;
   refreshLanguages();   // best-effort : récupère les langues déclarées par la communauté
   micStatus();
-  $("#send-hint").textContent = modeGoogle()
-    ? "L'envoi enregistre tes contributions dans la Drive du projet (texte + audio). Hors connexion, tout reste en sécurité sur l'appareil jusqu'au prochain envoi."
-    : "L'envoi transmet tes contributions au serveur de collecte, sauvegardées en 4 copies. Hors connexion, tout reste en sécurité sur l'appareil jusqu'au prochain envoi.";
+  $("#send-hint").textContent = t("send.hint");
   await refreshDoneTexts();   // reconstruit « déjà traité par cet utilisateur » depuis ses contributions
   await refresh();
   await updateServerBadge();
@@ -3752,9 +3816,9 @@ async function main() {
 function micStatus() {
   const rs = $("#rec-state");
   if (!window.isSecureContext) {
-    rs.textContent = "⚠ micro indisponible ici (nécessite HTTPS ou localhost)";
+    rs.textContent = t("boot.mic.insecure");
   } else if (!navigator.mediaDevices || !window.MediaRecorder) {
-    rs.textContent = "⚠ enregistrement non supporté par ce navigateur";
+    rs.textContent = t("boot.mic.unsupported");
   } else {
     rs.textContent = "";
   }
