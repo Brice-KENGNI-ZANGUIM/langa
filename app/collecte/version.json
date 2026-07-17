@@ -1,6 +1,10 @@
 {
-  "version": "v191",
+  "version": "v192",
   "changelog": {
+    "v192": [
+      "Enregistrement : un outil pour ne garder qu'une partie de ta voix quand un bruit a gâché le reste (une porte, une radio). Tu délimites la bonne portion sur l'onde ou en secondes, tu l'écoutes, puis tu la gardes ; le reste est supprimé, sans tout refaire",
+      "En anglais, le mot ou le nombre à traduire s'affiche en anglais pour mieux le comprendre avant de le traduire (le français reste pour les francophones)"
+    ],
     "v191": [
       "Réunion de langues en double : en plus des ressemblances repérées automatiquement, tu peux maintenant proposer toi-même de réunir deux langues que tu sais identiques",
       "Le panneau de réunion des langues est traduit (français et anglais) et expliqué dans l'aide guidée"
