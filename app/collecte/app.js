@@ -1130,11 +1130,13 @@ function langStatHtml(id) {
   if (!_langStats) return "";
   const s = _langStats[canonLangId(id)] || { count: 0, contrib: {} };
   const n = s.count;
-  const label = n === 0 ? t("lang.contribs.none")
+  const full = n === 0 ? t("lang.contribs.none")
     : (n === 1 ? t("lang.contribs.one") : ti("lang.contribs.many", { n }));
-  // La carte de langue n'affiche QUE le degre d'enrichissement (nb de contributions) ;
-  // les principaux contributeurs sont montres dans Explorer (page de la langue).
-  return `<span class="lang-count${n ? "" : " lang-count--empty"}">🗣 ${escapeHtml(label)}</span>`;
+  // Pastille COMPACTE (elle partage la ligne de l'autonyme) : nombre seul quand il y a
+  // des contributions, libellé complet en infobulle ; message d'invite si vide. Les
+  // principaux contributeurs sont montrés dans Explorer (page de la langue).
+  const shown = n === 0 ? full : `🗣 ${n}`;
+  return `<span class="lang-count${n ? "" : " lang-count--empty"}" title="${escapeHtml(full)}">${escapeHtml(shown)}</span>`;
 }
 /** Principaux contributeurs (top 5, avec leur nombre) de la LANGUE COURANTE, depuis les
     entrees d'Explorer. Seuls les noms publics opt-in (credit) sont affiches. HTML sur. */
@@ -1161,13 +1163,20 @@ function renderLangChoice() {
       + (l.provisoire ? t("lang.provisoire") : "");
     // Chaîne de recherche normalisée (nom + autonyme + région), sans accents/casse.
     const search = normSearch([l.nom, l.autonyme, l.region].filter(Boolean).join(" "));
+    // Agencement compact (gain vertical, crucial sur mobile) : emblème + nom sur la
+    // 1re ligne ; autonyme + pastille de contributions partagent la 2e ligne (l'espace
+    // horizontal inutilisé), au lieu d'une ligne dédiée à la seule pastille.
     return `<button class="lang-card${l.id === cur ? " is-current" : ""}" type="button" role="listitem" data-lang="${escapeHtml(l.id)}" data-search="${escapeHtml(search)}">
-      <span class="lang-emblem" aria-hidden="true">${emb}</span>
-      <span class="lang-name">${escapeHtml(l.nom)}</span>
-      ${l.autonyme ? `<span class="lang-autonym">${escapeHtml(l.autonyme)}</span>` : ""}
+      <span class="lang-head">
+        <span class="lang-emblem" aria-hidden="true">${emb}</span>
+        <span class="lang-name">${escapeHtml(l.nom)}</span>
+      </span>
+      <span class="lang-sub">
+        ${l.autonyme ? `<span class="lang-autonym">${escapeHtml(l.autonyme)}</span>` : ""}
+        ${langStatHtml(l.id)}
+      </span>
       ${l.region ? `<span class="lang-region">${escapeHtml(getUiLang() === "en" && l.region_en ? l.region_en : l.region)}</span>` : ""}
       <span class="lang-kb">${kb}</span>
-      ${langStatHtml(l.id)}
     </button>`;
   }).join("");
   // Plus de carte « ➕ » noyée en fin de grille : la déclaration se fait via le
