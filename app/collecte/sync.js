@@ -224,6 +224,23 @@ export async function fetchRequests(langue, deviceId) {
     return data;
   } catch (e) { return null; }
 }
+/** Demandes ouvertes des langues de l'utilisateur, présentées comme items « à
+    traduire » (lot 5). `langues` = CSV facultatif (sinon le backend lit le profil). */
+export async function fetchRequestsToTranslate(deviceId, langues) {
+  const base = endpoint();
+  const d = deviceId ? "&device_id=" + encodeURIComponent(deviceId) : "";
+  const l = langues ? "&langues=" + encodeURIComponent(langues) : "";
+  const url = isGoogle()
+    ? `${base}?action=requests_to_translate${d}${l}`
+    : `${base || ""}/api/requests_to_translate?x=1${d}${l}`;
+  try {
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) return null;
+    const data = await r.json();
+    if (!data || data.ok === false || !Array.isArray(data.items)) return null;
+    return data;
+  } catch (e) { return null; }
+}
 /** Publie une demande de traduction/transcription à la communauté. */
 export function postRequest(r) { return postOp(Object.assign({ op: "request" }, r)); }
 /** Répond à une demande : devient une contribution (alimente Explorer) + notifie le demandeur. */
