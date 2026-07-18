@@ -1,6 +1,9 @@
 {
-  "version": "v202",
+  "version": "v203",
   "changelog": {
+    "v203": [
+      "Icônes du menu du haut désormais en illustrations couleur détaillées et réalistes (maison, globe, lever de soleil, ampoule, coccinelle, personne), nettes et identiques sur tous les appareils ; l'icône coccinelle des bugs est la même dans le menu et sur la page"
+    ],
     "v202": [
       "Le décor animé est désormais visible aussi sur téléphone (il n'était figé que sur ordinateur) ; il ne se met en pause que pendant que tu écris au clavier, pour garder la frappe fluide",
       "Icônes du menu du haut plus faciles à distinguer : chacune a maintenant sa propre couleur (accueil cyan, langue verte, à propos bleu, aide dorée, bugs rouge, profil violet)",
