@@ -393,19 +393,25 @@
         </label>
       </div>
 
-      <!-- Audio (zone encadrée à part) -->
+      <!-- Audio (zone encadrée à part) : label + « revoir les consignes » à droite,
+           ligne de contrôles, PUIS le cadre de progression SEUL, PUIS les actions
+           (découper / retirer) en bas. Aucun bouton devant l'onde, surtout sur mobile. -->
       <div class="zone zone--audio">
-        <span class="field-label audio-label"><span id="lbl-audio">Transcription audio</span>
-          <span id="tag-audio" class="lang-tag">NGE</span></span>
+        <span class="field-label audio-label">
+          <span id="lbl-audio">Transcription audio</span>
+          <span id="tag-audio" class="lang-tag">NGE</span>
+          <button id="tr-guide-open" class="mini tr-guide-open" type="button" data-i18n="tr.guide.open">📋 Revoir les consignes</button>
+        </span>
         <div class="audio-row">
           <button id="btn-rec" class="btn btn--rec" type="button">🎙️ <span data-i18n="rec.start">Enregistrer l'audio</span></button>
           <span id="rec-timer" class="rec-timer" hidden aria-live="polite">00:00</span>
           <span id="rec-state" class="rec-state"></span>
-          <div id="audio-preview" class="audio-preview"></div>
-          <button id="btn-trim-audio" class="mini" type="button" hidden data-i18n="trim.open">✂️ Découper</button>
-          <button id="btn-clear-audio" class="mini" type="button" hidden data-i18n="wk.audio.remove">retirer</button>
           <button id="btn-mic-test" class="mini" type="button" data-i18n="wk.mic.test">🔎 Tester le micro</button>
-          <button id="tr-guide-open" class="mini tr-guide-open" type="button" data-i18n="tr.guide.open">📋 Revoir les consignes</button>
+        </div>
+        <div id="audio-preview" class="audio-preview"></div>
+        <div id="audio-actions" class="audio-actions" hidden>
+          <button id="btn-trim-audio" class="audio-act audio-act--trim" type="button" data-i18n="trim.open">✂️ Découper</button>
+          <button id="btn-clear-audio" class="audio-act audio-act--del" type="button" data-i18n="wk.audio.remove">retirer</button>
         </div>
         <div id="mic-diag" class="mic-diag" hidden></div>
       </div>

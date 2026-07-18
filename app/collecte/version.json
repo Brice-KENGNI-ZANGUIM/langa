@@ -1,6 +1,10 @@
 {
-  "version": "v194",
+  "version": "v195",
   "changelog": {
+    "v195": [
+      "Beaucoup plus de mots et de phrases à traduire : des centaines de mots et de phrases en plus, tous affichés aussi en anglais pour les anglophones",
+      "Outil audio remanié et plus clair : les boutons « Découper » (cyan) et « retirer » (rouge) sont bien alignés sous le lecteur, jamais devant lui sur téléphone, et « Revoir les consignes » se place à droite de la ligne du titre"
+    ],
     "v194": [
       "Correction : sur la page « Mon profil », changer de langue laissait parfois la page vide ; désormais chaque page se réaffiche correctement après un changement de langue",
       "Beaucoup plus de nombres à traduire : de quelques dizaines à plus de 150 (dizaines, centaines, milliers, millions, ordinaux, fractions), chacun affiché aussi en anglais"

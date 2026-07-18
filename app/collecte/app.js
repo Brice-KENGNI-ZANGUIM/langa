@@ -27,7 +27,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v194";
+const APP_VERSION = "v195";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -555,14 +555,12 @@ function mountLocalAudioPlayer(container, blobUrl, durMs) {
 function renderAudio() {
   const wrap = $("#audio-preview");
   wrap.innerHTML = "";
-  const bt = $("#btn-trim-audio");
+  const actions = $("#audio-actions");   // ligne Découper / retirer, sous le cadre
   if (audioBlob) {
     mountLocalAudioPlayer(wrap, URL.createObjectURL(audioBlob), audioDurationMs);
-    $("#btn-clear-audio").hidden = false;
-    if (bt) bt.hidden = false;
+    if (actions) actions.hidden = false;
   } else {
-    $("#btn-clear-audio").hidden = true;
-    if (bt) bt.hidden = true;
+    if (actions) actions.hidden = true;
   }
 }
 
