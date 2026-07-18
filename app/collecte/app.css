@@ -965,6 +965,10 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .hint-inline { color: var(--muted); font-weight: 400; font-size: .8rem; }
 .contrib-why { color: var(--muted); font-size: .8rem; line-height: 1.5; margin: 10px 0 2px; }
 .req { color: var(--red); font-weight: 700; }
+/* Bouton d'amorce sous le seuil : c'est un ABANDON de création (aspect « annuler », discret). */
+.btn--next.amorce-abort { background: transparent; color: var(--red);
+  border: 1.5px solid color-mix(in srgb, var(--red) 55%, var(--border)); box-shadow: none; animation: none; filter: none; }
+.btn--next.amorce-abort:hover { background: color-mix(in srgb, var(--red) 12%, transparent); transform: none; }
 .tel-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .tel-ind { flex: 1 1 148px; min-width: 128px; }
 .tel-num { flex: 2 1 150px; }

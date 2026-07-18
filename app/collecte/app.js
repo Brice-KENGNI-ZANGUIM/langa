@@ -28,7 +28,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v200";
+const APP_VERSION = "v201";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -104,14 +104,8 @@ function renderProfileLangs() {
   box.querySelectorAll(".lang-chip-toggle[data-lang]").forEach((btn) =>
     btn.addEventListener("click", () => toggleProfileLang(btn.dataset.lang)));
   const add = $("#profile-lang-add");
-  if (add) add.addEventListener("click", () => {
-    // Déclarer une nouvelle langue depuis le profil : possible dès que les champs
-    // obligatoires sont remplis (requireProfile passe), sinon on invite à les finir.
-    if (!requireProfile("Termine d'abord les champs obligatoires du profil pour déclarer une langue.")) return;
-    openLangChoice();
-    const dc = $("#lang-declare"); if (dc) { dc.hidden = false; dc.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
-    const n = $("#ld-nom"); if (n) { try { n.focus(); } catch (e) {} }
-  });
+  // Déclarer une nouvelle langue SANS quitter le profil : le formulaire unique s'ouvre en place.
+  if (add) add.addEventListener("click", openDeclareInProfile);
 }
 
 // --- État ----------------------------------------------------------------
@@ -1312,9 +1306,36 @@ function filterLangGrid(query) {
   if (empty) empty.hidden = !(q && visible === 0);
 }
 /** Ouvre le formulaire de déclaration d'une langue (exige un profil). */
+// Le formulaire de déclaration (#lang-declare) est UNIQUE : il vit normalement dans l'écran
+// des langues, mais on le DÉPLACE dans le profil quand on y déclare une langue. Aucune
+// duplication → tout changement de ses champs se répercute partout (source unique, exigence Brice).
+let _declareHome = null;   // { parent, next } : emplacement d'origine, pour le remettre en place
+function _captureDeclareHome() {
+  const dc = $("#lang-declare"); if (!dc || _declareHome) return;
+  _declareHome = { parent: dc.parentNode, next: dc.nextSibling };
+}
+function restoreDeclareHome() {
+  const dc = $("#lang-declare"); if (!dc || !_declareHome) return;
+  if (_declareHome.next && _declareHome.next.parentNode === _declareHome.parent)
+    _declareHome.parent.insertBefore(dc, _declareHome.next);
+  else _declareHome.parent.appendChild(dc);
+  dc.hidden = true;
+}
+/** Déclarer une langue DEPUIS LE PROFIL, en place (sans quitter la page) : on déplace le
+    formulaire unique dans le profil. */
+function openDeclareInProfile() {
+  if (!requireProfile("Termine d'abord les champs obligatoires du profil pour déclarer une langue.")) return;
+  _captureDeclareHome();
+  _declareCtx = "profile";
+  const dc = $("#lang-declare"), host = $("#profile-declare-host");
+  if (dc && host) { host.appendChild(dc); dc.hidden = false; dc.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+  const n = $("#ld-nom"); if (n) { try { n.focus(); } catch (e) { /* ok */ } }
+}
 function openDeclareForm() {
   // DÉCLARER une langue exige un profil (contrairement à la simple SÉLECTION).
   if (!requireProfile("Crée ton profil pour pouvoir déclarer une nouvelle langue.")) return;
+  _captureDeclareHome(); restoreDeclareHome();   // depuis l'écran des langues : le formulaire est à sa place
+  _declareCtx = "lang";
   const dc = $("#lang-declare"); if (dc) dc.hidden = false;
   const n = $("#ld-nom"); if (n) { try { n.focus(); } catch (e) { /* ok */ } }
   if (dc) dc.scrollIntoView({ behavior: "smooth", block: "nearest" });
@@ -1426,21 +1447,22 @@ function submitDeclareLang() {
   }
   _ldConfirmDup = false;
   const id = slugLang(nom);
-  const desc = { id, nom, region, pays, autonyme, alias: q.alias, famille, clavier: "defaut", statut: "active" };
-  // Registre local (visible tout de suite) = langues déjà déclarées (avec leurs champs) + la nouvelle.
+  const desc = { id, nom, region, pays, autonyme, alias: q.alias, famille, clavier: "defaut", statut: "provisoire" };
+  // Création PROVISOIRE : la langue n'existe QUE localement (pour que l'amorce puisse s'y
+  // rattacher) ; elle n'est NI déclarée aux autres NI ajoutée aux langues d'appartenance tant
+  // que ≥ AMORCE_MIN transcriptions ne sont pas enregistrées (règle Brice : une langue se crée
+  // en lui donnant d'abord au moins 5 voix, l'écriture n'étant pas exigée).
   const others = knownLanguages().filter((l) => !l.graine);
   others.push(desc);
   cacheRemoteLanguages(others);
-  declareLanguageRemote(Object.assign({ note }, desc));   // POST best-effort : la langue est créée d'emblée
-  addProfileLangue(id);                                   // la langue déclarée devient une langue d'appartenance
-  // reset du formulaire
+  _amorcePendingNote = note;
+  _amorceBuffer = [];
+  // reset du formulaire + remise du formulaire à sa place d'origine (il a pu être déplacé dans le profil)
   ["#ld-nom", "#ld-region", "#ld-pays", "#ld-autonyme", "#ld-alias", "#ld-famille", "#ld-note"].forEach((s) => { const e = $(s); if (e) e.value = ""; });
   const box = $("#ld-similar"); if (box) { box.hidden = true; box.innerHTML = ""; }
   if (er) er.hidden = true;
-  const dc = $("#lang-declare"); if (dc) dc.hidden = true;
-  // La langue est DÉJÀ créée. On enchaîne sur l'amorce sonore : enregistrer quelques
-  // mots de base (≥ AMORCE_MIN visé). L'utilisateur peut s'arrêter quand il veut — la
-  // langue reste créée et le peu enregistré est conservé.
+  restoreDeclareHome();
+  // Amorce sonore OBLIGATOIRE : la langue ne sera réellement créée qu'après ≥ AMORCE_MIN voix.
   startAmorce(desc);
 }
 
@@ -1455,6 +1477,12 @@ let _amChunks = [];
 let _amBlob = null;
 let _amDur = 0;
 let _amStartTs = 0;
+// Amorce = les ≥5 transcriptions OBLIGATOIRES qui conditionnent la création d'une langue.
+// Tant que le seuil n'est pas atteint, la langue reste PROVISOIRE (locale, non déclarée) et
+// les enregistrements sont TAMPONNÉS en mémoire ; à la finalisation on les verse dans la base.
+let _amorceBuffer = [];        // enregistrements d'amorce en attente de finalisation
+let _amorcePendingNote = "";   // note du formulaire de déclaration, gardée pour la déclaration finale
+let _declareCtx = null;        // origine de la déclaration en cours : "profile" | "lang"
 
 function startAmorce(desc) {
   _amorceLang = desc;
@@ -1495,9 +1523,15 @@ function renderAmorce() {
     if (cat) cat.textContent = "";
   }
   const skip = $("#amorce-skip"); if (skip) skip.disabled = !w;
-  // Le bouton « Terminer » se met en avant dès le minimum atteint.
+  // Sous le seuil, le bouton ABANDONNE la création (la langue n'existe pas encore) ; au seuil,
+  // il CRÉE réellement la langue et se met en avant.
   const fin = $("#amorce-finish");
-  if (fin) fin.classList.toggle("btn--go", _amorceDone >= AMORCE_MIN);
+  if (fin) {
+    const ok = _amorceDone >= AMORCE_MIN;
+    fin.classList.toggle("btn--go", ok);
+    fin.classList.toggle("amorce-abort", !ok);
+    fin.textContent = ok ? t("amorce.create") : t("amorce.abort");
+  }
   _amResetRecUiOnly();
 }
 function _amResetRecUiOnly() {
@@ -1566,13 +1600,45 @@ function amorceSkip() {
 function amorceFinish() {
   if (_amRec && _amRec.state === "recording") amorceStopRec();
   if (_amorceDone < AMORCE_MIN) {
-    const msg = ti("amorce.finish.confirm", { n: _amorceDone, min: AMORCE_MIN, lang: _amorceLang.nom });
+    // Sous le seuil : la création NE PEUT PAS aboutir (règle : ≥ AMORCE_MIN transcriptions).
+    // Le bouton propose donc d'ABANDONNER la création (la langue ne sera pas créée).
+    const msg = ti("amorce.abort.confirm", { n: _amorceDone, min: AMORCE_MIN, lang: (_amorceLang && _amorceLang.nom) || "" });
     if (!window.confirm(msg)) return;
+    _amorceAbort();
+    return;
   }
-  // La nouvelle langue devient la langue courante ; on recharge pour tout reconstruire
-  // proprement (corpus, clavier, Explorer) dans cette langue, et on vise l'accueil.
-  setCurrentLangId(_amorceLang.id);
-  try { history.replaceState(null, "", "#/accueil"); } catch (e) { /* ok */ }
+  _amorceFinalize();
+}
+/** ≥ AMORCE_MIN atteint : la langue est RÉELLEMENT créée (déclarée aux autres, ajoutée aux
+    langues d'appartenance) et les transcriptions tamponnées sont versées dans la base + envoyées. */
+async function _amorceFinalize() {
+  const desc = _amorceLang; if (!desc) return;
+  for (const rec of _amorceBuffer) { try { await DB.put(rec); markDoneText(rec.source_text); } catch (e) { /* ignore */ } }
+  // La langue passe de « provisoire » à « active » dans le registre local, puis on la déclare.
+  const others = knownLanguages().filter((l) => !l.graine).map((l) => l.id === desc.id ? Object.assign({}, l, { statut: "active" }) : l);
+  cacheRemoteLanguages(others);
+  declareLanguageRemote(Object.assign({ note: _amorcePendingNote || "" }, desc, { statut: "active" }));
+  addProfileLangue(desc.id);            // devient une langue d'appartenance (une fois créée pour de bon)
+  _amorceBuffer = []; _amorcePendingNote = "";
+  try { kickReconcile(); } catch (e) { /* le boot renverra de toute façon */ }
+  // Elle devient la langue courante ; on recharge pour tout reconstruire (corpus, clavier,
+  // Explorer). Retour au profil si la déclaration en venait, sinon l'accueil.
+  setCurrentLangId(desc.id);
+  const target = _declareCtx === "profile" ? "#/profil" : "#/accueil";
+  _declareCtx = null;
+  try { history.replaceState(null, "", target); } catch (e) { /* ok */ }
+  location.reload();
+}
+/** Abandon avant le seuil : la langue provisoire est retirée du registre local et les
+    transcriptions tamponnées sont jetées (rien n'a été persisté ni envoyé). */
+function _amorceAbort() {
+  const id = _amorceLang && _amorceLang.id;
+  const others = knownLanguages().filter((l) => !l.graine && l.id !== id);
+  cacheRemoteLanguages(others);
+  _amorceBuffer = []; _amorcePendingNote = "";
+  const target = _declareCtx === "profile" ? "#/profil" : "#/langue";
+  _declareCtx = null;
+  try { history.replaceState(null, "", target); } catch (e) { /* ok */ }
   location.reload();
 }
 async function saveAmorceContribution(langId, word, blob, durMs) {
@@ -1596,9 +1662,12 @@ async function saveAmorceContribution(langId, word, blob, durMs) {
     audioBlob: blob || null,
     audioMeta: blob ? { present: true, format: (blob && blob.type) || "audio/webm", duree_ms: durMs } : { present: false },
   };
-  await DB.put(rec);
-  markDoneText(rec.source_text);
-  kickReconcile();
+  // On NE PERSISTE PAS encore : tant que le seuil de ≥ AMORCE_MIN n'est pas atteint, la langue
+  // est provisoire. Les enregistrements sont tamponnés en mémoire, versés dans la base à la
+  // finalisation (_amorceFinalize) ou jetés à l'abandon (_amorceAbort). Rien n'est envoyé au
+  // backend pour une langue qui pourrait être abandonnée.
+  _amorceBuffer = _amorceBuffer.filter((r) => r.amorce_id !== rec.amorce_id);   // remplace si on refait le même mot
+  _amorceBuffer.push(rec);
 }
 /** Configure l'espace de travail selon l'activité (Traduire / Transcrire). */
 // --- Consignes par activité (Transcrire / Traduire), affichées les 3 premières fois ---
@@ -3909,8 +3978,10 @@ function initEvents() {
   const amVal = $("#amorce-validate"); if (amVal) amVal.addEventListener("click", amorceValidate);
   const amFin = $("#amorce-finish"); if (amFin) amFin.addEventListener("click", amorceFinish);
   const ldCancel = $("#ld-cancel"); if (ldCancel) ldCancel.addEventListener("click", () => {
-    const dc = $("#lang-declare"); if (dc) dc.hidden = true;
     const er = $("#ld-error"); if (er) er.hidden = true;
+    restoreDeclareHome();       // rend le formulaire à l'écran des langues (il a pu être déplacé dans le profil)
+    if (_declareCtx === "profile") { const p = $("#profile-langs"); if (p) p.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
+    _declareCtx = null;
   });
   // Logo + nom (header ET footer) = raccourci cliquable vers l'accueil (souris + clavier).
   [$("#brand-home"), $("#foot-home")].forEach((el) => {

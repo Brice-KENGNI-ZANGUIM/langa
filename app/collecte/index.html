@@ -185,7 +185,7 @@
         <div class="amorce-actions">
           <button id="amorce-skip" class="chip chip--btn" type="button" data-i18n="amorce.skip">Passer ce mot</button>
           <button id="amorce-validate" class="btn btn--primary" type="button" disabled data-i18n="amorce.validate">Valider &amp; suivant →</button>
-          <button id="amorce-finish" class="btn btn--next" type="button" data-i18n="amorce.finish">J'ai terminé</button>
+          <button id="amorce-finish" class="btn btn--next" type="button">Créer ma langue ✓</button>
         </div>
         <p id="amorce-note" class="amorce-note" hidden></p>
       </div>
@@ -241,6 +241,9 @@
             <span data-i18n-html="p.langs">Mes langues d'appartenance
               <span class="hint-inline">(touche une langue pour l'ajouter, retouche-la pour en faire la principale)</span></span>
             <div id="profile-langs" class="lang-chips" role="group" data-i18n-title="p.langs.aria" aria-label="Mes langues"></div>
+            <!-- Le formulaire de déclaration (#lang-declare) est DÉPLACÉ ici quand on déclare
+                 une langue depuis le profil : un seul formulaire, jamais dupliqué (source unique). -->
+            <div id="profile-declare-host"></div>
           </div>
           <label class="field field--check field--consent">
             <input id="c-consent" type="checkbox" />
