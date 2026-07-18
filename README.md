@@ -21,42 +21,60 @@ Cameroun, est la **plus avancée** : clavier dédié et corpus le plus riche.
 
 ## Aperçu
 
-<p align="center"><b>Accueil</b> — les trois portes d'entrée de la contribution : <b>Transcrire</b> (prêter sa voix),
+<p align="center"><b>Accueil</b> : les trois portes d'entrée de la contribution : <b>Transcrire</b> (prêter sa voix),
 <b>Traduire</b> (donner un équivalent) et <b>Explorer</b> (parcourir la bibliothèque commune). Chaque activité
 porte sa couleur d'identité ; on passe de l'une à l'autre à tout moment par le menu du haut.</p>
 <p align="center">
   <img src="assets/screenshots/accueil.png" alt="Écran d'accueil : Transcrire, Traduire, Explorer" width="820" />
 </p>
 
-<p align="center"><b>Traduire</b> — saisie français ↔ ngiemboon avec le <b>clavier dédié</b> qui s'ouvre au toucher :
+<p align="center"><b>Traduire</b> : saisie français ↔ ngiemboon avec le <b>clavier dédié</b> qui s'ouvre au toucher :
 voyelles, lettres propres à la langue (ɛ ɔ ʉ ŋ ẅ ÿ ʼ) et tons (á â ǎ à), regroupés par catégories colorées.
 Le compteur indique la progression sur le corpus (plusieurs milliers de mots et de phrases à traduire).</p>
 <p align="center">
   <img src="assets/screenshots/traduire-clavier.png" alt="Parcours Traduire avec le clavier virtuel ngiemboon" width="820" />
 </p>
 
-<p align="center"><b>Transcrire</b> — on enregistre sa voix qui prononce le mot, avec un outil qui permet de
+<p align="center"><b>Transcrire</b> : on enregistre sa voix qui prononce le mot, avec un outil qui permet de
 <b>ne garder que le bon passage</b> de l'enregistrement (« Découper »), et de le retirer pour recommencer.
 La voix est l'essentiel ; la traduction écrite reste facultative.</p>
 <p align="center">
   <img src="assets/screenshots/transcrire-audio.png" alt="Parcours Transcrire : enregistrement vocal, découpe et retrait" width="820" />
 </p>
 
-<p align="center"><b>Explorer</b> — la <b>bibliothèque commune</b> (recherche, filtres, export) et la
+<p align="center"><b>Explorer</b> : la <b>bibliothèque commune</b> (recherche, filtres, export) et la
 <b>carte des variantes</b> : d'où viennent les contributions, village par village, chaque losange
 dimensionné par son nombre de contributions. Chaque mot regroupe toutes ses propositions et leurs voix.</p>
 <p align="center">
   <img src="assets/screenshots/explorer-carte.png" alt="Explorer la bibliothèque + carte des variantes par village" width="820" />
 </p>
 
-<p align="center"><b>Multilingue</b> — l'écran de choix de langue : plusieurs langues d'Afrique sont
+<p align="center"><b>Apprendre en écoutant et en lisant les autres</b> : en ouvrant un mot, on découvre ce que
+différentes personnes ont proposé, regroupé <b>par village</b>. Chaque variante affiche le <b>rôle</b> du
+contributeur (locuteur natif, apprenant, linguiste), sa <b>prononciation</b> jouable directement dans un
+lecteur à onde, et le <b>consensus</b> quand plusieurs réponses concordent (« ✅ Référence Balatchi »).
+On apprend la langue simplement en explorant les contributions déjà partagées.</p>
+<p align="center">
+  <img src="assets/screenshots/explorer-detail.png" alt="Détail d'un mot : variantes par village, rôles, prononciations audio et consensus, pour apprendre en écoutant et en lisant" width="820" />
+</p>
+
+<p align="center"><b>Améliorer une contribution</b> : sous chaque proposition, « Améliorer / voter » ouvre un
+panneau communautaire : on <b>vote</b> pour la traduction la plus juste (la mieux corroborée devient la
+<b>version retenue par la communauté</b>), on écoute les <b>prononciations alternatives</b>, on lit les
+<b>commentaires</b>, et l'on peut soi-même <b>proposer</b> une meilleure écriture, une nouvelle voix ou une
+remarque. La qualité des données monte ainsi de proche en proche, par accord entre pairs.</p>
+<p align="center">
+  <img src="assets/screenshots/explorer-ameliorer.png" alt="Panneau d'amélioration d'une entrée : consensus, votes, prononciations alternatives, commentaires et formulaire de proposition" width="820" />
+</p>
+
+<p align="center"><b>Multilingue</b> : l'écran de choix de langue : plusieurs langues d'Afrique sont
 <b>déjà ouvertes</b> (avec leur autonyme et leur région), on peut <b>déclarer la sienne</b>, et signaler
 que deux langues déclarées sont en fait la même pour les <b>réunir</b> sans rien perdre.</p>
 <p align="center">
   <img src="assets/screenshots/langue-multilingue.png" alt="Choix de langue : langues déjà ouvertes, déclaration, réunion de doublons" width="820" />
 </p>
 
-<p align="center"><b>Bilingue (FR/EN)</b> — toute l'interface bascule en anglais d'un clic, y compris les
+<p align="center"><b>Bilingue (FR/EN)</b> : toute l'interface bascule en anglais d'un clic, y compris les
 mots et phrases à traduire, pour ouvrir la contribution à la diaspora et au-delà.</p>
 <p align="center">
   <img src="assets/screenshots/english-mode.png" alt="Interface complète en anglais (bilingue français / anglais)" width="820" />
