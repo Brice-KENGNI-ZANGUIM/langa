@@ -28,7 +28,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v198";
+const APP_VERSION = "v199";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1101,6 +1101,42 @@ function openLangChoice() {
   const er = $("#ld-error"); if (er) er.hidden = true;
   renderLangChoice();
   showView("lang");
+  // Stats d'enrichissement par langue (nombre de contributions + principaux contributeurs),
+  // calculées côté client puis réinjectées sans bloquer l'affichage.
+  computeLangStats().then(() => { if (_currentView === "lang") renderLangChoice(); });
+}
+// { langueCanonique → { count, contrib: {nom: n} } } — degré d'enrichissement par langue.
+let _langStats = null;
+async function computeLangStats() {
+  try {
+    const data = await browseLibrary({ limit: 500 });
+    const entries = (data && data.entries) || [];
+    const by = {};
+    for (const e of entries) {
+      const lid = canonLangId(entryLang(e));
+      if (!lid) continue;
+      // On ne compte que les entrées ayant un contenu réel (mot/traduction/audio).
+      if (!((e.source_text && e.source_text.trim()) || (e.target_text && e.target_text.trim()) || isPlayable(e.audio_url))) continue;
+      const s = by[lid] || (by[lid] = { count: 0, contrib: {} });
+      s.count++;
+      const name = (e.credit || "").trim();   // nom PUBLIC opt-in uniquement (jamais de PII)
+      if (name) s.contrib[name] = (s.contrib[name] || 0) + 1;
+    }
+    _langStats = by;
+  } catch (e) { _langStats = _langStats || {}; }
+}
+/** Pastille d'enrichissement + principaux contributeurs d'une langue (HTML sûr, échappé). */
+function langStatHtml(id) {
+  if (!_langStats) return "";
+  const s = _langStats[canonLangId(id)] || { count: 0, contrib: {} };
+  const n = s.count;
+  const label = n === 0 ? t("lang.contribs.none")
+    : (n === 1 ? t("lang.contribs.one") : ti("lang.contribs.many", { n }));
+  // Principaux contributeurs (top 3) AVEC leur nombre de contributions, compact.
+  const top = Object.entries(s.contrib).sort((a, b) => b[1] - a[1]).slice(0, 3)
+    .map(([name, k]) => `${escapeHtml(name)} (${k})`);
+  return `<span class="lang-count${n ? "" : " lang-count--empty"}">🗣 ${escapeHtml(label)}</span>`
+    + (top.length ? `<span class="lang-contrib" title="${t("lang.topcontrib")}">✍️ ${top.join(" · ")}</span>` : "");
 }
 /** Peint la grille des langues connues (graine + déclarées) + la carte « déclarer ». */
 function renderLangChoice() {
@@ -1120,6 +1156,7 @@ function renderLangChoice() {
       ${l.autonyme ? `<span class="lang-autonym">${escapeHtml(l.autonyme)}</span>` : ""}
       ${l.region ? `<span class="lang-region">${escapeHtml(getUiLang() === "en" && l.region_en ? l.region_en : l.region)}</span>` : ""}
       <span class="lang-kb">${kb}</span>
+      ${langStatHtml(l.id)}
     </button>`;
   }).join("");
   // Plus de carte « ➕ » noyée en fin de grille : la déclaration se fait via le

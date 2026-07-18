@@ -1,6 +1,9 @@
 {
-  "version": "v198",
+  "version": "v199",
   "changelog": {
+    "v199": [
+      "Écran des langues : chaque langue affiche désormais son nombre de contributions déjà faites (son degré d'enrichissement) et ses principaux contributeurs avec le nombre de leurs contributions"
+    ],
     "v198": [
       "Décor plus premium : les cartes gagnent une matière plus profonde (reflet, relief, halo de lumière à la couleur de l'activité) et l'en-tête un léger effet lumineux derrière le nom LANGA"
     ],

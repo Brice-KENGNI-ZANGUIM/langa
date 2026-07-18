@@ -533,6 +533,15 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .lang-region { font-size: .8rem; color: var(--muted); line-height: 1.35; }
 .lang-kb { margin-top: 4px; font-size: .72rem; color: var(--gold); font-weight: 700; letter-spacing: .02em; }
 .lang-card.is-current .lang-kb::after { content: " · sélectionnée"; color: var(--green); }
+:root[lang="en"] .lang-card.is-current .lang-kb::after { content: " · selected"; }
+/* Pastille d'enrichissement (nb de contributions) + principaux contributeurs par langue. */
+.lang-count { margin-top: 7px; align-self: flex-start; font-size: .74rem; font-weight: 700;
+  color: var(--cyan); background: color-mix(in srgb, var(--cyan) 12%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--cyan) 30%, var(--border)); border-radius: 999px; padding: 3px 11px; }
+.lang-count--empty { color: var(--muted); background: transparent;
+  border-color: var(--border); font-weight: 600; }
+.lang-contrib { margin-top: 5px; font-size: .7rem; color: var(--green); font-weight: 600;
+  max-width: 100%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lang-declare { margin-top: 16px; }
 .lang-declare h3 { margin: 0 0 4px; color: var(--text); }
 .lang-declare-hint { margin: 0 0 12px; color: var(--muted); font-size: .86rem; }
