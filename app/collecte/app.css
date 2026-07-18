@@ -196,8 +196,11 @@ body {
    de la 1re ligne) juste après « Aide ». Sur téléphone (≤560px, plus bas) : la
    1re ligne est répartie UNIFORMÉMENT (space-between) pour remplir la largeur. */
 .chips-nav  { gap: 6px 6px; flex-wrap: wrap; }
-/* Saut de ligne dur : tout ce qui suit (Bugs, Profil, outils) part en 2e ligne. */
-.chips-break { flex-basis: 100%; width: 100%; height: 0; margin: 0; padding: 0; border: 0; }
+/* Saut de ligne dur APRÈS la cloche : actif UNIQUEMENT sur téléphone (réactivé
+   dans le bloc ≤560px). Sur PC/tablette il est neutralisé (display:none) → tous
+   les boutons tiennent sur une seule ligne et ne basculent à la ligne suivante
+   que s'ils débordent réellement (wrap naturel), sans mise en page mobile. */
+.chips-break { display: none; margin: 0; padding: 0; border: 0; }
 /* Méta (état) : les deux pastilles « en ligne » / « Drive : prêt » restent TOUJOURS
    sur une seule ligne (jamais empilées) ; leur taille est réduite si besoin. */
 .chips-meta { gap: 6px 7px; flex-wrap: nowrap; }
@@ -293,6 +296,9 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
      largeur, contenu centré : aucun vide, aucun bouton minuscule. La cloche
      (icône seule) garde sa taille et se cale en bout, épaisseur ~1.2×. */
   .chips-nav { gap: 6px 7px; }
+  /* Téléphone : la cloche est le dernier bouton de la 1re ligne, Bugs/Profil/outils
+     passent en 2e ligne (saut de ligne réactivé ici seulement). */
+  .chips-break { display: block; flex-basis: 100%; width: 100%; height: 0; }
   .chip { font-size: .74rem; padding: 9px 8px; }
   .chip--btn { padding: 9px 8px; gap: 5px; }
   .chip--btn .chip-ico { width: 16px; height: 16px; }
