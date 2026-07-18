@@ -917,7 +917,9 @@ function showView(name) {
   const dmv = $("#view-demander"); if (dmv) dmv.hidden = name !== "demander";
   const glv = $("#view-legal"); if (glv) glv.hidden = name !== "legal";
   const nav = $("#main-nav");
-  if (nav) nav.hidden = (name === "lang" || name === "amorce" || name === "profile" || name === "hub" || name === "about" || name === "bugs" || name === "notifs" || name === "legal");
+  // Les 4 onglets d'activité sont accessibles depuis TOUTES les pages SAUF l'accueil
+  // (le hub, où les 4 grandes portes jouent déjà ce rôle).
+  if (nav) nav.hidden = (name === "hub");
   // Onglet actif de la barre de navigation (les 4 espaces).
   if (!nav || !nav.hidden) {
     const active = { app: (activity === "transcribe" ? "tab-transcrire" : "tab-traduire"), explore: "tab-explorer", demander: "tab-demander" }[name];
