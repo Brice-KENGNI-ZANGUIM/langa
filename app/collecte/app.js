@@ -1132,11 +1132,22 @@ function langStatHtml(id) {
   const n = s.count;
   const label = n === 0 ? t("lang.contribs.none")
     : (n === 1 ? t("lang.contribs.one") : ti("lang.contribs.many", { n }));
-  // Principaux contributeurs (top 3) AVEC leur nombre de contributions, compact.
-  const top = Object.entries(s.contrib).sort((a, b) => b[1] - a[1]).slice(0, 3)
-    .map(([name, k]) => `${escapeHtml(name)} (${k})`);
-  return `<span class="lang-count${n ? "" : " lang-count--empty"}">🗣 ${escapeHtml(label)}</span>`
-    + (top.length ? `<span class="lang-contrib" title="${t("lang.topcontrib")}">✍️ ${top.join(" · ")}</span>` : "");
+  // La carte de langue n'affiche QUE le degre d'enrichissement (nb de contributions) ;
+  // les principaux contributeurs sont montres dans Explorer (page de la langue).
+  return `<span class="lang-count${n ? "" : " lang-count--empty"}">🗣 ${escapeHtml(label)}</span>`;
+}
+/** Principaux contributeurs (top 5, avec leur nombre) de la LANGUE COURANTE, depuis les
+    entrees d'Explorer. Seuls les noms publics opt-in (credit) sont affiches. HTML sur. */
+function topContributorsHtml() {
+  const freq = {};
+  for (const e of (_exploreEntries || [])) {
+    const name = (e.credit || "").trim();
+    if (name) freq[name] = (freq[name] || 0) + 1;
+  }
+  const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  if (!top.length) return "";
+  const list = top.map(([name, k]) => `<span class="exp-contrib-item">${escapeHtml(name)} <b>${k}</b></span>`).join("");
+  return `<div class="exp-contrib"><span class="exp-contrib-lbl">✍️ ${t("exp.topcontrib")}</span>${list}</div>`;
 }
 /** Peint la grille des langues connues (graine + déclarées) + la carte « déclarer ». */
 function renderLangChoice() {
@@ -2148,7 +2159,7 @@ function renderVariantMap() {
     <div class="vmap-sub">${t("exp.vmap.sub")}${mine ? t("exp.vmap.sub.mine") : ""}.</div>
     <svg viewBox="0 0 100 82" class="vmap-svg" role="img" aria-label="${t("exp.vmap.aria")}">
       ${links}${diamonds}
-    </svg>`;
+    </svg>${topContributorsHtml()}`;
 }
 function renderExplore() {
   _openGroupKey = null;

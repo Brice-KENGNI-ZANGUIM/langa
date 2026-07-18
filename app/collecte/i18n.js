@@ -485,6 +485,7 @@ export const STR = {
   "exp.vmap.sub": { fr: "Chaque losange = un village ; sa taille = le nombre de contributions", en: "Each diamond = a village; its size = the number of contributions" },
   "exp.vmap.sub.mine": { fr: " · le tien ressort en doré", en: " · yours stands out in gold" },
   "exp.vmap.others": { fr: "Autres", en: "Others" },
+  "exp.topcontrib": { fr: "Principaux contributeurs", en: "Top contributors" },
 
   // — Corrections communautaires —
   "corr.community": { fr: "✅ <b>Version retenue par la communauté</b> :", en: "✅ <b>Version chosen by the community</b>:" },
