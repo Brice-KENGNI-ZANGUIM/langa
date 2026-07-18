@@ -1,6 +1,10 @@
 {
-  "version": "v204",
+  "version": "v205",
   "changelog": {
+    "v205": [
+      "Finition : tous les boutons (y compris secondaires comme « Annuler ») ont maintenant le même rendu soigné, avec un léger relief de matière et un halo au survol ; plus aucun bouton ne paraît « plat »",
+      "Numéro de téléphone de contact affiché au format « +33 7 72 08 82 36 » partout (application et flyer)"
+    ],
     "v204": [
       "Rendu plus homogène : tous les cadres de l'application ont maintenant le même effet premium (halo doux, bordure lumineuse, matière), et plus seulement ceux de Traduire, Transcrire et Explorer",
       "Les icônes Accueil et Mon profil apparaissent aussi en haut de leur page (avant le titre), comme sur les autres pages",

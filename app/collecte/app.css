@@ -199,7 +199,12 @@ body {
 .chips-tools { display: flex; gap: 6px; align-items: center; margin-left: auto; }
 .chip {
   font-size: .72rem; padding: 5px 10px; border-radius: 999px;
-  border: 1px solid var(--border); color: var(--muted); background: var(--panel);
+  border: 1px solid var(--border); color: var(--muted);
+  /* Matériau verre commun à TOUTES les pilules (reflet interne + légère profondeur) →
+     jamais « plat » au repos, cohérent avec les cadres. */
+  background-color: var(--panel);
+  background-image: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0));
+  box-shadow: inset 0 1px 0 var(--card-sheen), 0 2px 6px -4px rgba(0,0,0,.38);
   white-space: nowrap;
 }
 /* Un display (flex) posé ailleurs écrasait l'attribut [hidden] → un chip « hidden »
@@ -222,12 +227,13 @@ body {
 /* Étiquettes techniques (version) en mono, cohérent avec le logo */
 #app-ver { font-family: var(--font-mono); letter-spacing: -.02em; }
 .chip--btn { cursor: pointer; font: inherit; font-size: .82rem; line-height: 1.1;
-  padding: 5px 10px; background: var(--panel); color: var(--text); text-decoration: none;
+  padding: 5px 10px; background-color: var(--panel); color: var(--text); text-decoration: none;
   display: inline-flex; align-items: center;
-  transition: color .16s ease, border-color .16s ease, box-shadow .16s ease; }
+  transition: color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .1s ease; }
 a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weight: 600; }
 .chip--btn:hover { color: var(--cyan); border-color: var(--cyan);
-  box-shadow: 0 0 16px -2px rgba(34,211,238,.4); transform: translateY(-1px); }
+  box-shadow: inset 0 1px 0 var(--card-sheen), 0 0 16px -2px rgba(34,211,238,.45); transform: translateY(-1px); }
+.chip--btn:active { transform: translateY(0); box-shadow: inset 0 2px 5px -2px rgba(0,0,0,.45); }
 .chip--btn .chip-ico { transition: filter .16s ease; }
 .chip--btn:hover .chip-ico { filter: drop-shadow(0 0 6px rgba(34,211,238,.7)); }
 
@@ -1421,7 +1427,10 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 
 /* Boutons */
 .btn {
-  border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+  border: 1px solid var(--border); color: var(--text);
+  background-color: var(--panel2);
+  background-image: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+  box-shadow: inset 0 1px 0 var(--card-sheen), 0 3px 9px -5px rgba(0,0,0,.42);
   padding: 11px 18px; border-radius: 12px; cursor: pointer; font: inherit; font-size: .92rem;
   transition: transform .09s ease, box-shadow .16s ease, background .16s ease, border-color .16s ease;
 }
@@ -1447,11 +1456,20 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .actions { margin-top: 18px; }
 
 .mini {
-  border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+  border: 1px solid var(--border); color: var(--text);
+  background-color: var(--panel2);
+  background-image: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+  box-shadow: inset 0 1px 0 var(--card-sheen), 0 2px 7px -5px rgba(0,0,0,.4);
   border-radius: 9px; padding: 6px 12px; cursor: pointer; font-size: .8rem;
-  transition: border-color .14s ease, color .14s ease, background .14s ease;
+  transition: border-color .14s ease, color .14s ease, background .14s ease, box-shadow .14s ease, transform .1s ease;
 }
 .mini:hover { color: var(--cyan); border-color: var(--cyan); background: var(--panel); transform: translateY(-1px); box-shadow: 0 0 14px -6px var(--cyan); }
+/* Boutons secondaires du corps (Explorer, navigation) : même reflet de verre au repos que
+   les autres boutons → plus aucun bouton « plat ». (Le halo de couleur reste au survol.) */
+.grp-back, .entry-improve, .entry-share, .mini-btn {
+  background-image: linear-gradient(180deg, rgba(255,255,255,.05), rgba(255,255,255,0));
+  box-shadow: inset 0 1px 0 var(--card-sheen), 0 2px 6px -4px rgba(0,0,0,.32);
+}
 /* Actions secondaires de l'audio MISES EN ÉVIDENCE + vivantes : pilule cyan tintée,
    halo respirant, remplissage au survol → bien vues et remarquées. */
 #btn-mic-test, .tr-guide-open {
