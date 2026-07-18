@@ -757,11 +757,13 @@
     <div class="incite-body">
       <p id="incite-msg" class="incite-msg"></p>
       <div class="incite-actions">
+        <button id="incite-listen" class="incite-listen" type="button" hidden>🔊 Écouter</button>
         <button id="incite-go" class="btn btn--primary" type="button" data-i18n="incite.cta">Le dire dans ma langue →</button>
         <button id="incite-later" class="incite-later" type="button" data-i18n="incite.later">Plus tard</button>
       </div>
     </div>
     <button id="incite-close" class="incite-close" type="button" data-i18n-title="incite.close" title="Fermer" aria-label="Fermer">✕</button>
+    <audio id="incite-audio" preload="none" style="display:none"></audio>
   </div>
 
   <!-- Mode présentation : affichage plein écran pour montrer le projet (événements,

@@ -1799,7 +1799,10 @@ async function pickIncitation() {
       const it = byNorm.get(normTxt(src)); if (!it) continue;
       const elang = canonLangId(entryLang(e));
       if (elang === mine) continue;               // on met en avant ce qu'un AUTRE a fait, ailleurs
-      chosen = it; ref = { name: (e.credit || "").trim() || null, langId: elang }; break;
+      const aud = isPlayable(e.audio_url) ? e.audio_url : null;
+      const cand = { name: (e.credit || "").trim() || null, langId: elang, audio: aud, audioDur: e.audio_duree_ms || 0 };
+      if (!ref) { chosen = it; ref = cand; }      // 1re correspondance…
+      if (aud) { chosen = it; ref = cand; break; } // …mais on PRÉFÈRE une contribution AVEC audio (écoutable)
     }
   } catch (e) { /* hors ligne : pas de référence, on garde un mot non fait */ }
   if (!chosen) chosen = undone[Math.floor(Math.random() * undone.length)];
@@ -1818,10 +1821,31 @@ function renderIncitation(pick) {
     text = ti("incite.msg", { w, lang: langName });
   }
   const msg = $("#incite-msg"); if (msg) msg.textContent = text;   // textContent = anti-injection
-  const go = $("#incite-go"); if (go) go.onclick = () => { _incMarkShown(); bn.hidden = true; startTranslateWord(w); };
+  const go = $("#incite-go"); if (go) go.onclick = () => { _incMarkShown(); _incStopAudio(); bn.hidden = true; startTranslateWord(w); };
+  // Bouton « Écouter » : on peut entendre la version d'un AUTRE (dans sa langue) avant de la
+  // dire dans la sienne. Affiché seulement si la contribution de référence a un audio jouable.
+  const lis = $("#incite-listen");
+  if (lis) {
+    const aud = pick.ref && pick.ref.audio;
+    lis.hidden = !aud;
+    if (aud) {
+      lis.textContent = pick.ref.name ? ti("incite.listen.name", { name: pick.ref.name }) : t("incite.listen");
+      lis.onclick = () => _incPlayAudio(aud);
+    } else { lis.onclick = null; }
+  }
   bn.hidden = false;
 }
-function _incDismiss() { _incMarkShown(); const bn = $("#incite-banner"); if (bn) bn.hidden = true; }
+function _incStopAudio() { const au = $("#incite-audio"); if (au) { try { au.pause(); au.currentTime = 0; } catch (e) { /* ok */ } } }
+/** Joue l'audio d'une contribution (direct/data ou Drive) dans le petit lecteur du popup. */
+async function _incPlayAudio(url) {
+  const au = $("#incite-audio"); if (!au || !url) return;
+  try { au.pause(); } catch (e) { /* ok */ }
+  const did = driveFileId(url);
+  if (did) { await loadDriveAudioInto(au, did, () => {}); }
+  else { try { au.src = url; au.load(); } catch (e) { /* ok */ } }
+  try { await au.play(); } catch (e) { /* politique autoplay : le clic utilisateur devrait suffire */ }
+}
+function _incDismiss() { _incMarkShown(); _incStopAudio(); const bn = $("#incite-banner"); if (bn) bn.hidden = true; }
 /** À appeler quand on arrive sur l'accueil : montre l'invitation si elle est due. */
 async function maybeShowIncitation() {
   if (!incitationDue()) return;

@@ -481,6 +481,8 @@ export const STR = {
   "saymine.toast": { fr: "À toi ! Écris « {w} » dans ta langue.", en: "Your turn! Write “{w}” in your language." },
   "incite.aria": { fr: "Invitation à contribuer", en: "Invitation to contribute" },
   "incite.cta": { fr: "Le dire dans ma langue →", en: "Say it in my language →" },
+  "incite.listen": { fr: "🔊 Écouter", en: "🔊 Listen" },
+  "incite.listen.name": { fr: "🔊 Écouter {name}", en: "🔊 Hear {name}" },
   "incite.later": { fr: "Plus tard", en: "Later" },
   "incite.close": { fr: "Fermer", en: "Close" },
   "incite.inlang": { fr: " en {l}", en: " in {l}" },

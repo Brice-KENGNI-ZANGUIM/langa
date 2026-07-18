@@ -2,6 +2,7 @@
   "version": "v208",
   "changelog": {
     "v208": [
+      "Invitation à contribuer : un bouton « Écouter » permet désormais d'entendre la version d'une autre personne (dans sa langue) avant de la dire dans la tienne, pour t'inspirer",
       "Déclaration d'une langue : le pays et la famille/groupe sont maintenant obligatoires (comme le nom et la région). Les champs obligatoires sont marqués d'une étoile rouge et présentés en premier, avant les champs optionnels",
       "Explorer : nouvel export au format LIFT (lexique standard), pour réutiliser le vocabulaire d'une langue dans les logiciels de lexicographie (FLEx, WeSay), en plus des exports CSV et JSON"
     ],
