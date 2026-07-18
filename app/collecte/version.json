@@ -2,6 +2,7 @@
   "version": "v212",
   "changelog": {
     "v212": [
+      "Sur ordinateur, l'application occupe désormais une bien plus grande largeur d'écran : les grandes marges vides sur les côtés sont fortement réduites, pour un affichage plus généreux et plus confortable (l'affichage sur téléphone est inchangé)",
       "Le clavier prédictif (suggestions de mots réels à la frappe) fonctionne désormais pour toutes les langues à clavier dédié, pas seulement le ngiemboon : il propose les mots déjà partagés par la communauté dans ta langue au fur et à mesure que tu écris",
       "Réorganisation interne en « packs de langue » : le contenu propre à chaque langue (alphabet du clavier, lexique) est maintenant séparé du moteur commun, ce qui rend l'ajout et l'enrichissement d'une langue plus simples et plus fiables (aucun changement visible côté usage)"
     ],

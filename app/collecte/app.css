@@ -5,6 +5,10 @@
    (aucun flash au chargement). Toutes les surfaces passent par des variables. */
 :root, :root[data-theme="light"] {
   color-scheme: light;
+  /* Largeur maximale du contenu (conteneur .wrap + pied). Élargie pour occuper
+     davantage l'espace horizontal sur PC (marges latérales fortement réduites) ;
+     sur les écrans < cette valeur, le contenu reste pleinement fluide (mobile intact). */
+  --wrap-max: 1320px;
   /* Polices (voir fonts.css, embarquées hors-ligne). Titres = display géométrique
      (Space Grotesk) ; logo + étiquettes techniques (version, tags, URL) = mono
      (IBM Plex Mono) ; corps de texte = Noto Sans (lisible, couverture ngiemboon). */
@@ -294,7 +298,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 
 /* --- Cartes --- */
 .wrap {
-  max-width: 860px; margin: 0 auto; padding: 22px clamp(12px, 4vw, 24px) 60px;
+  max-width: var(--wrap-max); margin: 0 auto; padding: 22px clamp(12px, 4vw, 28px) 60px;
   display: flex; flex-direction: column; gap: 18px;
   flex: 1 0 auto;   /* occupe l'espace restant → pousse le footer en bas d'écran */
   width: 100%;
@@ -1039,7 +1043,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   padding: 26px clamp(14px, 4vw, 36px) 18px;
 }
 .foot-inner {
-  max-width: 860px; margin: 0 auto; display: flex; align-items: center;
+  max-width: var(--wrap-max); margin: 0 auto; display: flex; align-items: center;
   justify-content: space-between; gap: 20px; flex-wrap: wrap;
 }
 .foot-brand { display: flex; align-items: center; gap: 13px; }
@@ -1065,7 +1069,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .foot-contact a { color: var(--cyan); text-decoration: none; font-weight: 600; }
 .foot-contact a:hover { text-decoration: underline; }
 .foot-copy {
-  max-width: 860px; margin: 16px auto 0; color: var(--muted); font-size: .72rem;
+  max-width: var(--wrap-max); margin: 16px auto 0; color: var(--muted); font-size: .72rem;
   text-align: center; border-top: 1px solid var(--hairline); padding-top: 12px;
 }
 @media (max-width: 560px) {
@@ -1074,7 +1078,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 }
 /* Liens légaux du pied de page + page légale */
 .foot-legal { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 6px 18px;
-  justify-content: center; max-width: 860px; margin: 14px auto 0; padding-top: 10px;
+  justify-content: center; max-width: var(--wrap-max); margin: 14px auto 0; padding-top: 10px;
   border-top: 1px solid var(--hairline); }
 .foot-legal-link { color: var(--muted); font-size: .74rem; text-decoration: none;
   transition: color .14s ease; }
