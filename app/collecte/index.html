@@ -65,6 +65,8 @@
               title="Visite guidée de cette page" aria-label="Visite guidée"><img class="chip-ico" src="icons/ui/hi-help.png" alt="" aria-hidden="true"><span data-i18n="chip.help">Aide</span></button>
       <button id="bugs-link" class="chip chip--btn" type="button" data-i18n-title="chip.bugs.title"
               title="Suivi des bugs" aria-label="Suivi des bugs"><img class="chip-ico" src="icons/ui/hi-bug.png" alt="" aria-hidden="true"><span data-i18n="chip.bugs">Bugs</span></button>
+      <button id="btn-notifs" class="chip chip--btn chip--notif" type="button" hidden data-i18n-title="chip.notifs.title"
+              title="Mes notifications" aria-label="Mes notifications"><img class="chip-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span data-i18n="chip.notifs">Notifications</span><span id="notif-badge" class="notif-badge" hidden aria-hidden="true">0</span></button>
       <button id="btn-open-profile" class="chip chip--btn" type="button" hidden><img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="chip.profile">Mon profil</span></button>
       <!-- Outils (version + langue d'interface + thème) : poussés À DROITE de la ligne
            de nav (margin-left:auto). Ils basculent proprement à la ligne suivante,
@@ -254,8 +256,9 @@
           </label>
           <label class="field field--check field--credit">
             <input id="c-credit-on" type="checkbox" />
-            <span data-i18n-html="p.credit">J'autorise l'affichage de mon nom sur mes contributions dans la
-              <b>bibliothèque publique</b>. <span class="hint-inline">(facultatif, sinon tu restes anonyme)</span></span>
+            <span data-i18n-html="p.credit">J'autorise l'affichage de mon nom (prénom ou sigle) sur mes contributions dans la
+              <b>bibliothèque publique</b>, ainsi que dans les <b>notifications</b> envoyées aux autres et la communication
+              autour de la plateforme. <span class="hint-inline">(facultatif, sinon tu restes anonyme)</span></span>
           </label>
           <div class="field" id="credit-format-wrap" hidden>
             <span data-i18n="p.credit.label">Nom affiché dans la bibliothèque</span>
@@ -647,6 +650,25 @@
       </div>
     </section>
 
+    <!-- ============== VUE NOTIFICATIONS =================================== -->
+    <section id="view-notifs" class="view" hidden>
+      <div class="about-head">
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span data-i18n="notif.title">Mes notifications</span></h2>
+        <p class="contrib-why" data-i18n-html="notif.intro">Tu es tenu au courant de <b>tout ce qui se passe autour de tes
+          contributions</b> (quand on note ou améliore une de tes traductions ou transcriptions) et de la <b>vie de la
+          plateforme</b>. Chaque notification est datée ; les non lues sont mises en avant.</p>
+      </div>
+      <div class="notif-toolbar">
+        <button id="notif-markall" class="btn btn--ghost" type="button" data-i18n="notif.markall">Tout marquer comme lu</button>
+      </div>
+      <ul id="notif-feed" class="notif-feed" aria-live="polite"></ul>
+      <p id="notif-empty" class="notif-empty" hidden data-i18n="notif.empty">Aucune notification pour l'instant. Contribue et
+        échange avec la communauté : tu seras prévenu ici dès qu'il se passe quelque chose autour de tes contributions.</p>
+      <div class="about-cta">
+        <button class="btn btn--ghost" id="notif-back" type="button" data-i18n="btn.back">← Retour</button>
+      </div>
+    </section>
+
     <!-- Pages légales : mentions légales, confidentialité, CGU, CGV (bilingue) -->
     <section id="view-legal" class="view" hidden>
       <div class="view-head">
@@ -764,6 +786,22 @@
     </div>
     <button id="incite-close" class="incite-close" type="button" data-i18n-title="incite.close" title="Fermer" aria-label="Fermer">✕</button>
     <audio id="incite-audio" preload="none" style="display:none"></audio>
+  </div>
+
+  <!-- Popup de NOTIFICATION personnelle : apparaît à l'ouverture quand une activité
+       récente concerne tes contributions (on t'a noté, on t'a corrigé…). Réutilise
+       le style de la bannière d'invitation. « Voir » ouvre le centre de notifications. -->
+  <div id="notif-popup" class="incite-banner notif-popup" hidden role="dialog" aria-live="polite"
+       data-i18n-label="notif.aria" aria-label="Notification">
+    <span class="incite-ico" aria-hidden="true">🔔</span>
+    <div class="incite-body">
+      <p id="notif-popup-msg" class="incite-msg"></p>
+      <div class="incite-actions">
+        <button id="notif-popup-go" class="btn btn--primary" type="button" data-i18n="notif.see">Voir mes notifications →</button>
+        <button id="notif-popup-later" class="incite-later" type="button" data-i18n="incite.later">Plus tard</button>
+      </div>
+    </div>
+    <button id="notif-popup-close" class="incite-close" type="button" data-i18n-title="incite.close" title="Fermer" aria-label="Fermer">✕</button>
   </div>
 
   <!-- Mode présentation : affichage plein écran pour montrer le projet (événements,

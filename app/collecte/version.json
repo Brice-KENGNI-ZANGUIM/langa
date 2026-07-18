@@ -1,6 +1,11 @@
 {
-  "version": "v209",
+  "version": "v210",
   "changelog": {
+    "v210": [
+      "Nouveau centre de notifications (icône cloche en haut) : tu es prévenu dès qu'une activité concerne tes contributions, par exemple quand quelqu'un note ou améliore une de tes traductions ou transcriptions, ou quand ta langue franchit un cap. Chaque notification est datée, les non lues sont mises en avant, et une pastille rouge indique leur nombre",
+      "Le prénom de la personne apparaît dans la notification uniquement si elle a autorisé l'affichage de son nom (même autorisation que le crédit public), sinon la notification reste anonyme",
+      "Un petit rappel peut apparaître à l'ouverture quand une activité récente te concerne, avec un accès direct à tes notifications"
+    ],
     "v209": [
       "Explorer : chaque traduction ou transcription peut maintenant être votée par les locuteurs, avec trois choix (juste en vert, j'ai des doutes en jaune, faux en rouge) ; une pastille affiche le nombre de votes pour chacun des trois cas, ton propre choix ressort, et un nouveau clic sur ton choix l'annule"
     ],

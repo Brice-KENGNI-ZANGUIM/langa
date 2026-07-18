@@ -186,6 +186,26 @@ export async function mergesForDevice(deviceId) {
   } catch (e) { return []; }
 }
 
+/** Notifications de CE device (les siennes + les globales). `since` = horodatage
+    ms de la dernière lecture, pour compter les non-lues. Renvoie
+    {ok, notifications:[…], unread, server_ts} ou null si l'endpoint n'existe pas
+    encore (ancien backend Google non redéployé → l'app n'affiche simplement rien). */
+export async function fetchNotifications(deviceId, since) {
+  if (!deviceId) return null;
+  const base = endpoint();
+  const s = since ? "&since=" + encodeURIComponent(since) : "";
+  const url = isGoogle()
+    ? `${base}?action=notifications&device_id=${encodeURIComponent(deviceId)}${s}`
+    : `${base || ""}/api/notifications?device_id=${encodeURIComponent(deviceId)}${s}`;
+  try {
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) return null;
+    const data = await r.json();
+    if (!data || data.ok === false || !Array.isArray(data.notifications)) return null;
+    return data;
+  } catch (e) { return null; }
+}
+
 /** POST d'une opération communautaire (suggest/vote), même canal que les contributions. */
 async function postOp(payload) {
   const base = endpoint();

@@ -8,7 +8,7 @@ import { DB } from "./db.js";
 import { reconcile, checkServer, serverStats, modeGoogle, browseLibrary,
   fetchSuggestions, postSuggestion, postVote, postBug, fetchBugs,
   fetchLanguages, declareLanguage, declareUser, fetchDriveAudio,
-  proposeMerge, respondMerge, mergesForDevice } from "./sync.js";
+  proposeMerge, respondMerge, mergesForDevice, fetchNotifications } from "./sync.js";
 import { PROPOSITIONS } from "./propositions.js";
 import { BUGS } from "./bugs.js";
 import { CONFIG } from "./config.js";
@@ -28,7 +28,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v209";
+const APP_VERSION = "v210";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -816,9 +816,10 @@ let profileSnapshot = null; // sauvegarde pour « Annuler » en mode édition
 // Précédent/Suivant (popstate) rejoue la route ; un rafraîchissement ou un lien profond
 // restaure la même vue (sous réserve du VERROU de profil, qui garde la priorité).
 const ROUTE_OF_VIEW = { hub: "accueil", explore: "explorer", about: "apropos",
-  bugs: "bugs", profile: "profil", lang: "langue" };
+  bugs: "bugs", profile: "profil", lang: "langue", notifs: "notifications" };
 const VIEW_OF_ROUTE = { accueil: "hub", traduire: "app", transcrire: "app",
   explorer: "explore", apropos: "about", bugs: "bugs", profil: "profile", langue: "lang",
+  notifications: "notifs",
   // Pages légales : 4 routes → une même vue, ancrée sur la bonne section.
   "mentions-legales": "legal", "confidentialite": "legal", "cgu": "legal", "cgv": "legal" };
 // Correspondance route ↔ section légale.
@@ -875,6 +876,7 @@ function routeTo(route) {
     case "explorer": enterExplore(); break;
     case "apropos": openAbout(); break;
     case "bugs": openBugs(); break;
+    case "notifications": openNotifs(); break;
     case "profil": openProfile(profileComplete()); break;
     case "langue": openLangChoice(); break;
     case "mentions-legales": case "confidentialite": case "cgu": case "cgv":
@@ -909,14 +911,18 @@ function showView(name) {
   $("#view-explore").hidden = name !== "explore";
   $("#view-about").hidden = name !== "about";
   $("#view-bugs").hidden = name !== "bugs";
+  const nv = $("#view-notifs"); if (nv) nv.hidden = name !== "notifs";
   const glv = $("#view-legal"); if (glv) glv.hidden = name !== "legal";
   const nav = $("#main-nav");
-  if (nav) nav.hidden = (name === "lang" || name === "amorce" || name === "profile" || name === "hub" || name === "about" || name === "bugs" || name === "legal");
+  if (nav) nav.hidden = (name === "lang" || name === "amorce" || name === "profile" || name === "hub" || name === "about" || name === "bugs" || name === "notifs" || name === "legal");
   // « Mon profil » : visibilité conditionnée UNIQUEMENT à l'existence d'un profil.
   // Il reste donc affiché sur TOUTES les pages, y compris la vue profil elle-même
   // (il y sert de repère et n'a jamais à disparaître). Sans profil : rien à ouvrir.
   const prof = $("#btn-open-profile");
   if (prof) prof.hidden = !profileComplete();
+  // Cloche de notifications : visible dès qu'un profil existe (comme « Mon profil »).
+  const bn = $("#btn-notifs");
+  if (bn) bn.hidden = !profileComplete();
   // Sélecteur de langue : visible dès qu'une langue est choisie, partout, sans exception.
   const lc = $("#lang-chip");
   if (lc) lc.hidden = !hasChosenLang();
@@ -1069,13 +1075,20 @@ function pushUserProfile() {
 
 /** Écran d'accueil « Que veux-tu faire ? » (profil complet requis). */
 function enterHub() {
-  collectContributeur();
+  // On ne capture le formulaire QUE si l'on arrive de l'écran profil (édition
+  // réelle). Au boot / depuis une autre vue, les <select> habillés se synchronisent
+  // de façon asynchrone : un collectContributeur() prématuré lirait un champ
+  // transitoirement vide et ÉCRASERAIT le profil stocké (rôle, consentement…).
+  if (_currentView === "profile") collectContributeur();
   const c = loadContributeur();
   const nom = c.prenom || c.nom || "";
   $("#welcome-user").textContent = nom ? `${t("hub.greeting.hello")} ${nom} 👋` : "";
   const ht = $("#hub-title");
   if (ht) ht.textContent = nom ? `${t("hub.greeting.hello")} ${nom} 👋 · ${t("hub.greeting")}` : t("hub.greeting.solo");
   showView("hub");
+  // Notifications : rafraîchit la pastille, puis propose un popup si une activité
+  // récente concerne l'utilisateur (prioritaire sur l'invitation générique).
+  setTimeout(() => { refreshNotifs().then(() => { try { maybeShowNotifPopup(); } catch (e) { /* ok */ } }); }, 1000);
   // Invitation à contribuer (au plus 1×/jour) : apparaît en douceur après l'arrivée.
   setTimeout(() => { try { maybeShowIncitation(); } catch (e) { /* jamais bloquant */ } }, 1400);
 }
@@ -1851,8 +1864,112 @@ async function maybeShowIncitation() {
   if (!incitationDue()) return;
   let pick = null; try { pick = await pickIncitation(); } catch (e) { pick = null; }
   if (!pick || !incitationDue()) return;          // re-vérifie après l'await (course éventuelle)
+  if (($("#notif-popup") || {}).hidden === false) return;   // ne pas empiler sur un popup de notif
   renderIncitation(pick);
 }
+
+// --- Notifications : centre horodaté + pastille de non-lues + popup --------
+// Les notifications viennent du backend (fetchNotifications). L'état « lu » est
+// LOCAL : on mémorise l'horodatage (ms) de la dernière consultation ; toute
+// notification plus récente est « non lue ». Aucune PII : l'acteur n'est nommé
+// que par son crédit d'affichage DÉJÀ consenti (sinon « une personne »).
+const NOTIF_SEEN_KEY = "langa-notif-seen";
+const NOTIF_POPUP_KEY = "langa-notif-popup";   // dernier ts pour lequel un popup a été montré
+let _notifs = [];
+let _notifsReturn = "hub";
+
+/** Crédit d'affichage (prénom/sigle) si l'utilisateur l'a autorisé, sinon "". */
+function creditDisplay() {
+  try { return String(loadContributeur().credit_display || "").trim(); } catch (e) { return ""; }
+}
+function _notifSeenTs() { const v = parseInt(localStorage.getItem(NOTIF_SEEN_KEY) || "0", 10); return v > 0 ? v : 0; }
+function _setNotifSeenTs(ts) { try { localStorage.setItem(NOTIF_SEEN_KEY, String(ts || 0)); } catch (e) { /* ok */ } }
+
+/** Récupère les notifications + met à jour la pastille (silencieux, à l'ouverture). */
+async function refreshNotifs() {
+  if (!profileComplete()) return;
+  let data = null;
+  try { data = await fetchNotifications(deviceId(), _notifSeenTs()); } catch (e) { data = null; }
+  if (!data) return;
+  _notifs = data.notifications || [];
+  const unread = (typeof data.unread === "number") ? data.unread
+    : _notifs.filter((n) => (n.ts || 0) > _notifSeenTs()).length;
+  updateNotifBadge(unread);
+}
+function updateNotifBadge(n) {
+  const b = $("#notif-badge"); if (!b) return;
+  if (n > 0) { b.textContent = n > 99 ? "99+" : String(n); b.hidden = false; }
+  else b.hidden = true;
+}
+/** Message lisible d'une notification (construit en TEXTE → anti-injection). */
+function notifText(n) {
+  const d = n.data || {};
+  const who = (d.actor || "").trim() || t("notif.someone");
+  const mot = (d.mot || "").trim();
+  const ln = d.langue ? _incLangName(d.langue) : "";
+  if (n.type === "vote") {
+    const kindK = { ok: "notif.kind.ok", doubt: "notif.kind.doubt", no: "notif.kind.no" }[d.kind] || "notif.kind.ok";
+    return ti("notif.vote", { who, mot: mot || t("notif.your"), kind: t(kindK) });
+  }
+  if (n.type === "suggestion") return ti("notif.sugg", { who, mot: mot || t("notif.your") });
+  if (n.type === "milestone") return ti("notif.milestone", { lang: ln || t("notif.yourlang"), count: d.count || 0 });
+  return String(d.text || "");   // announce / types futurs porteurs d'un texte
+}
+function notifIcon(type) {
+  return ({ vote: "🗳️", suggestion: "✍️", milestone: "🎉", announce: "📣" })[type] || "🔔";
+}
+function relTime(ts) {
+  if (!ts) return "";
+  const s = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  if (s < 60) return t("notif.now");
+  const m = Math.floor(s / 60); if (m < 60) return ti("notif.min", { n: m });
+  const h = Math.floor(m / 60); if (h < 24) return ti("notif.hour", { n: h });
+  const j = Math.floor(h / 24); if (j < 7) return ti("notif.day", { n: j });
+  try { return new Date(ts).toLocaleDateString(getUiLang() === "en" ? "en-GB" : "fr-FR"); } catch (e) { return ""; }
+}
+function notifItemHtml(n) {
+  const unread = (n.ts || 0) > _notifSeenTs();
+  return `<li class="notif ${unread ? "notif--unread" : ""}">` +
+    `<span class="notif-ico" aria-hidden="true">${notifIcon(n.type)}</span>` +
+    `<div class="notif-body"><p class="notif-msg">${escapeHtml(notifText(n))}</p>` +
+    `<span class="notif-time">${escapeHtml(relTime(n.ts))}</span></div></li>`;
+}
+async function renderNotifs() {
+  const feed = $("#notif-feed"), empty = $("#notif-empty");
+  let data = null;
+  try { data = await fetchNotifications(deviceId(), 0); } catch (e) { data = null; }
+  if (data) _notifs = data.notifications || [];
+  if (feed) feed.innerHTML = _notifs.map(notifItemHtml).join("");
+  if (empty) empty.hidden = _notifs.length > 0;
+}
+/** Tout marquer comme lu = mémoriser l'horodatage courant (les suivantes seront « non lues »). */
+function markNotifsRead() {
+  const top = _notifs.length ? Math.max.apply(null, _notifs.map((n) => n.ts || 0)) : Date.now();
+  _setNotifSeenTs(Math.max(top, Date.now()));
+  updateNotifBadge(0);
+  const feed = $("#notif-feed"); if (feed) feed.querySelectorAll(".notif--unread").forEach((el) => el.classList.remove("notif--unread"));
+}
+function openNotifs() {
+  if (_currentView !== "notifs") _notifsReturn = _currentView;
+  showView("notifs");
+  renderNotifs().then(markNotifsRead);
+}
+/** Popup à l'ouverture s'il y a une notif personnelle fraîche jamais encore montrée en popup. */
+async function maybeShowNotifPopup() {
+  if (!profileComplete()) return;
+  const seen = _notifSeenTs();
+  const lastPop = parseInt(localStorage.getItem(NOTIF_POPUP_KEY) || "0", 10) || 0;
+  const fresh = _notifs.filter((n) => (n.type === "vote" || n.type === "suggestion" || n.type === "milestone")
+    && (n.ts || 0) > seen && (n.ts || 0) > lastPop);
+  if (!fresh.length) return;
+  const n = fresh[0];   // la plus récente (liste triée décroissante)
+  const pop = $("#notif-popup"), msg = $("#notif-popup-msg");
+  if (!pop || !msg) return;
+  msg.textContent = notifText(n);
+  pop.hidden = false;
+  try { localStorage.setItem(NOTIF_POPUP_KEY, String(n.ts || Date.now())); } catch (e) { /* ok */ }
+}
+function _notifPopupClose() { const p = $("#notif-popup"); if (p) p.hidden = true; }
 
 function enterExplore() {
   // Capture le lien direct AVANT que showView n'aligne l'URL sur « #/explorer » (sans requête).
@@ -2638,7 +2755,7 @@ async function onVote3(btn) {
   if (newVal) counts[newVal] = (counts[newVal] || 0) + 1;
   _applyVoteBar(bar, counts, newVal);
   try {
-    const r = await postVote({ id_cible: id, device_id: deviceId(), valeur: newVal });
+    const r = await postVote({ id_cible: id, device_id: deviceId(), valeur: newVal, credit: creditDisplay() });
     if (r && r.votes) _applyVoteBar(bar, r.votes, r.my_vote || "");   // réconcilie avec le serveur
   } catch (e) { toast(t("vote.fail"), "warn"); }
 }
@@ -4078,6 +4195,13 @@ function initEvents() {
   // Invitation à contribuer : « Plus tard » et « Fermer » l'écartent pour la journée.
   const inLater = $("#incite-later"); if (inLater) inLater.addEventListener("click", _incDismiss);
   const inClose = $("#incite-close"); if (inClose) inClose.addEventListener("click", _incDismiss);
+  // Notifications : cloche (ouvre le centre), retour, tout marquer comme lu, popup.
+  const bNotif = $("#btn-notifs"); if (bNotif) bNotif.addEventListener("click", openNotifs);
+  const nBack = $("#notif-back"); if (nBack) nBack.addEventListener("click", () => showView(_notifsReturn || "hub"));
+  const nMark = $("#notif-markall"); if (nMark) nMark.addEventListener("click", markNotifsRead);
+  const npGo = $("#notif-popup-go"); if (npGo) npGo.addEventListener("click", () => { _notifPopupClose(); openNotifs(); });
+  const npLater = $("#notif-popup-later"); if (npLater) npLater.addEventListener("click", _notifPopupClose);
+  const npClose = $("#notif-popup-close"); if (npClose) npClose.addEventListener("click", _notifPopupClose);
   const upNow = $("#update-now"); if (upNow) upNow.addEventListener("click", doUpdate);
   const upLater = $("#update-later"); if (upLater) upLater.addEventListener("click", () => {
     const dep = $("#update-ver") ? $("#update-ver").textContent.trim() : "";

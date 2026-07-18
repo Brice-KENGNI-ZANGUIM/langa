@@ -1667,6 +1667,33 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .incite-close:hover { color: var(--text); border-color: var(--cyan); }
 @media (max-width: 560px) { .incite-banner { right: 12px; left: 12px; bottom: 12px; width: auto; } }
 @media (prefers-reduced-motion: reduce) { .incite-banner { animation: updIn .3s ease both; } }
+/* Popup de notification : teinte violette (activité personnelle) plutôt que cyan. */
+.notif-popup { background: radial-gradient(120% 100% at 0% 0%, color-mix(in srgb, var(--violet) 14%, transparent), transparent 60%), var(--card-bg);
+  border-color: color-mix(in srgb, var(--violet) 55%, var(--border));
+  box-shadow: 0 18px 50px rgba(0,0,0,.42), 0 0 30px -6px var(--violet), inset 0 1px 0 var(--card-sheen); }
+
+/* Cloche du header : pastille de non-lues qui déborde en haut à droite. */
+.chip--notif { position: relative; }
+.notif-badge { position: absolute; top: -5px; right: -4px; min-width: 17px; height: 17px; padding: 0 4px;
+  border-radius: 999px; background: var(--red); color: #fff; font-size: .62rem; font-weight: 800; line-height: 17px;
+  text-align: center; box-shadow: 0 0 0 2px var(--bg), 0 0 10px -2px var(--red); pointer-events: none; }
+.notif-badge[hidden] { display: none; }
+
+/* Centre de notifications : flux horodaté, non-lues mises en avant. */
+.notif-toolbar { display: flex; justify-content: flex-end; margin: 4px 0 10px; }
+.notif-feed { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.notif { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px;
+  border: 1px solid var(--border); background: var(--panel);
+  box-shadow: inset 0 1px 0 var(--card-sheen); }
+.notif--unread { border-color: color-mix(in srgb, var(--violet) 55%, var(--border));
+  background: color-mix(in srgb, var(--violet) 9%, var(--panel));
+  box-shadow: 0 0 16px -8px var(--violet), inset 0 1px 0 var(--card-sheen); }
+.notif--unread .notif-msg { font-weight: 600; }
+.notif-ico { flex: 0 0 auto; font-size: 1.25rem; line-height: 1.3; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+.notif-body { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.notif-msg { margin: 0; font-size: .92rem; line-height: 1.45; color: var(--text); }
+.notif-time { font-size: .74rem; color: var(--muted); }
+.notif-empty { color: var(--muted); font-size: .92rem; line-height: 1.5; padding: 14px 4px; }
 
 /* ---- Visite guidée (projecteur + bulle « Étape N sur N ») ---- */
 .tour { position: fixed; inset: 0; z-index: 9998; }
