@@ -1,6 +1,9 @@
 {
-  "version": "v208",
+  "version": "v209",
   "changelog": {
+    "v209": [
+      "Explorer : chaque traduction ou transcription peut maintenant être votée par les locuteurs, avec trois choix (juste en vert, j'ai des doutes en jaune, faux en rouge) ; une pastille affiche le nombre de votes pour chacun des trois cas, ton propre choix ressort, et un nouveau clic sur ton choix l'annule"
+    ],
     "v208": [
       "Invitation à contribuer : un bouton « Écouter » permet désormais d'entendre la version d'une autre personne (dans sa langue) avant de la dire dans la tienne, pour t'inspirer",
       "Déclaration d'une langue : le pays et la famille/groupe sont maintenant obligatoires (comme le nom et la région). Les champs obligatoires sont marqués d'une étoile rouge et présentés en premier, avant les champs optionnels",

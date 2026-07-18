@@ -28,7 +28,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v208";
+const APP_VERSION = "v209";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1105,7 +1105,7 @@ function openLangChoice() {
 let _langStats = null;
 async function computeLangStats() {
   try {
-    const data = await browseLibrary({ limit: 500 });
+    const data = await browseLibrary({ limit: 500, device_id: deviceId() });
     const entries = (data && data.entries) || [];
     const by = {};
     for (const e of entries) {
@@ -2202,7 +2202,7 @@ async function loadLibrary() {
   if (status) status.textContent = t("exp.loading");
   if (list) list.innerHTML = "";
   try {
-    const data = await browseLibrary({ limit: 500 });
+    const data = await browseLibrary({ limit: 500, device_id: deviceId() });
     // Explorer est scopé sur la LANGUE COURANTE, et on ignore les entrées SANS AUCUN
     // contenu (ni mot source, ni traduction, ni audio jouable) : de telles entrées
     // dégénérées (POST malformé/ancien) créaient un groupe « — » vide, trompeur et
@@ -2590,6 +2590,7 @@ function renderProposal(e) {
     ${chips.length || note ? `<div class="entry-meta">${chips.join(" ")} ${note}</div>` : ""}
     ${audio}
     <div class="entry-foot">${credit} ${date}</div>
+    ${voteBarHtml(e)}
     <div class="entry-actions">
       <button type="button" class="entry-improve" data-id="${escapeHtml(e.id)}" data-orig="${escapeHtml(e.target_text || "")}">${t("exp.improve")}</button>
       <button type="button" class="entry-saymine" data-fr="${escapeHtml(e.direction === "nge2fr" ? (e.target_text || e.source_text || "") : (e.source_text || ""))}" title="${t("exp.saymine.title")}">${t("exp.saymine")}</button>
@@ -2597,6 +2598,49 @@ function renderProposal(e) {
     </div>
     <div class="entry-corr" hidden></div>
   </article>`;
+}
+
+// --- Vote communautaire à 3 états (juste ✓ / doute ? / faux ✗) --------------
+// Un locuteur laisse UN vote par proposition, qu'il peut changer ou ANNULER (re-clic
+// sur son choix). La pastille montre les comptes des 3 états ; son propre choix ressort.
+const VOTE_KINDS = [["ok", "✓", "ok"], ["doubt", "?", "doubt"], ["no", "✗", "no"]];
+function voteBarHtml(e) {
+  const v = e.votes3 || { ok: 0, doubt: 0, no: 0 };
+  const mine = e.my_vote || "";
+  const btns = VOTE_KINDS.map(([val, sym, cls]) =>
+    `<button type="button" class="ev-btn ev-${cls}${mine === val ? " is-mine" : ""}" data-v="${val}" data-id="${escapeHtml(e.id)}"
+       title="${t("vote." + val + ".title")}" aria-pressed="${mine === val}">${sym} <b class="ev-n">${(v[val] || 0)}</b></button>`).join("");
+  return `<div class="entry-vote" role="group" aria-label="${t("vote.aria")}"><span class="ev-lbl">${t("vote.lbl")}</span>${btns}</div>`;
+}
+function _voteCounts(bar) {
+  const o = {};
+  bar.querySelectorAll(".ev-btn").forEach((b) => { o[b.dataset.v] = parseInt((b.querySelector(".ev-n") || {}).textContent || "0", 10) || 0; });
+  return o;
+}
+function _applyVoteBar(bar, counts, mine) {
+  bar.querySelectorAll(".ev-btn").forEach((b) => {
+    const v = b.dataset.v, n = b.querySelector(".ev-n");
+    if (n) n.textContent = counts[v] || 0;
+    b.classList.toggle("is-mine", mine === v);
+    b.setAttribute("aria-pressed", mine === v);
+  });
+}
+async function onVote3(btn) {
+  if (!profileComplete()) { toast(t("vote.needprofile"), "warn"); openProfile(true); return; }
+  const bar = btn.closest(".entry-vote"); if (!bar) return;
+  const id = btn.dataset.id, val = btn.dataset.v;
+  const cur = bar.querySelector(".ev-btn.is-mine");
+  const curVal = cur ? cur.dataset.v : "";
+  const newVal = (curVal === val) ? "" : val;    // re-clic sur son choix = ANNULATION
+  // Mise à jour OPTIMISTE (réactivité) : on ajuste les comptes localement.
+  const counts = _voteCounts(bar);
+  if (curVal) counts[curVal] = Math.max(0, (counts[curVal] || 0) - 1);
+  if (newVal) counts[newVal] = (counts[newVal] || 0) + 1;
+  _applyVoteBar(bar, counts, newVal);
+  try {
+    const r = await postVote({ id_cible: id, device_id: deviceId(), valeur: newVal });
+    if (r && r.votes) _applyVoteBar(bar, r.votes, r.my_vote || "");   // réconcilie avec le serveur
+  } catch (e) { toast(t("vote.fail"), "warn"); }
 }
 
 // --- Corrections communautaires + consensus (par entrée) -------------------
@@ -2609,6 +2653,8 @@ function onExploreClick(e) {
   if (shr) { shareEntry(shr.dataset.src, shr.dataset.tgt, shr.dataset.dir, shr.dataset.audio === "1"); return; }
   const sm = e.target.closest(".entry-saymine");
   if (sm) { startTranslateWord(sm.dataset.fr); return; }
+  const ev = e.target.closest(".ev-btn");
+  if (ev) { onVote3(ev); return; }
   // clic sur un cadre de mot (mais pas sur un bouton interne) → détail
   const card = e.target.closest(".grp-card");
   if (card) { openGroup(card.dataset.key); return; }

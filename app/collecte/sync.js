@@ -74,12 +74,13 @@ export async function serverStats() {
  */
 export async function browseLibrary(opts = {}) {
   const limit = opts.limit || 500, offset = opts.offset || 0;
+  const dev = opts.device_id ? "&device_id=" + encodeURIComponent(opts.device_id) : "";
   let url;
   if (isGoogle()) {
-    url = `${endpoint()}?action=browse&limit=${limit}&offset=${offset}`;
+    url = `${endpoint()}?action=browse&limit=${limit}&offset=${offset}${dev}`;
   } else {
     const base = endpoint();
-    url = `${base || ""}/api/browse?limit=${limit}&offset=${offset}`;
+    url = `${base || ""}/api/browse?limit=${limit}&offset=${offset}${dev}`;
   }
   const r = await fetch(url, { cache: "no-store" });
   if (!r.ok) throw new Error("bibliothèque indisponible (" + r.status + ")");
