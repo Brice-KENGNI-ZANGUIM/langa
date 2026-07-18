@@ -1,6 +1,12 @@
 {
-  "version": "v213",
+  "version": "v214",
   "changelog": {
+    "v214": [
+      "Quand quelqu'un demande la traduction ou la prononciation d'un mot dans ta langue, cette demande apparaît maintenant directement en haut de « Traduire » et « Transcrire », dans un bandeau « La communauté attend une réponse dans ta langue » : un clic charge le mot et tu donnes ta réponse sur place, qui rejoint la bibliothèque et prévient la personne",
+      "Menu du haut plus clair : sur ordinateur tous les boutons tiennent sur une seule ligne ; sur téléphone la cloche de notifications est le dernier bouton de la première ligne (avec le nombre de messages non lus en rouge) et les boutons occupent bien toute la largeur",
+      "Les quatre onglets (Transcrire, Traduire, Explorer, Demander) sont accessibles depuis toutes les pages sauf l'accueil, et leur libellé s'affiche toujours en entier",
+      "Formulaires plus clairs : plus aucune valeur pré-remplie par défaut (langue, indicatif téléphonique, type de demande…) ; tu vois la case vide et tu choisis toi-même, les champs obligatoires étant marqués d'une étoile rouge"
+    ],
     "v213": [
       "Nouvelle porte « Demander » sur l'accueil : tu peux demander à la communauté la traduction ou la prononciation d'un mot ou d'une phrase dans une langue précise (avec le pays, la région et un peu de contexte). Les personnes qui parlent cette langue sont prévenues et peuvent t'aider ; les autres peuvent relayer ta demande autour d'eux avec un message tout prêt à partager",
       "Répondre à une demande se fait en un geste : ta réponse aide la personne, rejoint la bibliothèque Explorer et prévient le demandeur. LANGA devient un vrai outil d'entraide où chacun peut aider chacun",

@@ -9,7 +9,7 @@ import { reconcile, checkServer, serverStats, modeGoogle, browseLibrary,
   fetchSuggestions, postSuggestion, postVote, postBug, fetchBugs,
   fetchLanguages, declareLanguage, declareUser, fetchDriveAudio,
   proposeMerge, respondMerge, mergesForDevice, fetchNotifications,
-  fetchRequests, postRequest, postAnswer } from "./sync.js";
+  fetchRequests, fetchRequestsToTranslate, postRequest, postAnswer } from "./sync.js";
 import { PROPOSITIONS } from "./propositions.js";
 import { BUGS } from "./bugs.js";
 import { CONFIG } from "./config.js";
@@ -29,7 +29,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v213";
+const APP_VERSION = "v214";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -114,6 +114,7 @@ let direction = "fr2nge"; // fr2nge | nge2fr
 let mode = "proposer";    // proposer | libre  (défaut : proposer)
 let propCat = "auto";     // "auto" = progression ordonnée ; sinon un groupe précis
 let currentProp = null;   // proposition en cours {id, cat, texte}
+let _currentReqId = null; // lot 5 : id de la DEMANDE en cours de réponse (source venue du bandeau)
 let keyboard = null;
 let predict = null;
 // Caractères d'un « mot » ngiemboon (lettres Unicode + coup de glotte + tons combinants).
@@ -294,6 +295,7 @@ function discardWorkingInputs() {
 }
 let _lastGroup = null;
 function loadProposition() {
+  _currentReqId = null;     // item du corpus -> on ne répond plus à une demande
   discardWorkingInputs();   // repart propre : rien de l'ancien mot ne subsiste
   // Un groupe manuel épuisé → on repasse en mode automatique.
   if (propCat !== "auto" && groupUndone(propCat).length === 0) {
@@ -345,7 +347,7 @@ function applyMode() {
   $("#dir-toggle").hidden = proposer;
   if (proposer && direction !== "fr2nge") { direction = "fr2nge"; applyDirection(); }
   if (proposer) { refreshDoneTexts().then(() => loadProposition()); }
-  else { const s = $("#source"); s.value = ""; delete s.dataset.canon; s.placeholder = t("wk.source.ph"); currentProp = null; }
+  else { const s = $("#source"); s.value = ""; delete s.dataset.canon; s.placeholder = t("wk.source.ph"); currentProp = null; _currentReqId = null; }
   localStorage.setItem("modeSaisie", mode);
 }
 
@@ -725,6 +727,10 @@ async function saveContribution() {
     rec.proposition_id = currentProp.id;
     rec.proposition_cat = currentProp.cat;
   }
+  // lot 5 : réponse à une DEMANDE de la communauté -> relie la contribution à la
+  // demande (compte comme réponse + notifie le demandeur, côté backend).
+  const reqId = _currentReqId;
+  if (reqId) rec.request_id = reqId;
   await DB.put(rec);
   markDoneText(rec.source_text);   // cet item ne sera plus proposé à CET utilisateur
   if (mode === "proposer" && currentProp) {
@@ -732,6 +738,7 @@ async function saveContribution() {
   } else {
     resetForm();
   }
+  if (reqId) { _currentReqId = null; refreshReqStrip(); }   // la demande traitée disparaît du bandeau
   await refresh();
   kickReconcile();            // tente l'envoi tout de suite, puis en boucle jusqu'à confirmation
   toast("Contribution enregistrée localement.", "ok");
@@ -739,7 +746,9 @@ async function saveContribution() {
 }
 
 function resetForm() {
+  _currentReqId = null;                // plus de réponse à une demande en cours
   $("#source").value = "";
+  $("#source").readOnly = (mode === "proposer");   // libère la source imposée d'une demande
   delete $("#source").dataset.canon;   // #48 : pas de mot canonique résiduel
   $("#target").value = "";
   $("#domaine").value = "";
@@ -1744,6 +1753,64 @@ function enterWork(act) {
     _kbField = null;
   }
   showView("app");
+  refreshReqStrip(act);   // lot 5 : demandes de la communauté dans SA langue à traiter ici
+}
+
+// --- LOT 5 « Demander » : bandeau des demandes de la communauté à traiter -----
+// Les demandes ouvertes DANS LA LANGUE de l'utilisateur apparaissent en haut de
+// Traduire/Transcrire. Un clic charge le mot demandé en source ; la réponse
+// devient une contribution reliée à la demande (compte comme réponse + notifie le
+// demandeur). On ne montre que les demandes pertinentes pour l'activité courante.
+let _reqStripItems = [];
+function _reqMatchesActivity(kind, act) {
+  if (act === "transcribe") return kind === "transcription" || kind === "les_deux";
+  return kind === "traduction" || kind === "les_deux";   // translate
+}
+async function refreshReqStrip(act) {
+  const strip = $("#req-strip"), list = $("#req-strip-list");
+  if (!strip || !list) return;
+  act = act || activity;
+  let data = null;
+  try { data = await fetchRequestsToTranslate(deviceId()); } catch (e) { data = null; }
+  const items = ((data && data.items) || []).filter((r) => _reqMatchesActivity(r.kind, act));
+  _reqStripItems = items;
+  if (!items.length) { strip.hidden = true; list.innerHTML = ""; return; }
+  list.innerHTML = items.map(reqStripChipHtml).join("");
+  strip.hidden = false;
+}
+function reqStripChipHtml(r) {
+  const label = (getUiLang() === "en" && r.texte_en) ? r.texte_en : r.texte;
+  const by = (r.credit || "").trim();
+  return `<button type="button" class="req-chip" role="listitem" data-rid="${escapeHtml(r.id)}"` +
+    ` title="${escapeHtml(by ? ti("reqx.by", { who: by }) : t("reqx.chip.title"))}">` +
+    `<span class="req-chip-word">${escapeHtml(label)}</span>` +
+    (r.note ? `<span class="req-chip-note">${escapeHtml(r.note)}</span>` : "") +
+    `</button>`;
+}
+function onReqStripClick(e) {
+  const btn = e.target.closest && e.target.closest(".req-chip");
+  if (!btn) return;
+  const item = _reqStripItems.find((x) => x.id === btn.dataset.rid);
+  if (item) loadRequestIntoSource(item);
+}
+/** Charge le mot d'une demande comme SOURCE à traiter (traduire/prononcer). La
+    source est imposée (comme un item proposé) ; on retient l'id de la demande pour
+    relier la contribution. */
+function loadRequestIntoSource(item) {
+  mode = "libre"; applyMode();                         // source libre (on va la fixer nous-mêmes)
+  if (direction !== "fr2nge") { direction = "fr2nge"; applyDirection(); }
+  currentProp = null;
+  _currentReqId = item.id;
+  const src = $("#source");
+  if (src) {
+    src.dataset.canon = item.texte;                    // canonique FR (cohérence Explorer, #48)
+    src.value = (getUiLang() === "en" && item.texte_en) ? item.texte_en : sourceDisplay(item.texte);
+    src.readOnly = true;                               // mot imposé par la demande
+    src.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+  const tg = $("#target"); if (tg && activity !== "transcribe") { tg.value = ""; setTimeout(() => tg.focus(), 60); }
+  toast(ti("reqx.loaded", { w: item.texte }), "ok");
+  try { $("#work-card").scrollIntoView({ behavior: "smooth", block: "start" }); } catch (e) { /* ok */ }
 }
 /** #53 — « Dis-le dans ta langue » : depuis une entrée, propose le MÊME mot français dans la
     langue de l'utilisateur. Redirige vers profil (si absent), écran des langues (si aucune choisie),
@@ -4493,6 +4560,7 @@ function initEvents() {
   const nx = $("#tab-transcrire"); if (nx) nx.addEventListener("click", () => enterWork("transcribe"));
   const ne = $("#tab-explorer"); if (ne) ne.addEventListener("click", enterExplore);
   const nd = $("#tab-demander"); if (nd) nd.addEventListener("click", enterDemander);
+  const rsl = $("#req-strip-list"); if (rsl) rsl.addEventListener("click", onReqStripClick);   // lot 5 : clic sur une demande
   const eCsv = $("#export-csv"); if (eCsv) eCsv.addEventListener("click", () => downloadDict("csv"));
   const eJson = $("#export-json"); if (eJson) eJson.addEventListener("click", () => downloadDict("json"));
   const eLift = $("#export-lift"); if (eLift) eLift.addEventListener("click", () => downloadDict("lift"));
