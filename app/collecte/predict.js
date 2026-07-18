@@ -1,15 +1,17 @@
-// Moteur de prédiction ngiemboon — complétion de mots RÉELS à la frappe.
+// Moteur de prédiction GÉNÉRIQUE — complétion de mots RÉELS à la frappe, pour
+// N'IMPORTE quelle langue à clavier dédié.
 //
 // Principe (honnête) : on ne propose QUE des mots attestés. La source est
 // double et cumulative :
-//   1. l'AMORCE validée (lexique.data.js, générée + vérifiée par le moteur de
-//      règles) ;
-//   2. le CORPUS VIVANT : les mots ngiemboon des contributions déjà collectées
-//      (Explorer), agrégés avec leur FRÉQUENCE.
+//   1. l'AMORCE de la langue (le `lexicon` du pack, cf. langpacks.js), passée au
+//      constructeur ; pour le ngiemboon c'est un lexique validé par le moteur de
+//      règles, pour les autres langues il peut être vide au départ ;
+//   2. le CORPUS VIVANT : les mots de la langue dans les contributions déjà
+//      collectées (Explorer), agrégés avec leur FRÉQUENCE.
 // Le lexique grandit donc tout seul à mesure que la communauté contribue.
 //
-// Tout est on-device : aucun appel réseau. Sortie normalisée NFC.
-import { LEXIQUE_NGE } from "./lexique.data.js";
+// Séparation moteur / contenu : ce fichier ne connaît AUCUNE langue en dur ; le
+// contenu vient du pack. Tout est on-device : aucun appel réseau. Sortie NFC.
 
 const nfc = (s) => (s || "").normalize("NFC");
 // Base « sans ton » : on retire les diacritiques de ton (U+0300–U+036F) pour une
@@ -18,13 +20,15 @@ const nfc = (s) => (s || "").normalize("NFC");
 const TONES = /[̀-ͯ]/g;
 const baseOf = (s) => nfc(s).normalize("NFD").replace(TONES, "").normalize("NFC").toLowerCase();
 
-export class PredictNgiemboon {
-  constructor() {
+export class Predict {
+  /** `lexicon` = amorce [{m, fr}] de la langue (pack). Vide = démarre sans amorce
+      et apprend uniquement des contributions. */
+  constructor(lexicon) {
     // clé = mot NFC → { m, fr, freq, base }
     this._map = new Map();
     // index : 1re lettre de la base → liste de mots (accélère la complétion)
     this._buckets = new Map();
-    this.seed(LEXIQUE_NGE);
+    this.seed(lexicon || []);
   }
 
   /** Ajoute/renforce un mot. freqInc : poids (amorce = 1, contribution = 1 par occurrence). */
@@ -106,4 +110,4 @@ export class PredictNgiemboon {
   get size() { return this._map.size; }
 }
 
-export default PredictNgiemboon;
+export default Predict;

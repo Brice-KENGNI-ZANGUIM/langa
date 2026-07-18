@@ -1,6 +1,6 @@
 // Application de collecte Nguiemboo — logique principale.
 import { NgiemboonKeyboard } from "../keyboard/ngiemboon-keyboard.js";
-import { PredictNgiemboon } from "./predict.js";
+import { Predict } from "./predict.js";
 import { mountAudioPlayer } from "./audioplayer.js";
 import { sliceSamples, encodeWavBytes, detectSilenceBounds, samplesDuration } from "./audiotrim.js";
 import { sourceEn } from "./source_en.js";
@@ -13,7 +13,7 @@ import { PROPOSITIONS } from "./propositions.js";
 import { BUGS } from "./bugs.js";
 import { CONFIG } from "./config.js";
 import { currentLang, getCurrentLangId, setCurrentLangId, usesDedicatedKeyboard,
-  hasChosenLang, knownLanguages, cacheRemoteLanguages, langAlphabet } from "./languages.js";
+  hasChosenLang, knownLanguages, cacheRemoteLanguages, langAlphabet, langLexicon } from "./languages.js";
 import { applyI18n, getUiLang, setUiLang, t, tToast } from "./i18n.js";
 import { legalHtml, LEGAL_SECTIONS } from "./legal.js";
 import { entriesToCSV, entriesToJSON, entriesToLIFT, entriesToCLDF, entriesToELAN, exportFilename } from "./export.js";
@@ -28,7 +28,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v211";
+const APP_VERSION = "v212";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -2386,8 +2386,9 @@ async function loadLibrary() {
       .filter((e) => canonLangId(entryLang(e)) === lid)
       .filter((e) => (e.source_text && e.source_text.trim()) ||
                      (e.target_text && e.target_text.trim()) || isPlayable(e.audio_url));
-    // Le clavier prédictif APPREND des contributions réelles (mots + fréquences).
-    if (predict && lid === "nge") predict.learnFromEntries(_exploreEntries, lid);
+    // Le clavier prédictif APPREND des contributions réelles (mots + fréquences),
+    // pour toute langue à clavier dédié (le moteur est générique, cf. langpacks).
+    if (predict && usesDedicatedKeyboard(lid)) predict.learnFromEntries(_exploreEntries, lid);
     populateExploreFilters();
     renderExplore();
   } catch (e) {
@@ -3769,12 +3770,12 @@ function initKeyboard() {
   initPredict();
 }
 
-// --- Clavier prédictif ngiemboon : barre de suggestions de MOTS RÉELS ---------
-// Le moteur (predict.js) est amorcé par le lexique validé et APPREND en plus des
-// contributions déjà collectées. La barre n'apparaît que pour le ngiemboon (seule
-// langue à lexique dédié) et seulement s'il y a quelque chose à proposer.
+// --- Clavier prédictif : barre de suggestions de MOTS RÉELS -------------------
+// Moteur GÉNÉRIQUE (predict.js) amorcé par le LEXIQUE DU PACK de la langue courante
+// (langpacks.js) et qui APPREND en plus des contributions déjà collectées. La barre
+// apparaît pour toute langue à CLAVIER DÉDIÉ, et seulement s'il y a à proposer.
 function initPredict() {
-  if (!predict) predict = new PredictNgiemboon();
+  if (!predict) predict = new Predict(langLexicon(getCurrentLangId()));
   const strip = $("#kb-suggest");
   if (!strip) return;
   // Un seul écouteur délégué : quand le champ ciblé par le clavier change (frappe,
@@ -3794,9 +3795,10 @@ function initPredict() {
   });
 }
 
-/** Le clavier prédictif est-il pertinent pour la langue courante ? (lexique = nge). */
+/** Le clavier prédictif est-il pertinent ? Oui pour toute langue à CLAVIER DÉDIÉ
+    (le moteur propose depuis le lexique du pack + les contributions apprises). */
 function predictActive() {
-  return !!predict && getCurrentLangId() === "nge" && !!(keyboard && keyboard.target);
+  return !!predict && usesDedicatedKeyboard(getCurrentLangId()) && !!(keyboard && keyboard.target);
 }
 
 function predictHide() {

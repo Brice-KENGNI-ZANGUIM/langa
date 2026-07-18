@@ -1,6 +1,10 @@
 {
-  "version": "v211",
+  "version": "v212",
   "changelog": {
+    "v212": [
+      "Le clavier prédictif (suggestions de mots réels à la frappe) fonctionne désormais pour toutes les langues à clavier dédié, pas seulement le ngiemboon : il propose les mots déjà partagés par la communauté dans ta langue au fur et à mesure que tu écris",
+      "Réorganisation interne en « packs de langue » : le contenu propre à chaque langue (alphabet du clavier, lexique) est maintenant séparé du moteur commun, ce qui rend l'ajout et l'enrichissement d'une langue plus simples et plus fiables (aucun changement visible côté usage)"
+    ],
     "v211": [
       "Invitation à contribuer : une fois sur deux, elle te propose désormais d'aller donner ton avis (juste, doute ou faux) sur une proposition de ta langue que tu n'as pas encore notée, pour faire monter la qualité des mots ; le bouton t'amène directement à l'entrée concernée",
       "Explorer : deux nouveaux formats d'export en plus de CSV, JSON et LIFT : CLDF (listes de mots comparatives, pour les outils de linguistique) et ELAN (fichier .eaf d'annotations, transcription et traduction), pour que les chercheurs réutilisent facilement les données",

@@ -14,8 +14,7 @@
 //
 // Auteur : Brice Kengni Zanguim.
 
-import { NGIEMBOON } from "../keyboard/alphabet.data.js";
-import { ALPHABETS_AFRIQUE } from "../keyboard/alphabets_afrique.js";
+import { packAlphabet, packLexicon, packHasKeyboard, contentPack } from "./langpacks.js";
 import { CONFIG } from "./config.js";
 
 // Langue GRAINE : toujours présente, et seule à avoir un clavier dédié pour l'instant.
@@ -96,15 +95,21 @@ export function currentLang() {
   return getLang(getCurrentLangId());
 }
 
-// --- Alphabet / clavier d'une langue ---------------------------------------
-/** Pack alphabet d'une langue si elle a un clavier DÉDIÉ, sinon null (→ clavier système). */
-export function langAlphabet(id) {
-  if (id === "nge") return NGIEMBOON;
-  return ALPHABETS_AFRIQUE[id] || null;
-}
+// --- Alphabet / clavier / pack d'une langue --------------------------------
+// Le CONTENU par langue (alphabet du clavier dédié, lexique prédictif) vit dans
+// langpacks.js (séparation moteur / contenu). Ces helpers y délèguent, et
+// `langPack()` assemble le pack COMPLET = méta-donnée (registre) + contenu.
+/** Alphabet du clavier DÉDIÉ d'une langue, sinon null (→ clavier système). */
+export function langAlphabet(id) { return packAlphabet(id); }
 /** Cette langue a-t-elle un clavier DÉDIÉ à l'écran (vs le clavier du système) ? */
-export function usesDedicatedKeyboard(id) {
-  return !!langAlphabet(id);
+export function usesDedicatedKeyboard(id) { return packHasKeyboard(id); }
+/** Amorce du lexique prédictif de la langue (mots réels), ou [] si aucune. */
+export function langLexicon(id) { return packLexicon(id); }
+/** Pack COMPLET d'une langue : méta-donnée (nom, région, clavier…) + contenu
+    (alphabet, lexique). Point d'accès unique côté application. */
+export function langPack(id) {
+  id = id || getCurrentLangId();
+  return Object.assign({ meta: getLang(id) }, contentPack(id));
 }
 
 // --- Cache du registre distant (rempli en Phase B par fetchLanguages) ------
