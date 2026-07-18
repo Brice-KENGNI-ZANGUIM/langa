@@ -21,6 +21,9 @@ Cameroun, est la **plus avancée** : clavier dédié et corpus le plus riche.
 
 ## Aperçu
 
+<p align="center"><i>Les captures alternent le <b>thème clair</b> et le <b>thème sombre</b> : l'application propose les deux,
+au choix de chacun.</i></p>
+
 <p align="center"><b>Accueil</b> : les trois portes d'entrée de la contribution : <b>Transcrire</b> (prêter sa voix),
 <b>Traduire</b> (donner un équivalent) et <b>Explorer</b> (parcourir la bibliothèque commune). Chaque activité
 porte sa couleur d'identité ; on passe de l'une à l'autre à tout moment par le menu du haut.</p>
@@ -53,7 +56,9 @@ dimensionné par son nombre de contributions. Chaque mot regroupe toutes ses pro
 différentes personnes ont proposé, regroupé <b>par village</b>. Chaque variante affiche le <b>rôle</b> du
 contributeur (locuteur natif, apprenant, linguiste), sa <b>prononciation</b> jouable directement dans un
 lecteur à onde, et le <b>consensus</b> quand plusieurs réponses concordent (« ✅ Référence Balatchi »).
-On apprend la langue simplement en explorant les contributions déjà partagées.</p>
+Chaque proposition porte une <b>pastille de vote à trois choix</b> (juste en vert, doute en jaune, faux en
+rouge) : les locuteurs notent la justesse d'un coup d'œil. On apprend la langue simplement en explorant les
+contributions déjà partagées.</p>
 <p align="center">
   <img src="assets/screenshots/explorer-detail.png" alt="Détail d'un mot : variantes par village, rôles, prononciations audio et consensus, pour apprendre en écoutant et en lisant" width="820" />
 </p>
@@ -65,6 +70,15 @@ panneau communautaire : on <b>vote</b> pour la traduction la plus juste (la mieu
 remarque. La qualité des données monte ainsi de proche en proche, par accord entre pairs.</p>
 <p align="center">
   <img src="assets/screenshots/explorer-ameliorer.png" alt="Panneau d'amélioration d'une entrée : consensus, votes, prononciations alternatives, commentaires et formulaire de proposition" width="820" />
+</p>
+
+<p align="center"><b>Notifications</b> : chacun est tenu au courant de <b>tout ce qui se passe autour de ses
+contributions</b> (quand une de ses traductions ou transcriptions est <b>notée</b> ou <b>améliorée</b>) et
+de la <b>vie de la langue</b> (paliers franchis). Un centre de notifications <b>daté</b> garde l'historique,
+une pastille signale les non lues, et un rappel discret peut apparaître à l'ouverture. Le prénom de l'autre
+personne n'apparaît que si elle a autorisé l'affichage de son nom.</p>
+<p align="center">
+  <img src="assets/screenshots/notifications.png" alt="Centre de notifications daté : vote reçu, amélioration reçue, jalon de la langue" width="820" />
 </p>
 
 <p align="center"><b>Multilingue</b> : l'écran de choix de langue : plusieurs langues d'Afrique sont
