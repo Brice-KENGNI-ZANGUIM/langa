@@ -1,6 +1,10 @@
 {
-  "version": "v212",
+  "version": "v213",
   "changelog": {
+    "v213": [
+      "Nouvelle porte « Demander » sur l'accueil : tu peux demander à la communauté la traduction ou la prononciation d'un mot ou d'une phrase dans une langue précise (avec le pays, la région et un peu de contexte). Les personnes qui parlent cette langue sont prévenues et peuvent t'aider ; les autres peuvent relayer ta demande autour d'eux avec un message tout prêt à partager",
+      "Répondre à une demande se fait en un geste : ta réponse aide la personne, rejoint la bibliothèque Explorer et prévient le demandeur. LANGA devient un vrai outil d'entraide où chacun peut aider chacun"
+    ],
     "v212": [
       "Sur ordinateur, l'application occupe désormais une bien plus grande largeur d'écran : les grandes marges vides sur les côtés sont fortement réduites, pour un affichage plus généreux et plus confortable (l'affichage sur téléphone est inchangé)",
       "Le clavier prédictif (suggestions de mots réels à la frappe) fonctionne désormais pour toutes les langues à clavier dédié, pas seulement le ngiemboon : il propose les mots déjà partagés par la communauté dans ta langue au fur et à mesure que tu écris",

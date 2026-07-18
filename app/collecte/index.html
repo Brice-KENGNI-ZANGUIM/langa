@@ -315,6 +315,15 @@
             prononciations, propose des améliorations.</span>
           <span class="hub-go" data-i18n="hub.open">Ouvrir →</span>
         </button>
+        <button class="hub-card" type="button" data-go="demander">
+          <span class="hub-card-head">
+            <img class="hub-ico" src="icons/act-request.png" alt="" aria-hidden="true">
+            <span class="hub-name" data-i18n="hub.card.demander">Demander</span>
+          </span>
+          <span class="hub-desc" data-i18n="hub.card.demander.desc">Demande à la communauté la traduction ou la prononciation d'un mot
+            ou d'une phrase dans une langue précise. Quelqu'un pourra t'aider.</span>
+          <span class="hub-go" data-i18n="hub.ask">Demander →</span>
+        </button>
       </div>
       <div class="hub-share">
         <span class="share-lead" data-i18n="share.hub">Aide nos langues à rayonner, partage LANGA :</span>
@@ -668,6 +677,59 @@
         échange avec la communauté : tu seras prévenu ici dès qu'il se passe quelque chose autour de tes contributions.</p>
       <div class="about-cta">
         <button class="btn btn--ghost" id="notif-back" type="button" data-i18n="btn.back">← Retour</button>
+      </div>
+    </section>
+
+    <!-- ============== VUE DEMANDER (axe social : entraide traduction) ======= -->
+    <section id="view-demander" class="view" hidden>
+      <div class="about-head">
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/act-request.png" alt="" aria-hidden="true"><span data-i18n="req.title">Demander une traduction</span></h2>
+        <p class="contrib-why" data-i18n-html="req.intro">Demande à la communauté la <b>traduction</b> ou la <b>prononciation</b>
+          d'un mot ou d'une phrase dans une langue précise. Les personnes qui parlent cette langue sont prévenues et peuvent
+          t'aider ; les autres peuvent <b>relayer ta demande</b> autour d'eux. N'importe qui peut aider n'importe qui.</p>
+      </div>
+
+      <div class="card req-form">
+        <h3 data-i18n="req.form.h">Lancer une demande</h3>
+        <div class="grid2">
+          <label class="field"><span data-i18n-html="req.f.texte">Mot ou phrase <span class="req">*</span></span>
+            <input id="req-texte" type="text" maxlength="280" data-i18n-ph="req.f.texte.ph" placeholder="ex. mangue" autocomplete="off" />
+          </label>
+          <div class="field"><span data-i18n-html="req.f.langue">Langue demandée <span class="req">*</span></span>
+            <select id="req-langue"></select>
+          </div>
+          <div class="field"><span data-i18n="req.f.kind">Ce que tu demandes</span>
+            <select id="req-kind">
+              <option value="traduction" data-i18n="req.kind.trad">La traduction (écrite)</option>
+              <option value="transcription" data-i18n="req.kind.transc">La prononciation (voix)</option>
+              <option value="les_deux" data-i18n="req.kind.both">Les deux</option>
+            </select>
+          </div>
+          <label class="field"><span data-i18n="req.f.pays">Pays / région (facultatif)</span>
+            <input id="req-pays" type="text" maxlength="80" data-i18n-ph="req.f.pays.ph" placeholder="ex. Cameroun, Ouest" autocomplete="off" />
+          </label>
+          <label class="field field--wide"><span data-i18n="req.f.note">Contexte (facultatif)</span>
+            <input id="req-note" type="text" maxlength="280" data-i18n-ph="req.f.note.ph" placeholder="ex. ma grand-mère m'a dit ce mot, je n'ai pas compris" autocomplete="off" />
+          </label>
+        </div>
+        <div class="actions">
+          <button id="req-send" class="btn btn--primary" type="button" data-i18n="req.form.send">Publier ma demande →</button>
+          <p id="req-error" class="lock-hint" hidden></p>
+        </div>
+      </div>
+
+      <div class="req-list-head">
+        <h3 data-i18n="req.list.h">Demandes en attente</h3>
+        <label class="req-filter"><span data-i18n="req.filter">Langue :</span>
+          <select id="req-filter-lang"></select>
+        </label>
+      </div>
+      <ul id="req-list" class="req-list" aria-live="polite"></ul>
+      <p id="req-empty" class="notif-empty" hidden data-i18n="req.empty">Aucune demande en attente pour l'instant. Sois le premier
+        à demander de l'aide à la communauté.</p>
+
+      <div class="about-cta">
+        <button class="btn btn--ghost" id="req-back" type="button" data-i18n="btn.back">← Retour</button>
       </div>
     </section>
 

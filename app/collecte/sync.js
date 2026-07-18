@@ -206,6 +206,29 @@ export async function fetchNotifications(deviceId, since) {
   } catch (e) { return null; }
 }
 
+/** Demandes ouvertes de traduction/transcription (« porte Demander »). Filtre par
+    langue si fournie. Renvoie {ok, requests:[…]} ou null si l'endpoint n'existe pas
+    encore (ancien backend Google non redéployé). */
+export async function fetchRequests(langue, deviceId) {
+  const base = endpoint();
+  const l = langue ? "&langue=" + encodeURIComponent(langue) : "";
+  const d = deviceId ? "&device_id=" + encodeURIComponent(deviceId) : "";
+  const url = isGoogle()
+    ? `${base}?action=requests${l}${d}`
+    : `${base || ""}/api/requests?x=1${l}${d}`;
+  try {
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) return null;
+    const data = await r.json();
+    if (!data || data.ok === false || !Array.isArray(data.requests)) return null;
+    return data;
+  } catch (e) { return null; }
+}
+/** Publie une demande de traduction/transcription à la communauté. */
+export function postRequest(r) { return postOp(Object.assign({ op: "request" }, r)); }
+/** Répond à une demande : devient une contribution (alimente Explorer) + notifie le demandeur. */
+export function postAnswer(a) { return postOp(Object.assign({ op: "answer_request" }, a)); }
+
 /** POST d'une opération communautaire (suggest/vote), même canal que les contributions. */
 async function postOp(payload) {
   const base = endpoint();

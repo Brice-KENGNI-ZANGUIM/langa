@@ -8,7 +8,8 @@ import { DB } from "./db.js";
 import { reconcile, checkServer, serverStats, modeGoogle, browseLibrary,
   fetchSuggestions, postSuggestion, postVote, postBug, fetchBugs,
   fetchLanguages, declareLanguage, declareUser, fetchDriveAudio,
-  proposeMerge, respondMerge, mergesForDevice, fetchNotifications } from "./sync.js";
+  proposeMerge, respondMerge, mergesForDevice, fetchNotifications,
+  fetchRequests, postRequest, postAnswer } from "./sync.js";
 import { PROPOSITIONS } from "./propositions.js";
 import { BUGS } from "./bugs.js";
 import { CONFIG } from "./config.js";
@@ -28,7 +29,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v212";
+const APP_VERSION = "v213";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -816,10 +817,10 @@ let profileSnapshot = null; // sauvegarde pour « Annuler » en mode édition
 // Précédent/Suivant (popstate) rejoue la route ; un rafraîchissement ou un lien profond
 // restaure la même vue (sous réserve du VERROU de profil, qui garde la priorité).
 const ROUTE_OF_VIEW = { hub: "accueil", explore: "explorer", about: "apropos",
-  bugs: "bugs", profile: "profil", lang: "langue", notifs: "notifications" };
+  bugs: "bugs", profile: "profil", lang: "langue", notifs: "notifications", demander: "demander" };
 const VIEW_OF_ROUTE = { accueil: "hub", traduire: "app", transcrire: "app",
   explorer: "explore", apropos: "about", bugs: "bugs", profil: "profile", langue: "lang",
-  notifications: "notifs",
+  notifications: "notifs", demander: "demander",
   // Pages légales : 4 routes → une même vue, ancrée sur la bonne section.
   "mentions-legales": "legal", "confidentialite": "legal", "cgu": "legal", "cgv": "legal" };
 // Correspondance route ↔ section légale.
@@ -877,6 +878,7 @@ function routeTo(route) {
     case "apropos": openAbout(); break;
     case "bugs": openBugs(); break;
     case "notifications": openNotifs(); break;
+    case "demander": enterDemander(); break;
     case "profil": openProfile(profileComplete()); break;
     case "langue": openLangChoice(); break;
     case "mentions-legales": case "confidentialite": case "cgu": case "cgv":
@@ -912,9 +914,10 @@ function showView(name) {
   $("#view-about").hidden = name !== "about";
   $("#view-bugs").hidden = name !== "bugs";
   const nv = $("#view-notifs"); if (nv) nv.hidden = name !== "notifs";
+  const dmv = $("#view-demander"); if (dmv) dmv.hidden = name !== "demander";
   const glv = $("#view-legal"); if (glv) glv.hidden = name !== "legal";
   const nav = $("#main-nav");
-  if (nav) nav.hidden = (name === "lang" || name === "amorce" || name === "profile" || name === "hub" || name === "about" || name === "bugs" || name === "notifs" || name === "legal");
+  if (nav) nav.hidden = (name === "lang" || name === "amorce" || name === "profile" || name === "hub" || name === "about" || name === "bugs" || name === "notifs" || name === "demander" || name === "legal");
   // « Mon profil » : visibilité conditionnée UNIQUEMENT à l'existence d'un profil.
   // Il reste donc affiché sur TOUTES les pages, y compris la vue profil elle-même
   // (il y sert de repère et n'a jamais à disparaître). Sans profil : rien à ouvrir.
@@ -1962,10 +1965,14 @@ function notifText(n) {
   }
   if (n.type === "suggestion") return ti("notif.sugg", { who, mot: mot || t("notif.your") });
   if (n.type === "milestone") return ti("notif.milestone", { lang: ln || t("notif.yourlang"), count: d.count || 0 });
+  if (n.type === "request") return ti("notif.request", { who, mot: mot || "…", lang: ln || _langNameById(d.langue) || t("notif.yourlang") });
+  if (n.type === "request_share") return ti("notif.request_share", { mot: mot || "…", lang: ln || _langNameById(d.langue) || t("notif.yourlang") });
+  if (n.type === "request_answered") return ti("notif.request_answered", { who, mot: mot || t("notif.your") });
   return String(d.text || "");   // announce / types futurs porteurs d'un texte
 }
 function notifIcon(type) {
-  return ({ vote: "🗳️", suggestion: "✍️", milestone: "🎉", announce: "📣" })[type] || "🔔";
+  return ({ vote: "🗳️", suggestion: "✍️", milestone: "🎉", announce: "📣",
+            request: "🙋", request_share: "🔗", request_answered: "🎉" })[type] || "🔔";
 }
 function relTime(ts) {
   if (!ts) return "";
@@ -2008,7 +2015,8 @@ async function maybeShowNotifPopup() {
   if (!profileComplete()) return;
   const seen = _notifSeenTs();
   const lastPop = parseInt(localStorage.getItem(NOTIF_POPUP_KEY) || "0", 10) || 0;
-  const fresh = _notifs.filter((n) => (n.type === "vote" || n.type === "suggestion" || n.type === "milestone")
+  const POP_TYPES = { vote: 1, suggestion: 1, milestone: 1, request: 1, request_answered: 1 };
+  const fresh = _notifs.filter((n) => POP_TYPES[n.type]
     && (n.ts || 0) > seen && (n.ts || 0) > lastPop);
   if (!fresh.length) return;
   const n = fresh[0];   // la plus récente (liste triée décroissante)
@@ -2019,6 +2027,132 @@ async function maybeShowNotifPopup() {
   try { localStorage.setItem(NOTIF_POPUP_KEY, String(n.ts || Date.now())); } catch (e) { /* ok */ }
 }
 function _notifPopupClose() { const p = $("#notif-popup"); if (p) p.hidden = true; }
+
+// --- Porte « Demander » : entraide communautaire de traduction/transcription --
+// Un utilisateur demande un mot/phrase dans une langue précise ; les locuteurs sont
+// notifiés (« viens aider »), les autres invités à relayer. N'importe qui répond en
+// place (texte) : la réponse devient une contribution qui alimente Explorer et
+// prévient le demandeur. Backend : ops request / answer_request (sync.js).
+let _reqReturn = "hub";
+let _requests = [];
+function _langNameById(id) {
+  const l = knownLanguages().find((x) => canonLangId(x.id) === canonLangId(id));
+  return l ? l.nom : String(id || "");
+}
+function _fillReqLangSelects() {
+  const langs = visibleLanguages(knownLanguages());
+  const opts = langs.map((l) => `<option value="${escapeHtml(l.id)}">${escapeHtml(l.nom)}</option>`).join("");
+  const sel = $("#req-langue");
+  if (sel) { sel.innerHTML = opts; sel.value = getCurrentLangId(); }
+  const f = $("#req-filter-lang");
+  if (f) { const cur = f.value; f.innerHTML = `<option value="">${escapeHtml(t("req.filter.all"))}</option>` + opts; f.value = cur || ""; }
+  refreshEnhancedSelects();
+}
+function enterDemander() {
+  if (!requireProfile(t("req.needprofile"))) return;
+  if (_currentView !== "demander") _reqReturn = _currentView;
+  _fillReqLangSelects();
+  showView("demander");
+  renderRequests();
+}
+function reqKindLabel(k) {
+  return t({ traduction: "req.kind.trad.s", transcription: "req.kind.transc.s", les_deux: "req.kind.both.s" }[k] || "req.kind.trad.s");
+}
+function reqCardHtml(r) {
+  const lang = _langNameById(r.langue);
+  const who = (r.credit || "").trim();
+  const loc = [r.pays, r.region, r.variante].filter(Boolean).map((x) => x).join(" · ");
+  const meta = [reqKindLabel(r.kind), lang, loc].filter(Boolean).join(" · ");
+  return `<li class="req-item${r.mine ? " req-item--mine" : ""}" data-id="${escapeHtml(r.id)}" data-w="${escapeHtml(r.texte)}" data-lang="${escapeHtml(r.langue)}">` +
+    `<div class="req-top"><span class="req-word">${escapeHtml(r.texte)}</span>` +
+      `<span class="req-badge">${escapeHtml(lang)}</span></div>` +
+    `<div class="req-meta">${escapeHtml(meta)}${who ? " · " + escapeHtml(ti("req.by", { who })) : ""}</div>` +
+    (r.note ? `<div class="req-note">${escapeHtml(r.note)}</div>` : "") +
+    `<div class="req-actions">` +
+      (r.mine ? `<span class="req-mine-tag">${escapeHtml(t("req.mine"))}</span>`
+              : `<button type="button" class="btn btn--sm req-answer-open">${escapeHtml(t("req.answer"))}</button>`) +
+      `<button type="button" class="chip chip--btn req-share">${escapeHtml(t("req.share"))}</button>` +
+      `<span class="req-count">${escapeHtml(ti("req.answers", { n: r.answers || 0 }))}</span>` +
+    `</div>` +
+    `<div class="req-answer-box" hidden>` +
+      `<input type="text" class="req-answer-input" maxlength="280" placeholder="${escapeHtml(t("req.answer.ph"))}" />` +
+      `<button type="button" class="btn btn--primary btn--sm req-answer-send">${escapeHtml(t("req.answer.send"))}</button>` +
+    `</div>` +
+  `</li>`;
+}
+async function renderRequests() {
+  const list = $("#req-list"), empty = $("#req-empty");
+  const flt = ($("#req-filter-lang") && $("#req-filter-lang").value) || "";
+  let data = null;
+  try { data = await fetchRequests(flt, deviceId()); } catch (e) { data = null; }
+  _requests = (data && data.requests) || [];
+  if (list) list.innerHTML = _requests.map(reqCardHtml).join("");
+  if (empty) empty.hidden = _requests.length > 0;
+}
+async function submitRequest() {
+  const texte = ($("#req-texte").value || "").trim();
+  const langue = ($("#req-langue").value || "").trim();
+  const err = $("#req-error");
+  if (!texte || !langue) { if (err) { err.hidden = false; err.textContent = t("req.err.fields"); } return; }
+  if (err) err.hidden = true;
+  const btn = $("#req-send"); if (btn) btn.disabled = true;
+  try {
+    const r = await postRequest({
+      texte, langue, lang_nom: _langNameById(langue), kind: ($("#req-kind").value || "traduction"),
+      pays: ($("#req-pays").value || "").trim(), note: ($("#req-note").value || "").trim(),
+      device_id: deviceId(), credit: creditDisplay(),
+    });
+    if (r && r.ok) {
+      toast(t("req.sent"), "ok");
+      $("#req-texte").value = ""; $("#req-pays").value = ""; $("#req-note").value = "";
+      renderRequests();
+    } else { toast(t("req.fail"), "warn"); }
+  } catch (e) { toast(t("req.fail"), "warn"); }
+  finally { if (btn) btn.disabled = false; }
+}
+async function _sendAnswer(item, btn) {
+  const inp = item.querySelector(".req-answer-input");
+  const texte = ((inp && inp.value) || "").trim();
+  if (!texte) { toast(t("req.answer.empty"), "warn"); return; }
+  const rid = item.dataset.id;
+  if (btn) btn.disabled = true;
+  try {
+    const c = loadContributeur();
+    const r = await postAnswer({
+      request_id: rid, texte, device_id: deviceId(),
+      credit_display: c.credit_display || "", contributeur: c,
+      client_id: "ans-" + rid + "-" + deviceId(),
+    });
+    if (r && r.ok) { toast(t("req.answer.ok"), "ok"); renderRequests(); }
+    else { toast(t("req.fail"), "warn"); }
+  } catch (e) { toast(t("req.fail"), "warn"); }
+  finally { if (btn) btn.disabled = false; }
+}
+/** Message prêt à copier/partager pour relayer une demande (non-locuteurs). */
+async function _shareRequest(item) {
+  const w = item.dataset.w, lang = _langNameById(item.dataset.lang);
+  const text = ti("req.share.msg", { w, lang, url: PRESENT_URL.replace(/\/$/, "") });
+  try { if (navigator.share) { await navigator.share({ title: "LANGA", text }); return; } }
+  catch (e) { if (e && e.name === "AbortError") return; }
+  try {
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      await navigator.clipboard.writeText(text); toast(t("req.share.copied"), "ok"); return;
+    }
+  } catch (e) { /* repli */ }
+  toast(t("req.share.copied"), "ok");
+}
+function onReqListClick(e) {
+  const openB = e.target.closest(".req-answer-open");
+  if (openB) {
+    const box = openB.closest(".req-item").querySelector(".req-answer-box");
+    if (box) { box.hidden = !box.hidden; const inp = box.querySelector(".req-answer-input"); if (!box.hidden && inp) inp.focus(); }
+    return;
+  }
+  const share = e.target.closest(".req-share");
+  if (share) { _shareRequest(share.closest(".req-item")); return; }
+  const send = e.target.closest(".req-answer-send");
+  if (send) { _sendAnswer(send.closest(".req-item"), send); return; }
+}
 
 function enterExplore() {
   // Capture le lien direct AVANT que showView n'aligne l'URL sur « #/explorer » (sans requête).
@@ -4292,7 +4426,9 @@ function initEvents() {
     card.addEventListener("click", (ev) => {
       spawnRipple(card, ev);
       const go = card.dataset.go;
-      if (go === "explore") enterExplore(); else enterWork(go);
+      if (go === "explore") enterExplore();
+      else if (go === "demander") enterDemander();
+      else enterWork(go);
     })
   );
   // Onglets de navigation permanents
@@ -4330,6 +4466,11 @@ function initEvents() {
   const npGo = $("#notif-popup-go"); if (npGo) npGo.addEventListener("click", () => { _notifPopupClose(); openNotifs(); });
   const npLater = $("#notif-popup-later"); if (npLater) npLater.addEventListener("click", _notifPopupClose);
   const npClose = $("#notif-popup-close"); if (npClose) npClose.addEventListener("click", _notifPopupClose);
+  // Porte « Demander » : publier une demande, retour, filtre langue, réponses/partage.
+  const rSend = $("#req-send"); if (rSend) rSend.addEventListener("click", submitRequest);
+  const rBack = $("#req-back"); if (rBack) rBack.addEventListener("click", () => showView(_reqReturn || "hub"));
+  const rFilt = $("#req-filter-lang"); if (rFilt) rFilt.addEventListener("change", renderRequests);
+  const rList = $("#req-list"); if (rList) rList.addEventListener("click", onReqListClick);
   const upNow = $("#update-now"); if (upNow) upNow.addEventListener("click", doUpdate);
   const upLater = $("#update-later"); if (upLater) upLater.addEventListener("click", () => {
     const dep = $("#update-ver") ? $("#update-ver").textContent.trim() : "";

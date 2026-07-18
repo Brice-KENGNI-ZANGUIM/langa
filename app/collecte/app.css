@@ -406,8 +406,10 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 
 /* ---- Accueil « Que veux-tu faire ? » ---- */
 .hub-head { text-align: center; margin-bottom: 4px; }
-.hub-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
-@media (max-width: 720px) { .hub-cards { grid-template-columns: 1fr; } }
+.hub-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+/* 4 portes : 4 de front sur grand écran, 2×2 sur tablette / PC étroit, 1 sur mobile. */
+@media (max-width: 1080px) { .hub-cards { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .hub-cards { grid-template-columns: 1fr; } }
 /* Chaque porte porte SA couleur d'identité (assortie à son icône et au mode
    présentation) : Traduire → vert, Transcrire → violet, Explorer → or. */
 /* Angle enregistré (animable) pour la bordure conique tournante des cartes du hub. */
@@ -430,6 +432,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .hub-card:nth-child(1) { --acc: var(--green); }
 .hub-card:nth-child(2) { --acc: #a78bfa; }
 .hub-card:nth-child(3) { --acc: var(--gold); }
+.hub-card:nth-child(4) { --acc: var(--cyan); }
 /* Bordure vive et PLEINE de la couleur d'activité (bien lisible à l'arrêt) SURMONTÉE d'une
    comète blanche large qui fait le tour, rapide. Anneau réalisé au masque → reste dans la boîte. */
 .hub-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 3px;
@@ -1711,6 +1714,34 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .notif-msg { margin: 0; font-size: .92rem; line-height: 1.45; color: var(--text); }
 .notif-time { font-size: .74rem; color: var(--muted); }
 .notif-empty { color: var(--muted); font-size: .92rem; line-height: 1.5; padding: 14px 4px; }
+
+/* --- Porte « Demander » : formulaire + liste des demandes --- */
+.req-form { --acc: var(--cyan); }
+.req-form h3, .req-list-head h3 { margin: 0 0 12px; font-family: var(--font-display); font-size: 1.05rem; color: var(--text); }
+.req-list-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 22px 0 12px; }
+.req-filter { display: inline-flex; align-items: center; gap: 8px; font-size: .86rem; color: var(--muted); }
+.req-filter select { min-width: 160px; }
+.req-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 12px; }
+.req-item { position: relative; padding: 14px 16px; border-radius: 16px; border: 1px solid var(--border);
+  background: radial-gradient(120% 80% at 0% 0%, color-mix(in srgb, var(--cyan) 7%, transparent), transparent 60%), var(--panel);
+  box-shadow: inset 0 1px 0 var(--card-sheen); }
+.req-item--mine { border-color: color-mix(in srgb, var(--cyan) 45%, var(--border));
+  box-shadow: 0 0 18px -10px var(--cyan), inset 0 1px 0 var(--card-sheen); }
+.req-top { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+.req-word { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; color: var(--text); }
+.req-badge { font-size: .74rem; font-weight: 700; color: var(--cyan); padding: 2px 10px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--cyan) 45%, var(--border)); background: color-mix(in srgb, var(--cyan) 10%, var(--panel2)); white-space: nowrap; }
+.req-meta { font-size: .82rem; color: var(--muted); margin-top: 3px; }
+.req-note { font-size: .88rem; color: var(--text); margin-top: 8px; padding: 8px 10px; border-radius: 10px;
+  background: var(--panel2); border-left: 3px solid color-mix(in srgb, var(--cyan) 50%, var(--border)); }
+.req-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.req-mine-tag { font-size: .78rem; font-weight: 700; color: var(--cyan); }
+.req-count { font-size: .78rem; color: var(--muted); margin-left: auto; }
+.btn--sm { padding: 7px 14px; font-size: .85rem; border-radius: 999px; }
+.req-answer-box { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+.req-answer-box[hidden] { display: none; }
+.req-answer-input { flex: 1 1 220px; min-width: 0; }
+@media (max-width: 520px) { .req-answer-input { flex-basis: 100%; } .req-count { margin-left: 0; } }
 
 /* ---- Visite guidée (projecteur + bulle « Étape N sur N ») ---- */
 .tour { position: fixed; inset: 0; z-index: 9998; }
