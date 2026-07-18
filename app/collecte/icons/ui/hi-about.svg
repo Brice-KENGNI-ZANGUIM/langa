@@ -1,5 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="À propos">
-<defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5cebff"/><stop offset=".55" stop-color="#16b6d6"/><stop offset="1" stop-color="#0c8a6a"/></linearGradient>
+<defs><linearGradient id="ag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8fc2ff"/><stop offset=".55" stop-color="#3f7fe0"/><stop offset="1" stop-color="#163f8a"/></linearGradient>
 <radialGradient id="agl" cx="34%" cy="26%" r="62%"><stop offset="0" stop-color="#fff" stop-opacity=".75"/><stop offset=".6" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
 <circle cx="16" cy="16" r="12.5" fill="url(#ag)"/>
 <circle cx="16" cy="9.6" r="2.3" fill="#fff"/><rect x="13.9" y="13.6" width="4.2" height="10.4" rx="2.1" fill="#fff"/>

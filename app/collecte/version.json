@@ -1,6 +1,12 @@
 {
-  "version": "v201",
+  "version": "v202",
   "changelog": {
+    "v202": [
+      "Le décor animé est désormais visible aussi sur téléphone (il n'était figé que sur ordinateur) ; il ne se met en pause que pendant que tu écris au clavier, pour garder la frappe fluide",
+      "Icônes du menu du haut plus faciles à distinguer : chacune a maintenant sa propre couleur (accueil cyan, langue verte, à propos bleu, aide dorée, bugs rouge, profil violet)",
+      "Page « À propos » : nouvel emblème soigné (soleil levant, clin d'œil au sens de LANGA, « la lumière ») et cadre « La vision » retravaillé, plus lisible et plus premium",
+      "Cadres de l'application au rendu plus homogène et plus soigné"
+    ],
     "v201": [
       "Déclarer une nouvelle langue depuis « Mon profil », sans changer de page : le formulaire s'ouvre directement dans le profil",
       "Créer une langue, c'est d'abord lui donner de la voix : enregistre des mots de base à l'oral (5 pour qu'elle soit complète), car c'est la voix qui compte, pas l'écriture (beaucoup parlent leur langue sans l'écrire). Tu peux t'arrêter avant 5 : ta langue est gardée, marquée « à compléter », et tout ce que tu as enregistré est conservé pour être repris plus tard, par toi ou par d'autres locuteurs"

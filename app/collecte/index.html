@@ -513,14 +513,38 @@
     <section id="view-about" class="view" hidden>
       <div class="about-head">
         <h2 class="view-title view-title--ico">
-          <svg class="about-title-ic" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11.2v4.6"/><path d="M12 7.9h.01"/></svg>
+          <span class="about-emblem" aria-hidden="true">
+            <svg viewBox="0 0 48 48" width="46" height="46">
+              <defs>
+                <linearGradient id="abBadge" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stop-color="#2ad4ee"/><stop offset=".52" stop-color="#34d399"/><stop offset="1" stop-color="#e5c07b"/>
+                </linearGradient>
+                <radialGradient id="abGloss" cx=".5" cy=".26" r=".72">
+                  <stop offset="0" stop-color="#ffffff" stop-opacity=".6"/><stop offset=".62" stop-color="#ffffff" stop-opacity="0"/>
+                </radialGradient>
+                <radialGradient id="abSun" cx=".5" cy=".4" r=".62">
+                  <stop offset="0" stop-color="#fffdf5"/><stop offset="1" stop-color="#ffe9b0"/>
+                </radialGradient>
+              </defs>
+              <rect x="2" y="2" width="44" height="44" rx="13.5" fill="url(#abBadge)"/>
+              <rect x="2" y="2" width="44" height="44" rx="13.5" fill="url(#abGloss)"/>
+              <rect x="2.7" y="2.7" width="42.6" height="42.6" rx="12.9" fill="none" stroke="#ffffff" stroke-opacity=".4" stroke-width="1"/>
+              <g stroke="#08343a" stroke-opacity=".82" stroke-width="2.1" stroke-linecap="round">
+                <path d="M24 20.5V15"/><path d="M15.5 22.5l-3-3"/><path d="M32.5 22.5l3-3"/>
+                <path d="M13.5 28H10"/><path d="M34.5 28H38"/><path d="M18.5 18.5l-1.8-2.4"/><path d="M29.5 18.5l1.8-2.4"/>
+              </g>
+              <path d="M13.5 30.5a10.5 10.5 0 0 1 21 0z" fill="url(#abSun)" stroke="#08343a" stroke-opacity=".82" stroke-width="2.1" stroke-linejoin="round"/>
+              <path d="M11 34.5h26" stroke="#08343a" stroke-opacity=".82" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </span>
           <span data-i18n="about.title">À propos de LANGA</span>
         </h2>
         <p class="contrib-why" data-i18n-html="about.lead">Dans les langues nguni, <b>LANGA</b> signifie « la lumière », et le mot évoque aussi « langue ». Son ambition est de donner une <b>voix numérique</b> à nos langues.</p>
       </div>
 
       <div class="card about-vision">
-        <h3 data-i18n="about.vision.h">La vision : nos langues d'Afrique, texte et voix</h3>
+        <span class="about-vision-eyebrow" aria-hidden="true" data-i18n="about.vision.eyebrow">NOTRE AMBITION</span>
+        <h3 data-i18n="about.vision.h">La vision : nos langues d'Afrique, en texte, en voix</h3>
         <p data-i18n-html="about.vision.p1">LANGA est un projet <b>ouvert à tous</b>. Il rassemble <b>les mots et les voix</b> de <b>nos
           langues</b> pour bâtir ensemble les outils qui les font vivre, qu'il s'agisse <b>de dictionnaires, de claviers ou d'intelligences artificielles</b> qui les comprennent.</p>
         <p data-i18n-html="about.vision.p2">LANGA donne une <b>voix numérique</b> à <b>nos langues d'Afrique</b>. Le <b>ngiemboon</b> est aujourd'hui
@@ -590,7 +614,7 @@
     <!-- ============== VUE SUIVI DES BUGS ================================== -->
     <section id="view-bugs" class="view" hidden>
       <div class="about-head">
-        <h2 class="view-title" data-i18n="bugs.title">🐞 Suivi des bugs</h2>
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-bug.svg" alt="" aria-hidden="true"><span data-i18n="bugs.title">Suivi des bugs</span></h2>
         <p class="contrib-why" data-i18n-html="bugs.intro">Chaque bug est <b>identifié</b>, décrit, daté et suivi jusqu'à sa
           résolution. Tu peux <b>signaler</b> un problème : il rejoint la liste et tu suis son
           avancement (⏳ en attente → ✅ résolu).</p>

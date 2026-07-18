@@ -469,7 +469,11 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .title-ico { width: 34px; height: 34px; flex: 0 0 auto; }
 /* Icône « info » du titre « À propos » (remplace l'ancien symbole étoilé) : teinte
    cyan d'accent, ne rétrécit pas. */
-.about-title-ic { flex: 0 0 auto; color: var(--cyan); }
+/* Emblème premium du titre « À propos » : badge en verre dégradé, soleil levant (LANGA =
+   « la lumière ») ; halo doux, léger relief. */
+.about-emblem { flex: 0 0 auto; display: inline-flex; line-height: 0;
+  filter: drop-shadow(0 4px 10px rgba(0,0,0,.28)) drop-shadow(0 0 14px color-mix(in srgb, var(--green) 40%, transparent)); }
+.about-emblem svg { display: block; border-radius: 14px; }
 .hub-name { font-size: 1.55rem; font-family: var(--font-display); font-weight: 700;
   letter-spacing: -.01em; color: var(--text); }
 .hub-desc { color: var(--muted); font-size: .86rem; line-height: 1.5; }
@@ -1743,11 +1747,11 @@ body::after {
    (Continu → gelé sur mobile pour ne rien coûter à la frappe.) */
 .card::after {
   content: ""; position: absolute; inset: -1px; border-radius: 19px; padding: 1px;
-  background: linear-gradient(130deg, var(--cyan), transparent 38%, var(--green) 68%, transparent);
+  background: linear-gradient(130deg, var(--cyan), transparent 40%, var(--green) 66%, transparent);
   background-size: 300% 300%;
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
-  opacity: .24; pointer-events: none;
+  opacity: .42; pointer-events: none;
   animation: ngCardBorder 12s linear infinite;
 }
 @keyframes ngCardBorder { to { background-position: 300% 0; } }
@@ -1819,30 +1823,46 @@ body::after {
    (dégradés, halos, glows). Les effets ponctuels (survol) restent, ils ne
    tournent pas en boucle. */
 @media (max-width: 640px) {
+  /* DÉCOR VIVANT SUR MOBILE (Brice le veut visible partout, pas seulement sur PC). On ne
+     gèle QUE l'aurore PLEIN ÉCRAN (body::before/after) : c'est le seul calque assez grand
+     pour peser vraiment. Tout le reste (bordures tournantes des cartes du hub, halos qui
+     respirent, glow d'icônes, aurore d'en-tête, anneau des cartes, brillance des boutons,
+     ornements) RESTE animé sur téléphone. */
   body::before { animation: none; top: -28vmax; left: -20vmax; opacity: .8; }
   body::after  { animation: none; bottom: -30vmax; right: -22vmax; opacity: .8; }
-  .topbar::after { animation: none; background: linear-gradient(90deg, transparent, var(--cyan), var(--green), transparent); }
-  .brand-mark::after { animation: none; opacity: .7; }
-  .chip--on { animation: none; }
-  /* Sur mobile on gèle les animations CONTINUES des cartes du hub (halo respirant,
-     bordure conique tournante, glow pulsé de l'icône = repeints par frame) : le look
-     statique reste riche (dégradé de bordure figé, glow, halo). Le shimmer ne se
-     déclenche qu'au survol (absent au tactile) → aucun coût continu. */
-  .hub-card, .hub-card::before, .hub-ico { animation: none; }
-  .brand::before { animation: none; opacity: .5; }   /* aurore d'en-tête figée sur mobile */
-  /* Les balayages de brillance des boutons RESTENT animés sur mobile (petits éléments
-     composités, loin du clavier → aucun impact sur la frappe ; Brice les veut vivants). */
-  .card::after { animation: none; }
-  .brand-mark::before { animation: none; }
-  /* Les ornements décoratifs (titre, séparateur .ndop-sep, barres de cartes) RESTENT
-     animés sur mobile : ils sont légers (petits éléments, hors chemin de frappe) et
-     Brice les veut vivants partout. Seules les animations LOURDES (aurore plein écran)
-     restent gelées ci-dessus. Le gel d'accessibilité reste, lui, dans prefers-reduced-motion. */
+  /* Exception ciblée : quand le CLAVIER ngiemboon est ouvert, on gèle les animations
+     continues pour garder la frappe parfaitement fluide (le clavier couvre le bas de
+     l'écran, le décor n'y est de toute façon plus visible). */
+  body.kb-docked .hub-card, body.kb-docked .hub-card::before, body.kb-docked .hub-ico,
+  body.kb-docked .card::after, body.kb-docked .brand::before { animation: none; }
 }
 
 /* ============ Page « À propos » (vraie vue de l'app, style app) ============ */
-.about-vision h3, .about-share h3 { margin: 0 0 8px; font-size: 20px; color: var(--text); }
-.about-vision p { margin: 0 0 10px; line-height: 1.6; color: var(--text); }
+/* Cadre « La vision » = HÉROS premium : fond en lavis d'accent, bordure dégradée vive tout
+   autour, eyebrow, titre au dégradé de marque, filet lumineux. */
+.about-vision { position: relative; overflow: hidden; border: 1.5px solid transparent;
+  background:
+    radial-gradient(120% 90% at 0% 0%, color-mix(in srgb, var(--cyan) 12%, transparent), transparent 55%),
+    radial-gradient(120% 90% at 100% 0%, color-mix(in srgb, var(--gold) 12%, transparent), transparent 55%),
+    var(--card-bg);
+  box-shadow: 0 0 40px -22px var(--cyan), var(--shadow-card), inset 0 1px 0 var(--card-sheen), inset 0 -1px 0 var(--card-inner);
+  padding: 22px clamp(16px, 3.5vw, 26px); }
+.about-vision::after { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.5px; z-index: 1; pointer-events: none;
+  background: linear-gradient(135deg, var(--cyan), var(--green) 45%, var(--gold)); background-size: 100% 100%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  filter: drop-shadow(0 0 5px color-mix(in srgb, var(--cyan) 40%, transparent)); animation: none; opacity: 1; }
+.about-vision > * { position: relative; z-index: 2; }
+.about-vision-eyebrow { display: inline-block; font-family: var(--font-mono); font-size: .72rem; font-weight: 700;
+  letter-spacing: .18em; color: var(--gold); margin-bottom: 8px;
+  padding: 3px 10px; border-radius: 999px; background: color-mix(in srgb, var(--gold) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--gold) 30%, var(--border)); }
+.about-vision h3 { margin: 0 0 12px; font-size: clamp(20px, 3.6vw, 26px); line-height: 1.25;
+  font-family: var(--font-display); font-weight: 700; letter-spacing: -.01em;
+  background: linear-gradient(100deg, var(--cyan), var(--green) 55%, var(--gold));
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: var(--green); }
+.about-share h3 { margin: 0 0 8px; font-size: 20px; color: var(--text); }
+.about-vision p { margin: 0 0 11px; line-height: 1.62; color: var(--text); font-size: .96rem; }
 .about-vision p:last-child { margin-bottom: 0; }
 .about-vision p b { color: var(--text); font-weight: 700; }
 

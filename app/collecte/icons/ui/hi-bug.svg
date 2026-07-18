@@ -1,10 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Bugs">
-<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5df0b0"/><stop offset=".55" stop-color="#22c98a"/><stop offset="1" stop-color="#0b6f80"/></linearGradient>
+<defs><linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9a8f"/><stop offset=".55" stop-color="#ef4444"/><stop offset="1" stop-color="#8f1d17"/></linearGradient>
 <radialGradient id="bgl" cx="38%" cy="30%" r="55%"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></radialGradient></defs>
-<g stroke="#0b6f80" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="12" x2="11" y2="15"/><line x1="26" y1="12" x2="21" y2="15"/><line x1="5" y1="20" x2="11" y2="20"/><line x1="27" y1="20" x2="21" y2="20"/><line x1="7" y1="27" x2="11" y2="23"/><line x1="25" y1="27" x2="21" y2="23"/></g>
+<g stroke="#8f1d17" stroke-width="1.8" stroke-linecap="round"><line x1="6" y1="12" x2="11" y2="15"/><line x1="26" y1="12" x2="21" y2="15"/><line x1="5" y1="20" x2="11" y2="20"/><line x1="27" y1="20" x2="21" y2="20"/><line x1="7" y1="27" x2="11" y2="23"/><line x1="25" y1="27" x2="21" y2="23"/></g>
 <rect x="9.8" y="10.6" width="12.4" height="16.4" rx="6.2" fill="url(#bg)"/>
 <circle cx="16" cy="7.6" r="4.2" fill="url(#bg)"/>
-<g stroke="#0b6f80" stroke-width="1.4" stroke-linecap="round"><line x1="13.6" y1="4.8" x2="12" y2="2.8"/><line x1="18.4" y1="4.8" x2="20" y2="2.8"/></g>
+<g stroke="#8f1d17" stroke-width="1.4" stroke-linecap="round"><line x1="13.6" y1="4.8" x2="12" y2="2.8"/><line x1="18.4" y1="4.8" x2="20" y2="2.8"/></g>
 <g fill="#eafff6" opacity=".92"><circle cx="13.8" cy="15.6" r="1.3"/><circle cx="18.2" cy="15.6" r="1.3"/><circle cx="13.8" cy="20.6" r="1.3"/><circle cx="18.2" cy="20.6" r="1.3"/></g>
 <ellipse cx="13.5" cy="13" rx="4.5" ry="3.4" fill="url(#bgl)"/>
 </svg>

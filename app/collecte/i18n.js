@@ -213,7 +213,8 @@ export const STR = {
   "about.title": { fr: "À propos de LANGA", en: "About LANGA" },
   "about.lead": { fr: "Dans les langues nguni, <b>LANGA</b> signifie « la lumière », et le mot évoque aussi « langue ». Son ambition est de donner une <b>voix numérique</b> à nos langues.",
                   en: "In the Nguni languages, <b>LANGA</b> means \"light\", and the word also evokes \"language\". Its ambition is to give our languages a <b>digital voice</b>." },
-  "about.vision.h": { fr: "La vision : nos langues d'Afrique, texte et voix", en: "The vision: our African languages, text and voice" },
+  "about.vision.eyebrow": { fr: "NOTRE AMBITION", en: "OUR AMBITION" },
+  "about.vision.h": { fr: "La vision : nos langues d'Afrique, en texte, en voix", en: "The vision: our African languages, in text, in voice" },
   "about.vision.p1": { fr: "LANGA est un projet <b>ouvert à tous</b>. Il rassemble <b>les mots et les voix</b> de <b>nos langues</b> pour bâtir ensemble les outils qui les font vivre, qu'il s'agisse <b>de dictionnaires, de claviers ou d'intelligences artificielles</b> qui les comprennent.",
                        en: "LANGA is a project <b>open to everyone</b>. It gathers <b>the words and voices</b> of <b>our languages</b> so we can build together the tools that keep them alive, whether <b>dictionaries, keyboards or artificial intelligences</b> that understand them." },
   "about.vision.p2": { fr: "LANGA donne une <b>voix numérique</b> à <b>nos langues d'Afrique</b>. Le <b>ngiemboon</b> est aujourd'hui la langue la plus avancée, car il possède déjà son clavier dédié et le corpus le plus riche, mais la plateforme accueille plusieurs langues et chacun peut y ajouter la sienne. Où que tu sois, un simple <b>téléphone ou ordinateur</b> suffit pour y contribuer.",
@@ -287,7 +288,7 @@ export const STR = {
   "profile.lock": { fr: "🔒 Complète tous les champs obligatoires (marqués *) pour continuer.", en: "🔒 Complete all required fields (marked *) to continue." },
 
   // — Suivi des bugs —
-  "bugs.title": { fr: "🐞 Suivi des bugs", en: "🐞 Bug tracker" },
+  "bugs.title": { fr: "Suivi des bugs", en: "Bug tracker" },
   "bugs.intro": { fr: "Chaque bug est <b>identifié</b>, décrit, daté et suivi jusqu'à sa résolution. Tu peux <b>signaler</b> un problème : il rejoint la liste et tu suis son avancement (⏳ en attente → ✅ résolu).",
                   en: "Every bug is <b>tracked</b>, described, dated and followed until it's fixed. You can <b>report</b> a problem: it joins the list and you follow its progress (⏳ pending → ✅ fixed)." },
   "bugs.report.h": { fr: "Signaler un bug", en: "Report a bug" },
