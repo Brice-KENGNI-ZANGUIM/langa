@@ -235,8 +235,8 @@ body {
   display: inline-flex; align-items: center;
   transition: color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .1s ease; }
 /* Chip ICÔNE SEULE (ex. la cloche des notifications) : pas de texte. Épaisseur
-   (hauteur) ~1.4× celle des autres chips pour mieux la repérer. */
-.chip--icon { padding: 10px 11px; }
+   (hauteur) ~1.2× celle des autres chips pour mieux la repérer sans dominer. */
+.chip--icon { padding: 7px 11px; }
 .chip--icon .chip-ico { width: 21px; height: 21px; }
 a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weight: 600; }
 .chip--btn:hover { color: var(--cyan); border-color: var(--cyan);
@@ -257,9 +257,14 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   .brand-txt h1 { font-size: 1.95rem; line-height: 1; }    /* LANGA agrandi, proche du logo */
   .brand-sub { font-size: .48em; }                         /* « · Collecte » bien plus petit */
   .tagline { display: none; }                              /* déjà répété dans le footer */
-  .chip { font-size: .72rem; padding: 4px 8px; }
-  .chip--btn { padding: 4px 9px; }
-  .chip--btn .chip-ico { width: 15px; height: 15px; }
+  .chip { font-size: .72rem; padding: 4px 6px; }
+  .chip--btn { padding: 4px 6px; gap: 4px; }
+  .chip--btn .chip-ico { width: 14px; height: 14px; }
+  /* Cloche (icône seule) : épaisseur ~1.2× les autres chips, compacte pour tenir
+     sur la 1re ligne juste après « Aide » (boutons resserrés ci-dessus). Placée
+     APRÈS .chip--btn pour l'emporter sur son padding réduit. */
+  .chip--icon { padding: 6px 7px; }
+  .chip--icon .chip-ico { width: 17px; height: 17px; }
   /* Méta (ligne 1, droite) : les deux pastilles d'état gardent leur texte (« en ligne »,
      « Drive : prêt ») avec le point clignotant devant, et restent sur UNE SEULE ligne
      (jamais empilées), quitte à être un peu plus compactes. */
@@ -270,7 +275,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   #app-ver { font-size: .62rem; }
   /* Nav (ligne 2) : boutons resserrés (H et V) qui BASCULENT à la ligne suivante quand
      ils débordent (jamais de scroll ni de bouton caché), le groupe outils reste à droite. */
-  .chips-nav { flex-wrap: wrap; gap: 5px 6px; }
+  .chips-nav { flex-wrap: wrap; gap: 4px 4px; }
   .chips-nav .chip--btn { flex: 0 0 auto; }
 }
 /* Téléphone étroit : la marque et les deux pastilles d'état doivent tenir sur UNE ligne,
