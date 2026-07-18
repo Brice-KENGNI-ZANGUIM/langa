@@ -129,19 +129,21 @@
       <div id="lang-declare" class="lang-declare card" hidden>
         <h3 data-i18n="lang.declare.h">➕ Déclarer une nouvelle langue</h3>
         <p class="lang-declare-hint" data-i18n="lang.declare.hint">Elle deviendra aussitôt visible et enrichissable par toute la communauté.</p>
+        <p class="lang-declare-req" data-i18n-html="lang.f.reqlegend">Les champs marqués <span class="req">*</span> sont obligatoires.</p>
+        <!-- OBLIGATOIRES d'abord (marqués d'une * rouge), puis les OPTIONNELS. -->
         <div class="grid2">
-          <label class="field"><span data-i18n="lang.f.nom">Nom de la langue *</span>
+          <label class="field"><span class="field-lbl"><span data-i18n="lang.f.nom">Nom de la langue</span> <span class="req">*</span></span>
             <input id="ld-nom" type="text" placeholder="ex. Bassa" autocomplete="off" maxlength="40" /></label>
-          <label class="field"><span data-i18n="lang.f.pays">Pays (optionnel)</span>
-            <input id="ld-pays" type="text" placeholder="ex. Cameroun" autocomplete="off" maxlength="40" /></label>
-          <label class="field"><span data-i18n="lang.f.region">Région / localité *</span>
+          <label class="field"><span class="field-lbl"><span data-i18n="lang.f.region">Région / localité</span> <span class="req">*</span></span>
             <input id="ld-region" type="text" placeholder="ex. Ouest (Bamiléké)" autocomplete="off" maxlength="60" /></label>
+          <label class="field"><span class="field-lbl"><span data-i18n="lang.f.pays">Pays</span> <span class="req">*</span></span>
+            <input id="ld-pays" type="text" placeholder="ex. Cameroun" autocomplete="off" maxlength="40" /></label>
+          <label class="field"><span class="field-lbl"><span data-i18n="lang.f.famille">Famille / groupe</span> <span class="req">*</span></span>
+            <input id="ld-famille" type="text" placeholder="ex. bamiléké, bantou" data-i18n-ph="lang.f.famille.ph" autocomplete="off" maxlength="60" /></label>
           <label class="field"><span data-i18n="lang.f.autonym">Autonyme (optionnel)</span>
             <input id="ld-autonyme" type="text" placeholder="le nom dans la langue elle-même" data-i18n-ph="lang.f.autonym.ph" autocomplete="off" maxlength="40" /></label>
           <label class="field"><span data-i18n="lang.f.alias">Autres noms / orthographes (optionnel)</span>
             <input id="ld-alias" type="text" placeholder="ex. Nguiembor, Nguiembow" data-i18n-ph="lang.f.alias.ph" autocomplete="off" maxlength="120" /></label>
-          <label class="field"><span data-i18n="lang.f.famille">Famille / groupe (optionnel)</span>
-            <input id="ld-famille" type="text" placeholder="ex. bamiléké, bantou" data-i18n-ph="lang.f.famille.ph" autocomplete="off" maxlength="60" /></label>
           <label class="field field--wide"><span data-i18n="lang.f.note">Note sur l'alphabet (optionnel)</span>
             <input id="ld-note" type="text" placeholder="lettres ou tons particuliers (futur clavier dédié)" data-i18n-ph="lang.f.note.ph" autocomplete="off" maxlength="140" /></label>
         </div>
@@ -501,6 +503,7 @@
           <div class="explore-export">
             <button id="export-csv" class="chip chip--btn" type="button" data-i18n="exp.export.csv">⬇ Exporter (CSV)</button>
             <button id="export-json" class="chip chip--btn" type="button" data-i18n="exp.export.json">⬇ Exporter (JSON)</button>
+            <button id="export-lift" class="chip chip--btn" type="button" data-i18n-title="exp.export.lift.title" title="Format LIFT (lexique standard, pour FLEx/WeSay)" data-i18n="exp.export.lift">⬇ Exporter (LIFT)</button>
           </div>
         </div>
         <div class="explore-status" id="explore-status"></div>

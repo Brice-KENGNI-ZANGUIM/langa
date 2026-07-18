@@ -16,7 +16,7 @@ import { currentLang, getCurrentLangId, setCurrentLangId, usesDedicatedKeyboard,
   hasChosenLang, knownLanguages, cacheRemoteLanguages, langAlphabet } from "./languages.js";
 import { applyI18n, getUiLang, setUiLang, t, tToast } from "./i18n.js";
 import { legalHtml, LEGAL_SECTIONS } from "./legal.js";
-import { entriesToCSV, entriesToJSON, exportFilename } from "./export.js";
+import { entriesToCSV, entriesToJSON, entriesToLIFT, exportFilename } from "./export.js";
 import { shareCardText, shareTitle, mountShareBar } from "./share.js";
 import { findSimilarLanguages } from "./langsim.js";
 import { findDuplicatePairs, pickCanonical, resolveCanonicalId, visibleLanguages } from "./langmerge.js";
@@ -28,7 +28,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v207";
+const APP_VERSION = "v208";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1434,8 +1434,8 @@ function submitDeclareLang() {
   const famille = (($("#ld-famille") && $("#ld-famille").value) || "").trim();
   const note = ($("#ld-note").value || "").trim();
   const er = $("#ld-error");
-  if (!nom || !region) {
-    if (er) { er.textContent = "Le nom de la langue et la région sont obligatoires."; er.hidden = false; }
+  if (!nom || !region || !pays || !famille) {
+    if (er) { er.textContent = t("lang.f.req.err"); er.hidden = false; }
     return;
   }
   // Confirmation DOUCE : si une langue très proche existe et qu'on n'a pas encore
@@ -2148,6 +2148,9 @@ function downloadDict(fmt) {
   if (fmt === "json") {
     content = entriesToJSON(entries, { langue: lid, nom: currentLang().nom, exporte_par: "LANGA" });
     mime = "application/json";
+  } else if (fmt === "lift") {
+    content = entriesToLIFT(entries, { langId: lid });
+    mime = "application/xml";
   } else {
     content = entriesToCSV(entries);
     mime = "text/csv";
@@ -3985,6 +3988,7 @@ function initEvents() {
   const ne = $("#tab-explorer"); if (ne) ne.addEventListener("click", enterExplore);
   const eCsv = $("#export-csv"); if (eCsv) eCsv.addEventListener("click", () => downloadDict("csv"));
   const eJson = $("#export-json"); if (eJson) eJson.addEventListener("click", () => downloadDict("json"));
+  const eLift = $("#export-lift"); if (eLift) eLift.addEventListener("click", () => downloadDict("lift"));
   // Page « À propos » (vraie vue de l'app, avec header/footer/fond partagés)
   const aboutLink = $("#about-link"); if (aboutLink) aboutLink.addEventListener("click", openAbout);
   const aboutBack = $("#about-back"); if (aboutBack) aboutBack.addEventListener("click", () => showView(_aboutReturn || "hub"));

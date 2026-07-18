@@ -1,6 +1,10 @@
 {
-  "version": "v207",
+  "version": "v208",
   "changelog": {
+    "v208": [
+      "Déclaration d'une langue : le pays et la famille/groupe sont maintenant obligatoires (comme le nom et la région). Les champs obligatoires sont marqués d'une étoile rouge et présentés en premier, avant les champs optionnels",
+      "Explorer : nouvel export au format LIFT (lexique standard), pour réutiliser le vocabulaire d'une langue dans les logiciels de lexicographie (FLEx, WeSay), en plus des exports CSV et JSON"
+    ],
     "v207": [
       "Nouvelle invitation à contribuer : jusqu'à trois fois par jour (le matin, l'après-midi et le soir, à ton heure locale), un petit message te propose un mot que tu n'as pas encore fait dans ta langue, en s'appuyant sur ce qu'une autre personne a déjà partagé, avec un lien direct pour le dire dans ta langue"
     ],
