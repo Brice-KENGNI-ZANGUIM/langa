@@ -1,6 +1,9 @@
 {
-  "version": "v195",
+  "version": "v196",
   "changelog": {
+    "v196": [
+      "Nouvelles pages d'informations légales accessibles depuis le pied de page : mentions légales, politique de confidentialité, conditions d'utilisation et de vente, en français et en anglais"
+    ],
     "v195": [
       "Beaucoup plus de mots et de phrases à traduire : des centaines de mots et de phrases en plus, tous affichés aussi en anglais pour les anglophones",
       "Outil audio remanié et plus clair : les boutons « Découper » (cyan) et « retirer » (rouge) sont bien alignés sous le lecteur, jamais devant lui sur téléphone, et « Revoir les consignes » se place à droite de la ligne du titre"

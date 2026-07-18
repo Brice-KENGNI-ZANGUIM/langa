@@ -351,6 +351,11 @@ export const STR = {
   "foot.sub": { fr: "Numériser les langues d'Afrique, texte et voix, par leurs communautés",
                 en: "Digitizing African languages, text and voice, by their communities" },
   "foot.thanks": { fr: "Merci à chaque contributeur de la langue", en: "Thanks to every contributor to the language" },
+  "legal.title": { fr: "Informations légales", en: "Legal information" },
+  "legal.mentions": { fr: "Mentions légales", en: "Legal notice" },
+  "legal.confidentialite": { fr: "Confidentialité", en: "Privacy" },
+  "legal.cgu": { fr: "CGU", en: "Terms of use" },
+  "legal.cgv": { fr: "CGV", en: "Terms of sale" },
 
   // — Sens de traduction & libellés dépendant de la langue ({lang} = nom de la langue) —
   "dir.src.fr": { fr: "Mot / phrase en français", en: "Word / phrase in French" },

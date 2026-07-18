@@ -15,6 +15,7 @@ import { CONFIG } from "./config.js";
 import { currentLang, getCurrentLangId, setCurrentLangId, usesDedicatedKeyboard,
   hasChosenLang, knownLanguages, cacheRemoteLanguages, langAlphabet } from "./languages.js";
 import { applyI18n, getUiLang, setUiLang, t, tToast } from "./i18n.js";
+import { legalHtml, LEGAL_SECTIONS } from "./legal.js";
 import { entriesToCSV, entriesToJSON, exportFilename } from "./export.js";
 import { shareCardText, shareTitle, mountShareBar } from "./share.js";
 import { findSimilarLanguages } from "./langsim.js";
@@ -27,7 +28,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v195";
+const APP_VERSION = "v196";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -823,7 +824,12 @@ let profileSnapshot = null; // sauvegarde pour « Annuler » en mode édition
 const ROUTE_OF_VIEW = { hub: "accueil", explore: "explorer", about: "apropos",
   bugs: "bugs", profile: "profil", lang: "langue" };
 const VIEW_OF_ROUTE = { accueil: "hub", traduire: "app", transcrire: "app",
-  explorer: "explore", apropos: "about", bugs: "bugs", profil: "profile", langue: "lang" };
+  explorer: "explore", apropos: "about", bugs: "bugs", profil: "profile", langue: "lang",
+  // Pages légales : 4 routes → une même vue, ancrée sur la bonne section.
+  "mentions-legales": "legal", "confidentialite": "legal", "cgu": "legal", "cgv": "legal" };
+// Correspondance route ↔ section légale.
+const LEGAL_ROUTE_SEC = { "mentions-legales": "mentions", "confidentialite": "confidentialite", "cgu": "cgu", "cgv": "cgv" };
+const LEGAL_SEC_ROUTE = { mentions: "mentions-legales", confidentialite: "confidentialite", cgu: "cgu", cgv: "cgv" };
 let _replayingHistory = false;   // vrai pendant le rejeu (initial/back/forward) → pas de pushState
 
 /** Route canonique d'une vue (l'espace app dépend de l'activité Traduire/Transcrire). */
@@ -859,10 +865,14 @@ function routeTo(route) {
   const targetView = VIEW_OF_ROUTE[route];
   if (!targetView) { goHome(); return; }
   // Idempotence : déjà sur cette vue (et bonne activité pour l'app) → ne rien refaire.
+  // Exception « legal » : on ré-entre pour pointer sur la bonne section.
   if (targetView === _currentView) {
-    if (targetView !== "app") return;
-    const wantAct = route === "transcrire" ? "transcribe" : "translate";
-    if (wantAct === activity) return;
+    if (targetView === "app") {
+      const wantAct = route === "transcrire" ? "transcribe" : "translate";
+      if (wantAct === activity) return;
+    } else if (targetView !== "legal") {
+      return;
+    }
   }
   switch (route) {
     case "accueil": enterHub(); break;
@@ -873,6 +883,8 @@ function routeTo(route) {
     case "bugs": openBugs(); break;
     case "profil": openProfile(profileComplete()); break;
     case "langue": openLangChoice(); break;
+    case "mentions-legales": case "confidentialite": case "cgu": case "cgv":
+      openLegal(LEGAL_ROUTE_SEC[route]); break;
     default: goHome();
   }
 }
@@ -903,8 +915,9 @@ function showView(name) {
   $("#view-explore").hidden = name !== "explore";
   $("#view-about").hidden = name !== "about";
   $("#view-bugs").hidden = name !== "bugs";
+  const glv = $("#view-legal"); if (glv) glv.hidden = name !== "legal";
   const nav = $("#main-nav");
-  if (nav) nav.hidden = (name === "lang" || name === "amorce" || name === "profile" || name === "hub" || name === "about" || name === "bugs");
+  if (nav) nav.hidden = (name === "lang" || name === "amorce" || name === "profile" || name === "hub" || name === "about" || name === "bugs" || name === "legal");
   // « Mon profil » : visibilité conditionnée UNIQUEMENT à l'existence d'un profil.
   // Il reste donc affiché sur TOUTES les pages, y compris la vue profil elle-même
   // (il y sert de repère et n'a jamais à disparaître). Sans profil : rien à ouvrir.
@@ -983,6 +996,26 @@ function openBugs() {
   if (_currentView !== "bugs") _bugsReturn = _currentView;
   showView("bugs");
   renderBugs();
+}
+/** Ouvre les pages légales, ancrées sur la section demandée (mentions|confidentialite|cgu|cgv). */
+let _legalReturn = "hub";
+function openLegal(section) {
+  const sec = LEGAL_SEC_ROUTE[section] ? section : "mentions";
+  if (_currentView !== "legal") _legalReturn = _currentView || "hub";
+  const en = getUiLang() === "en";
+  const nav = $("#legal-nav");
+  if (nav) nav.innerHTML = LEGAL_SECTIONS.map((s) =>
+    `<a href="#legal-${s.id}" class="legal-navlink${s.id === sec ? " is-active" : ""}" data-sec="${s.id}">${en ? s.t.en : s.t.fr}</a>`).join("");
+  const content = $("#legal-content");
+  if (content) content.innerHTML = legalHtml(getUiLang());
+  showView("legal");   // legal n'est PAS dans ROUTE_OF_VIEW → syncHash ne pose pas de hash
+  const route = LEGAL_SEC_ROUTE[sec] || "mentions-legales";
+  try {
+    const st = { v: "legal" }, h = "#/" + route;
+    if (_replayingHistory) history.replaceState(st, "", h); else history.pushState(st, "", h);
+  } catch (e) { /* ok */ }
+  const target = document.getElementById("legal-" + sec);
+  if (target) setTimeout(() => target.scrollIntoView({ behavior: "smooth", block: "start" }), 60);
 }
 async function submitBug() {
   const titre = $("#bug-titre").value.trim();
@@ -3730,6 +3763,16 @@ function initEvents() {
   const aboutBack = $("#about-back"); if (aboutBack) aboutBack.addEventListener("click", () => showView(_aboutReturn || "hub"));
   const bugsLink = $("#bugs-link"); if (bugsLink) bugsLink.addEventListener("click", openBugs);
   const bugsBack = $("#bugs-back"); if (bugsBack) bugsBack.addEventListener("click", () => showView(_bugsReturn || "hub"));
+  // Pages légales : liens du pied de page + navigation interne + retour.
+  document.querySelectorAll(".foot-legal-link").forEach((a) =>
+    a.addEventListener("click", (e) => { e.preventDefault(); openLegal(a.dataset.legal); }));
+  const legalNav = $("#legal-nav");
+  if (legalNav) legalNav.addEventListener("click", (e) => {
+    const a = e.target.closest(".legal-navlink"); if (!a) return;
+    e.preventDefault(); openLegal(a.dataset.sec);
+  });
+  const legalBack = $("#legal-back");
+  if (legalBack) legalBack.addEventListener("click", () => routeTo(viewToRoute(_legalReturn) || "accueil"));
   const bugSend = $("#bug-send"); if (bugSend) bugSend.addEventListener("click", submitBug);
   const upNow = $("#update-now"); if (upNow) upNow.addEventListener("click", doUpdate);
   const upLater = $("#update-later"); if (upLater) upLater.addEventListener("click", () => {

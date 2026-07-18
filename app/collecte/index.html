@@ -642,6 +642,18 @@
         <button class="btn btn--ghost" id="bugs-back" type="button" data-i18n="btn.back">← Retour</button>
       </div>
     </section>
+
+    <!-- Pages légales : mentions légales, confidentialité, CGU, CGV (bilingue) -->
+    <section id="view-legal" class="view" hidden>
+      <div class="view-head">
+        <h2 class="view-title" data-i18n="legal.title">Informations légales</h2>
+      </div>
+      <nav class="legal-nav" id="legal-nav" aria-label="Sections légales"></nav>
+      <div id="legal-content" class="legal-content"></div>
+      <div class="about-cta">
+        <button class="btn btn--ghost" id="legal-back" type="button" data-i18n="btn.back">← Retour</button>
+      </div>
+    </section>
   </main>
 
   <footer class="site-footer">
@@ -665,6 +677,12 @@
       <span class="share-lead" data-i18n="share.foot">Partage LANGA autour de toi :</span>
       <div class="share-mount" id="share-foot"></div>
     </div>
+    <nav class="foot-legal" aria-label="Informations légales">
+      <a href="#/mentions-legales" class="foot-legal-link" data-legal="mentions" data-i18n="legal.mentions">Mentions légales</a>
+      <a href="#/confidentialite" class="foot-legal-link" data-legal="confidentialite" data-i18n="legal.confidentialite">Confidentialité</a>
+      <a href="#/cgu" class="foot-legal-link" data-legal="cgu" data-i18n="legal.cgu">CGU</a>
+      <a href="#/cgv" class="foot-legal-link" data-legal="cgv" data-i18n="legal.cgv">CGV</a>
+    </nav>
     <div class="foot-copy">© 2026 Brice Kengni Zanguim · <span data-i18n="foot.thanks">Merci à chaque contributeur de la langue</span></div>
   </footer>
 
