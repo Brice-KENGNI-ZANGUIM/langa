@@ -520,6 +520,9 @@ export const STR = {
                       en: "How do you say “{w}” in your language? {name} already shared it{inlang}. Your turn: say it in yours." },
   "incite.msg": { fr: "Comment dit-on « {w} » dans ta langue ? Prête ta voix ou écris-le, et enrichis {lang}.",
                   en: "How do you say “{w}” in your language? Lend your voice or write it, and enrich {lang}." },
+  "incite.rate.msg": { fr: "Quelqu'un a proposé une traduction de « {w} » en {lang}. Es-tu d'accord ? Donne ton avis : juste, doute ou faux.",
+                       en: "Someone proposed a translation of “{w}” in {lang}. Do you agree? Give your take: correct, unsure or wrong." },
+  "incite.rate.cta": { fr: "Aller voter →", en: "Go and vote →" },
   "exp.loadfail": { fr: "La bibliothèque n'a pas pu être chargée. Vérifie ta connexion, puis rouvre l'onglet Explorer.", en: "The library could not be loaded. Check your connection, then reopen the Explore tab." },
   // Partage ADAPTATIF d'une entrée (texte marketing + lien direct vers l'entrée)
   "shareE.q": { fr: "Comment dit-on « {w} » en {lang} ?", en: "How do you say “{w}” in {lang}?" },

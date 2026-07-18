@@ -1753,6 +1753,16 @@ function startTranslateWord(frWord) {
   const tg = $("#target"); if (tg) { tg.value = ""; setTimeout(() => tg.focus(), 60); }
   toast(ti("saymine.toast", { w }), "ok");
 }
+/** Ouvre Explorer sur un mot précis (via lien direct) pour que l'utilisateur NOTE
+    les propositions (juste / doute / faux). Utilisé par l'incitation « rate ». */
+function startRateWord(frWord, dir) {
+  const w = shareClean(frWord, 200);
+  if (!w) return;
+  if (!requireProfile(t("req.profile.explore"))) return;
+  if (!hasChosenLang()) { openLangChoice(); return; }
+  try { history.pushState({ v: "explore" }, "", "#/explorer?w=" + encodeURIComponent(w) + "&d=" + encodeURIComponent(dir || "fr2nge")); } catch (e) { /* ok */ }
+  enterExplore();   // capte le lien direct puis ouvre le détail du mot (avec les pastilles de vote)
+}
 
 // --- Incitation à contribuer (nudge personnalisé) ---------------------------
 // Moteur UNIQUE (réutilisable plus tard pour l'envoi d'e-mails via langia.tech) :
@@ -1795,13 +1805,43 @@ function _incLangName(id) {
   const l = knownLanguages().find((x) => canonLangId(x.id) === canonLangId(id));
   return l ? l.nom : "";
 }
+/** Cherche, dans la langue de l'utilisateur, une proposition d'un AUTRE qu'il n'a
+    pas encore notée : on l'incitera à donner son avis (juste / doute / faux). But :
+    faire monter la qualité des données par la notation communautaire. */
+async function pickRateCandidate() {
+  try {
+    const data = await browseLibrary({ limit: 300, device_id: deviceId() });
+    const mine = canonLangId(getCurrentLangId());
+    const myCredit = creditDisplay();
+    const cands = (((data && data.entries) || [])).filter((e) => {
+      if (canonLangId(entryLang(e)) !== mine) return false;      // sa langue uniquement
+      if ((e.my_vote || "") !== "") return false;                // pas déjà noté par lui
+      if (!(e.target_text || "").trim()) return false;           // rien d'écrit à juger
+      if (myCredit && (e.credit || "").trim() === myCredit) return false;  // pas sa propre contribution
+      return true;
+    });
+    if (!cands.length) return null;
+    const e = cands[Math.floor(Math.random() * cands.length)];
+    return { kind: "rate", word: (e.source_text || "").trim(),
+             target: (e.target_text || "").trim(), dir: e.direction || "fr2nge" };
+  } catch (e) { return null; }
+}
 /** Choisit un item non fait (mots d'abord, puis phrases) + une référence sociale
-    optionnelle (contribution d'un AUTRE, dans une autre langue) sur ce même item. */
+    optionnelle (contribution d'un AUTRE, dans une autre langue) sur ce même item ;
+    OU, une fois sur deux, incite à NOTER une proposition non encore jugée. */
 async function pickIncitation() {
+  // Environ une fois sur deux : inviter à noter plutôt qu'à traduire (qualité des données).
+  if (Math.random() < 0.5) {
+    const r = await pickRateCandidate();
+    if (r && r.word) return r;
+  }
   await refreshDoneTexts();
   let undone = groupUndone("mots");
   if (undone.length < 20) undone = undone.concat(groupUndone("phrases"));
-  if (!undone.length) return null;
+  if (!undone.length) {
+    const r = await pickRateCandidate();   // plus rien à traduire → on propose de noter
+    return (r && r.word) ? r : null;
+  }
   let chosen = null, ref = null;
   try {
     const data = await browseLibrary({ limit: 300 });
@@ -1819,12 +1859,22 @@ async function pickIncitation() {
     }
   } catch (e) { /* hors ligne : pas de référence, on garde un mot non fait */ }
   if (!chosen) chosen = undone[Math.floor(Math.random() * undone.length)];
-  return { word: chosen.texte, ref };
+  return { kind: "translate", word: chosen.texte, ref };
 }
 function renderIncitation(pick) {
   const bn = $("#incite-banner"); if (!bn || !pick) return;
   const w = pick.word;
   const langName = (currentLang() && currentLang().nom) || "";
+  const go = $("#incite-go"), lis = $("#incite-listen");
+  // Variante « noter » : on invite à donner son avis sur une proposition non jugée.
+  if (pick.kind === "rate") {
+    const m = $("#incite-msg"); if (m) m.textContent = ti("incite.rate.msg", { w, lang: langName });
+    if (lis) { lis.hidden = true; lis.onclick = null; }
+    if (go) { go.textContent = t("incite.rate.cta"); go.onclick = () => { _incMarkShown(); _incStopAudio(); bn.hidden = true; startRateWord(pick.word, pick.dir); }; }
+    bn.hidden = false;
+    return;
+  }
+  if (go) go.textContent = t("incite.cta");   // rétablit le libellé « traduire » (peut avoir été changé)
   let text;
   if (pick.ref && pick.ref.name) {
     const ln = pick.ref.langId ? _incLangName(pick.ref.langId) : "";
@@ -1834,10 +1884,9 @@ function renderIncitation(pick) {
     text = ti("incite.msg", { w, lang: langName });
   }
   const msg = $("#incite-msg"); if (msg) msg.textContent = text;   // textContent = anti-injection
-  const go = $("#incite-go"); if (go) go.onclick = () => { _incMarkShown(); _incStopAudio(); bn.hidden = true; startTranslateWord(w); };
+  if (go) go.onclick = () => { _incMarkShown(); _incStopAudio(); bn.hidden = true; startTranslateWord(w); };
   // Bouton « Écouter » : on peut entendre la version d'un AUTRE (dans sa langue) avant de la
   // dire dans la sienne. Affiché seulement si la contribution de référence a un audio jouable.
-  const lis = $("#incite-listen");
   if (lis) {
     const aud = pick.ref && pick.ref.audio;
     lis.hidden = !aud;
