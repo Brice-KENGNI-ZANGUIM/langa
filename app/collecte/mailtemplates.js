@@ -96,6 +96,48 @@ const GENERATORS = {
       ].join("\n"),
     };
   },
+  // Une demande de traduction a été lancée dans une langue que le destinataire PARLE.
+  request(d, lang) {
+    const mot = (d.mot || "").trim(), langue = (d.langue || "").trim();
+    return {
+      subject: _pick(lang, `Quelqu'un cherche « ${mot} » dans ta langue`, `Someone is looking for “${mot}” in your language`),
+      body: [
+        _hello(d, lang), "",
+        _pick(lang,
+          `Une personne cherche à savoir comment on dit « ${mot} »${langue ? ` en ${langue}` : ""}. Tu parles cette langue : quelques secondes suffisent pour l'aider, en écrivant le mot ou en prêtant ta voix.`,
+          `Someone wants to know how to say “${mot}”${langue ? ` in ${langue}` : ""}. You speak this language: a few seconds are enough to help, by writing the word or lending your voice.`),
+      ].join("\n"),
+    };
+  },
+  // Une demande dans une langue que le destinataire NE parle pas : on l'invite à RELAYER.
+  // `share` = message tout prêt à copier/coller sur ses réseaux (préparé par l'app).
+  request_share(d, lang) {
+    const mot = (d.mot || "").trim(), langue = (d.langue || "").trim();
+    const share = (d.share || "").trim();
+    return {
+      subject: _pick(lang, `Aide à trouver « ${mot} » : partage cette demande`, `Help find “${mot}”: share this request`),
+      body: [
+        _hello(d, lang), "",
+        _pick(lang,
+          `Quelqu'un cherche la traduction de « ${mot} »${langue ? ` en ${langue}` : ""}. Tu ne parles peut-être pas cette langue, mais tu connais sûrement quelqu'un qui la parle. Partage ce message autour de toi (WhatsApp, Facebook, tes proches) :`,
+          `Someone is looking for the translation of “${mot}”${langue ? ` in ${langue}` : ""}. You may not speak it, but you surely know someone who does. Share this message around you (WhatsApp, Facebook, your circle):`),
+        share ? ("\n« " + share + " »") : "",
+      ].join("\n"),
+    };
+  },
+  // On a répondu à la demande de l'utilisateur.
+  request_answered(d, lang) {
+    const who = _who(d, lang), mot = (d.mot || "").trim();
+    return {
+      subject: _pick(lang, `${who} a répondu à ta demande « ${mot} »`, `${who} answered your request “${mot}”`),
+      body: [
+        _hello(d, lang), "",
+        _pick(lang,
+          `Bonne nouvelle : ${who} a répondu à ta demande de traduction de « ${mot} ». Va voir la réponse sur LANGA.`,
+          `Good news: ${who} answered your translation request for “${mot}”. Check the answer on LANGA.`),
+      ].join("\n"),
+    };
+  },
   // Résumé périodique (tous les 2 jours) : agrège l'activité récente.
   digest(d, lang) {
     const items = Array.isArray(d.items) ? d.items : [];
