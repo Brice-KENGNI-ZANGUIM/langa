@@ -4141,6 +4141,73 @@ function initIndicatifs() {
     `<option value="${escapeHtml(x.d)}">${x.f} ${escapeHtml(x.p)} (${escapeHtml(x.d)})</option>`
   ).join("");
 }
+// --- Infobulles par champ (ⓘ) : une aide COURTE et ciblée sur chaque champ du
+// profil et de la déclaration de langue, en complément de la visite guidée (qui,
+// elle, raconte le parcours). Le petit ⓘ se place en coin haut-droit du champ, HORS
+// de l'élément traduit (data-i18n), pour survivre à la bascule FR/EN. Clic = popover.
+const FIELD_TIPS = {
+  "c-nom": { fr: "Ton nom de famille. Il sert à te créditer et à te recontacter si besoin. Il n'est jamais affiché publiquement : seul le crédit que tu choisis plus bas peut l'être.",
+             en: "Your family name. Used to credit you and to reach you if needed. It is never shown publicly: only the credit you choose below may be." },
+  "c-prenom": { fr: "Ton prénom. C'est lui qui peut apparaître comme crédit public sur tes contributions, si tu l'autorises plus bas.",
+                en: "Your first name. It can appear as the public credit on your contributions, if you allow it below." },
+  "c-village": { fr: "Le village ou quartier d'où vient ta façon de parler. Les mots changent d'un village à l'autre : cette information situe ta variante.",
+                 en: "The village or neighbourhood your way of speaking comes from. Words change from one village to another: this places your variety." },
+  "c-role": { fr: "Locuteur natif, apprenant ou linguiste. Cela indique aux autres le poids de ta contribution : un natif fait autorité sur la prononciation.",
+              en: "Native speaker, learner or linguist. It tells others how much weight your contribution carries: a native is authoritative on pronunciation." },
+  "c-email": { fr: "Pour te recontacter si une contribution demande une précision. Jamais affiché publiquement, jamais transmis à des tiers.",
+               en: "To reach you if a contribution needs clarification. Never shown publicly, never shared with third parties." },
+  "c-tel": { fr: "Ton numéro avec l'indicatif du pays. Sert uniquement à te joindre si besoin ; jamais public.",
+             en: "Your number with the country code. Only used to reach you if needed; never public." },
+  "c-consent": { fr: "Autorisation d'utiliser tes contributions pour documenter et outiller la langue, et de te contacter à ce sujet. Obligatoire pour participer.",
+                 en: "Permission to use your contributions to document and equip the language, and to contact you about it. Required to take part." },
+  "c-credit-on": { fr: "Si tu coches, ton prénom ou sigle apparaît sur tes contributions et dans les notifications envoyées aux autres. Sinon, tu restes anonyme.",
+                   en: "If ticked, your first name or initials appear on your contributions and in notifications sent to others. Otherwise you stay anonymous." },
+  "ld-nom": { fr: "Le nom courant de la langue en français (ex. Bassa, Douala).",
+              en: "The common name of the language in French (e.g. Bassa, Douala)." },
+  "ld-region": { fr: "La région ou la localité où elle est parlée (ex. Ouest, Littoral).",
+                 en: "The region or area where it is spoken (e.g. West, Littoral)." },
+  "ld-pays": { fr: "Le pays principal où on la parle.", en: "The main country where it is spoken." },
+  "ld-famille": { fr: "La famille ou le groupe linguistique (ex. bantou, bamiléké). Aide à relier les langues proches.",
+                  en: "The language family or group (e.g. Bantu, Bamileke). Helps relate nearby languages." },
+  "ld-autonyme": { fr: "Le nom de la langue DANS la langue elle-même, tel que ses locuteurs l'appellent.",
+                   en: "The name of the language IN the language itself, as its speakers call it." },
+  "ld-alias": { fr: "D'autres noms ou orthographes de la langue, séparés par des virgules. Évite les doublons quand deux personnes l'écrivent différemment.",
+                en: "Other names or spellings of the language, comma-separated. Avoids duplicates when two people write it differently." },
+  "ld-note": { fr: "Lettres, sons ou tons particuliers à prévoir, en vue d'un futur clavier dédié à la langue.",
+               en: "Special letters, sounds or tones to plan for, towards a future dedicated keyboard for the language." },
+};
+function mountFieldTips(root) {
+  root = root || document;
+  Object.keys(FIELD_TIPS).forEach((id) => {
+    const inp = root.getElementById ? root.getElementById(id) : document.getElementById(id);
+    if (!inp) return;
+    const wrap = inp.closest(".field") || inp.closest("label");
+    if (!wrap || wrap.querySelector(":scope > .field-tip")) return;   // déjà monté
+    wrap.classList.add("has-tip");
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "field-tip";
+    btn.dataset.tipId = id;
+    btn.textContent = "ⓘ";
+    btn.setAttribute("aria-label", t("tip.aria"));
+    wrap.appendChild(btn);
+  });
+}
+/** Ouvre/ferme le popover d'aide d'un champ. Un seul ouvert à la fois. */
+function onFieldTipClick(e) {
+  const btn = e.target.closest(".field-tip");
+  document.querySelectorAll(".field-tip-pop").forEach((p) => { if (!btn || p._owner !== btn) p.remove(); });
+  if (!btn) return;
+  e.preventDefault(); e.stopPropagation();
+  if (btn._pop && btn._pop.isConnected) { btn._pop.remove(); btn._pop = null; return; }
+  const tip = FIELD_TIPS[btn.dataset.tipId]; if (!tip) return;
+  const pop = document.createElement("div");
+  pop.className = "field-tip-pop";
+  pop.textContent = getUiLang() === "en" ? (tip.en || tip.fr) : tip.fr;   // textContent = anti-injection
+  pop._owner = btn; btn._pop = pop;
+  const wrap = btn.closest(".field") || btn.closest("label");
+  if (wrap) wrap.appendChild(pop);
+}
 function initContributeur() {
   setupVillageCombo();
   initIndicatifs();                       // remplit d'abord les options d'indicatif
@@ -4154,6 +4221,8 @@ function initContributeur() {
     el.addEventListener("change", collectContributeur);
     el.addEventListener("input", collectContributeur);
   });
+  mountFieldTips();                        // infobulles ⓘ sur le profil ET la déclaration de langue
+  document.addEventListener("click", onFieldTipClick);   // popover (un seul ouvert à la fois)
 }
 
 /** Remplit les champs du profil depuis le stockage (aussi utilisé pour annuler). */

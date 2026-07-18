@@ -483,6 +483,7 @@ export const STR = {
   "exp.saymine": { fr: "🌍 Dis-le dans ta langue", en: "🌍 Say it in your language" },
   "exp.saymine.title": { fr: "Propose ce mot dans ta propre langue", en: "Offer this word in your own language" },
   "saymine.toast": { fr: "À toi ! Écris « {w} » dans ta langue.", en: "Your turn! Write “{w}” in your language." },
+  "tip.aria": { fr: "Aide sur ce champ", en: "Help for this field" },
   "vote.lbl": { fr: "Ton avis :", en: "Your take:" },
   "vote.aria": { fr: "Voter sur cette proposition (juste, doute ou faux)", en: "Vote on this entry (correct, unsure or wrong)" },
   "vote.ok.title": { fr: "Juste / correct", en: "Correct" },
