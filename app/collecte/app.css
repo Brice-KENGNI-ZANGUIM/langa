@@ -235,7 +235,32 @@ body {
   50%      { opacity: .4; box-shadow: 0 0 3px 0 currentColor; }
 }
 .chip--off { color: var(--red); border-color: rgba(248,113,113,.5); }
+/* Pastille VERSION en retard (mise à jour disponible) : décorée comme les autres
+   pastilles (dot clignotant + halo), mais en ROUGE (à jour = verte via .chip--on). */
+#app-ver.chip--off { border-color: currentColor;
+  box-shadow: 0 0 12px -2px currentColor, 0 0 10px rgba(248,113,113,.16) inset; }
+#app-ver.chip--off::before {
+  content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%;
+  margin-right: 7px; vertical-align: middle; background: currentColor;
+  box-shadow: 0 0 8px 1px currentColor; animation: ngLiveDot 1.5s ease-in-out infinite;
+}
+/* Les 3 pastilles d'état (version, en ligne, DB) : taille légèrement réduite. */
+.chips-meta .chip { font-size: .66rem; }
 .chip--ghost { border-style: dashed; }
+/* Bascule de langue en CAPSULE FR|EN (PC + mobile) : la moitié de la langue ACTIVE
+   est VERTE, l'autre grisée ; l'attribut data-active (posé au chargement) inverse les
+   couleurs à chaque changement de langue. Largeur suffisante pour lire FR et EN. */
+.lang-switch { padding: 0; overflow: hidden; display: inline-flex; align-items: stretch;
+  border: 1px solid var(--border); border-radius: 999px; line-height: 1; cursor: pointer; }
+.lang-switch .lang-seg { display: inline-flex; align-items: center; justify-content: center;
+  min-width: 2.4ch; padding: 4px 9px; font-weight: 800; font-size: .72rem; letter-spacing: .04em;
+  color: var(--muted); background: color-mix(in srgb, var(--muted) 12%, var(--panel));
+  transition: background .16s ease, color .16s ease; }
+.lang-switch .lang-seg[data-seg="fr"] { border-right: 1px solid var(--border); }
+.lang-switch[data-active="fr"] .lang-seg[data-seg="fr"],
+.lang-switch[data-active="en"] .lang-seg[data-seg="en"] {
+  background: var(--green); color: var(--bg); }
+.lang-switch:hover { border-color: var(--cyan); box-shadow: 0 0 14px -6px var(--cyan); }
 /* Étiquettes techniques (version) en mono, cohérent avec le logo */
 #app-ver { font-family: var(--font-mono); letter-spacing: -.02em; }
 .chip--btn { cursor: pointer; font: inherit; font-size: .75rem; line-height: 1.1;
@@ -278,7 +303,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
      (jamais empilées), quitte à être un peu plus compactes. */
   .chips-meta { gap: 4px; flex-wrap: nowrap; justify-content: flex-end; }
   #srv-stats { display: none; }
-  #net, #srv { font-size: .54rem; padding: 2px 7px; }
+  #net, #srv, #app-ver { font-size: .54rem; padding: 2px 7px; }
   #net.chip--on::before, #srv.chip--on::before { width: 5px; height: 5px; margin-right: 4px; }
   #app-ver { font-size: .62rem; }
   /* Nav (ligne 2) : boutons resserrés (H et V) qui BASCULENT à la ligne suivante quand
@@ -307,10 +332,11 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   #lang-chip-name { display: inline-block; max-width: 140px; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
   .chips-meta { gap: 4px; }
-  #net, #srv { font-size: .58rem; padding: 2px 6px; line-height: 1.15; }
+  #net, #srv, #app-ver { font-size: .58rem; padding: 2px 6px; line-height: 1.15; }
   #net.chip--on::before, #srv.chip--on::before { margin-right: 4px; width: 5px; height: 5px; }
   #app-ver { font-size: .58rem; padding: 3px 7px; }
-  #ui-lang-toggle { padding: 4px 8px; }
+  #ui-lang-toggle { padding: 0; }        /* capsule FR|EN : le padding est sur les segments */
+  .lang-switch .lang-seg { padding: 4px 8px; font-size: .66rem; }
   #theme-toggle { padding: 6px 7px; }   /* thème clair/sombre : épaisseur (horizontal) x1.15, hauteur inchangée */
 }
 /* Petits téléphones (≤ 389px) : le nom se réduit d'un cran pour que « LANGA · Collecte »
@@ -324,7 +350,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 @media (max-width: 340px) {
   .brand-mark { width: 36px; height: 36px; }
   .brand-txt h1 { font-size: 1.08rem; }
-  #net, #srv { font-size: .48rem; padding: 2px 5px; }
+  #net, #srv, #app-ver { font-size: .48rem; padding: 2px 5px; }
   #net.chip--on::before, #srv.chip--on::before { margin-right: 3px; width: 4px; height: 4px; }
   /* Très petits écrans : boutons un cran plus compacts (icônes conservées). */
   .chip { font-size: .66rem; padding: 4px 6px; }

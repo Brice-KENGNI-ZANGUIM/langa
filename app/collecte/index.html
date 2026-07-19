@@ -75,17 +75,22 @@
            de nav (margin-left:auto). Ils basculent proprement à la ligne suivante,
            toujours alignés à droite, quand la nav déborde. -->
       <div class="chips-tools">
-        <span id="app-ver" class="chip chip--ghost" data-i18n-title="app.ver.title" title="Version de l'application"></span>
-        <button id="ui-lang-toggle" class="chip chip--btn" type="button" data-i18n="chip.ui" data-i18n-title="chip.ui.title"
-                title="Switch to English" aria-label="Switch to English">EN</button>
+        <!-- Bascule de langue en CAPSULE FR|EN : la moitié de la langue ACTIVE est verte,
+             l'autre grisée ; les couleurs s'inversent à chaque changement de langue. -->
+        <button id="ui-lang-toggle" class="chip lang-switch" type="button" data-i18n-title="chip.ui.title"
+                title="Switch to English" aria-label="Changer de langue">
+          <span class="lang-seg" data-seg="fr">FR</span><span class="lang-seg" data-seg="en">EN</span>
+        </button>
         <button id="theme-toggle" class="chip chip--btn" type="button" data-i18n-title="theme.title"
                 title="Basculer clair / sombre" aria-label="Basculer clair / sombre"><img class="chip-ico" src="icons/ui/hi-theme.svg" alt="" aria-hidden="true"></button>
       </div>
     </div>
     <div class="chips-meta">
+      <!-- Version : juste avant « en ligne ». Décorée comme les autres pastilles (dot + halo) ;
+           VERTE si l'app est à jour, ROUGE si une mise à jour est disponible. -->
+      <span id="app-ver" class="chip chip--on" data-i18n-title="app.ver.title" title="Version de l'application"></span>
       <span id="net" class="chip">…</span>
       <span id="srv" class="chip">…</span>
-      <span id="srv-stats" class="chip chip--ghost"></span>
     </div>
   </header>
 

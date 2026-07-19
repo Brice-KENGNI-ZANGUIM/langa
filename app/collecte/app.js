@@ -3554,22 +3554,25 @@ async function send() { await reconcileTick(); }
 // --- Indicateurs (réseau / serveur) -------------------------------------
 async function updateServerBadge() {
   const on = navigator.onLine;
-  $("#net").textContent = on ? "en ligne" : "hors ligne";
+  $("#net").textContent = on ? t("net.online") : t("net.offline");
   $("#net").className = "chip " + (on ? "chip--on" : "chip--off");
   let srv = false;
   try { srv = await checkServer(); } catch (e) { srv = false; }
   const g = modeGoogle();
   $("#srv").textContent = g
-    ? (srv ? "DB" : "hors ligne")
-    : (srv ? "serveur : connecté" : "serveur : hors d'atteinte");
+    ? (srv ? t("srv.db") : t("net.offline"))
+    : (srv ? t("srv.connected") : t("srv.unreachable"));
   $("#srv").className = "chip " + (srv ? "chip--on" : "chip--off");
-  $("#srv-stats").textContent = "";
-  if (srv && !g) {
-    try {
-      const st = await serverStats();
-      const n = st && st.stores && st.stores[0] ? st.stores[0].count : 0;
-      $("#srv-stats").textContent = n + " enregistrement(s) · " + (st && st.stores ? st.stores.length : 0) + " copies";
-    } catch (e) { /* ignore */ }
+  const _ss = $("#srv-stats");   // pastille de stats retirée du header : garde-fou si absente
+  if (_ss) {
+    _ss.textContent = "";
+    if (srv && !g) {
+      try {
+        const st = await serverStats();
+        const n = st && st.stores && st.stores[0] ? st.stores[0].count : 0;
+        _ss.textContent = n + " enregistrement(s) · " + (st && st.stores ? st.stores.length : 0) + " copies";
+      } catch (e) { /* ignore */ }
+    }
   }
 }
 
@@ -3966,13 +3969,18 @@ const _hideBanner = () => {
       garantit qu'après une mise à jour réussie, elle disparaît pour de bon.
     - Version écartée via « Plus tard » → on ne ré-affiche pas pour CETTE version
       (mémoire locale), mais une version encore plus récente rouvre la bannière. */
+function _setVerBadge(behind) {
+  const av = $("#app-ver"); if (av) av.className = "chip " + (behind ? "chip--off" : "chip--on");
+}
 async function checkForUpdate() {
   const dep = await fetchDeployedVersion();
-  if (!dep || _verNum(dep) <= _verNum(APP_VERSION)) {   // rien de plus récent → on masque
+  if (!dep || _verNum(dep) <= _verNum(APP_VERSION)) {   // rien de plus récent → à jour
+    _setVerBadge(false);                                 // pastille version VERTE (à jour)
     _hideBanner();
     localStorage.removeItem("updateDismissed");          // repart propre pour la prochaine fois
     return;
   }
+  _setVerBadge(true);   // une version plus récente existe → pastille version ROUGE
   _deployedVer = dep;   // cible mémorisée (sert au vérificateur d'après-mise-à-jour)
   const banner = $("#update-banner"); if (!banner) return;
   if (localStorage.getItem("updateDismissed") === dep) { banner.hidden = true; return; } // écartée pour cette version
@@ -4673,6 +4681,7 @@ function initEvents() {
   const homeLink = $("#home-link"); if (homeLink) homeLink.addEventListener("click", goHome);
   // Bascule de la langue d'INTERFACE (FR ⇄ EN), distincte de la langue de contenu.
   const uiToggle = $("#ui-lang-toggle");
+  if (uiToggle) uiToggle.dataset.active = getUiLang();   // moitié verte = langue active (capsule FR|EN)
   if (uiToggle) uiToggle.addEventListener("click", () => {
     // Bascule de langue d'INTERFACE : on recharge pour que TOUT se reconstruise
     // dans la nouvelle langue (y compris les <select> habillés, la visite guidée, etc.).

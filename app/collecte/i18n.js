@@ -25,6 +25,12 @@ export function setUiLang(l) {
 export const STR = {
   // — En-tête / chrome —
   "chip.home": { fr: "Accueil", en: "Home" },
+  "net.online": { fr: "en ligne", en: "online" },
+  "net.offline": { fr: "hors ligne", en: "offline" },
+  "srv.db": { fr: "DB", en: "DB" },
+  "srv.offline": { fr: "hors ligne", en: "offline" },
+  "srv.connected": { fr: "serveur : connecté", en: "server: connected" },
+  "srv.unreachable": { fr: "serveur : hors d'atteinte", en: "server: unreachable" },
   "chip.lang": { fr: "Langue", en: "Language" },
   "chip.about": { fr: "À propos", en: "About" },
   "chip.help": { fr: "Aide", en: "Help" },
