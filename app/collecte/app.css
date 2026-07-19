@@ -244,8 +244,9 @@ body {
   margin-right: 7px; vertical-align: middle; background: currentColor;
   box-shadow: 0 0 8px 1px currentColor; animation: ngLiveDot 1.5s ease-in-out infinite;
 }
-/* Les 3 pastilles d'état (version, en ligne, DB) : taille légèrement réduite. */
-.chips-meta .chip { font-size: .66rem; }
+/* Les 3 pastilles d'état (version, en ligne, DB) : taille réduite ET hauteur IDENTIQUE
+   (line-height fixe → la police mono de la version ne la rend plus plus haute). */
+.chips-meta .chip { font-size: .66rem; line-height: 1.25; }
 .chip--ghost { border-style: dashed; }
 /* Bascule de langue en CAPSULE FR|EN (PC + mobile) : la moitié de la langue ACTIVE
    est VERTE, l'autre grisée ; l'attribut data-active (posé au chargement) inverse les
@@ -320,7 +321,6 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   #srv-stats { display: none; }
   #net, #srv, #app-ver { font-size: .5rem; padding: 2px 5px; }
   #net.chip--on::before, #srv.chip--on::before { width: 4px; height: 4px; margin-right: 3px; }
-  #app-ver { font-size: .62rem; }
   /* Nav (ligne 2) : boutons resserrés (H et V) qui BASCULENT à la ligne suivante quand
      ils débordent (jamais de scroll ni de bouton caché), le groupe outils reste à droite. */
   .chips-nav { flex-wrap: wrap; gap: 4px 4px; }
@@ -349,7 +349,6 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   .chips-meta { gap: 4px; }
   #net, #srv, #app-ver { font-size: .52rem; padding: 2px 5px; line-height: 1.15; }
   #net.chip--on::before, #srv.chip--on::before { margin-right: 3px; width: 4px; height: 4px; }
-  #app-ver { font-size: .58rem; padding: 3px 7px; }
   #ui-lang-toggle, #theme-toggle { padding: 0; }   /* capsules : le padding est sur les segments */
   .lang-switch .lang-seg, .theme-switch .theme-seg { padding: 4px 8px; font-size: .66rem; }
 }
