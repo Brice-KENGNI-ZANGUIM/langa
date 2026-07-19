@@ -294,11 +294,11 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   /* Nav TÉLÉPHONE : boutons COMPACTS, taille naturelle, AVEC leur icône (ni géants
      ni minuscules). La cloche reste le dernier bouton de la 1re ligne ; Bugs, Profil
      et les outils passent en 2e ligne via le saut de ligne. */
-  .chips-nav { gap: 4px 6px; }
-  .chip { font-size: .7rem; padding: 3px 8px; }
-  .chip--btn { padding: 3px 8px; gap: 5px; }
+  .chips-nav { gap: 2px 6px; }        /* deux lignes de boutons plus rapprochées */
+  .chip { font-size: .7rem; padding: 4px 8px; }   /* hauteur ~x1.1 */
+  .chip--btn { padding: 4px 8px; gap: 5px; }
   .chip--btn .chip-ico { width: 15px; height: 15px; }
-  .chip--icon { padding: 4px 8px; }
+  .chip--icon { padding: 6px 8px; }   /* cloche : épaisseur ~x1.1 (elle seule) */
   .chip--icon .chip-ico { width: 16px; height: 16px; }
   /* Nom de langue tronqué seulement s'il est vraiment très long. */
   #lang-chip-name { display: inline-block; max-width: 140px; overflow: hidden;

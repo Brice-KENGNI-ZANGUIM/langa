@@ -1,6 +1,10 @@
 {
-  "version": "v214",
+  "version": "v215",
   "changelog": {
+    "v215": [
+      "Ajustements d'affichage sur téléphone : les 4 onglets (Transcrire, Traduire, Explorer, Demander) restent sur une seule ligne, chacun bien délimité comme un bouton ; le défilement ne saute plus quand tu passes au mot suivant après un envoi ; les boutons « Revoir les consignes » et « Enregistrer l'audio » ont désormais le même aspect dans Traduire et Transcrire",
+      "Le corpus de mots à traduire s'est enrichi de plusieurs centaines de mots et expressions du quotidien (nature, cuisine, marché, métiers, corps, maison, transport…), avec leur équivalent anglais"
+    ],
     "v214": [
       "Quand quelqu'un demande la traduction ou la prononciation d'un mot dans ta langue, cette demande apparaît maintenant directement en haut de « Traduire » et « Transcrire », dans un bandeau « La communauté attend une réponse dans ta langue » : un clic charge le mot et tu donnes ta réponse sur place, qui rejoint la bibliothèque et prévient la personne",
       "Menu du haut plus clair : sur ordinateur tous les boutons tiennent sur une seule ligne ; sur téléphone la cloche de notifications est le dernier bouton de la première ligne (avec le nombre de messages non lus en rouge) et les boutons occupent bien toute la largeur",
