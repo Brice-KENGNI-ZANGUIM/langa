@@ -435,10 +435,13 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   /* Icône AU-DESSUS du texte : le libellé récupère toute la largeur du bouton et
      s'affiche en entier (« Transcrire », « Demander »… ne sont plus tronqués),
      tout en gardant l'icône. Texte réduit pour tenir sur les écrans étroits. */
-  .nav-tab { flex: 1 1 0; min-width: 0; flex-direction: column; justify-content: center;
-    gap: 3px; padding: 7px 3px; font-size: .72rem; }
-  .nav-tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
-  .nav-tab .nav-ico { width: 18px; height: 18px; }
+  /* Onglets TÉLÉPHONE : icône + libellé sur la MÊME ligne. Icône à sa taille normale
+     (22px), texte réduit pour que les 4 libellés s'affichent ENTIERS à côté d'elle. */
+  .nav-tab { flex: 1 1 0; min-width: 0; justify-content: center;
+    gap: 2px; padding: 8px 1px; font-size: .52rem; }
+  .nav-tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+  .nav-tab .nav-ico { width: 22px; height: 22px; flex: none; }
+  .nav-tabs { gap: 3px; padding: 3px; }
 }
 
 /* ---- Accueil « Que veux-tu faire ? » ---- */
