@@ -648,6 +648,7 @@ export const STR = {
   "update.sub.one": { fr: "Ta version est en retard. Voici les améliorations de la mise à jour :", en: "Your version is behind. Here are the improvements in this update:" },
   "update.vtag": { fr: "Version {v}", en: "Version {v}" },
   "update.wip": { fr: "Mise à jour…", en: "Updating…" },
+  "loader.txt": { fr: "Chargement…", en: "Loading…" },
 };
 
 // Messages éphémères (toasts) : table FR → EN. On garde le FR comme source dans les

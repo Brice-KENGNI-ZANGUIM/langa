@@ -592,7 +592,19 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   /* Fondu RADIAL centré sur le coin NORD-EST (100% 0%) : le coin reste plein, la transparence
      rayonne vers le SUD-OUEST → les bords gauche ET bas de l'image se fondent sans arête. */
   -webkit-mask-image: radial-gradient(125% 125% at 100% 0%, #000 40%, rgba(0,0,0,.42) 66%, transparent 88%);
-          mask-image: radial-gradient(125% 125% at 100% 0%, #000 40%, rgba(0,0,0,.42) 66%, transparent 88%); }
+          mask-image: radial-gradient(125% 125% at 100% 0%, #000 40%, rgba(0,0,0,.42) 66%, transparent 88%);
+  /* Contour de la COULEUR DU CADRE (accent de la carte) tracé autour de l'image : silhouette
+     pour les illustrations découpées, bord net pour les photos. */
+  filter: drop-shadow(1.4px 0 0 var(--acc)) drop-shadow(-1.4px 0 0 var(--acc))
+          drop-shadow(0 1.4px 0 var(--acc)) drop-shadow(0 -1.4px 0 var(--acc)); }
+/* MOBILE (1 colonne, carte large) : image à HAUTEUR PLEINE du cadre, calée à droite, jamais
+   recadrée (l'image chevauche peu le texte car la carte est large) ; fondu vers la gauche
+   pour dégager la zone de texte. Vaut pour photos ET illustrations. */
+@media (max-width: 560px) {
+  .hub-illus { top: -22px; bottom: -22px; height: calc(100% + 44px); object-position: right center;
+    -webkit-mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%);
+            mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%); }
+}
 /* Le texte passe au-dessus de l'image, avec une ombre portée pour un contraste garanti. */
 .hub-card--illus .hub-card-head, .hub-card--illus .hub-desc, .hub-card--illus .hub-go { position: relative; z-index: 2; }
 .hub-card--illus .hub-name, .hub-card--illus .hub-desc, .hub-card--illus .hub-go {
@@ -2551,6 +2563,33 @@ body.kb-docked .card::after, body.kb-docked .chip--on,
 body.kb-docked .ndop-sep, body.kb-docked .ndop-sep i, body.kb-docked .ndop-sep::before, body.kb-docked .ndop-sep::after,
 body.kb-docked .field--consent {
   animation: none !important;
+}
+
+/* ===== Voile de CHARGEMENT (boot / rechargement) =========================
+   Visible d'emblée (posé dans le HTML), retiré en fin d'init par hideAppLoader().
+   Anneau conique aux couleurs de la marque qui tourne autour du logo qui respire. */
+.app-loader { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center;
+  gap: 18px; align-content: center;
+  background: radial-gradient(120% 90% at 50% 32%, var(--panel), var(--bg));
+  transition: opacity .5s ease, visibility .5s ease; }
+.app-loader--hide { opacity: 0; visibility: hidden; pointer-events: none; }
+.app-loader-mark { position: relative; width: 108px; height: 108px; display: grid; place-items: center; }
+.app-loader-mark img { width: 76px; height: 76px; border-radius: 20px;
+  filter: drop-shadow(0 0 16px color-mix(in srgb, var(--cyan) 55%, transparent));
+  animation: loaderPulse 1.8s ease-in-out infinite; }
+.app-loader-ring { position: absolute; inset: 0; border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 0deg, var(--cyan) 95deg, var(--green) 210deg, transparent 320deg);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+  animation: loaderSpin 1s linear infinite; }
+.app-loader-txt { color: var(--muted); font-size: .9rem; letter-spacing: .03em; }
+@keyframes loaderSpin { to { transform: rotate(360deg); } }
+@keyframes loaderPulse { 0%, 100% { transform: scale(1); opacity: .92; } 50% { transform: scale(1.07); opacity: 1; } }
+/* Curseur « occupé » pendant une attente pilotée (rechargement, fetch long). */
+body.is-busy, body.is-busy * { cursor: progress !important; }
+@media (prefers-reduced-motion: reduce) {
+  .app-loader-ring { animation: none; opacity: .55; }
+  .app-loader-mark img { animation: none; }
 }
 
 /* ALLÈGEMENT des animations continues (moins d'intensité / plus lentes) : impact réduit

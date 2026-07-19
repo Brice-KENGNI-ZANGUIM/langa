@@ -43,6 +43,15 @@
   <link rel="stylesheet" href="./app.css" />
 </head>
 <body>
+  <!-- Voile de CHARGEMENT : visible d'emblée (couvre le boot / le rechargement), retiré par
+       le script en fin d'initialisation. Le logo « respire » au centre d'un anneau qui tourne. -->
+  <div id="app-loader" class="app-loader" role="status" aria-live="polite" aria-label="Chargement">
+    <div class="app-loader-mark">
+      <span class="app-loader-ring" aria-hidden="true"></span>
+      <img src="./icons/logo.svg" alt="" width="76" height="76" />
+    </div>
+    <p class="app-loader-txt" data-i18n="loader.txt">Chargement…</p>
+  </div>
   <header class="topbar">
     <div class="brand brand--home" id="brand-home" role="link" tabindex="0"
          data-i18n-title="brand.home.title" title="Revenir à l'accueil" aria-label="Revenir à l'accueil : Traduire, Transcrire, Explorer">
@@ -310,7 +319,7 @@
           <span class="hub-go" data-i18n="hub.start">Commencer →</span>
         </button>
         <button class="hub-card hub-card--illus" type="button" data-go="translate">
-          <img class="hub-illus" src="icons/hub-translate-bg.jpg" alt="" aria-hidden="true">
+          <img class="hub-illus hub-illus--cut" src="icons/hub-translate-ill.png" alt="" aria-hidden="true">
           <span class="hub-card-head">
             <img class="hub-ico" src="icons/act-translate.svg" alt="" aria-hidden="true">
             <span class="hub-name" data-i18n="hub.card.translate">Traduire</span>
@@ -330,7 +339,7 @@
           <span class="hub-go" data-i18n="hub.open">Ouvrir →</span>
         </button>
         <button class="hub-card hub-card--illus" type="button" data-go="demander">
-          <img class="hub-illus" src="icons/hub-request-bg.jpg" alt="" aria-hidden="true">
+          <img class="hub-illus hub-illus--cut" src="icons/hub-request-ill.png" alt="" aria-hidden="true">
           <span class="hub-card-head">
             <img class="hub-ico" src="icons/act-request.png" alt="" aria-hidden="true">
             <span class="hub-name" data-i18n="hub.card.demander">Demander</span>

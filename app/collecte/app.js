@@ -4018,6 +4018,7 @@ async function checkForUpdate() {
 // dépendre d'un instant précis.
 async function applyUpdate() {
   const btn = $("#update-now"); if (btn) { btn.disabled = true; btn.textContent = t("update.wip"); }
+  showAppLoader();   // voile pendant la manœuvre de mise à jour + rechargement
   localStorage.removeItem("updateDismissed");   // on met vraiment à jour → oublie tout report
   let _reloaded = false;
   const hardReload = () => { if (_reloaded) return; _reloaded = true; location.reload(); };
@@ -4769,7 +4770,20 @@ function initEvents() {
   });
 }
 
+// --- Voile de chargement (boot / rechargement) ---------------------------
+function hideAppLoader() {
+  const el = document.getElementById("app-loader");
+  if (el) el.classList.add("app-loader--hide");
+  document.body.classList.remove("is-busy");
+}
+function showAppLoader() {
+  const el = document.getElementById("app-loader");
+  if (el) el.classList.remove("app-loader--hide");
+  document.body.classList.add("is-busy");
+}
+
 async function main() {
+  setTimeout(hideAppLoader, 6000);   // filet : jamais bloqué sur le voile même si une étape traîne
   initTheme();
   const ver = $("#app-ver");
   if (ver) ver.textContent = APP_VERSION;
@@ -4803,6 +4817,7 @@ async function main() {
     if (route) routeTo(route); else enterHub();
   }
   _replayingHistory = false;
+  hideAppLoader();      // 1re vue affichée → on lève le voile (les rafraîchissements ci-dessous suivent en fond)
   refreshLanguages();   // best-effort : récupère les langues déclarées par la communauté
   micStatus();
   $("#send-hint").textContent = t("send.hint");
