@@ -1,152 +1,272 @@
 <p align="center">
-  <img src="assets/logo.png" alt="Logo LANGA" width="132" />
+  <img src="assets/logo.png" alt="Logo LANGA" height="130" />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/wordmark-dark.png" />
+    <img src="assets/wordmark-light.png" alt="LANGA" height="130" />
+  </picture>
 </p>
 
-<h1 align="center">LANGA : numériser les langues d'Afrique</h1>
+<p align="center">
+  <b>Donner une place numérique aux langues d'Afrique</b><br>
+  <i>« la lumière » en langues nguni · le texte <b>et</b> la voix · portés par les communautés</i>
+</p>
 
 <p align="center">
-  <i>« la lumière » en langues nguni · texte <b>et</b> voix · par leurs communautés</i>
+  <img src="assets/badges/langues.svg" alt="langues : multi-langue" />
+  <img src="assets/badges/interface.svg" alt="interface : FR · EN" />
+  <img src="assets/badges/contenu.svg" alt="contenu : voix + texte" />
+  <img src="assets/badges/licence.svg" alt="licence : AGPL-3.0" />
 </p>
 
 ---
 
-**LANGA** est un projet **de longue haleine** qui vise à rendre les langues
-africaines aussi accessibles numériquement que le français ou l'anglais, **à
-l'écrit comme à l'oral**. Il est **ouvert à tous** : où que l'on soit, un simple
-téléphone ou ordinateur suffit pour contribuer.
+## 🌍 Le projet en quelques mots
 
-La plateforme accueille **déjà plusieurs langues d'Afrique** et chacun peut y
-déclarer la sienne. Le **ngiemboon** (*Ngiembɔɔn*), langue bamiléké de l'Ouest
-Cameroun, est la **plus avancée** : clavier dédié et corpus le plus riche.
+La plupart des langues africaines se parlent tous les jours mais s'écrivent peu, et
+elles restent presque absentes des outils numériques : on ne les trouve ni dans les
+claviers, ni dans les dictionnaires en ligne, ni dans les traducteurs. **LANGA** est
+une application ouverte à tous qui permet à chacun d'écrire, de prononcer et de
+consulter les mots de sa langue, à l'écrit comme à l'oral, depuis un simple téléphone
+ou un ordinateur.
 
-## Aperçu
+La plateforme accueille **déjà plusieurs langues d'Afrique** et chacun peut y déclarer
+la sienne si elle manque encore. Le **ngiemboon** (*Ngiembɔɔn*), une langue bamiléké de
+l'Ouest du Cameroun, est la plus avancée : elle dispose d'un clavier dédié et du corpus
+le plus riche.
 
-<p align="center"><i>Les captures alternent le <b>thème clair</b> et le <b>thème sombre</b> : l'application propose les deux,
-au choix de chacun.</i></p>
+> [!NOTE]
+> L'application est **gratuite** et **ouverte à tous**. Elle s'utilise sur téléphone
+> comme sur ordinateur, en **français** ou en **anglais**, avec un **thème clair** et un
+> **thème sombre** au choix.
 
-<p align="center"><b>Accueil</b> : les trois portes d'entrée de la contribution : <b>Transcrire</b> (prêter sa voix),
-<b>Traduire</b> (donner un équivalent) et <b>Explorer</b> (parcourir la bibliothèque commune). Chaque activité
-porte sa couleur d'identité ; on passe de l'une à l'autre à tout moment par le menu du haut.</p>
+## 🧭 Ce que l'on fait dans l'application
+
+L'application s'organise autour de quatre activités :
+
+- 🎙️ &nbsp;**Transcrire** : prêter sa voix en prononçant un mot ou une phrase.
+- ✍️ &nbsp;**Traduire** : écrire l'équivalent d'un mot entre le français et sa langue.
+- 📚 &nbsp;**Explorer** : parcourir, lire et écouter ce que les autres ont déjà partagé.
+- 📣 &nbsp;**Demander** : solliciter la communauté lorsqu'un mot nous échappe.
+
+Ces quatre portes sont accessibles à tout moment depuis le menu du haut, et l'on passe
+librement de l'une à l'autre.
+
+Les captures qui suivent alternent le **thème sombre** et le **thème clair** :
+l'application propose les deux ambiances, au choix de chacun.
+
+### L'accueil et ses quatre portes
+
 <p align="center">
-  <img src="assets/screenshots/accueil.png" alt="Écran d'accueil : Transcrire, Traduire, Explorer" width="820" />
+  <img src="assets/screenshots/accueil.png" alt="Écran d'accueil : Transcrire, Traduire, Explorer, Demander" width="860" />
 </p>
 
-<p align="center"><b>Traduire</b> : saisie français ↔ ngiemboon avec le <b>clavier dédié</b> qui s'ouvre au toucher :
-voyelles, lettres propres à la langue (ɛ ɔ ʉ ŋ ẅ ÿ ʼ) et tons (á â ǎ à), regroupés par catégories colorées.
-Le compteur indique la progression sur le corpus (plusieurs milliers de mots et de phrases à traduire).</p>
+L'accueil présente les quatre activités comme des portes distinctes, chacune avec sa
+couleur d'identité : le violet pour la transcription, le vert pour la traduction, l'or
+pour l'exploration et le cyan pour la demande. On reconnaît ainsi chaque espace d'un
+coup d'œil, et l'on ouvre celui que l'on veut. Le menu du haut reste présent partout
+pour changer d'activité, de langue ou de thème.
+
+### ✍️ Traduire, avec un clavier fait pour la langue
+
 <p align="center">
-  <img src="assets/screenshots/traduire-clavier.png" alt="Parcours Traduire avec le clavier virtuel ngiemboon" width="820" />
+  <img src="assets/screenshots/traduire-clavier.png" alt="Parcours Traduire avec le clavier virtuel ngiemboon" width="860" />
 </p>
 
-<p align="center"><b>Transcrire</b> : on enregistre sa voix qui prononce le mot, avec un outil qui permet de
-<b>ne garder que le bon passage</b> de l'enregistrement (« Découper »), et de le retirer pour recommencer.
-La voix est l'essentiel ; la traduction écrite reste facultative.</p>
+Traduire consiste à donner l'équivalent d'un mot ou d'une phrase entre le français et la
+langue choisie. On peut se laisser proposer un mot du corpus, qui compte déjà plusieurs
+milliers d'entrées, ou saisir librement le sien. Comme les lettres et les tons propres
+aux langues africaines ne figurent pas sur un clavier ordinaire, LANGA fournit un
+**clavier virtuel dédié** qui s'ouvre au moment où l'on touche le champ de saisie, à la
+manière d'une application de messagerie.
+
+Ce clavier regroupe les caractères par familles colorées : les voyelles, les consonnes,
+les lettres propres à la langue comme ɛ, ɔ, ʉ, ŋ, ẅ et ÿ, les tons posés sur la voyelle,
+et la ponctuation. Une aide phonétique permet d'appuyer sur une lettre pour entendre
+comment elle se prononce. Pendant la frappe, un **texte prédictif** propose des mots
+réels déjà présents dans la langue, ce qui accélère la saisie et aide à garder une
+orthographe cohérente.
+
+### 🎙️ Transcrire, pour la prononciation
+
 <p align="center">
-  <img src="assets/screenshots/transcrire-audio.png" alt="Parcours Transcrire : enregistrement vocal, découpe et retrait" width="820" />
+  <img src="assets/screenshots/transcrire-audio.png" alt="Parcours Transcrire : enregistrement vocal, découpe et retrait" width="860" />
 </p>
 
-<p align="center"><b>Explorer</b> : la <b>bibliothèque commune</b> (recherche, filtres, export) et la
-<b>carte des variantes</b> : d'où viennent les contributions, village par village, chaque losange
-dimensionné par son nombre de contributions. Chaque mot regroupe toutes ses propositions et leurs voix.</p>
+Beaucoup de personnes parlent leur langue sans l'écrire, et la voix tient donc une place
+centrale. Transcrire, c'est enregistrer sa propre prononciation d'un mot ou d'une
+phrase, la traduction écrite restant facultative. Une consigne rappelle l'essentiel
+avant de commencer : se placer dans un endroit calme, parler lentement et distinctement,
+et dire le mot une seule fois.
+
+Comme un enregistrement se passe rarement du premier coup, l'outil audio permet de **ne
+garder que le bon passage**, en délimitant la portion utile sur la forme d'onde ou en
+secondes, avec une pré écoute avant de valider, et un nettoyage automatique des silences.
+On peut aussi retirer l'enregistrement pour recommencer.
+
+### 📣 Demander à la communauté
+
 <p align="center">
-  <img src="assets/screenshots/explorer-carte.png" alt="Explorer la bibliothèque + carte des variantes par village" width="820" />
+  <img src="assets/screenshots/demander.png" alt="Porte Demander : les demandes de traduction et de prononciation adressées à la communauté" width="860" />
 </p>
 
-<p align="center"><b>Apprendre en écoutant et en lisant les autres</b> : en ouvrant un mot, on découvre ce que
-différentes personnes ont proposé, regroupé <b>par village</b>. Chaque variante affiche le <b>rôle</b> du
-contributeur (locuteur natif, apprenant, linguiste), sa <b>prononciation</b> jouable directement dans un
-lecteur à onde, et le <b>consensus</b> quand plusieurs réponses concordent (« ✅ Référence Balatchi »).
-Chaque proposition porte une <b>pastille de vote à trois choix</b> (juste en vert, doute en jaune, faux en
-rouge) : les locuteurs notent la justesse d'un coup d'œil. On apprend la langue simplement en explorant les
-contributions déjà partagées.</p>
+La porte Demander permet de solliciter la communauté lorsqu'on cherche la traduction ou
+la prononciation d'un mot dans une langue précise. On lance un appel en indiquant le
+pays, la région et un peu de contexte. Les personnes qui parlent cette langue sont
+prévenues et invitées à répondre, tandis que les autres reçoivent un message tout prêt
+pour relayer la demande autour d'elles. On répond directement sur place, en écrivant ou
+en enregistrant sa voix, et cette réponse rejoint la bibliothèque commune tout en
+avertissant la personne qui avait posé la question. Si le mot demandé n'existe pas
+encore, il vient s'ajouter à la liste des mots à traduire.
+
+### Le fil « à traduire »
+
 <p align="center">
-  <img src="assets/screenshots/explorer-detail.png" alt="Détail d'un mot : variantes par village, rôles, prononciations audio et consensus, pour apprendre en écoutant et en lisant" width="820" />
+  <img src="assets/screenshots/a-traduire.png" alt="Bandeau « la communauté attend une réponse dans ta langue » en haut de Traduire" width="860" />
 </p>
 
-<p align="center"><b>Améliorer une contribution</b> : sous chaque proposition, « Améliorer / voter » ouvre un
-panneau communautaire : on <b>vote</b> pour la traduction la plus juste (la mieux corroborée devient la
-<b>version retenue par la communauté</b>), on écoute les <b>prononciations alternatives</b>, on lit les
-<b>commentaires</b>, et l'on peut soi-même <b>proposer</b> une meilleure écriture, une nouvelle voix ou une
-remarque. La qualité des données monte ainsi de proche en proche, par accord entre pairs.</p>
+En haut des parcours Traduire et Transcrire, un bandeau apparaît lorsqu'une demande
+concerne l'une de nos langues. Il indique que « la communauté attend une réponse dans ta
+langue » et présente les mots concernés sous forme de pastilles. Un clic charge le mot
+demandé, et la réponse donnée compte à la fois comme une entrée de la bibliothèque et
+comme une réponse à la personne. On retrouve aussi sur cette vue les quatre onglets
+d'activité, présents en haut des pages, chacun dans sa couleur.
+
+### 📚 Explorer la bibliothèque et la carte des variantes
+
 <p align="center">
-  <img src="assets/screenshots/explorer-ameliorer.png" alt="Panneau d'amélioration d'une entrée : consensus, votes, prononciations alternatives, commentaires et formulaire de proposition" width="820" />
+  <img src="assets/screenshots/explorer-carte.png" alt="Explorer la bibliothèque et la carte des variantes par village" width="860" />
 </p>
 
-<p align="center"><b>Notifications</b> : chacun est tenu au courant de <b>tout ce qui se passe autour de ses
-contributions</b> (quand une de ses traductions ou transcriptions est <b>notée</b> ou <b>améliorée</b>) et
-de la <b>vie de la langue</b> (paliers franchis). Un centre de notifications <b>daté</b> garde l'historique,
-une pastille signale les non lues, et un rappel discret peut apparaître à l'ouverture. Le prénom de l'autre
-personne n'apparaît que si elle a autorisé l'affichage de son nom.</p>
+Explorer donne accès à l'ensemble des contributions. La bibliothèque se parcourt, se
+cherche et se filtre, et elle s'exporte dans plusieurs formats standards afin que les
+données restent réutilisables ailleurs, y compris par des outils de linguistique. Au
+dessus des mots, une **carte des variantes** montre d'où viennent les contributions,
+village par village, chaque losange étant dimensionné par le nombre de contributions du
+lieu. Pour une langue bamiléké, la prononciation et le vocabulaire changent d'un village
+à l'autre, et la carte rend cette diversité visible plutôt que de la gommer.
+
+### Le détail d'un mot, pour écouter et lire
+
 <p align="center">
-  <img src="assets/screenshots/notifications.png" alt="Centre de notifications daté : vote reçu, amélioration reçue, jalon de la langue" width="820" />
+  <img src="assets/screenshots/explorer-detail.png" alt="Détail d'un mot : variantes par village, rôles, prononciations audio, consensus et vote à trois choix" width="860" />
 </p>
 
-<p align="center"><b>Multilingue</b> : l'écran de choix de langue : plusieurs langues d'Afrique sont
-<b>déjà ouvertes</b> (avec leur autonyme et leur région), on peut <b>déclarer la sienne</b>, et signaler
-que deux langues déclarées sont en fait la même pour les <b>réunir</b> sans rien perdre.</p>
+En ouvrant un mot, on découvre tout ce que différentes personnes en ont proposé,
+regroupé par village. Chaque proposition indique le **rôle** de son auteur, locuteur
+natif, apprenant ou linguiste. La **prononciation** se joue directement dans un lecteur à
+forme d'onde, et lorsque plusieurs réponses concordent, un **consensus** met en avant la
+version de référence d'un village. Chaque proposition porte enfin une **pastille de vote
+à trois choix**, juste en vert, doute en jaune et faux en rouge, que les locuteurs
+utilisent pour signaler la justesse d'un coup d'œil.
+
+### Améliorer une contribution
+
 <p align="center">
-  <img src="assets/screenshots/langue-multilingue.png" alt="Choix de langue : langues déjà ouvertes, déclaration, réunion de doublons" width="820" />
+  <img src="assets/screenshots/explorer-ameliorer.png" alt="Panneau d'amélioration : consensus, votes, prononciations alternatives, commentaires et proposition" width="860" />
 </p>
 
-<p align="center"><b>Bilingue (FR/EN)</b> : toute l'interface bascule en anglais d'un clic, y compris les
-mots et phrases à traduire, pour ouvrir la contribution à la diaspora et au-delà.</p>
+Sous chaque proposition, un panneau d'amélioration réunit les outils d'un travail
+commun. On y vote pour la traduction la plus juste, la mieux corroborée devenant la
+version retenue par la communauté, on écoute les prononciations alternatives, on lit les
+commentaires, et l'on peut soi même proposer une meilleure écriture, une nouvelle voix
+ou une remarque. La qualité se construit ainsi par accord entre pairs, et une entrée peut
+se corriger et s'affiner avec le temps.
+
+### Les notifications
+
 <p align="center">
-  <img src="assets/screenshots/english-mode.png" alt="Interface complète en anglais (bilingue français / anglais)" width="820" />
+  <img src="assets/screenshots/notifications.png" alt="Centre de notifications daté : vote reçu, amélioration reçue, jalon de la langue" width="860" />
 </p>
 
-## Vision (3 volets)
+Chacun est tenu au courant de ce qui touche à ses propres contributions, par exemple
+lorsqu'une de ses traductions est notée ou améliorée, ainsi que de la vie de la langue,
+comme le franchissement d'un palier de contributions. Un centre de notifications daté
+conserve l'historique, une pastille signale les messages non lus, et un rappel discret
+peut apparaître à l'ouverture. Le prénom d'une autre personne n'apparaît que si elle a
+autorisé l'affichage de son nom, sinon la notification reste anonyme.
 
-1. **Application de collecte de données** (la priorité actuelle) : un clavier virtuel
-   ngiemboon et une application légère (Web/PWA) qui permettent aux locuteurs de
-   proposer des traductions français ↔ ngiemboon et d'enregistrer leur voix. Elle
-   constitue la base de textes et d'audio nécessaire pour entraîner un futur modèle.
-2. **Clavier physique adaptatif** : un clavier dont la disposition s'adapte à la
-   langue (piste explorée en parallèle).
-3. **Modèle d'IA pour les langues africaines** : entraîné à terme sur les données
-   collectées (génération, traduction, synthèse et reconnaissance de la voix).
+### Une plateforme multi-langue
 
-## Démarrer l'application de collecte
+<p align="center">
+  <img src="assets/screenshots/langue-multilingue.png" alt="Choix de langue : langues déjà ouvertes, déclaration d'une nouvelle langue, réunion de doublons" width="860" />
+</p>
+
+L'écran de choix présente les langues déjà ouvertes avec leur nom propre et leur région,
+et chacun peut **déclarer la sienne** si elle manque, ce qui la rend aussitôt
+enrichissable par tous. Comme deux personnes peuvent créer sans le savoir la même langue
+sous deux orthographes différentes, un mécanisme de réunion permet de signaler que deux
+langues déclarées n'en font qu'une, et de les fusionner sans rien perdre, les
+orthographes devenant des noms alternatifs et les régions se cumulant.
+
+### Français et anglais
+
+<p align="center">
+  <img src="assets/screenshots/english-mode.png" alt="Interface complète en anglais, en thème sombre" width="860" />
+</p>
+
+Toute l'interface bascule en anglais d'un seul geste, y compris les mots et les phrases à
+traduire, qui s'affichent alors dans la langue de lecture de la personne. Les
+francophones gardent le français, les anglophones lisent l'anglais, et chacun peut
+contribuer dans la langue qui lui convient.
+
+## ✨ Aides et repères
+
+Une visite guidée accueille le nouveau venu, et de courtes bulles d'aide expliquent
+chaque champ au moment où l'on s'en sert. Chaque entrée de la bibliothèque dispose d'un
+bouton de partage. L'application s'habille de motifs inspirés du Ndop et reprend, page
+après page, la couleur de chaque activité.
+
+## ▶️ Ouvrir l'application
+
+Pour ouvrir l'application en local, on sert le dossier `app/collecte/` avec n'importe
+quel serveur de fichiers, puis on ouvre l'adresse affichée :
 
 ```bash
-python3 server/collecte_server.py      # ouvre l'URL affichée (port 8765, ou 1er libre)
+cd app/collecte
+python3 -m http.server 8000
+# puis ouvrir http://localhost:8000/ dans un navigateur
 ```
 
-Les contributions envoyées sont d'abord gardées **sur l'appareil** puis transmises
-à la base ; le serveur local les sauvegarde **en 4 copies** (1 principale + 3
-sauvegardes). En production, l'app peut aussi viser un backend **Google Apps Script**
-(feuille de calcul + Drive), configurable dans `app/collecte/config.js`.
+Le clavier virtuel ngiemboon est aussi disponible seul, comme démonstration autonome,
+dans `app/keyboard/clavier.html`.
 
-## Structure du dépôt
+## 🗂️ Structure du dépôt
 
 | Dossier | Contenu |
 |---------|---------|
-| `app/collecte/` | **Application de collecte** (PWA hors-ligne : formulaire FR ↔ ngiemboon + audio, stockage local, envoi robuste, Explorer, aide guidée). |
-| `app/keyboard/` | **Clavier virtuel ngiemboon** (composant réutilisable ; `clavier.html` = démo autonome). |
-| `app/flyer/` | Flyer promotionnel partageable (image + PDF) et QR encadré de motifs Ndop. |
-| `server/` | Backend : serveur local Python (4 copies) et script Google Apps Script (production). |
-| `data/` | `alphabet_ngiemboon.json` : **source unique de vérité** de l'alphabet, et seed public. |
-| `scripts/` | Générateurs d'assets (données clavier, propositions, logo, flyer) et moteur de règles. |
+| `app/collecte/` | L'application : les quatre parcours (Transcrire, Traduire, Explorer, Demander), le clavier, l'outil audio, la bibliothèque, les notifications et l'aide guidée. |
+| `app/keyboard/` | Le clavier virtuel ngiemboon, sous forme de composant réutilisable, avec `clavier.html` comme démonstration autonome. |
+| `app/flyer/` | Le flyer de présentation partageable, en image et en PDF, avec son QR encadré de motifs Ndop. |
+| `assets/` | Le logo et les captures d'écran utilisées dans ce document. |
 
-## Alphabet (résumé)
+## 🔤 L'alphabet ngiemboon en bref
 
 - **8 voyelles** : a e ɛ i o ɔ u ʉ
 - **24 consonnes** : b c d f g h j k l m n ŋ p r pf s sh t ts v ẅ ÿ z ʼ
-- **5 tons** (accents sur la voyelle) : haut `á`, bas `a` (non marqué),
-  haut-descendant `â`, montant `ǎ`, bas-descendant `à`
+- **5 tons**, marqués par un accent sur la voyelle : haut `á`, bas non marqué `a`,
+  haut descendant `â`, montant `ǎ` et bas descendant `à`
 
-Les données publiées dans ce dépôt sont uniquement des éléments **libres de
-droits** : la graine de vocabulaire vérifiée par l'auteur et les contributions de
-la communauté.
+Le corpus proposé à la traduction réunit plusieurs milliers de mots et de phrases du
+quotidien, ainsi que les nombres et les chiffres, chaque entrée étant accompagnée de son
+équivalent anglais. Les éléments publiés dans ce dépôt sont uniquement des contenus
+libres de droits, à savoir la graine de vocabulaire vérifiée par l'auteur et les
+contributions de la communauté.
 
-## Licence
+## ⚖️ Licence
 
 Le **code** est distribué sous licence **GNU Affero General Public License v3.0
-(AGPL-3.0)**, voir [`LICENSE`](LICENSE). En résumé : le code reste **ouvert** ;
-toute redistribution, fork ou **service en ligne** dérivé doit republier son code
-source sous la même licence.
+(AGPL-3.0)**, dont le texte figure dans [`LICENSE`](LICENSE). En résumé, le code reste
+ouvert : toute redistribution, tout fork et tout service en ligne dérivé doit republier
+son propre code source sous la même licence.
 
-## Auteur
+## 👤 Auteur
 
-Brice Kengni Zanguim
+**Brice Kengni Zanguim**
 
-© 2026 Brice Kengni Zanguim
+---
+
+<p align="center">
+  <img src="assets/logo.png" alt="LANGA" height="46" /><br>
+  <sub>© 2026 Brice Kengni Zanguim</sub>
+</p>
