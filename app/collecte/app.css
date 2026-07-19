@@ -552,9 +552,9 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 
 /* ---- Accueil « Que veux-tu faire ? » ---- */
 .hub-head { text-align: center; margin-bottom: 4px; }
-.hub-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
-/* 4 portes : 4 de front sur grand écran, 2×2 sur tablette / PC étroit, 1 sur mobile. */
-@media (max-width: 1080px) { .hub-cards { grid-template-columns: repeat(2, 1fr); } }
+/* 4 portes : 2 par ligne (PC / tablette), 1 par ligne en mobile étroit. Image à hauteur
+   pleine du cadre dans tous les cas. */
+.hub-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 @media (max-width: 560px) { .hub-cards { grid-template-columns: 1fr; } }
 /* Chaque porte porte SA couleur d'identité (assortie à son icône et au mode
    présentation) : Traduire → vert, Transcrire → violet, Explorer → or. */
@@ -563,6 +563,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .hub-card { --acc: var(--cyan);
   display: flex; flex-direction: column; align-items: flex-start; gap: 8px; text-align: left;
   padding: 22px 20px; border-radius: 18px; cursor: pointer; font: inherit; position: relative; overflow: hidden;
+  min-height: 226px;   /* cartes ~×1.2 plus hautes qu'auparavant (respiration + place à l'image) */
   /* lavis de couleur discret en haut de carte, posé sur le fond de carte */
   background: radial-gradient(130% 78% at 50% -14%, color-mix(in srgb, var(--acc) 16%, transparent), transparent 62%), var(--card-bg);
   border: 1px solid color-mix(in srgb, var(--acc) 20%, var(--border));
@@ -586,29 +587,37 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
    COLLÉE au coin NORD-EST (haut-droite, jusqu'aux bords haut/droite du cadre). width:auto
    → l'image garde ses proportions, rien n'est coupé. Elle se fond vers le SUD-OUEST via un
    masque en dégradé : le coin est illustré, la zone de texte (bas-gauche) reste dégagée. */
-.hub-illus { position: absolute; top: -22px; right: -20px;
-  height: 70%; width: auto; max-width: none;
-  object-fit: contain; object-position: top right; z-index: 0; pointer-events: none;
-  /* Fondu RADIAL centré sur le coin NORD-EST (100% 0%) : le coin reste plein, la transparence
-     rayonne vers le SUD-OUEST → les bords gauche ET bas de l'image se fondent sans arête. */
-  -webkit-mask-image: radial-gradient(125% 125% at 100% 0%, #000 40%, rgba(0,0,0,.42) 66%, transparent 88%);
-          mask-image: radial-gradient(125% 125% at 100% 0%, #000 40%, rgba(0,0,0,.42) 66%, transparent 88%);
-  /* Contour de la COULEUR DU CADRE (accent de la carte) tracé autour de l'image : silhouette
-     pour les illustrations découpées, bord net pour les photos. */
+/* Image RÉALISTE/illustrée ENTIÈRE (jamais recadrée) : HAUTEUR PLEINE du cadre (déborde
+   jusqu'aux bords haut/bas/droite), calée tout à DROITE. Cartes larges (empilées) → l'image
+   chevauche peu le texte. Fondu vers la GAUCHE pour dégager la zone de texte. Contour de la
+   COULEUR DU CADRE tracé autour de l'image (silhouette pour les illustrations, bord net pour
+   les photos). Identique PC et mobile. */
+.hub-illus { position: absolute; bottom: 0; top: auto; right: -20px;
+  height: 98%; width: auto; max-width: none;
+  object-fit: contain; object-position: right bottom; z-index: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%);
+          mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%);
   filter: drop-shadow(1.4px 0 0 var(--acc)) drop-shadow(-1.4px 0 0 var(--acc))
           drop-shadow(0 1.4px 0 var(--acc)) drop-shadow(0 -1.4px 0 var(--acc)); }
-/* MOBILE (1 colonne, carte large) : image à HAUTEUR PLEINE du cadre, calée à droite, jamais
-   recadrée (l'image chevauche peu le texte car la carte est large) ; fondu vers la gauche
-   pour dégager la zone de texte. Vaut pour photos ET illustrations. */
-@media (max-width: 560px) {
-  .hub-illus { top: -22px; bottom: -22px; height: calc(100% + 44px); object-position: right center;
-    -webkit-mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%);
-            mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%); }
-}
 /* Le texte passe au-dessus de l'image, avec une ombre portée pour un contraste garanti. */
 .hub-card--illus .hub-card-head, .hub-card--illus .hub-desc, .hub-card--illus .hub-go { position: relative; z-index: 2; }
 .hub-card--illus .hub-name, .hub-card--illus .hub-desc, .hub-card--illus .hub-go {
-  text-shadow: 0 1px 8px var(--panel), 0 0 3px var(--panel); }
+  text-shadow: 0 1px 10px var(--panel), 0 0 6px var(--panel), 0 0 2px var(--panel); }
+/* Le texte n'occupe que ~70% à gauche : il passe à la ligne AVANT d'atteindre l'image ;
+   les 30% de droite restent réservés à l'image. */
+.hub-card--illus .hub-card-head,
+.hub-card--illus .hub-desc,
+.hub-card--illus .hub-go { max-width: 70%; }
+/* Texte AGRANDI dans les cartes. */
+.hub-card--illus .hub-name { font-size: 1.82rem; }
+.hub-card--illus .hub-desc { font-size: .98rem; line-height: 1.55; }
+.hub-card--illus .hub-go { font-size: 1rem; }
+/* Icône AGRANDIE, posée dans un CERCLE au contour de la couleur du cadre (accent). */
+.hub-card--illus .hub-ico {
+  width: 78px; height: 78px; padding: 11px; box-sizing: border-box; border-radius: 50%;
+  border: 2.5px solid var(--acc); object-fit: contain;
+  background: radial-gradient(circle at 50% 32%, color-mix(in srgb, var(--acc) 18%, var(--panel)), var(--panel));
+  box-shadow: 0 0 17px -7px var(--acc), inset 0 1px 0 var(--card-sheen); }
 /* Bordure vive et PLEINE de la couleur d'activité (bien lisible à l'arrêt) SURMONTÉE d'une
    comète blanche large qui fait le tour, rapide. Anneau réalisé au masque → reste dans la boîte. */
 .hub-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 3px;
@@ -1394,6 +1403,12 @@ input:focus, select:focus, textarea:focus {
   box-shadow: 0 0 0 1px rgba(34,211,238,.12) inset;
 }
 textarea:focus { box-shadow: 0 0 0 3px rgba(34,211,238,.28), 0 0 26px rgba(34,211,238,.20); }
+/* Curseur clignotant (caret) coloré selon l'ACTIVITÉ : repère visuel du contexte de saisie.
+   Cyan par défaut, vert en Traduire, violet en Transcrire, or dans Explorer. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]), textarea { caret-color: var(--cyan); }
+#view-app[data-act="translate"] :is(input, textarea) { caret-color: var(--green); }
+#view-app[data-act="transcribe"] :is(input, textarea) { caret-color: var(--violet); }
+#view-explore :is(input, textarea) { caret-color: var(--gold); }
 /* Autofill : le navigateur force sinon un fond clair qui casse le thème sombre */
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
@@ -2573,20 +2588,26 @@ body.kb-docked .field--consent {
   background: radial-gradient(120% 90% at 50% 32%, var(--panel), var(--bg));
   transition: opacity .5s ease, visibility .5s ease; }
 .app-loader--hide { opacity: 0; visibility: hidden; pointer-events: none; }
-.app-loader-mark { position: relative; width: 108px; height: 108px; display: grid; place-items: center; }
-.app-loader-mark img { width: 76px; height: 76px; border-radius: 20px;
-  filter: drop-shadow(0 0 16px color-mix(in srgb, var(--cyan) 55%, transparent));
+.app-loader-mark { position: relative; width: 262px; height: 262px; display: grid; place-items: center; }
+.app-loader-mark img { width: 168px; height: 168px; border-radius: 44px;
+  filter: drop-shadow(0 0 30px color-mix(in srgb, var(--cyan) 55%, transparent));
   animation: loaderPulse 1.8s ease-in-out infinite; }
 .app-loader-ring { position: absolute; inset: 0; border-radius: 50%;
   background: conic-gradient(from 0deg, transparent 0deg, var(--cyan) 95deg, var(--green) 210deg, transparent 320deg);
-  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
-          mask: radial-gradient(farthest-side, transparent calc(100% - 5px), #000 calc(100% - 4px));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 8px));
+          mask: radial-gradient(farthest-side, transparent calc(100% - 9px), #000 calc(100% - 8px));
   animation: loaderSpin 1s linear infinite; }
 .app-loader-txt { color: var(--muted); font-size: .9rem; letter-spacing: .03em; }
 @keyframes loaderSpin { to { transform: rotate(360deg); } }
 @keyframes loaderPulse { 0%, 100% { transform: scale(1); opacity: .92; } 50% { transform: scale(1.07); opacity: 1; } }
 /* Curseur « occupé » pendant une attente pilotée (rechargement, fetch long). */
 body.is-busy, body.is-busy * { cursor: progress !important; }
+/* Curseur de MARQUE (PC) : flèche cyan->vert comme curseur par défaut partout où l'on
+   navigue. `cursor` étant hérité, on rétablit explicitement le curseur TEXTE sur les champs
+   de saisie ; les éléments cliquables gardent leur `pointer` (main système = affordance). */
+body { cursor: url("icons/cur-pointer.png") 2 1, auto; }
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]),
+textarea, [contenteditable="true"] { cursor: text; }
 @media (prefers-reduced-motion: reduce) {
   .app-loader-ring { animation: none; opacity: .55; }
   .app-loader-mark img { animation: none; }

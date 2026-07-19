@@ -39,6 +39,7 @@ const SHELL = [
   "./icons/mic-real.png",
   "./icons/act-explore.svg",
   "./icons/act-request.png",
+  "./icons/cur-pointer.png",
   "./icons/ui/hi-home.png",
   "./icons/ui/hi-lang.png",
   "./icons/ui/hi-about.png",
