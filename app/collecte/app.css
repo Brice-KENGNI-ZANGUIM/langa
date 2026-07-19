@@ -472,6 +472,14 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   transition: color .15s ease, background .15s ease, box-shadow .2s ease, border-color .2s ease, transform .12s ease;
   animation: ngCardBreath 6s ease-in-out infinite; }
 .nav-tab > * { position: relative; z-index: 3; }   /* icône + libellé au-dessus des effets */
+/* Illustration d'activité en décor discret à DROITE de l'onglet (cohérence avec le hub) :
+   ancrée en bas-droite, fondue vers la gauche, faible opacité, SOUS le texte ; retirée sur
+   l'onglet actif (fond de couleur uni). */
+.nav-illus { position: absolute; bottom: 0; right: -4px; top: auto; height: 165%; width: auto;
+  z-index: 0 !important; pointer-events: none; opacity: .5; object-fit: contain; object-position: right bottom;
+  -webkit-mask-image: linear-gradient(to left, #000 24%, transparent 80%);
+          mask-image: linear-gradient(to left, #000 24%, transparent 80%); }
+.nav-tab.is-active .nav-illus { opacity: 0; }
 .nav-tab::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 2px;
   pointer-events: none; z-index: 2;
   background:
@@ -593,7 +601,9 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
    COULEUR DU CADRE tracé autour de l'image (silhouette pour les illustrations, bord net pour
    les photos). Identique PC et mobile. */
 .hub-illus { position: absolute; bottom: 0; top: auto; right: -20px;
-  height: 98%; width: auto; max-width: none;
+  height: 99%; width: auto; max-width: 42%;   /* jamais plus de 42% de la LARGEUR (responsive) :
+     l'image reste pleine hauteur tant que la place le permet, et se réduit d'elle-même sur
+     carte étroite (contain) → elle ne déborde jamais dans la zone de texte. */
   object-fit: contain; object-position: right bottom; z-index: 0; pointer-events: none;
   -webkit-mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%);
           mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%);
@@ -605,19 +615,27 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   text-shadow: 0 1px 10px var(--panel), 0 0 6px var(--panel), 0 0 2px var(--panel); }
 /* Le texte n'occupe que ~70% à gauche : il passe à la ligne AVANT d'atteindre l'image ;
    les 30% de droite restent réservés à l'image. */
+/* Le texte n'occupe que le complément à gauche (l'image est plafonnée à 42%) : ~56% max,
+   il passe à la ligne AVANT l'image quelle que soit la taille d'écran. */
 .hub-card--illus .hub-card-head,
 .hub-card--illus .hub-desc,
-.hub-card--illus .hub-go { max-width: 70%; }
-/* Texte AGRANDI dans les cartes. */
-.hub-card--illus .hub-name { font-size: 1.82rem; }
-.hub-card--illus .hub-desc { font-size: .98rem; line-height: 1.55; }
-.hub-card--illus .hub-go { font-size: 1rem; }
+.hub-card--illus .hub-go { max-width: 56%; }
+/* Texte AGRANDI (PC) ; titre = plus gros glyphe devant l'icône. */
+.hub-card--illus .hub-name { font-size: 2.05rem; }
+.hub-card--illus .hub-desc { font-size: 1rem; line-height: 1.55; }
+.hub-card--illus .hub-go { font-size: 1.02rem; }
 /* Icône AGRANDIE, posée dans un CERCLE au contour de la couleur du cadre (accent). */
 .hub-card--illus .hub-ico {
-  width: 78px; height: 78px; padding: 11px; box-sizing: border-box; border-radius: 50%;
+  width: 92px; height: 92px; padding: 13px; box-sizing: border-box; border-radius: 50%;
   border: 2.5px solid var(--acc); object-fit: contain;
   background: radial-gradient(circle at 50% 32%, color-mix(in srgb, var(--acc) 18%, var(--panel)), var(--panel));
   box-shadow: 0 0 17px -7px var(--acc), inset 0 1px 0 var(--card-sheen); }
+/* MOBILE étroit : on réduit icône + titre pour que tout tienne sans déborder. */
+@media (max-width: 560px) {
+  .hub-card--illus .hub-name { font-size: 1.55rem; }
+  .hub-card--illus .hub-desc { font-size: .9rem; }
+  .hub-card--illus .hub-ico { width: 66px; height: 66px; padding: 9px; }
+}
 /* Bordure vive et PLEINE de la couleur d'activité (bien lisible à l'arrêt) SURMONTÉE d'une
    comète blanche large qui fait le tour, rapide. Anneau réalisé au masque → reste dans la boîte. */
 .hub-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 3px;
