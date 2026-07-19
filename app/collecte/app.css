@@ -304,7 +304,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   #lang-chip-name { display: inline-block; max-width: 140px; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
   .chips-meta { gap: 4px; }
-  #net, #srv { font-size: .5rem; padding: 2px 6px; line-height: 1.15; }
+  #net, #srv { font-size: .58rem; padding: 2px 6px; line-height: 1.15; }
   #net.chip--on::before, #srv.chip--on::before { margin-right: 4px; width: 5px; height: 5px; }
   #app-ver { font-size: .58rem; padding: 3px 7px; }
   #ui-lang-toggle { padding: 4px 8px; }
@@ -435,14 +435,16 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
      CHAQUE onglet est un vrai bouton visible (contour + fond teinté de sa couleur
      d'activité) pour qu'on voie clairement qu'on peut cliquer. Conteneur transparent
      (les 4 boutons sont les unités visuelles). */
-  .nav-tabs { width: 100%; flex-wrap: nowrap; gap: 5px; padding: 0; background: transparent; border: none; }
-  .nav-tab { flex: 1 1 0; min-width: 0; justify-content: center;
-    gap: 3px; padding: 7px 1px; font-size: .5rem; border-radius: 11px;
+  /* 2 boutons PAR LIGNE (grille 2×2) : chaque bouton est large → icône ET texte
+     bien GRANDS, libellé entier, contour + teinte de sa couleur d'activité. */
+  .nav-tabs { width: 100%; flex-wrap: wrap; gap: 8px; padding: 0; background: transparent; border: none; }
+  .nav-tab { flex: 1 1 44%; min-width: 0; justify-content: center;
+    gap: 8px; padding: 12px 8px; font-size: .92rem; border-radius: 13px;
     border: 1px solid color-mix(in srgb, var(--acc) 50%, var(--border));
     background: color-mix(in srgb, var(--acc) 12%, var(--panel));
     box-shadow: inset 0 1px 0 var(--card-sheen), 0 1px 3px -1px rgba(0,0,0,.25); }
   .nav-tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-  .nav-tab .nav-ico { width: 25px; height: 25px; flex: none; }
+  .nav-tab .nav-ico { width: 30px; height: 30px; flex: none; }
   /* Onglet actif : couleur d'activité pleine (déjà géré par .is-active) — on garde. */
 }
 
