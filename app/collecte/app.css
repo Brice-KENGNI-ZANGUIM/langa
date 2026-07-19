@@ -124,12 +124,17 @@ body {
   }
 }
 
-.hub-vision{ margin-top:10px; font-size:.9rem; line-height:1.55; color:var(--muted);
-  padding:11px 14px; border-radius:12px; border:1px solid rgba(226,181,111,.35);
-  /* OPAQUE : teinte or→cyan posée sur une base panel pleine → la trame Ndop ne
-     traverse plus le cadre. */
-  background:linear-gradient(120deg, rgba(226,181,111,.14), rgba(34,211,238,.06) 72%), var(--panel); }
-.hub-vision b{ color:var(--text); font-weight:700; }
+/* Texte d'intro des langues : CALLOUT bien en évidence (bordure dorée, fond teinté,
+   halo lumineux) et texte plus grand/contrasté, pour être remarqué et lu. */
+.hub-vision{ margin-top:10px; font-size:1rem; line-height:1.55;
+  color: color-mix(in srgb, var(--text) 82%, var(--muted));
+  padding:16px 18px; border-radius:16px;
+  border:1.5px solid color-mix(in srgb, var(--gold) 55%, var(--border));
+  background:
+    radial-gradient(130% 130% at 0% 0%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 60%),
+    linear-gradient(120deg, rgba(226,181,111,.10), rgba(34,211,238,.05) 72%), var(--card-bg);
+  box-shadow: inset 0 1px 0 var(--card-sheen), 0 0 26px -8px var(--gold); }
+.hub-vision b{ color:var(--text); font-weight:800; }
 
 /* --- Barre supérieure --- */
 /* Header en GRILLE 2 niveaux (max), identique PC / mobile / tablette :
@@ -444,7 +449,9 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .mini-profile:hover { box-shadow: 0 0 16px rgba(34,211,238,.3); border-color: var(--cyan); }
 
 /* ---- Navigation entre espaces (Traduire / Transcrire / Explorer) ---- */
-.main-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+/* Barre des 4 onglets REMONTÉE près du header (comble ~80% de l'espace vide). */
+.main-nav { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap;
+  margin-top: -14px; }
 .main-nav[hidden] { display: none; }
 /* Onglets : chaque bouton porte SA couleur d'activité (contour + fond teinté + halo),
    IDENTIQUE sur PC et téléphone. Sur PC ils s'étirent pour remplir la largeur dédiée
@@ -483,9 +490,11 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   /* Onglets TÉLÉPHONE : les 4 boutons sur UNE SEULE LIGNE, icône + libellé côte à
      côte. Chaque onglet est un vrai bouton visible (contour + fond teinté de sa
      couleur d'activité). Icône et texte un peu agrandis pour remplir le bouton. */
-  .nav-tabs { width: 100%; flex-wrap: nowrap; gap: 5px; padding: 0; background: transparent; border: none; }
-  .nav-tab { flex: 1 1 0; min-width: 0; justify-content: center;
-    gap: 3px; padding: 8px 1px; font-size: .5rem; border-radius: 11px;
+  .nav-tabs { width: 100%; flex-wrap: nowrap; gap: 4px; padding: 0; background: transparent; border: none; }
+  /* Icône décalée VERS LA GAUCHE (justify flex-start + petit padding gauche) : le
+     libellé récupère la place à droite → icône ET texte plus GRANDS sans débordement. */
+  .nav-tab { flex: 1 1 0; min-width: 0; justify-content: flex-start;
+    gap: 3px; padding: 8px 1px; font-size: .52rem; border-radius: 11px;
     border: 1px solid color-mix(in srgb, var(--acc) 50%, var(--border));
     background: color-mix(in srgb, var(--acc) 12%, var(--panel));
     box-shadow: inset 0 1px 0 var(--card-sheen), 0 1px 3px -1px rgba(0,0,0,.25); }
