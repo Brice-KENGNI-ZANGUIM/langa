@@ -1,6 +1,9 @@
 {
-  "version": "v220",
+  "version": "v221",
   "changelog": {
+    "v221": [
+      "L'accueil et la page « À propos » s'illustrent : chaque porte (Transcrire, Traduire, Explorer, Demander) s'ouvre sur une photo réaliste, aux vêtements africains, intégrée dans le cadre et fondue vers le texte pour rester lisible ; « À propos » s'ouvre sur une grande image de communauté qui transmet sa langue"
+    ],
     "v220": [
       "Les illustrations des fenêtres d'information (popups) sont désormais plus grandes et débordent joliment du cadre, entourées d'un halo lumineux à la couleur du message, pour un rendu plus vivant et plus premium"
     ],

@@ -579,6 +579,20 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .hub-card:nth-child(2) { --acc: #a78bfa; }
 .hub-card:nth-child(3) { --acc: var(--gold); }
 .hub-card:nth-child(4) { --acc: var(--cyan); }
+/* Illustration africaine en FOND de carte, sous un filtre assombrissant (dégradé vers la
+   couleur de carte, plus fort en bas) pour que l'icône, le titre et le texte restent
+   parfaitement lisibles par-dessus, dans les deux thèmes. --card-illus posé en HTML. */
+/* Illustration africaine posée en HAUT-DROITE (Nord-Est), image carrée entière, qui se fond
+   progressivement vers le BAS-GAUCHE (Sud-Ouest) via un masque en dégradé : le coin est
+   illustré, la zone de texte reste dégagée. Même esprit que les popups. */
+.hub-illus { position: absolute; inset: -22px -20px; width: calc(100% + 40px); height: calc(100% + 44px);
+  object-fit: cover; object-position: 72% center; z-index: 0; pointer-events: none;
+  -webkit-mask-image: linear-gradient(to bottom left, #000 20%, rgba(0,0,0,.4) 52%, transparent 82%);
+          mask-image: linear-gradient(to bottom left, #000 20%, rgba(0,0,0,.4) 52%, transparent 82%); }
+/* Le texte passe au-dessus de l'image, avec une ombre portée pour un contraste garanti. */
+.hub-card--illus .hub-card-head, .hub-card--illus .hub-desc, .hub-card--illus .hub-go { position: relative; z-index: 2; }
+.hub-card--illus .hub-name, .hub-card--illus .hub-desc, .hub-card--illus .hub-go {
+  text-shadow: 0 1px 8px var(--panel), 0 0 3px var(--panel); }
 /* Bordure vive et PLEINE de la couleur d'activité (bien lisible à l'arrêt) SURMONTÉE d'une
    comète blanche large qui fait le tour, rapide. Anneau réalisé au masque → reste dans la boîte. */
 .hub-card::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 3px;
@@ -2223,6 +2237,10 @@ body::after {
 }
 
 /* ============ Page « À propos » (vraie vue de l'app, style app) ============ */
+/* Bannière hero : illustration de communauté, pleine largeur, coins arrondis + halo. */
+.about-hero { display: block; width: 100%; height: auto; border-radius: 18px; margin: 4px 0 18px;
+  border: 1px solid color-mix(in srgb, var(--cyan) 22%, var(--border));
+  box-shadow: var(--shadow-card), 0 0 46px -24px var(--cyan), inset 0 1px 0 var(--card-sheen); }
 /* Cadre « La vision » = HÉROS premium : fond en lavis d'accent, bordure dégradée vive tout
    autour, eyebrow, titre au dégradé de marque, filet lumineux. */
 .about-vision { position: relative; overflow: hidden; border: 1.5px solid transparent;
