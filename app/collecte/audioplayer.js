@@ -168,48 +168,53 @@ export function mountAudioPlayer(box, audio) {
   }
 
   let wavePhase = 0;
-  // Contour de l'onde : enveloppe MIROIR (haut/bas) suivant les vrais pics, + une
-  // ondulation LIVE (modulée par le son joué, liveAmp) concentrée près du front de lecture.
-  function wavePath(px) {
-    const midY = H / 2, halfH = H * 0.46, step = 2, win = W * 0.16;
-    const ampAt = (x) => {
-      let a = envAt(x / W);
-      const near = Math.max(0, 1 - Math.abs(x - px) / win);
-      a += Math.sin(x * 0.11 + wavePhase) * (liveAmp * 0.38 * near);
-      return Math.max(0.04, Math.min(1, a));
-    };
-    ctx.beginPath(); ctx.moveTo(0, midY);
-    for (let x = 0; x <= W; x += step) ctx.lineTo(x, midY - ampAt(x) * halfH);
-    for (let x = W; x >= 0; x -= step) ctx.lineTo(x, midY + ampAt(x) * halfH);
-    ctx.closePath();
+  // Ajoute une BARRE-PILULE (miroir vertical autour du milieu) à un Path2D.
+  function addBar(path, cx, halfLen, w) {
+    const r = Math.min(w / 2, halfLen);
+    const x = cx - w / 2, y = H / 2 - halfLen, h = halfLen * 2;
+    if (path.roundRect) { path.roundRect(x, y, w, h, r); return; }
+    path.moveTo(x + r, y);
+    path.arcTo(x + w, y, x + w, y + h, r); path.arcTo(x + w, y + h, x, y + h, r);
+    path.arcTo(x, y + h, x, y, r); path.arcTo(x, y, x + w, y, r); path.closePath();
   }
+  // Forme d'onde = ÉGALISEUR de barres-pilules, dégradé africain cyan→vert→or (comme
+  // l'onde du téléphone de l'affiche). Barres LUES en dégradé lumineux + halo, barres
+  // à venir en sourdine ; réactives au son près du front (liveAmp) + shimmer continu.
   function draw() {
     if (!W || !H) return;
     const p = progress();
-    const acc = cssVar("--cyan", "#22d3ee");
-    const grn = cssVar("--green", "#34d399");
+    const cyan = cssVar("--cyan", "#22d3ee");
+    const green = cssVar("--green", "#34d399");
+    const gold = cssVar("--gold", "#e5c07b");
     const muted = cssVar("--muted", "#8b97a6");
-    const px = p * W;
+    const px = p * W, halfH = H * 0.44;
     ctx.clearRect(0, 0, W, H);
-    // 1) onde entière en sourdine (partie NON lue)
-    wavePath(px);
-    ctx.fillStyle = muted; ctx.globalAlpha = 0.34; ctx.fill(); ctx.globalAlpha = 1;
-    // 2) partie LUE (découpée au front) en cyan→vert, avec un léger halo
-    if (px > 0.5) {
-      ctx.save();
-      ctx.beginPath(); ctx.rect(0, 0, px, H); ctx.clip();
-      wavePath(px);
-      const g = ctx.createLinearGradient(0, 0, Math.max(1, px), 0);
-      g.addColorStop(0, acc); g.addColorStop(1, grn);
-      ctx.shadowColor = acc; ctx.shadowBlur = liveAmp > 0 ? 10 : 4;
-      ctx.fillStyle = g; ctx.fill();
-      ctx.restore();
+    const BARS = Math.max(20, Math.min(64, Math.floor(W / 9)));
+    const slot = W / BARS, barW = Math.max(2, slot * 0.56);
+    const played = new Path2D(), dim = new Path2D();
+    for (let i = 0; i < BARS; i++) {
+      const cx = (i + 0.5) * slot;
+      let a = envAt(cx / W);
+      a += Math.sin(i * 0.55 + wavePhase) * 0.045;                              // shimmer vivant
+      const near = Math.max(0, 1 - Math.abs(cx - px) / (W * 0.15));
+      a += Math.sin(i * 0.9 + wavePhase * 1.8) * (liveAmp * 0.55 * near);       // réaction au son
+      a = Math.max(0.06, Math.min(1, a));
+      addBar(cx <= px ? played : dim, cx, a * halfH, barW);
     }
-    // 3) crête lumineuse au front de lecture
+    // 1) barres à venir : sourdine
+    ctx.globalAlpha = 0.34; ctx.fillStyle = muted; ctx.fill(dim); ctx.globalAlpha = 1;
+    // 2) barres lues : dégradé cyan→vert→or + halo lumineux
+    const g = ctx.createLinearGradient(0, 0, W, 0);
+    g.addColorStop(0, cyan); g.addColorStop(0.52, green); g.addColorStop(1, gold);
+    ctx.save();
+    ctx.shadowColor = green; ctx.shadowBlur = liveAmp > 0.02 ? 14 : 8;
+    ctx.fillStyle = g; ctx.fill(played);
+    ctx.restore();
+    // 3) front de lecture : fin trait lumineux
     if (p > 0 && p < 1) {
       ctx.save();
-      ctx.shadowColor = acc; ctx.shadowBlur = 12; ctx.fillStyle = acc;
-      roundRect(ctx, Math.min(W - 3, px - 1.5), 3, 3, H - 6, 1.5); ctx.fill();
+      ctx.shadowColor = cyan; ctx.shadowBlur = 14; ctx.fillStyle = "#eafcff";
+      roundRect(ctx, Math.min(W - 3, px - 1.5), 2, 3, H - 4, 1.5); ctx.fill();
       ctx.restore();
     }
     canvas.setAttribute("aria-valuenow", Math.round(p * 100));

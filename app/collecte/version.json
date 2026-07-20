@@ -1,6 +1,9 @@
 {
-  "version": "v229",
+  "version": "v230",
   "changelog": {
+    "v230": [
+      "La zone d'écoute audio est entièrement redessinée : une onde en barres lumineuses, dégradé cyan-vert-or, qui vit et réagit au son pendant la lecture, avec un front de lecture éclatant, pour une écoute belle et immersive"
+    ],
     "v229": [
       "Pied de page revu : le nom LANGIAL y est désormais coloré et stylisé comme dans l'en-tête, aligné avec le logo ; les mentions légales et le copyright sont réunis sur une seule ligne bien rangée"
     ],
