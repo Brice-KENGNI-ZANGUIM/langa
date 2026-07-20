@@ -3,13 +3,13 @@
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/wordmark-dark.png" />
-    <img src="assets/wordmark-light.png" alt="LANGIAL" height="130" />
+    <img src="assets/wordmark-light.png" alt="LANGIAL" height="110" />
   </picture>
 </p>
 
 <p align="center">
   <b>Donner une place numérique aux langues d'Afrique</b><br>
-  <i>« la lumière » en langues nguni · le texte <b>et</b> la voix · portés par les communautés</i>
+  <i>le texte <b>et</b> la voix · portés par les communautés</i>
 </p>
 
 <p align="center">
