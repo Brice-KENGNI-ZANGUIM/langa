@@ -3,7 +3,7 @@
   &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="assets/wordmark-dark.png" />
-    <img src="assets/wordmark-light.png" alt="LANGIAL" height="110" />
+    <img src="assets/wordmark-light.png" alt="LANGIAL" height="88" />
   </picture>
 </p>
 
