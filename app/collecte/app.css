@@ -2715,7 +2715,7 @@ a[href], button:not([disabled]), [role="button"], [role="link"], summary, select
 [tabindex]:not([tabindex="-1"]), label.switch-row, input[type="range"], input[type="checkbox"], input[type="radio"],
 .chip, .btn, .nav-tab, .hub-card, .lang-btn, .lang-card, .mini-profile,
 .share-ico, .share-btn--native, .foot-nav a, .foot-legal-link, .aplayer-play, .aplayer-mute {
-  cursor: url("icons/cur-hand.png") 11 2, pointer !important;
+  cursor: url("icons/cur-hand.png") 16 3, pointer !important;
 }
 input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="button"]):not([type="submit"]),
 textarea, [contenteditable="true"] { cursor: text; }
