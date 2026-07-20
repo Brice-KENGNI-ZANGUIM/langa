@@ -189,53 +189,50 @@ export function mountAudioPlayer(box, audio) {
     path.arcTo(x + w, y, x + w, y + h, r); path.arcTo(x + w, y + h, x, y + h, r);
     path.arcTo(x, y + h, x, y, r); path.arcTo(x, y, x + w, y, r); path.closePath();
   }
-  // Forme d'onde = FILAMENTS néon fluides entrelacés : plusieurs courbes souples qui
-  // ondulent (fréquences/phases différentes → tressage), en FUSEAU selon l'enveloppe réelle
-  // du son, avec un CŒUR blanc lumineux et un glow. Réactif au son (liveAmp) + flux continu
-  // (wavePhase). Style « onde d'énergie » lumineuse sur fond sombre (réf. filaments).
+  // Forme d'onde = BARRES VERTICALES (façon message vocal, réf. _aplayer_light), dimensionnées
+  // par les VRAIS pics du son : partie LUE en dégradé cyan→vert→or, partie non lue grisée, front
+  // de lecture lumineux. Pas de courbe blanche. Par-dessus, un effet de VIBRATION/MIRAGE qui se
+  // PROPAGE le long des barres : une bosse étroite voyage le long de l'onde (des barres statiques,
+  // d'autres qui enflent au passage), d'autant plus marquée que le son émis est fort (liveAmp).
   function draw() {
     if (!W || !H) return;
     const p = progress();
     const cyan = cssVar("--cyan", "#22d3ee");
     const green = cssVar("--green", "#34d399");
-    const midY = H / 2, maxA = H * 0.46, px = p * W;
+    const gold = cssVar("--gold", "#e2b56f");
+    const midY = H / 2, maxA = H * 0.44, px = p * W;
     ctx.clearRect(0, 0, W, H);
-    // fond sombre local (contraste pour le néon)
+    // fond sombre local (contraste)
     ctx.save(); ctx.fillStyle = "rgba(4,9,15,0.5)"; const bp = new Path2D();
     if (bp.roundRect) bp.roundRect(0, 0, W, H, 10); else bp.rect(0, 0, W, H);
     ctx.fill(bp); ctx.restore();
-    ctx.lineCap = "round";
-    const STR = 6;
-    const grad = ctx.createLinearGradient(0, 0, W, 0);
-    grad.addColorStop(0, cyan); grad.addColorStop(0.5, green); grad.addColorStop(1, "#9be86a");
-    for (let k = STR - 1; k >= 0; k--) {
-      const core = k === 0, f = 2.0 + k * 1.15, ph = wavePhase * (1 + k * 0.06) + k * 1.35, dir = k % 2 ? 1 : -1;
-      const ampS = core ? 0.66 : (0.28 + 0.5 * (1 - k / STR));
-      ctx.beginPath();
-      for (let x = 0; x <= W; x += 3) {
-        const e = envAt(x / W);
-        const near = Math.max(0, 1 - Math.abs(x - px) / (W * 0.34));
-        // GONFLEMENT au passage du son (l'onde enfle là où l'on lit, au rythme du son réel)…
-        const live = 1 + liveAmp * 1.05 * near;
-        // …+ MIRAGE : une micro-vibration rapide, uniquement près du curseur et proportionnelle
-        // au son émis, pour l'effet dynamique/tremblant demandé.
-        const mirage = liveAmp * near * near * Math.sin(x * 0.5 + wavePhase * 7 + k) * maxA * 0.09;
-        const y = midY + dir * (Math.sin(x * 0.02 * f + ph) * maxA * ampS * e * live * (core ? 1 : 0.85) + mirage);
-        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = core ? "#eafffb" : grad;
-      ctx.lineWidth = core ? 2.6 : 1.5;
-      ctx.globalAlpha = core ? 1 : 0.55;
-      ctx.shadowColor = core ? cyan : green;
-      ctx.shadowBlur = core ? 18 : 8;
-      ctx.stroke();
-      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
+    const played = ctx.createLinearGradient(0, 0, W, 0);
+    played.addColorStop(0, cyan); played.addColorStop(0.5, green); played.addColorStop(1, gold);
+    const bw = 2.7, step = bw + 3.6, n = Math.max(1, Math.floor((W - 2) / step));  // barres DENSES
+    // Position de l'ONDE qui se propage (0→1, boucle), et sa largeur (bosse étroite).
+    const wavePos = (wavePhase * 0.016) % 1, sig = 0.06;
+    for (let i = 0; i < n; i++) {
+      const cx = 2 + i * step + step / 2;
+      const t = cx / W, e = envAt(t);
+      // Onde voyageante : bosse gaussienne (distance circulaire → boucle sans à-coup). Seules les
+      // barres sous la bosse enflent (au rythme du son) ; les autres restent statiques.
+      const dd = Math.min(Math.abs(t - wavePos), 1 - Math.abs(t - wavePos));
+      const travel = Math.exp(-(dd * dd) / (2 * sig * sig));
+      const vib = 1 + liveAmp * 1.5 * travel;
+      const half = Math.min(maxA, maxA * (0.10 + 0.90 * e) * vib);
+      const isPlayed = cx <= px;
+      const path = new Path2D(); addBar(path, cx, half, bw);
+      ctx.save();
+      ctx.fillStyle = isPlayed ? played : "rgba(150,168,186,0.30)";
+      if (isPlayed) { ctx.shadowColor = green; ctx.shadowBlur = 3 + 7 * travel; ctx.globalAlpha = 0.92 + 0.08 * travel; }
+      ctx.fill(path);
+      ctx.restore();
     }
-    // 3) front de lecture : fin trait lumineux
+    // Front de lecture : fin trait lumineux
     if (p > 0 && p < 1) {
       ctx.save();
-      ctx.shadowColor = cyan; ctx.shadowBlur = 14; ctx.fillStyle = "#eafcff";
-      roundRect(ctx, Math.min(W - 3, px - 1.5), 2, 3, H - 4, 1.5); ctx.fill();
+      ctx.shadowColor = cyan; ctx.shadowBlur = 12; ctx.fillStyle = "#eafcff";
+      roundRect(ctx, Math.min(W - 3, px - 1.2), 3, 2.4, H - 6, 1.2); ctx.fill();
       ctx.restore();
     }
     canvas.setAttribute("aria-valuenow", Math.round(p * 100));

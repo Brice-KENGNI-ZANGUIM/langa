@@ -1,6 +1,9 @@
 {
-  "version": "v252",
+  "version": "v253",
   "changelog": {
+    "v253": [
+      "Nouvelle onde d'\u00e9coute audio : retour aux barres verticales (fa\u00e7on message vocal) dimensionn\u00e9es par le son r\u00e9el, partie lue en d\u00e9grad\u00e9 cyan-vert-or et partie non lue gris\u00e9e ; pendant la lecture une vibration se propage le long des barres au rythme du son (des barres statiques, d'autres qui enflent au passage) ; plus de courbe blanche"
+    ],
     "v252": [
       "Traduire/Transcrire : le bouton \u00ab Ajouter\u2026 \u00bb (traduction ou transcription secondaire, optionnelle) est plac\u00e9 tout en bas, apr\u00e8s le contenu principal et juste avant \u00ab Enregistrer \u00bb ; la partie optionnelle se d\u00e9plie juste en dessous"
     ],
