@@ -613,7 +613,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .hub-illus-wrap { flex: 0 0 48%; align-self: stretch; position: relative; overflow: hidden; min-width: 0; }
 /* L'image occupe tout le conteneur (= hauteur du cadre), sans recadrage (contain), plaquée à
    DROITE et en bas. */
-.hub-illus { position: absolute; left: 0; right: 0; bottom: 0; height: 99%;
+.hub-illus { position: absolute; right: 0; bottom: 0; width: 100%; height: 98%;
   object-fit: contain; object-position: right bottom; pointer-events: none;
   -webkit-mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%);
           mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%);
