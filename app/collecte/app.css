@@ -1050,7 +1050,14 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .tr-guide-ex-txt { font-size: 1.05rem; font-weight: 800; }
 .tr-guide-ex-card.bad { background: color-mix(in srgb, var(--red) 10%, var(--panel)); border: 1px solid color-mix(in srgb, var(--red) 38%, var(--border)); }
 .tr-guide-ex-card.bad .tr-guide-ex-label { color: var(--red); }
-.tr-guide-ex-card.bad .tr-guide-ex-txt { color: var(--red); text-decoration: line-through; text-decoration-color: var(--red); text-decoration-thickness: 2px; }
+.tr-guide-ex-card.bad .tr-guide-ex-txt { color: var(--red); display: inline-flex; align-items: center; gap: 8px; }
+/* Panneau « INTERDIT » (cercle rouge barré en diagonale) devant le mot à éviter : bien plus
+   parlant qu'un simple barré. Dessiné en CSS → net, à la couleur de marque, sombre comme clair. */
+.tr-guide-ex-card.bad .tr-guide-ex-txt::before {
+  content: ""; flex: 0 0 auto; width: 1.15em; height: 1.15em; border-radius: 50%;
+  border: 2.2px solid var(--red);
+  background: linear-gradient(45deg, transparent calc(50% - 1.3px), var(--red) calc(50% - 1.3px),
+    var(--red) calc(50% + 1.3px), transparent calc(50% + 1.3px)); }
 .tr-guide-ex-card.good { background: color-mix(in srgb, var(--green) 10%, var(--panel)); border: 1px solid color-mix(in srgb, var(--green) 38%, var(--border)); }
 .tr-guide-ex-card.good .tr-guide-ex-label { color: var(--green); }
 .tr-guide-ex-card.good .tr-guide-ex-txt { color: var(--green); }

@@ -2,7 +2,7 @@
   "version": "v243",
   "changelog": {
     "v243": [
-      "Consignes de Traduire : le mot \u00ab \u00e0 \u00e9viter \u00bb (rouge, barr\u00e9) et le mot \u00ab \u00e0 faire \u00bb (vert) sont maintenant nettement distincts",
+      "Consignes de Traduire : le mot \u00ab \u00e0 \u00e9viter \u00bb porte un panneau \u00ab interdit \u00bb rouge et le mot \u00ab \u00e0 faire \u00bb est en vert, pour une distinction imm\u00e9diate",
       "Pendant un enregistrement audio, le bouton \u00ab Enregistrer la contribution \u00bb est gris\u00e9 tant que l'enregistrement n'est pas arr\u00eat\u00e9 (fini la confusion avec le bouton Arr\u00eater)"
     ],
     "v242": [
