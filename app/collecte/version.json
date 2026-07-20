@@ -1,6 +1,9 @@
 {
-  "version": "v236",
+  "version": "v237",
   "changelog": {
+    "v237": [
+      "Lecture audio mieux calibrée : le curseur de position atteint désormais la fin de la barre pile quand le son se termine (fini l'arrêt à mi-parcours), la barre est calée sur la vraie durée jouée"
+    ],
     "v236": [
       "Nouvelle onde d'écoute audio : des filaments lumineux entrelacés qui ondulent en fuseau autour d'un cœur brillant, façon onde d'énergie, et qui vibrent au rythme du son pendant la lecture"
     ],

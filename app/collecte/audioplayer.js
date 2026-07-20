@@ -86,10 +86,17 @@ export function mountAudioPlayer(box, audio) {
   const muteBtn = ui.querySelector(".aplayer-mute");
   const volSlider = ui.querySelector(".aplayer-volslider");
   const ctx = canvas.getContext("2d");
-  // Durée AUTORITAIRE : la vraie durée (mesurée à l'enregistrement, transmise via
-  // data-audio-dur en ms) PRIME sur audio.duration, peu fiable pour le WebM/Opus.
+  // Durée pour CALIBRER la barre : on prend la VRAIE durée jouable (audio.duration) dès
+  // qu'elle est connue et fiable → le front de lecture atteint 100 % pile à la fin du son
+  // (aucune durée « figée » qui ferait s'arrêter le curseur avant la fin). data-audio-dur
+  // (mesuré à l'enregistrement) sert seulement de REPLI tant que audio.duration est indispo
+  // (WebM/Opus annonce parfois Infinity avant la sonde fixDuration ci-dessous).
   const knownDur = (() => { const v = parseFloat(box.dataset.audioDur); return isFinite(v) && v > 0 ? v / 1000 : 0; })();
-  const DUR = () => (knownDur > 0 ? knownDur : (isFinite(audio.duration) && audio.duration > 0 ? audio.duration : 0));
+  const DUR = () => {
+    const ad = audio.duration;
+    if (isFinite(ad) && ad > 0.05) return ad;   // vraie durée jouable → prime (barre calée sur la fin réelle)
+    return knownDur > 0 ? knownDur : 0;          // repli tant que la vraie durée n'est pas encore connue
+  };
 
   // --- VRAIS pics d'amplitude (Web Audio) : la forme de l'onde = le son réel -------
   let peaksDone = false;
@@ -163,6 +170,7 @@ export function mountAudioPlayer(box, audio) {
   }
 
   function progress() {
+    if (audio.ended) return 1;                  // fin réelle → front pile à 100 %
     const d = DUR();
     return d > 0 ? Math.min(1, audio.currentTime / d) : 0;
   }
@@ -266,10 +274,12 @@ export function mountAudioPlayer(box, audio) {
     audio.addEventListener("timeupdate", onProbe);
     try { audio.currentTime = 1e101; } catch (e) { audio.removeEventListener("timeupdate", onProbe); }
   }
-  audio.addEventListener("loadedmetadata", () => { durEl.textContent = fmtTime(DUR()); draw(); if (knownDur <= 0) fixDuration(); });
+  // TOUJOURS sonder la vraie durée (même si data-audio-dur est fourni) → la barre est
+  // calibrée sur la durée réellement jouée, jamais sur une valeur figée qui décalerait le front.
+  audio.addEventListener("loadedmetadata", () => { durEl.textContent = fmtTime(DUR()); draw(); fixDuration(); });
   audio.addEventListener("loadeddata", decodePeaks);   // vrais pics dès que l'audio est chargé
   if (audio.readyState >= 2) decodePeaks();
-  audio.addEventListener("durationchange", () => { if (knownDur <= 0 && _durFixed) durEl.textContent = fmtTime(audio.duration); });
+  audio.addEventListener("durationchange", () => { durEl.textContent = fmtTime(DUR()); draw(); });
   audio.addEventListener("timeupdate", () => { curEl.textContent = fmtTime(audio.currentTime); if (!raf) draw(); });
   audio.addEventListener("play", () => {
     setupAnalyser();
