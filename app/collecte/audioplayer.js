@@ -209,14 +209,12 @@ export function mountAudioPlayer(box, audio) {
     const g = ctx.createLinearGradient(0, 0, W, 0);
     g.addColorStop(0, "#2fe4ff"); g.addColorStop(0.26, cyan); g.addColorStop(0.52, "#34e6a6");
     g.addColorStop(0.78, "#9be86a"); g.addColorStop(1, gold);
-    // 1) barres à venir : même dégradé, estompé (coloré, jamais gris)
-    ctx.save(); ctx.globalAlpha = 0.20; ctx.fillStyle = g; ctx.fill(dim); ctx.restore();
-    // 2) barres lues : NÉON additif (halo coloré large + resserrement), réactif au son
-    ctx.save(); ctx.globalCompositeOperation = "lighter";
-    ctx.shadowColor = cyan; ctx.shadowBlur = liveAmp > 0.02 ? 26 : 22; ctx.fillStyle = g;
-    ctx.fill(played); ctx.fill(played);
-    ctx.shadowColor = "#34e6a6"; ctx.shadowBlur = 9; ctx.fill(played);
-    ctx.shadowBlur = 0; ctx.fill(played);
+    // 1) barres à venir : colorées et bien VISIBLES (opaques, juste un peu estompées)
+    ctx.save(); ctx.globalAlpha = 0.5; ctx.fillStyle = g; ctx.fill(dim); ctx.restore();
+    // 2) barres lues : SOLIDES + halo lumineux (aucune transparence), réactif au son
+    ctx.save(); ctx.shadowColor = cyan; ctx.shadowBlur = liveAmp > 0.02 ? 16 : 12;
+    ctx.fillStyle = g; ctx.fill(played);
+    ctx.shadowColor = "#34e6a6"; ctx.shadowBlur = 6; ctx.fill(played);
     ctx.restore();
     // 3) front de lecture : fin trait lumineux
     if (p > 0 && p < 1) {

@@ -1,6 +1,9 @@
 {
-  "version": "v234",
+  "version": "v235",
   "changelog": {
+    "v235": [
+      "L'onde d'écoute audio est désormais opaque et lumineuse (plus de transparence), bien visible pendant la lecture"
+    ],
     "v234": [
       "Le curseur revient au comportement classique : curseur coloré cyan sur la page, et main du navigateur au survol des éléments cliquables"
     ],
