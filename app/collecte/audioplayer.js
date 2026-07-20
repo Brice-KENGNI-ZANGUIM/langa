@@ -208,25 +208,50 @@ export function mountAudioPlayer(box, audio) {
     ctx.fill(bp); ctx.restore();
     const played = ctx.createLinearGradient(0, 0, W, 0);
     played.addColorStop(0, cyan); played.addColorStop(0.5, green); played.addColorStop(1, gold);
-    const bw = 2.7, step = bw + 3.6, n = Math.max(1, Math.floor((W - 2) / step));  // barres DENSES
+    const bw = 2.3, step = bw + 2.3, n = Math.max(1, Math.floor((W - 2) / step));  // barres TRÈS DENSES
     // Position de l'ONDE qui se propage (0→1, boucle), et sa largeur (bosse étroite).
-    const wavePos = (wavePhase * 0.016) % 1, sig = 0.06;
+    const wavePos = (wavePhase * 0.016) % 1, sig = 0.07;
+    const travelAt = (t) => { const dd = Math.min(Math.abs(t - wavePos), 1 - Math.abs(t - wavePos)); return Math.exp(-(dd * dd) / (2 * sig * sig)); };
     for (let i = 0; i < n; i++) {
       const cx = 2 + i * step + step / 2;
       const t = cx / W, e = envAt(t);
       // Onde voyageante : bosse gaussienne (distance circulaire → boucle sans à-coup). Seules les
-      // barres sous la bosse enflent (au rythme du son) ; les autres restent statiques.
-      const dd = Math.min(Math.abs(t - wavePos), 1 - Math.abs(t - wavePos));
-      const travel = Math.exp(-(dd * dd) / (2 * sig * sig));
-      const vib = 1 + liveAmp * 1.5 * travel;
+      // barres sous la bosse enflent/tremblent (au rythme du son) ; les autres restent statiques.
+      const travel = travelAt(t);
+      const vib = 1 + liveAmp * 1.9 * travel;
       const half = Math.min(maxA, maxA * (0.10 + 0.90 * e) * vib);
       const isPlayed = cx <= px;
       const path = new Path2D(); addBar(path, cx, half, bw);
       ctx.save();
       ctx.fillStyle = isPlayed ? played : "rgba(150,168,186,0.30)";
-      if (isPlayed) { ctx.shadowColor = green; ctx.shadowBlur = 3 + 7 * travel; ctx.globalAlpha = 0.92 + 0.08 * travel; }
+      if (isPlayed) { ctx.shadowColor = green; ctx.shadowBlur = 3 + 8 * travel; ctx.globalAlpha = 0.9 + 0.1 * travel; }
       ctx.fill(path);
       ctx.restore();
+    }
+    // ~10 CORDES fines vibrantes PAR-DESSUS les barres : fins filaments néon tressés (fréquences /
+    // phases différentes) qui ondulent, ENFLENT et TREMBLENT (mirage) au passage de l'onde et au
+    // rythme du son. Aucune corde blanche ; dégradé cyan→vert→or, glow doux.
+    ctx.lineCap = "round";
+    const grad = ctx.createLinearGradient(0, 0, W, 0);
+    grad.addColorStop(0, cyan); grad.addColorStop(0.5, green); grad.addColorStop(1, gold);
+    const STR = 10;
+    for (let k = 0; k < STR; k++) {
+      const f = 1.6 + k * 0.85, ph = wavePhase * (0.9 + k * 0.05) + k * 1.2, dir = k % 2 ? 1 : -1;
+      const ampS = 0.26 + 0.44 * (1 - k / STR);            // faisceau : cordes plus amples au centre
+      ctx.beginPath();
+      for (let x = 0; x <= W; x += 3) {
+        const tt = x / W, e = envAt(tt), travel = travelAt(tt);
+        const live = 1 + liveAmp * (0.6 + 1.4 * travel);   // enfle au passage de l'onde + au son
+        const mirage = (0.14 + liveAmp * 0.55) * travel * Math.sin(x * 0.55 + wavePhase * 8 + k) * maxA * 0.11; // TREMBLEMENT
+        const y = midY + dir * (Math.sin(x * 0.02 * f + ph) * maxA * ampS * e * live + mirage);
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 0.9 + 0.4 * (1 - k / STR);
+      ctx.globalAlpha = 0.28 + 0.24 * (1 - k / STR);
+      ctx.shadowColor = green; ctx.shadowBlur = 6;
+      ctx.stroke();
+      ctx.globalAlpha = 1; ctx.shadowBlur = 0;
     }
     // Front de lecture : fin trait lumineux
     if (p > 0 && p < 1) {
