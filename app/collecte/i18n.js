@@ -249,6 +249,8 @@ export const STR = {
 
   "about.how.3.h": { fr: "Explorer", en: "Explore" },
   "about.how.3.p": { fr: "Écoute, apprends et vote pour les meilleures améliorations", en: "Listen, learn and vote for the best improvements" },
+  "about.say.h": { fr: "Ils parlent de nous", en: "What people say" },
+  "say.anon": { fr: "Un membre de la communauté", en: "A community member" },
   "about.share.h": { fr: "Partager le projet", en: "Share the project" },
   "about.share.p": { fr: "Fais découvrir LANGIAL autour de toi en montrant le QR code ou en partageant le flyer.", en: "Spread the word about LANGIAL by showing the QR code or sharing the flyer." },
   "about.share.img": { fr: "⬇ Flyer (image)", en: "⬇ Flyer (image)" },

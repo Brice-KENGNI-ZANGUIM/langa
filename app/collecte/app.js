@@ -1011,6 +1011,28 @@ function showView(name) {
 function openAbout() {
   if (_currentView !== "about") _aboutReturn = _currentView;
   showView("about");
+  renderTestimonials();
+}
+// « Ils parlent de nous » : avis RÉELS d'utilisateurs. On n'invente JAMAIS de témoignage :
+// la liste ne contient que des avis vérifiés fournis par Brice. Tant qu'elle est vide, la
+// section entière reste masquée (aucun faux avis, aucun encart vide trompeur).
+// Pour ajouter un avis réel : { nom, role, langue, texte } (role/langue facultatifs).
+const TESTIMONIALS = [];
+function renderTestimonials() {
+  const grid = $("#about-say"), head = $("#about-sec-say");
+  if (!grid || !head) return;
+  const items = TESTIMONIALS.filter((x) => x && (x.texte || "").trim());
+  const has = items.length > 0;
+  head.hidden = !has; grid.hidden = !has;
+  if (!has) { grid.innerHTML = ""; return; }
+  grid.innerHTML = items.map((x) => {
+    const meta = [x.role, x.langue ? _langNameById(x.langue) : ""].filter(Boolean).join(" · ");
+    return `<figure class="say-card">
+      <blockquote class="say-text">${escapeHtml(x.texte)}</blockquote>
+      <figcaption class="say-by"><span class="say-name">${escapeHtml(x.nom || t("say.anon"))}</span>` +
+      (meta ? `<span class="say-meta">${escapeHtml(meta)}</span>` : "") + `</figcaption>
+    </figure>`;
+  }).join("");
 }
 
 // --- Suivi des bugs -------------------------------------------------------
