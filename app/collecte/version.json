@@ -1,6 +1,9 @@
 {
-  "version": "v257",
+  "version": "v258",
   "changelog": {
+    "v258": [
+      "Visite guid\u00e9e compl\u00e9t\u00e9e : la porte Demander et le centre de notifications ont d\u00e9sormais leur propre visite ; nouvelles \u00e9tapes pour la cloche de notifications, le bandeau des demandes, les boutons Ajouter une traduction ou une voix, et la recherche dans tes contributions envoy\u00e9es"
+    ],
     "v257": [
       "Onde d'\u00e9coute audio enrichie : barres plus denses, plus une dizaine de fines cordes lumineuses entrelac\u00e9es qui vibrent et tremblent (effet mirage) au passage de l'onde, au rythme du son r\u00e9el"
     ],
