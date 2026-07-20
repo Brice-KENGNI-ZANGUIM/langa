@@ -29,7 +29,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v227";
+const APP_VERSION = "v228";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -2003,14 +2003,14 @@ function renderIncitation(pick) {
   const go = $("#incite-go"), lis = $("#incite-listen");
   // Variante « noter » : on invite à donner son avis sur une proposition non jugée.
   if (pick.kind === "rate") {
-    bn.dataset.ptype = "rate"; _setImg("pop-rate.png");
+    bn.dataset.ptype = "rate"; _setImg("pop-rate.webp");
     const m = $("#incite-msg"); if (m) m.textContent = ti("incite.rate.msg", { w: wShow, lang: langName });
     if (lis) { lis.hidden = true; lis.onclick = null; }
     if (go) { go.textContent = t("incite.rate.cta"); go.onclick = () => { _incMarkShown(); _incStopAudio(); bn.hidden = true; startRateWord(pick.word, pick.dir); }; }
     bn.hidden = false;
     return;
   }
-  bn.dataset.ptype = "contribute"; _setImg("pop-contribute.png");
+  bn.dataset.ptype = "contribute"; _setImg("pop-contribute.webp");
   if (go) go.textContent = t("incite.cta");   // rétablit le libellé « traduire » (peut avoir été changé)
   let text;
   if (pick.ref && pick.ref.name) {
@@ -2172,8 +2172,8 @@ async function maybeShowNotifPopup() {
   if (_ico) {
     // Illustrations réalistes (avatars ronds) : demande = appel à la communauté ;
     // activité = deux personnes qui échangent. Plutôt que des emojis (préférence Brice).
-    if (isReq) { _ico.innerHTML = '<img class="pop-photo" src="icons/pop-request.png" alt="" aria-hidden="true" width="52" height="52">'; }
-    else { _ico.innerHTML = '<img class="pop-photo" src="icons/two-talk.png" alt="" aria-hidden="true" width="52" height="52">'; }
+    if (isReq) { _ico.innerHTML = '<img class="pop-photo" src="icons/pop-request.webp" alt="" aria-hidden="true" width="52" height="52">'; }
+    else { _ico.innerHTML = '<img class="pop-photo" src="icons/two-talk.webp" alt="" aria-hidden="true" width="52" height="52">'; }
   }
   pop.hidden = false;
   try { localStorage.setItem(NOTIF_POPUP_KEY, String(n.ts || Date.now())); } catch (e) { /* ok */ }
@@ -2733,7 +2733,7 @@ async function loadLibrary() {
   } catch (e) {
     _exploreEntries = [];
     if (status) status.textContent = "";
-    if (list) list.innerHTML = `<div class="explore-empty"><img class="empty-illus" src="icons/state-offline.png" alt="" aria-hidden="true"><div class="empty-msg">${t("exp.loadfail")}</div></div>`;
+    if (list) list.innerHTML = `<div class="explore-empty"><img class="empty-illus" src="icons/state-offline.webp" alt="" aria-hidden="true"><div class="empty-msg">${t("exp.loadfail")}</div></div>`;
   }
   applyExploreDeepLink();   // lien direct #/explorer?w=…&d=… → ouvre l'entrée visée
 }
@@ -2891,7 +2891,7 @@ function renderExplore() {
     const emsg = _exploreEntries.length === 0
       ? (currentLang() ? ti("exp.empty.lang", { lang: escapeHtml(currentLang().nom) }) : t("exp.empty.search"))
       : t("exp.empty.search");
-    list.innerHTML = `<div class="explore-empty"><img class="empty-illus" src="icons/empty-explore.png" alt="" aria-hidden="true"><div class="empty-msg">${emsg}</div></div>`;
+    list.innerHTML = `<div class="explore-empty"><img class="empty-illus" src="icons/empty-explore.webp" alt="" aria-hidden="true"><div class="empty-msg">${emsg}</div></div>`;
     return;
   }
   list.className = "explore-groups";
@@ -3656,7 +3656,7 @@ function celebrate(originEl) {
     // Illustration « merci » qui apparaît brièvement (uniquement sur une action de l'utilisateur).
     if (originEl) {
       const thanks = document.createElement("img");
-      thanks.className = "celebrate-illus"; thanks.src = "icons/celebrate-thanks.png"; thanks.alt = "";
+      thanks.className = "celebrate-illus"; thanks.src = "icons/celebrate-thanks.webp"; thanks.alt = "";
       thanks.style.left = cx + "px"; thanks.style.top = cy + "px";
       layer.appendChild(thanks);
     }

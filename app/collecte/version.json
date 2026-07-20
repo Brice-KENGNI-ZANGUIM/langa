@@ -1,6 +1,9 @@
 {
-  "version": "v227",
+  "version": "v228",
   "changelog": {
+    "v228": [
+      "Images encore allégées sans perte de qualité (illustrations et popups convertis dans un format moderne plus compact), pour une application plus légère et plus rapide"
+    ],
     "v227": [
       "Correction majeure du chargement sur le nouveau site : l'application est désormais entièrement autonome (le clavier et ses données sont intégrés), ce qui supprime l'écran de chargement qui restait bloqué. Ouverture rapide et propre"
     ],

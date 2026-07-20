@@ -964,7 +964,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
      couleur de panneau, pour ne pas gêner l'onde ni les contrôles. */
   background-color: color-mix(in srgb, var(--cyan) 6%, var(--panel));
   background-image: linear-gradient(color-mix(in srgb, var(--panel) 62%, transparent), color-mix(in srgb, var(--panel) 62%, transparent)),
-    url("icons/audio-panel-bg.jpg");
+    url("icons/audio-panel-bg.webp");
   background-size: cover; background-position: center;
   border: 1px solid color-mix(in srgb, var(--cyan) 26%, var(--border));
   box-shadow: 0 0 24px -16px var(--cyan), var(--shadow-card); }
