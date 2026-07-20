@@ -29,7 +29,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v250";
+const APP_VERSION = "v251";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -434,15 +434,13 @@ async function startRecording() {
   // file://, le navigateur bloque getUserMedia — cause n°1 des « je n'arrive pas ».
   if (!window.isSecureContext) {
     rs.textContent = t("rec.blocked");
-    toast("L'enregistrement audio exige HTTPS ou localhost (sécurité du navigateur). "
-      + "En local, ouvre http://localhost:8765/ ; une fois l'app en ligne (HTTPS), "
-      + "le micro marchera sur les téléphones.", "warn");
+    toast(t("toast.audio.https"), "warn");
     renderMicDiag(micStaticInfo(), "?", false, "insecure");
     return;
   }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
     rs.textContent = t("rec.unsupported");
-    toast("Ce navigateur ne supporte pas l'enregistrement audio. Essaie Chrome ou Firefox à jour.", "warn");
+    toast(t("toast.audio.unsupported"), "warn");
     renderMicDiag(micStaticInfo(), "?", false, "");
     return;
   }
@@ -746,15 +744,15 @@ async function saveContribution() {
   const c = collectContributeur();
 
   if (!profileComplete()) {
-    toast("Remplis d'abord ton profil (tous les champs marqués *).", "warn");
+    toast(t("toast.profile.fill"), "warn");
     openProfile(true);
     return;
   }
   if (activity === "transcribe") {
-    if (!source) { toast("Écris ou fais-toi proposer le mot/phrase à prononcer.", "warn"); return; }
-    if (!audioBlob) { toast("Enregistre ta voix : c'est l'essentiel d'une transcription.", "warn"); return; }
+    if (!source) { toast(t("toast.need.source"), "warn"); return; }
+    if (!audioBlob) { toast(t("toast.need.audio"), "warn"); return; }
   } else if (!source || !target) {
-    toast("Renseigne le mot/phrase ET sa traduction.", "warn");
+    toast(t("toast.need.both"), "warn");
     return;
   }
 
@@ -799,7 +797,7 @@ async function saveContribution() {
   if (reqId) { _currentReqId = null; refreshReqStrip(); }   // la demande traitée disparaît du bandeau
   await refresh();
   kickReconcile();            // tente l'envoi tout de suite, puis en boucle jusqu'à confirmation
-  toast("Contribution enregistrée localement.", "ok");
+  toast(t("toast.saved.local"), "ok");
   celebrate($("#btn-save"));  // micro-célébration sobre (halo + confettis Ndop)
 }
 
@@ -1130,7 +1128,7 @@ function openLegal(section) {
 async function submitBug() {
   const titre = $("#bug-titre").value.trim();
   const desc = $("#bug-desc").value.trim();
-  if (!titre) { toast("Donne au moins un titre au bug.", "warn"); return; }
+  if (!titre) { toast(t("toast.bug.title"), "warn"); return; }
   const c = loadContributeur();
   const bug = {
     id: "BUG-U-" + Date.now().toString(36) + "-" + Math.floor(Math.random() * 1e4),
@@ -1146,7 +1144,7 @@ async function submitBug() {
   $("#bug-status").textContent = t("bug.saved");
   await renderBugs();
   try { await postBug(bug); } catch (e) { /* best-effort ; resignalé à la prochaine ouverture */ }
-  toast("Bug signalé, merci ! Tu peux suivre son avancement ici.", "ok");
+  toast(t("toast.bug.sent"), "ok");
 }
 
 /** Ouvre la vue profil. edit=true → mode modification (depuis l'app). */
@@ -1669,11 +1667,11 @@ function _amResetRecUiOnly() {
 async function amorceRecToggle() {
   if (_amRec && _amRec.state === "recording") { amorceStopRec(); return; }
   if (!window.isSecureContext) {
-    toast("L'enregistrement audio exige HTTPS ou localhost (sécurité du navigateur). ", "warn");
+    toast(t("toast.audio.https"), "warn");
     return;
   }
   if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia || !window.MediaRecorder) {
-    toast("Ce navigateur ne supporte pas l'enregistrement audio. Essaie Chrome ou Firefox à jour.", "warn");
+    toast(t("toast.audio.unsupported"), "warn");
     return;
   }
   try {
@@ -2739,7 +2737,7 @@ function tourVisible(sel) {
 }
 function startTour(steps) {
   _tourSteps = (steps || []).filter((s) => tourVisible(s.sel));
-  if (!_tourSteps.length) { toast("Rien à guider sur cette page pour le moment.", "warn"); return; }
+  if (!_tourSteps.length) { toast(t("toast.guide.none"), "warn"); return; }
   _tourIdx = 0;
   $("#tour").hidden = false;
   tourGoto();
@@ -2860,11 +2858,11 @@ async function shareEntry(src, tgt, dir, hasAudio) {
   try {
     if (navigator.clipboard && navigator.clipboard.writeText) {
       await navigator.clipboard.writeText(text);
-      toast("Carte copiée, colle-la où tu veux !", "ok");
+      toast(t("toast.card.copied"), "ok");
       return;
     }
   } catch (e) { /* dernier repli ci-dessous */ }
-  toast("Partage indisponible sur cet appareil.", "warn");
+  toast(t("toast.share.na"), "warn");
 }
 
 /** Télécharge le dictionnaire de la LANGUE COURANTE (entrées visibles) en CSV ou JSON. */
@@ -2901,7 +2899,7 @@ function downloadDict(fmt) {
     setTimeout(() => { try { URL.revokeObjectURL(url); } catch (e) { /* ok */ } }, 1500);
     toast(`Dictionnaire exporté · ${entries.length} ${entries.length === 1 ? "entrée" : "entrées"}`, "ok");
   } catch (e) {
-    toast("Export impossible sur cet appareil.", "err");
+    toast(t("toast.export.na"), "err");
   }
 }
 
@@ -3532,13 +3530,13 @@ async function onVote(btn) {
   try {
     await postVote({ id_cible: btn.dataset.cible, device_id: deviceId(), valeur: 1 });
     await reloadCorrections(btn.closest(".entry"));
-  } catch (e) { btn.disabled = false; toast("Vote non enregistré (connexion ?).", "warn"); }
+  } catch (e) { btn.disabled = false; toast(t("toast.vote.fail"), "warn"); }
 }
 async function onProposeSubmit(btn) {
   const panel = btn.closest(".entry-corr");
   const sel = panel.querySelector(".corr-form select");   // masqué (sr-only) → par balise
   const type = (sel && sel.value) || "texte";
-  if (!profileComplete()) { toast("Renseigne ton profil pour proposer.", "warn"); openProfile(true); return; }
+  if (!profileComplete()) { toast(t("toast.propose.profile"), "warn"); openProfile(true); return; }
   const c = loadContributeur();
   const base = {
     id_contribution: btn.dataset.entry, type,
@@ -3547,7 +3545,7 @@ async function onProposeSubmit(btn) {
   };
   let payload;
   if (type === "audio") {
-    if (!panel._corrBlob) { toast("Enregistre d'abord ta prononciation.", "warn"); return; }
+    if (!panel._corrBlob) { toast(t("toast.propose.audio"), "warn"); return; }
     payload = Object.assign(base, {
       audio_base64: await blobToBase64Corr(panel._corrBlob),
       audio: { present: true, format: panel._corrBlob.type || "audio/webm", duree_ms: panel._corrDur || 0 },
@@ -3555,7 +3553,7 @@ async function onProposeSubmit(btn) {
   } else {
     const inp = panel.querySelector("[data-role='corr-text']");
     const texte = nfc(inp ? inp.value.trim() : "");
-    if (!texte) { toast("Écris ta proposition.", "warn"); return; }
+    if (!texte) { toast(t("toast.propose.text"), "warn"); return; }
     payload = Object.assign(base, { texte });
   }
   btn.disabled = true;
@@ -3563,8 +3561,8 @@ async function onProposeSubmit(btn) {
     await postSuggestion(payload);
     panel._corrBlob = null; panel._corrDur = 0;
     await reloadCorrections(panel.closest(".entry"));
-    toast("Proposition envoyée. Merci !", "ok");
-  } catch (e) { btn.disabled = false; toast("Envoi impossible (connexion ?).", "warn"); }
+    toast(t("toast.propose.ok"), "ok");
+  } catch (e) { btn.disabled = false; toast(t("toast.send.fail"), "warn"); }
 }
 function blobToBase64Corr(blob) {
   return new Promise((res, rej) => {
@@ -3751,7 +3749,7 @@ async function refresh() {
   fill("#list-sent", sent, true);
 
   document.querySelectorAll("[data-resend]").forEach((b) =>
-    b.addEventListener("click", () => { kickReconcile(true); toast("Renvoi en cours…", "ok"); })
+    b.addEventListener("click", () => { kickReconcile(true); toast(t("toast.resend"), "ok"); })
   );
   document.querySelectorAll("[data-del]").forEach((b) =>
     b.addEventListener("click", async () => {
@@ -4174,16 +4172,16 @@ async function downloadPresent(kind) {
   // Affiche DESSINÉE : image propre (aucun bouton, aucun curseur, aucune autorisation).
   let cv = null;
   try { cv = await presentPosterCanvas(); }
-  catch (e) { toast("Téléchargement impossible sur cet appareil.", "warn"); return; }
+  catch (e) { toast(t("toast.dl.na"), "warn"); return; }
   try {
     if (kind === "pdf") {
       downloadBlob(canvasToPdfBlob(cv), "langa-presentation.pdf");
     } else {
       await new Promise((res) => cv.toBlob((b) => { downloadBlob(b, "langa-presentation.png"); res(); }, "image/png"));
     }
-    toast("Présentation téléchargée ✓", "ok");
+    toast(t("toast.present.dl"), "ok");
   } catch (e) {
-    toast("Téléchargement impossible sur cet appareil.", "warn");
+    toast(t("toast.dl.na"), "warn");
   }
 }
 function setStatus(msg) {
@@ -4362,18 +4360,18 @@ async function verifyUpdateApplied() {
   if (verdict === "none") return;
   if (verdict === "done") {
     sessionStorage.removeItem("pendingUpdate");
-    toast("Application à jour (" + APP_VERSION + ") ✓");
+    toast(ti("toast.upd.uptodate", { v: APP_VERSION }));
     return;
   }
   if (verdict === "giveup") {
     sessionStorage.removeItem("pendingUpdate");
-    toast("Mise à jour automatique impossible, recharge la page (Ctrl+Maj+R).", "warn");
+    toast(t("toast.upd.manual"), "warn");
     return;
   }
   // "retry" : nouvelle tentative bornée
   sessionStorage.setItem("pendingUpdate", JSON.stringify({ to: pend.to, tries: (pend.tries || 0) + 1 }));
   _deployedVer = pend.to;
-  toast("Finalisation de la mise à jour…");
+  toast(t("toast.upd.finalizing"));
   await applyUpdate();
 }
 
@@ -4885,7 +4883,7 @@ function initEvents() {
   const addAu = $("#add-transcription"); if (addAu) addAu.addEventListener("click", () => _revealOptional("#audio-wrap", "#add-transcription", null));
   $("#btn-save").addEventListener("click", saveContribution);
   $("#btn-send").addEventListener("click", send);
-  const rs = $("#btn-resend"); if (rs) rs.addEventListener("click", () => { kickReconcile(); toast("Renvoi en cours…", "ok"); });
+  const rs = $("#btn-resend"); if (rs) rs.addEventListener("click", () => { kickReconcile(); toast(t("toast.resend"), "ok"); });
   window.addEventListener("online", () => { updateServerBadge(); kickReconcile(); });   // retour réseau → renvoi auto
   window.addEventListener("offline", updateServerBadge);
   // Mode proposer / libre
