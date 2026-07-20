@@ -1,6 +1,9 @@
 {
-  "version": "v251",
+  "version": "v252",
   "changelog": {
+    "v252": [
+      "Traduire/Transcrire : le bouton \u00ab Ajouter\u2026 \u00bb (traduction ou transcription secondaire, optionnelle) est plac\u00e9 tout en bas, apr\u00e8s le contenu principal et juste avant \u00ab Enregistrer \u00bb ; la partie optionnelle se d\u00e9plie juste en dessous"
+    ],
     "v251": [
       "Tous les messages courts (confirmations, alertes) s'affichent d\u00e9sormais correctement en fran\u00e7ais ET en anglais (ils \u00e9taient rest\u00e9s en fran\u00e7ais en mode anglais)"
     ],

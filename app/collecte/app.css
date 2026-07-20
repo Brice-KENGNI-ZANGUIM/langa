@@ -1093,11 +1093,22 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .zone--audio #mic-diag { margin-top: 10px; }
 /* Mode TRANSCRIRE : la voix passe juste après le mot source (avant la traduction,
    facultative ici). Contrôles du haut = order 0 (gardent leur place). */
-#view-app[data-act="transcribe"] #source-wrap { order: 1; }
-#view-app[data-act="transcribe"] .zone--audio { order: 2; }
-#view-app[data-act="transcribe"] #target-wrap { order: 3; }
-#view-app[data-act="transcribe"] .grid2       { order: 4; }
-#view-app[data-act="transcribe"] .actions     { order: 5; }
+/* Transcrire : source, puis l'AUDIO (principal) et domaine/note, puis la traduction OPTIONNELLE
+   (repliée derrière « Ajouter une traduction ») TOUT EN BAS, juste avant « Enregistrer ». */
+#view-app[data-act="transcribe"] #source-wrap     { order: 1; }
+#view-app[data-act="transcribe"] .zone--audio     { order: 2; }
+#view-app[data-act="transcribe"] .grid2           { order: 3; }
+#view-app[data-act="transcribe"] #add-translation { order: 4; }
+#view-app[data-act="transcribe"] #target-wrap     { order: 5; }
+#view-app[data-act="transcribe"] .actions         { order: 6; }
+/* Traduire : source, la TRADUCTION (principale) et domaine/note, puis l'audio OPTIONNEL
+   (replié derrière « Ajouter une transcription ») TOUT EN BAS, juste avant « Enregistrer ». */
+#view-app[data-act="translate"] #source-wrap        { order: 1; }
+#view-app[data-act="translate"] #target-wrap        { order: 2; }
+#view-app[data-act="translate"] .grid2              { order: 3; }
+#view-app[data-act="translate"] #add-transcription  { order: 4; }
+#view-app[data-act="translate"] .zone--audio        { order: 5; }
+#view-app[data-act="translate"] .actions            { order: 6; }
 /* « Revoir les consignes » : DEUX emplacements selon la consigne du moment.
    - Transcrire : le bouton reste dans la zone audio (#tr-guide-open, défaut).
    - Traduire : il passe sur la LIGNE du label « Traduction [langue] », à droite
