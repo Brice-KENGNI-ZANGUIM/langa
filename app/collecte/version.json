@@ -1,6 +1,9 @@
 {
-  "version": "v249",
+  "version": "v250",
   "changelog": {
+    "v250": [
+      "Correction : en Transcrire la traduction (optionnelle) est bien MASQUÉE, et en Traduire l'enregistrement audio (optionnel) est bien masqué, chacun repliable via son bouton \u00ab Ajouter\u2026 \u00bb (un r\u00e9siduel d'affichage forçait la section \u00e0 rester visible)"
+    ],
     "v249": [
       "Notifications plus justes : une demande pr\u00e9cise d\u00e9sormais s'il s'agit d'une traduction, d'une prononciation ou des deux, et dit \u00ab dans la langue X \u00bb (au lieu de \u00ab dans X \u00bb) ; le jalon dit \u00ab la langue X vient d'atteindre N contributions \u00bb"
     ],

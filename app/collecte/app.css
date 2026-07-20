@@ -1380,6 +1380,10 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 @media (max-width: 560px) { .grid2 { grid-template-columns: 1fr; } }
 
 .field { display: flex; flex-direction: column; gap: 6px; }
+/* `.field { display:flex }` écrasait l'attribut [hidden] (même piège que .chip, cf. plus haut) :
+   la section optionnelle repliée (#target-wrap en Transcrire, #audio-wrap en Traduire) restait
+   VISIBLE malgré hidden. On rend la main à [hidden]. */
+#target-wrap[hidden], #audio-wrap[hidden] { display: none !important; }
 /* Infobulle par champ : petit ⓘ en coin haut-droit + popover au clic. */
 .field.has-tip { position: relative; }
 .field-tip { position: absolute; top: 0; right: 0; width: 22px; height: 22px; padding: 0;
