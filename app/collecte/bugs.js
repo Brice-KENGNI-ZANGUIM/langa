@@ -12,6 +12,16 @@
 // Auteur : Brice Kengni Zanguim
 export const BUGS = [
   {
+    id: "BUG-U-mrmae78s-7670", titre: "Deux propositions vides regroupées, sans mot ni bouton, dans Explorer",
+    titre_en: "Two empty entries grouped together, with no word or button, in Explorer",
+    description: "Dans Explorer, deux propositions apparaissaient regroupées en une seule sans mot indiqué, et en les ouvrant on voyait deux cadres vides, sans bouton pour écouter l'audio ni afficher la traduction.",
+    description_en: "In Explorer, two entries appeared grouped together with no word shown, and opening them revealed two empty cards, with no button to play audio or show the translation.",
+    statut: "resolu", severite: "mineur", zone: "Explorer", zone_en: "Explorer",
+    detecte_le: "2026-07-15", resolu_le: "2026-07-21", version: "v240",
+    correctif: "La cause était de rares lignes totalement vides en base (envois anciens/malformés, sans mot, ni traduction, ni audio). Explorer les ignore désormais à l'affichage : elles ne forment plus de groupe fantôme et seules les vraies contributions apparaissent.",
+    correctif_en: "The cause was a few completely empty rows in the database (old/malformed sends, with no word, translation or audio). Explorer now ignores them on display: they no longer form a ghost group and only real contributions appear.",
+  },
+  {
     id: "BUG-U-mrtcyz9u-8933", titre: "Notification de demande impossible à ouvrir",
     titre_en: "Request notification could not be opened",
     description: "Une notification indiquant qu'un utilisateur souhaitait une traduction ou une prononciation dans ta langue ne pouvait pas être ouverte : rien ne se passait au clic, impossible d'aller aider la personne.",
