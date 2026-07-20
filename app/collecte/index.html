@@ -25,14 +25,15 @@
   <meta name="twitter:title" content="LANGA : Numériser les langues d'Afrique, texte et voix" />
   <meta name="twitter:description" content="Plateforme communautaire pour numériser nos langues, en texte et en voix. Transcris, traduis, explore, gratuitement." />
   <meta name="twitter:image" content="https://brice-kengni-zanguim.github.io/langa/app/collecte/icons/og-share.jpg" />
-  <!-- Thème posé AVANT le premier rendu (clair par défaut) → aucun flash. -->
+  <!-- Thème posé AVANT le premier rendu (SOMBRE par défaut sur toutes les machines ;
+       le choix explicite de l'utilisateur, une fois fait, est respecté) → aucun flash. -->
   <script>
     (function () {
       try {
         var t = localStorage.getItem("ng-theme");
-        if (t !== "dark" && t !== "light") t = "light";
+        if (t !== "dark" && t !== "light") t = "dark";
         document.documentElement.setAttribute("data-theme", t);
-      } catch (e) { document.documentElement.setAttribute("data-theme", "light"); }
+      } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
     })();
   </script>
   <link rel="manifest" href="./manifest.webmanifest" />
