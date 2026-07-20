@@ -3701,7 +3701,7 @@ function closePresent() {
 // <canvas> haute résolution — SANS aucune dépendance externe (CSP stricte). Le PNG
 // vient de canvas.toBlob ; le PDF est un fichier minimal fait main qui embarque
 // l'affiche en JPEG (filtre DCTDecode, universellement lu par les lecteurs PDF).
-const PRESENT_URL = "https://brice-kengni-zanguim.github.io/langa/app/collecte/";
+const PRESENT_URL = "https://langial.com/";
 
 // Barres de partage du site (réseaux) disséminées : accueil, À propos, footer, présentation.
 function mountShareBars() {
