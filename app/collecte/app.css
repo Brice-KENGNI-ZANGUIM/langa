@@ -606,13 +606,15 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .hub-card--illus { flex-direction: row; align-items: stretch; gap: 0; padding: 0; }
 .hub-card--illus .hub-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column;
   align-items: flex-start; justify-content: center; gap: 8px; padding: 20px 6px 20px 20px; }
-/* Colonne de droite : conteneur qui fait EXACTEMENT la hauteur du cadre (align-self stretch,
-   règle fiable sur tout navigateur car ce n'est pas un élément remplacé), largeur 48%. */
-.hub-illus-wrap { flex: 0 0 48%; align-self: stretch; display: flex; align-items: stretch;
-  justify-content: flex-end; min-width: 0; overflow: hidden; }
-/* L'image : hauteur = 100% du conteneur = 100% du cadre, plaquée à DROITE. */
-.hub-illus { height: 100%; width: auto; max-width: 100%; object-fit: contain; object-position: right center;
-  pointer-events: none;
+/* Colonne de droite : conteneur étiré à la hauteur du cadre (align-self stretch). Il est en
+   position:relative et l'image est en absolute inset:0 → l'image NE participe PLUS au calcul de
+   la hauteur (fini la dépendance circulaire qui variait selon le navigateur). Largeur 52% pour
+   que l'image carrée atteigne bien 100% de la hauteur du cadre. */
+.hub-illus-wrap { flex: 0 0 48%; align-self: stretch; position: relative; overflow: hidden; min-width: 0; }
+/* L'image occupe tout le conteneur (= hauteur du cadre), sans recadrage (contain), plaquée à
+   DROITE et en bas. */
+.hub-illus { position: absolute; inset: 0; width: 100%; height: 100%;
+  object-fit: cover; object-position: right center; pointer-events: none;
   -webkit-mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%);
           mask-image: linear-gradient(to left, #000 50%, rgba(0,0,0,.5) 80%, transparent 100%);
   filter: drop-shadow(1.4px 0 0 var(--acc)) drop-shadow(-1.4px 0 0 var(--acc))
