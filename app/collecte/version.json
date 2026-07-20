@@ -1,6 +1,9 @@
 {
-  "version": "v244",
+  "version": "v245",
   "changelog": {
+    "v245": [
+      "Lecture audio corrig\u00e9e : la dur\u00e9e affich\u00e9e redevient la VRAIE dur\u00e9e de l'enregistrement (fini les \u00ab 32 s \u00bb pour 6 s), le curseur avance en phase avec le son et atteint la fin pile \u00e0 la fin ; l'effet de vibration/mirage de l'onde au passage du curseur est renforc\u00e9 et cal\u00e9 sur le son r\u00e9el"
+    ],
     "v244": [
       "Nouvelle en-t\u00eate : les 4 espaces (Transcrire, Traduire, Explorer, Demander) sont int\u00e9gr\u00e9s au header, et l'image de banni\u00e8re de chaque page est d\u00e9sormais soud\u00e9e au bas de l'en-t\u00eate, pleine largeur, comme une bande qui fait corps avec le d\u00e9cor (fini l'effet \u00ab image pos\u00e9e \u00bb)"
     ],

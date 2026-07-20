@@ -93,9 +93,13 @@ export function mountAudioPlayer(box, audio) {
   // (WebM/Opus annonce parfois Infinity avant la sonde fixDuration ci-dessous).
   const knownDur = (() => { const v = parseFloat(box.dataset.audioDur); return isFinite(v) && v > 0 ? v / 1000 : 0; })();
   const DUR = () => {
+    // Durée MESURÉE à l'enregistrement (data-audio-dur) = la SEULE fiable : le WebM/Opus
+    // annonce une `audio.duration` fausse (souvent très supérieure, ex. 32 s pour 6 s, ou
+    // Infinity). On la privilégie donc ; `audio.duration` ne sert QU'EN REPLI (audio importé
+    // sans durée connue) et bornée pour écarter les valeurs aberrantes.
+    if (knownDur > 0) return knownDur;
     const ad = audio.duration;
-    if (isFinite(ad) && ad > 0.05) return ad;   // vraie durée jouable → prime (barre calée sur la fin réelle)
-    return knownDur > 0 ? knownDur : 0;          // repli tant que la vraie durée n'est pas encore connue
+    return (isFinite(ad) && ad > 0.05 && ad < 24 * 3600) ? ad : 0;
   };
 
   // --- VRAIS pics d'amplitude (Web Audio) : la forme de l'onde = le son réel -------
@@ -210,9 +214,13 @@ export function mountAudioPlayer(box, audio) {
       ctx.beginPath();
       for (let x = 0; x <= W; x += 3) {
         const e = envAt(x / W);
-        const near = Math.max(0, 1 - Math.abs(x - px) / (W * 0.3));
-        const live = 1 + liveAmp * 0.6 * near;
-        const y = midY + dir * Math.sin(x * 0.02 * f + ph) * maxA * ampS * e * live * (core ? 1 : 0.85);
+        const near = Math.max(0, 1 - Math.abs(x - px) / (W * 0.34));
+        // GONFLEMENT au passage du son (l'onde enfle là où l'on lit, au rythme du son réel)…
+        const live = 1 + liveAmp * 1.05 * near;
+        // …+ MIRAGE : une micro-vibration rapide, uniquement près du curseur et proportionnelle
+        // au son émis, pour l'effet dynamique/tremblant demandé.
+        const mirage = liveAmp * near * near * Math.sin(x * 0.5 + wavePhase * 7 + k) * maxA * 0.09;
+        const y = midY + dir * (Math.sin(x * 0.02 * f + ph) * maxA * ampS * e * live * (core ? 1 : 0.85) + mirage);
         if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.strokeStyle = core ? "#eafffb" : grad;
@@ -268,15 +276,16 @@ export function mountAudioPlayer(box, audio) {
       if (isFinite(audio.duration) && audio.duration > 0) {
         audio.removeEventListener("timeupdate", onProbe);
         try { audio.currentTime = 0; } catch (e) { /* ok */ }
-        durEl.textContent = fmtTime(audio.duration); draw();
+        durEl.textContent = fmtTime(DUR()); draw();
       }
     };
     audio.addEventListener("timeupdate", onProbe);
     try { audio.currentTime = 1e101; } catch (e) { audio.removeEventListener("timeupdate", onProbe); }
   }
-  // TOUJOURS sonder la vraie durée (même si data-audio-dur est fourni) → la barre est
-  // calibrée sur la durée réellement jouée, jamais sur une valeur figée qui décalerait le front.
-  audio.addEventListener("loadedmetadata", () => { durEl.textContent = fmtTime(DUR()); draw(); fixDuration(); });
+  // On ne sonde `audio.duration` QUE lorsqu'aucune durée n'a été MESURÉE à l'enregistrement
+  // (audio importé sans data-audio-dur). Sinon la durée mesurée fait foi : sonder un WebM/Opus
+  // renvoie souvent une durée fausse (le bug « 32 s pour 6 s ») et perturbe le curseur.
+  audio.addEventListener("loadedmetadata", () => { durEl.textContent = fmtTime(DUR()); draw(); if (knownDur === 0) fixDuration(); });
   audio.addEventListener("loadeddata", decodePeaks);   // vrais pics dès que l'audio est chargé
   if (audio.readyState >= 2) decodePeaks();
   audio.addEventListener("durationchange", () => { durEl.textContent = fmtTime(DUR()); draw(); });
