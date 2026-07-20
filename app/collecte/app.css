@@ -320,7 +320,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   .brand-mark { width: 48px; height: 48px; border-radius: 13px; }
   .brand-mark img { border-radius: 13px; }
   .brand-txt h1 { font-size: 1.95rem; line-height: 1; }    /* LANGIAL agrandi, proche du logo */
-  .brand-sub { font-size: .48em; }                         /* « · Collecte » bien plus petit */
+  .brand-sub { display: none; }                            /* « · Collecte » retiré sur mobile (place au nom) */
   .tagline { display: none; }                              /* déjà répété dans le footer */
   .chip { font-size: .72rem; padding: 4px 6px; }
   .chip--btn { padding: 4px 6px; gap: 4px; }
@@ -2709,16 +2709,32 @@ body.kb-docked .field--consent {
 .app-loader-txt { color: var(--muted); font-size: .9rem; letter-spacing: .03em; }
 @keyframes loaderSpin { to { transform: rotate(360deg); } }
 @keyframes loaderPulse { 0%, 100% { transform: scale(1); opacity: .92; } 50% { transform: scale(1.07); opacity: 1; } }
-/* PERF TÉLÉPHONE : sur petit écran, on FIGE les animations décoratives les plus coûteuses
-   (bordures-comètes coniques + « respiration » des box-shadow, qui repeignent en continu).
-   Les bordures et halos restent (statiques) → rendu premium préservé, fluidité retrouvée. */
-@media (max-width: 768px) {
-  .nav-tab::before, .hub-card::before, .hub-card::after, .view-title::before,
-  .nav-tab, .hub-card, .view-title, .ndop-sep i,
-  .btn--primary::after, .btn--next::after, .btn--send::after,
-  .lang-card::before, .lang-search-btn::after, .corr-submit::after, .tour-next::after {
+/* ═══ PERF TÉLÉPHONE (fluidité avant tout) ═══════════════════════════════════════
+   Sur petit écran (machines faibles), deux coûts dominent et provoquent la lenteur :
+   (1) le décor animé EN CONTINU (aurores, comètes coniques, respirations de box-shadow,
+       halos, sheens, glows) qui repeint/compose à chaque frame ;
+   (2) le flou d'arrière-plan `backdrop-filter` qui recalcule un flou de toute la zone à
+       chaque frame de défilement.
+   On FIGE donc tout le décor (il reste VISIBLE mais statique) et on RETIRE le flou, puis on
+   RÉACTIVE uniquement les animations FONCTIONNELLES (retour d'état) : chargement,
+   enregistrement, consentement requis, bannière de mise à jour, lecture audio en cours.
+   Le décor animé complet reste actif sur ordinateur (> 900px). */
+@media (max-width: 900px) {
+  *, *::before, *::after {
     animation: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
   }
+  /* Animations d'ÉTAT réactivées (elles renseignent l'utilisateur, coût négligeable) */
+  .app-loader-mark img { animation: loaderPulse 1.8s ease-in-out infinite !important; }
+  .app-loader-ring { animation: loaderSpin 1s linear infinite !important; }
+  .rec-timer::before { animation: ngRecPulse 1s ease-in-out infinite !important; }
+  .btn--rec.is-recording { animation: ngRecBtn 1.4s ease-in-out infinite !important; }
+  .field--consent:not(.is-checked) { animation: ngConsentPulse 2.4s ease-in-out infinite !important; }
+  .aplayer.is-playing .aplayer-play .aplayer-ring { animation: aplayerPulse 1.8s ease-out infinite !important; }
+  .update-banner { animation: updGlow 1.8s ease-in-out infinite !important; }
+  .update-dot { animation: updBlink 1s steps(1,end) infinite !important; }
+  .update-btn { animation: updPulse 1.6s ease-in-out infinite !important; }
 }
 /* Curseur « occupé » pendant une attente pilotée (rechargement, fetch long). */
 body.is-busy, body.is-busy * { cursor: progress !important; }

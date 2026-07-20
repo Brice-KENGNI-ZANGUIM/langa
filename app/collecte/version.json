@@ -1,6 +1,11 @@
 {
-  "version": "v239",
+  "version": "v240",
   "changelog": {
+    "v240": [
+      "Explorer : par défaut tu ne vois que les contributions de ta langue ; un sélecteur en haut permet d'afficher une autre langue ou toutes les langues. La carte des villages montre désormais chaque village séparément (fini le losange « Autres »), et cliquer un village filtre la liste sur lui",
+      "Le fond du mode présentation (à l'écran comme à l'export PNG/PDF) reprend fidèlement le motif du site, en clair comme en sombre",
+      "Sur téléphone, l'en-tête est allégé (« · Collecte » retiré) pour laisser toute la place au nom"
+    ],
     "v239": [
       "Application plus fluide sur téléphone (les animations décoratives les plus lourdes sont allégées sur petit écran) ; le mode présentation reprend le fond du site en clair comme en sombre"
     ],

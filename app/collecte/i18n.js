@@ -356,6 +356,7 @@ export const STR = {
   "exp.f.role": { fr: "Tous les rôles", en: "All roles" },
   "exp.f.variante": { fr: "Toutes les variantes", en: "All variants" },
   "exp.f.domaine": { fr: "Tous les domaines", en: "All domains" },
+  "exp.f.lang.all": { fr: "Toutes les langues", en: "All languages" },
   "exp.export.csv": { fr: "⬇ Exporter (CSV)", en: "⬇ Export (CSV)" },
   "exp.export.json": { fr: "⬇ Exporter (JSON)", en: "⬇ Export (JSON)" },
   "exp.export.lift": { fr: "⬇ Exporter (LIFT)", en: "⬇ Export (LIFT)" },

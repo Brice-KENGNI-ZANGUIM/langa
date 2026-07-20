@@ -29,7 +29,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v239";
+const APP_VERSION = "v240";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -2595,7 +2595,9 @@ function initTour() {
 // est calculé PAR VILLAGE (les variantes villageoises sont toutes potentiellement
 // justes), et un avertissement prévient quand une proposition vient d'un autre
 // village que celui du lecteur.
-let _exploreEntries = [];
+let _exploreEntries = [];      // entrées ACTUELLEMENT affichées (scopées sur la langue choisie)
+let _exploreAll = [];          // TOUTES les entrées chargées (toutes langues), pour changer de scope sans recharger
+let _exploreLangFilter = null; // langue affichée : null = non initialisé, "" = toutes, sinon id canonique
 let _exploreGroups = [];
 let _openGroupKey = null;
 let _exploreInit = false;
@@ -2611,6 +2613,33 @@ function initExploreOnce() {
   ["#filter-direction", "#filter-role", "#filter-variante", "#filter-domaine"].forEach((s) => {
     const el = $(s); if (el) el.addEventListener("change", renderExplore);
   });
+  // Changer la LANGUE affichée re-scope tout Explorer (liste + carte + autres filtres)
+  // sans nouveau chargement réseau : on filtre localement les entrées déjà en mémoire.
+  const langSel = $("#filter-lang");
+  if (langSel) langSel.addEventListener("change", () => {
+    _exploreLangFilter = langSel.value;
+    applyExploreLangScope();
+    populateExploreFilters();
+    renderExplore();
+  });
+  // Cliquer un village de la carte filtre la liste sur ce village (re-cliquer = tout).
+  const vmap = $("#variant-map");
+  if (vmap) {
+    const pick = (node) => {
+      const v = node.getAttribute("data-village"); if (!v) return;
+      const fv = $("#filter-variante"); if (!fv) return;
+      fv.value = (fv.value === v) ? "" : v;         // bascule : re-cliquer le même = retire le filtre
+      refreshEnhancedSelects();
+      renderExplore();
+    };
+    vmap.addEventListener("click", (e) => {
+      const node = e.target.closest && e.target.closest(".vmap-node"); if (node) pick(node);
+    });
+    vmap.addEventListener("keydown", (e) => {
+      const node = e.target.closest && e.target.closest(".vmap-node");
+      if (node && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); pick(node); }
+    });
+  }
   const search = $("#explore-search");
   if (search) search.addEventListener("input", renderExplore);
   const list = $("#explore-list");
@@ -2711,31 +2740,40 @@ async function loadLibrary() {
   if (list) list.innerHTML = "";
   try {
     const data = await browseLibrary({ limit: 500, device_id: deviceId() });
-    // Explorer est scopé sur la LANGUE COURANTE, et on ignore les entrées SANS AUCUN
-    // contenu (ni mot source, ni traduction, ni audio jouable) : de telles entrées
-    // dégénérées (POST malformé/ancien) créaient un groupe « — » vide, trompeur et
-    // sans bouton audio/traduction (BUG-U-mrmae78s-7670).
-    // Langue courante et langue de chaque entrée résolues vers leur CANONIQUE : les
-    // contributions d'une langue fusionnée apparaissent sous celle qui l'a absorbée.
-    // Si l'utilisateur N'A PAS déclaré de langue (profil non créé), on NE présume PAS le
-    // ngiemboon : Explorer montre alors TOUTES les langues. Dès qu'une langue est choisie,
-    // Explorer se scope dessus (canonique, pour absorber les langues fusionnées).
-    const lid = hasChosenLang() ? canonLangId(getCurrentLangId()) : null;
-    _exploreEntries = (((data && data.entries) || []))
-      .filter((e) => !lid || canonLangId(entryLang(e)) === lid)
+    // On charge TOUTES les langues (on ignore les entrées SANS AUCUN contenu : ni mot
+    // source, ni traduction, ni audio jouable ; de telles entrées dégénérées créaient un
+    // groupe « — » vide, trompeur et sans bouton, cf. BUG-U-mrmae78s-7670).
+    _exploreAll = (((data && data.entries) || []))
       .filter((e) => (e.source_text && e.source_text.trim()) ||
                      (e.target_text && e.target_text.trim()) || isPlayable(e.audio_url));
-    // Le clavier prédictif APPREND des contributions réelles (mots + fréquences),
-    // pour toute langue à clavier dédié (le moteur est générique, cf. langpacks).
-    if (predict && lid && usesDedicatedKeyboard(lid)) predict.learnFromEntries(_exploreEntries, lid);
+    // Par DÉFAUT, Explorer se scope sur la langue de l'utilisateur (il ne voit d'emblée
+    // que SA langue) ; il peut ensuite choisir une autre langue ou « Toutes les langues »
+    // via le sélecteur. Résolution canonique : une langue fusionnée s'affiche sous celle
+    // qui l'a absorbée. Sans langue déclarée, on part sur « Toutes les langues ».
+    if (_exploreLangFilter === null)
+      _exploreLangFilter = hasChosenLang() ? canonLangId(getCurrentLangId()) : "";
+    // Le clavier prédictif APPREND des contributions réelles (mots + fréquences) de la
+    // langue de l'utilisateur, pour toute langue à clavier dédié (moteur générique).
+    const lid = hasChosenLang() ? canonLangId(getCurrentLangId()) : null;
+    if (predict && lid && usesDedicatedKeyboard(lid))
+      predict.learnFromEntries(_exploreAll.filter((e) => canonLangId(entryLang(e)) === lid), lid);
+    applyExploreLangScope();
     populateExploreFilters();
     renderExplore();
   } catch (e) {
-    _exploreEntries = [];
+    _exploreAll = []; _exploreEntries = [];
     if (status) status.textContent = "";
     if (list) list.innerHTML = `<div class="explore-empty"><img class="empty-illus" src="icons/state-offline.webp" alt="" aria-hidden="true"><div class="empty-msg">${t("exp.loadfail")}</div></div>`;
   }
   applyExploreDeepLink();   // lien direct #/explorer?w=…&d=… → ouvre l'entrée visée
+}
+/** Applique le scope de langue courant : `_exploreEntries` = sous-ensemble de
+    `_exploreAll` filtré sur la langue choisie (« » = toutes les langues). */
+function applyExploreLangScope() {
+  const lf = _exploreLangFilter;
+  _exploreEntries = lf
+    ? _exploreAll.filter((e) => canonLangId(entryLang(e)) === lf)
+    : _exploreAll.slice();
 }
 // Deep-link : si l'URL cible un mot précis, pré-remplit la recherche et OUVRE le groupe.
 let _deepWord = null, _deepDir = null;
@@ -2760,6 +2798,19 @@ function populateExploreFilters() {
   };
   fill("#filter-variante", t("exp.f.variante"), uniq("variante"));
   fill("#filter-domaine", t("exp.f.domaine"), uniq("domaine"));
+  // Sélecteur de LANGUE affichée : « Toutes les langues » + une entrée par langue
+  // présente (id canonique, nom + nombre de contributions), triée par volume.
+  const lsel = $("#filter-lang");
+  if (lsel) {
+    const counts = {};
+    for (const e of _exploreAll) { const id = canonLangId(entryLang(e)); counts[id] = (counts[id] || 0) + 1; }
+    const langs = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+    lsel.innerHTML = `<option value="">${t("exp.f.lang.all")}</option>` +
+      langs.map(([id, c]) => `<option value="${escapeHtml(id)}">${escapeHtml(_langNameById(id))} (${c})</option>`).join("");
+    // La valeur reflète le scope courant (défini au chargement = langue de l'utilisateur).
+    lsel.value = (_exploreLangFilter && counts[_exploreLangFilter]) ? _exploreLangFilter : "";
+    _exploreLangFilter = lsel.value;        // resynchronise si la langue n'a aucune contribution
+  }
   refreshEnhancedSelects();               // les filtres sont déjà habillés (auto) → resync
 }
 /** Clé de normalisation (casse/espaces ignorés) pour regrouper un même mot. */
@@ -2828,23 +2879,52 @@ function renderVariantMap() {
   if (!items.length) { host.hidden = true; host.innerHTML = ""; return; }
   host.hidden = false;
   const mine = viewerVillage();
-  // Villages connus à position fixe ; TOUS les autres (quartiers…) agrégés en un
-  // seul nœud « Autres » à une place réservée → aucun chevauchement possible.
-  const known = items.filter(([v]) => VILLAGE_POS[v]);
-  const autres = items.filter(([v]) => !VILLAGE_POS[v]).reduce((s, x) => s + x[1], 0);
-  const raw = known.map(([v, c]) => [v, c, VILLAGE_POS[v]]);
-  if (autres > 0) raw.push([t("exp.vmap.others"), autres, [16, 22]]);
-  const max = Math.max.apply(null, raw.map((x) => x[1]));
-  const nodes = raw.map(([v, c, pos]) => ({ v: v, c: c, x: pos[0], y: pos[1], mine: v === mine }));
+  // CHAQUE village a SON PROPRE nœud (plus d'agrégat « Autres ») : les villages connus
+  // gardent leur position fixe ; les autres (quartiers, villages d'autres langues…) sont
+  // placés automatiquement en couronne(s) autour du centre, avec évitement de collision
+  // pour qu'aucun losange ni son étiquette ne se chevauchent. Trié par volume décroissant.
+  const sorted = items.slice().sort((a, b) => b[1] - a[1]);
+  const placed = [];   // {x,y} déjà occupés (pour l'anti-collision)
+  const free = (x, y, d) => placed.every((p) => Math.hypot(p.x - x, p.y - y) >= d);
+  const cx0 = 50, cy0 = 48;                         // centre géométrique du canevas (viewBox 0..96)
+  const rings = [{ r: 28, n: 10 }, { r: 41, n: 14 }, { r: 15, n: 6 }];
+  const GAP = 17;                                   // écart mini entre 2 centres (anti-chevauchement)
+  const nodes = [];
+  // 1) villages CONNUS d'abord : ils gardent leur position fixe → on les réserve pour que
+  //    les inconnus (placés ensuite) les évitent (aucun chevauchement).
+  for (const [v, c] of sorted) {
+    if (!VILLAGE_POS[v]) continue;
+    const pos = { x: VILLAGE_POS[v][0], y: VILLAGE_POS[v][1] };
+    placed.push(pos); nodes.push({ v, c, x: pos.x, y: pos.y, mine: v === mine });
+  }
+  // 2) villages INCONNUS : première place libre en couronne autour du centre.
+  let ui = 0;
+  for (const [v, c] of sorted) {
+    if (VILLAGE_POS[v]) continue;
+    let pos = null;
+    for (const ring of rings) {
+      for (let k = 0; k < ring.n && !pos; k++) {
+        const a = (k / ring.n) * Math.PI * 2 + ui * 0.618;   // décalage doré : positions variées
+        const x = cx0 + ring.r * Math.cos(a), y = cy0 + ring.r * 0.74 * Math.sin(a);
+        if (x >= 10 && x <= 90 && y >= 9 && y <= 87 && free(x, y, GAP)) pos = { x, y };
+      }
+      if (pos) break;
+    }
+    if (!pos) { const a = ui * 1.3; pos = { x: cx0 + 33 * Math.cos(a), y: cy0 + 26 * Math.sin(a) }; }
+    ui++;
+    placed.push(pos); nodes.push({ v, c, x: pos.x, y: pos.y, mine: v === mine });
+  }
+  const max = Math.max.apply(null, nodes.map((n) => n.c));
   const cx = (VILLAGE_POS["Bangang"] || [50, 58])[0], cy = (VILLAGE_POS["Bangang"] || [50, 58])[1];
   const links = nodes.map((n) =>
     `<line x1="${cx}" y1="${cy}" x2="${n.x.toFixed(1)}" y2="${n.y.toFixed(1)}" style="stroke:var(--gold)" stroke-opacity="0.16" stroke-width="0.45"/>`
   ).join("");
   const diamonds = nodes.map((n) => {
-    const r = (2.6 + 4.4 * Math.sqrt(n.c / max)).toFixed(2);
+    const r = (2.0 + 3.2 * Math.sqrt(n.c / max)).toFixed(2);
     const fill = n.mine ? "var(--gold)" : "var(--cyan)";
     const stroke = n.mine ? "var(--gold)" : "var(--green)";
-    return `<g transform="translate(${n.x.toFixed(1)},${n.y.toFixed(1)})">
+    // Nœud CLIQUABLE : filtre la liste sur ce village (le « lien » qui va avec chacun).
+    return `<g class="vmap-node" data-village="${escapeHtml(n.v)}" transform="translate(${n.x.toFixed(1)},${n.y.toFixed(1)})" role="button" tabindex="0" aria-label="${escapeHtml(n.v)} (${n.c})" style="cursor:pointer">
       <rect x="${-r}" y="${-r}" width="${2 * r}" height="${2 * r}" rx="0.7" transform="rotate(45)"
         style="fill:${fill};stroke:${stroke}" fill-opacity="${n.mine ? 0.92 : 0.72}" stroke-width="0.5"/>
       <text x="0" y="1" text-anchor="middle" font-size="2.7" font-weight="700" style="fill:#06121a">${n.c}</text>
@@ -2853,7 +2933,7 @@ function renderVariantMap() {
   }).join("");
   host.innerHTML = `<div class="vmap-head">${t("exp.vmap.head")}</div>
     <div class="vmap-sub">${t("exp.vmap.sub")}${mine ? t("exp.vmap.sub.mine") : ""}.</div>
-    <svg viewBox="0 0 100 82" class="vmap-svg" role="img" aria-label="${t("exp.vmap.aria")}">
+    <svg viewBox="0 0 100 96" class="vmap-svg" role="img" aria-label="${t("exp.vmap.aria")}">
       ${links}${diamonds}
     </svg>${topContributorsHtml()}`;
 }
@@ -3759,15 +3839,29 @@ async function presentPosterCanvas() {
   const dark = document.documentElement.getAttribute("data-theme") === "dark";
 
   g.fillStyle = bgc; g.fillRect(0, 0, W, H);
-  const diamond = (cx, cy, r) => { g.beginPath(); g.moveTo(cx, cy - r); g.lineTo(cx + r, cy); g.lineTo(cx, cy + r); g.lineTo(cx - r, cy); g.closePath(); };
-  g.save();
-  for (let ty = 0; ty < H + 132; ty += 132) for (let tx = 0; tx < W + 132; tx += 132) {
-    const cx = tx + 66, cy = ty + 66;
-    g.lineWidth = 1.4; g.globalAlpha = dark ? 0.22 : 0.30; g.strokeStyle = gold; diamond(cx, cy, 62); g.stroke();
-    g.lineWidth = 1.2; g.globalAlpha = dark ? 0.19 : 0.26; g.strokeStyle = cyan; diamond(cx, cy, 34); g.stroke();
-    g.lineWidth = 0.9; g.globalAlpha = dark ? 0.14 : 0.20; g.strokeStyle = gold; diamond(cx, cy, 16); g.stroke();
+  // MÊME FOND QUE LE SITE : on pose l'IMAGE de motif Ndop (bg-pattern, clair/sombre) en
+  // tuiles, à l'opacité du site, sur le voile de la couleur de fond (texte lisible). Repli
+  // sur le motif vectoriel losange si l'image ne se charge pas (export toujours abouti).
+  let patternDrawn = false;
+  try {
+    const pat = await loadImage(dark ? "./icons/bg-pattern-dark.jpg" : "./icons/bg-pattern-light.jpg");
+    const TS = 460, th = TS * ((pat.height / pat.width) || 1);   // tuile (densité proche du site)
+    g.save(); g.globalAlpha = dark ? 0.42 : 0.20;
+    for (let ty = 0; ty < H; ty += th) for (let tx = 0; tx < W; tx += TS) g.drawImage(pat, tx, ty, TS, th);
+    g.restore(); g.globalAlpha = 1;
+    patternDrawn = true;
+  } catch (e) { /* repli vectoriel ci-dessous */ }
+  if (!patternDrawn) {
+    const diamond = (cx, cy, r) => { g.beginPath(); g.moveTo(cx, cy - r); g.lineTo(cx + r, cy); g.lineTo(cx, cy + r); g.lineTo(cx - r, cy); g.closePath(); };
+    g.save();
+    for (let ty = 0; ty < H + 132; ty += 132) for (let tx = 0; tx < W + 132; tx += 132) {
+      const cx = tx + 66, cy = ty + 66;
+      g.lineWidth = 1.4; g.globalAlpha = dark ? 0.22 : 0.30; g.strokeStyle = gold; diamond(cx, cy, 62); g.stroke();
+      g.lineWidth = 1.2; g.globalAlpha = dark ? 0.19 : 0.26; g.strokeStyle = cyan; diamond(cx, cy, 34); g.stroke();
+      g.lineWidth = 0.9; g.globalAlpha = dark ? 0.14 : 0.20; g.strokeStyle = gold; diamond(cx, cy, 16); g.stroke();
+    }
+    g.restore(); g.globalAlpha = 1;
   }
-  g.restore(); g.globalAlpha = 1;
   // Effet « TORCHE » : deux halos radiaux doux (comme l'aurore de l'app) qui donnent
   // l'impression qu'une lumière éclaire le fond. Composite « lighter » → la lumière
   // s'ADDITIONNE au décor (le motif Ndop s'illumine sous la torche).
