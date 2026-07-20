@@ -189,26 +189,34 @@ export function mountAudioPlayer(box, audio) {
     const muted = cssVar("--muted", "#8b97a6");
     const px = p * W, halfH = H * 0.44;
     ctx.clearRect(0, 0, W, H);
-    const BARS = Math.max(20, Math.min(64, Math.floor(W / 9)));
-    const slot = W / BARS, barW = Math.max(2, slot * 0.56);
+    const BARS = Math.max(48, Math.min(240, Math.floor(W / 2.2)));   // traits FINS et DENSES (vraie forme d'onde)
+    const slot = W / BARS, barW = Math.max(1, slot * 0.5);
     const played = new Path2D(), dim = new Path2D();
     for (let i = 0; i < BARS; i++) {
       const cx = (i + 0.5) * slot;
       let a = envAt(cx / W);
-      a += Math.sin(i * 0.55 + wavePhase) * 0.045;                              // shimmer vivant
-      const near = Math.max(0, 1 - Math.abs(cx - px) / (W * 0.15));
-      a += Math.sin(i * 0.9 + wavePhase * 1.8) * (liveAmp * 0.55 * near);       // réaction au son
-      a = Math.max(0.06, Math.min(1, a));
+      a += Math.sin(cx * 0.06 + wavePhase) * 0.04;                              // shimmer spatial doux
+      const near = Math.max(0, 1 - Math.abs(cx - px) / (W * 0.16));
+      a += Math.sin(cx * 0.11 + wavePhase * 1.8) * (liveAmp * 0.6 * near);       // vibration réactive au son
+      a = Math.max(0.04, Math.min(1, a));
       addBar(cx <= px ? played : dim, cx, a * halfH, barW);
     }
-    // 1) barres à venir : sourdine
-    ctx.globalAlpha = 0.34; ctx.fillStyle = muted; ctx.fill(dim); ctx.globalAlpha = 1;
-    // 2) barres lues : dégradé cyan→vert→or + halo lumineux
+    // Fond local assombri (fait ressortir le néon, comme sur les références).
+    ctx.save(); ctx.fillStyle = "rgba(3,7,12,0.5)"; const bp = new Path2D();
+    if (bp.roundRect) bp.roundRect(0, 0, W, H, 10); else bp.rect(0, 0, W, H);
+    ctx.fill(bp); ctx.restore();
+    // Dégradé futuriste RICHE cyan→turquoise→vert→lime→or.
     const g = ctx.createLinearGradient(0, 0, W, 0);
-    g.addColorStop(0, cyan); g.addColorStop(0.52, green); g.addColorStop(1, gold);
-    ctx.save();
-    ctx.shadowColor = green; ctx.shadowBlur = liveAmp > 0.02 ? 14 : 8;
-    ctx.fillStyle = g; ctx.fill(played);
+    g.addColorStop(0, "#2fe4ff"); g.addColorStop(0.26, cyan); g.addColorStop(0.52, "#34e6a6");
+    g.addColorStop(0.78, "#9be86a"); g.addColorStop(1, gold);
+    // 1) barres à venir : même dégradé, estompé (coloré, jamais gris)
+    ctx.save(); ctx.globalAlpha = 0.20; ctx.fillStyle = g; ctx.fill(dim); ctx.restore();
+    // 2) barres lues : NÉON additif (halo coloré large + resserrement), réactif au son
+    ctx.save(); ctx.globalCompositeOperation = "lighter";
+    ctx.shadowColor = cyan; ctx.shadowBlur = liveAmp > 0.02 ? 26 : 22; ctx.fillStyle = g;
+    ctx.fill(played); ctx.fill(played);
+    ctx.shadowColor = "#34e6a6"; ctx.shadowBlur = 9; ctx.fill(played);
+    ctx.shadowBlur = 0; ctx.fill(played);
     ctx.restore();
     // 3) front de lecture : fin trait lumineux
     if (p > 0 && p < 1) {

@@ -960,14 +960,14 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .aplayer { flex: 1 1 100%; width: 100%; box-sizing: border-box;
   display: flex; align-items: center; gap: clamp(8px, 2.5vw, 14px);
   padding: 10px clamp(10px, 3vw, 14px); border-radius: 14px;
-  /* Panneau d'ambiance dédié derrière l'onde : texture sombre estompée sous un voile de la
-     couleur de panneau, pour ne pas gêner l'onde ni les contrôles. */
-  background-color: color-mix(in srgb, var(--cyan) 6%, var(--panel));
-  background-image: linear-gradient(color-mix(in srgb, var(--panel) 62%, transparent), color-mix(in srgb, var(--panel) 62%, transparent)),
-    url("icons/audio-panel-bg.webp");
-  background-size: cover; background-position: center;
-  border: 1px solid color-mix(in srgb, var(--cyan) 26%, var(--border));
-  box-shadow: 0 0 24px -16px var(--cyan), var(--shadow-card); }
+  /* Cadre FUTURISTE (aucune photo) : verre foncé + halos diffus cyan (haut-gauche) et or
+     (bas-droite), assortis à l'onde ; fin liseré lumineux + lueur d'ambiance. */
+  background:
+    radial-gradient(130% 180% at 0% 0%, color-mix(in srgb, var(--cyan) 16%, transparent), transparent 55%),
+    radial-gradient(130% 180% at 100% 100%, color-mix(in srgb, var(--gold) 12%, transparent), transparent 55%),
+    linear-gradient(180deg, color-mix(in srgb, var(--cyan) 6%, var(--panel)), var(--panel2));
+  border: 1px solid color-mix(in srgb, var(--cyan) 32%, var(--border));
+  box-shadow: 0 0 26px -14px var(--cyan), inset 0 1px 0 var(--card-sheen), var(--shadow-card); }
 /* Bouton play/pause rond (aplat cyan, icône = couleur du fond → contraste 2 thèmes) */
 .aplayer-play { position: relative; flex: 0 0 auto; width: clamp(42px, 12vw, 52px); height: clamp(42px, 12vw, 52px);
   border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;

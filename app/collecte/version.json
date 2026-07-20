@@ -1,6 +1,9 @@
 {
-  "version": "v232",
+  "version": "v233",
   "changelog": {
+    "v233": [
+      "La zone d'écoute audio devient futuriste : cadre sombre épuré (sans photo) et onde sonore fine, dense et lumineuse en dégradé cyan-vert-or qui vibre au rythme du son"
+    ],
     "v232": [
       "L'image de la page « À propos » devient une belle photo réaliste de trois générations qui transmettent leur langue. Nouveau curseur : sur les éléments cliquables, il prend une forme de main cyan entourée d'un léger halo lumineux qui le met en évidence"
     ],
