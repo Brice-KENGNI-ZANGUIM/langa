@@ -103,14 +103,11 @@
 
 body {
   margin: 0;
-  /* Motif Ndop IDENTIQUE au cadre du QR (losange laiton + losange cyan + points)
-     sur TOUTES les pages. Statique (aucune animation) → zéro coût de rendu ;
-     mêmes colorations que le QR/flyer via --lattice-img. */
+  /* Fond = MOTIF africain (Ndop/Bogolan) via la couche fixe .bg-motif (clair ET sombre) ;
+     ici on ne garde que l'aurore d'ambiance + le dégradé de base (la trame losange est retirée). */
   background:
-    var(--lattice-img),
     radial-gradient(54vmax 34vmax at 50% -3%, var(--aurora-c), transparent 62%),
     var(--bg-grad);
-  background-size: 132px 132px, auto;
   color: var(--text);
   font-family: var(--font-body);
   /* Footer TOUJOURS ancré en bas : body en colonne pleine hauteur, le <main>
@@ -2256,18 +2253,15 @@ body::after {
 }
 
 /* Pied de page : filet identitaire en haut */
-.site-footer { position: relative; overflow: hidden; }
+/* Image d'ambiance en FOND de l'élément footer (derrière TOUT le contenu, jamais en surcouche) :
+   un léger voile sombre par-dessus l'image garantit la lisibilité des liens/texte. */
+.site-footer { position: relative; overflow: hidden;
+  background:
+    linear-gradient(color-mix(in srgb, var(--bg) 52%, transparent), color-mix(in srgb, var(--bg) 74%, transparent)),
+    url("icons/footer-bg.jpg") center / cover no-repeat; }
 .site-footer::before {
   content: ""; position: absolute; top: 0; left: 0; right: 0; height: 1px; z-index: 2;
   background: linear-gradient(90deg, transparent, rgba(34,211,238,.4), rgba(52,211,153,.4), transparent);
-}
-/* Image d'ambiance en fond de footer (texture Ndop très sombre), estompée sous un voile
-   pour garder les liens/texte parfaitement lisibles. */
-.site-footer::after {
-  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: linear-gradient(color-mix(in srgb, var(--bg) 62%, transparent), color-mix(in srgb, var(--bg) 82%, transparent)),
-    url("icons/footer-bg.jpg") center / cover no-repeat;
-  opacity: .9;
 }
 .foot-inner, .foot-copy { position: relative; z-index: 1; }
 
