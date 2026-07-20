@@ -414,6 +414,11 @@
           spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
       </div>
 
+      <!-- Bouton pour DÉPLIER la traduction (optionnelle en mode Transcrire) -->
+      <button id="add-translation" class="add-optional" type="button" hidden>
+        <span class="add-optional-ico" aria-hidden="true">＋</span>
+        <span data-i18n="wk.add.translation">Ajouter une traduction</span></button>
+
       <div class="field zone zone--target" id="target-wrap">
         <span class="field-label"><span id="lbl-target">Traduction</span>
           <span id="tag-target" class="lang-tag">NGE</span>
@@ -462,7 +467,12 @@
       <!-- Audio (zone encadrée à part) : label + « revoir les consignes » à droite,
            ligne de contrôles, PUIS le cadre de progression SEUL, PUIS les actions
            (découper / retirer) en bas. Aucun bouton devant l'onde, surtout sur mobile. -->
-      <div class="zone zone--audio">
+      <!-- Bouton pour DÉPLIER l'audio/transcription (optionnel en mode Traduire) -->
+      <button id="add-transcription" class="add-optional" type="button" hidden>
+        <span class="add-optional-ico" aria-hidden="true">＋</span>
+        <span data-i18n="wk.add.transcription">Ajouter une transcription audio</span></button>
+
+      <div class="zone zone--audio" id="audio-wrap">
         <span class="field-label audio-label">
           <span id="lbl-audio">Transcription audio</span>
           <span id="tag-audio" class="lang-tag">NGE</span>

@@ -1,6 +1,9 @@
 {
-  "version": "v245",
+  "version": "v246",
   "changelog": {
+    "v246": [
+      "Traduire et Transcrire ne se ressemblent plus : sur Traduire, l'enregistrement audio (optionnel) est repli\u00e9 derri\u00e8re un bouton \u00ab Ajouter une transcription audio \u00bb ; sur Transcrire, la traduction (optionnelle) est repli\u00e9e derri\u00e8re \u00ab Ajouter une traduction \u00bb. Tu peux d\u00e9plier l'autre volet \u00e0 tout moment pour compl\u00e9ter ton mot (faire les deux)"
+    ],
     "v245": [
       "Lecture audio corrig\u00e9e : la dur\u00e9e affich\u00e9e redevient la VRAIE dur\u00e9e de l'enregistrement (fini les \u00ab 32 s \u00bb pour 6 s), le curseur avance en phase avec le son et atteint la fin pile \u00e0 la fin ; l'effet de vibration/mirage de l'onde au passage du curseur est renforc\u00e9 et cal\u00e9 sur le son r\u00e9el"
     ],

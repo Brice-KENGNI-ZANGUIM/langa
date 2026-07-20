@@ -1769,6 +1769,20 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   filter: grayscale(1) !important; opacity: .6; cursor: not-allowed; transform: none !important; }
 #btn-save.is-rec-locked::after, #btn-save:disabled::after { content: none !important; animation: none !important; opacity: 0 !important; }
 .btn--rec.is-recording { border-color: var(--red); color: var(--red); box-shadow: 0 0 16px rgba(248,113,113,.35); }
+/* Bouton « Ajouter … » : déplie une contribution SECONDAIRE optionnelle (traduction en mode
+   Transcrire, ou transcription audio en mode Traduire). Discret mais clairement cliquable :
+   pointillé, teinte de l'activité au survol, pleine largeur. */
+.add-optional { display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  width: 100%; padding: 12px 16px; border-radius: 14px; cursor: pointer;
+  font: inherit; font-weight: 700; color: var(--muted);
+  background: color-mix(in srgb, var(--cyan) 5%, transparent);
+  border: 1.5px dashed color-mix(in srgb, var(--cyan) 40%, var(--border));
+  transition: color .15s ease, border-color .15s ease, background .15s ease, box-shadow .2s ease; }
+.add-optional[hidden] { display: none; }
+.add-optional:hover { color: var(--cyan); border-color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 12%, transparent); box-shadow: 0 0 18px -8px var(--cyan); }
+.add-optional:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+.add-optional-ico { font-size: 1.2em; line-height: 1; font-weight: 800; color: var(--cyan); }
 /* CONVENTION boutons du CORPS du site (hors header, hors boutons neutres) —
    couleur UNIE, jamais de dégradé ; texte = var(--bg) (toujours à l'opposé de la
    couleur du bouton → lisible en clair ET en sombre) :

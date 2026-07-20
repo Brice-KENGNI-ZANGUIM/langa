@@ -151,6 +151,8 @@ export const STR = {
   "trim.dur": { fr: "Sélection : {d} s", en: "Selection: {d} s" },
   // Interface générale — traduction complète (aucun français en mode anglais)
   "wk.next": { fr: "Prochain mot →", en: "Next word →" },
+  "wk.add.translation": { fr: "Ajouter une traduction", en: "Add a translation" },
+  "wk.add.transcription": { fr: "Ajouter une transcription audio", en: "Add an audio recording" },
   "wk.kb.open": { fr: "⌨ Ouvrir le clavier ngiemboon", en: "⌨ Open the ngiemboon keyboard" },
   "wk.kb.close": { fr: "✕ Fermer", en: "✕ Close" },
   "wk.audio.remove": { fr: "retirer", en: "remove" },

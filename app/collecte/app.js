@@ -29,7 +29,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v245";
+const APP_VERSION = "v246";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1794,7 +1794,28 @@ function setActivity(act) {
   const tp = $("#tab-traduire"); if (tp) tp.classList.toggle("is-active", !isT);
   const tt = $("#tab-transcrire"); if (tt) tt.classList.toggle("is-active", isT);
   const te = $("#tab-explorer"); if (te) te.classList.remove("is-active");
+  applyOptionalSections(activity);   // replie la section OPTIONNELLE selon l'activité
   updateGate();
+}
+/** Différencie Traduire et Transcrire : la contribution SECONDAIRE est repliée derrière un
+    bouton « Ajouter … » (non supprimée). En Transcrire, la traduction est optionnelle ; en
+    Traduire, la transcription audio est optionnelle. L'utilisateur peut la déplier à tout moment
+    pour compléter son mot (faire les deux). */
+function applyOptionalSections(act) {
+  const isT = act === "transcribe";
+  const tw = $("#target-wrap"), aw = $("#audio-wrap");
+  const addT = $("#add-translation"), addA = $("#add-transcription");
+  if (tw) tw.hidden = isT;          // traduction repliée en Transcrire
+  if (addT) addT.hidden = !isT;     // bouton « Ajouter une traduction » (Transcrire)
+  if (aw) aw.hidden = !isT;         // audio replié en Traduire
+  if (addA) addA.hidden = isT;      // bouton « Ajouter une transcription audio » (Traduire)
+}
+/** Déplie une section optionnelle et masque son bouton d'ajout (l'utilisateur a choisi de la remplir). */
+function _revealOptional(zoneSel, btnSel, focusSel) {
+  const z = $(zoneSel), btn = $(btnSel);
+  if (z) z.hidden = false;
+  if (btn) btn.hidden = true;
+  if (focusSel) { const f = $(focusSel); if (f) keepScroll(() => { try { f.focus({ preventScroll: true }); } catch (e) { /* ok */ } }); }
 }
 function enterWork(act) {
   if (!requireProfile(act === "transcribe"
@@ -4823,6 +4844,9 @@ function initEvents() {
     else startRecording();
   });
   $("#btn-clear-audio").addEventListener("click", clearAudio);
+  // Déplier la section optionnelle (l'utilisateur veut compléter son mot par l'autre volet).
+  const addTr = $("#add-translation"); if (addTr) addTr.addEventListener("click", () => _revealOptional("#target-wrap", "#add-translation", "#target"));
+  const addAu = $("#add-transcription"); if (addAu) addAu.addEventListener("click", () => _revealOptional("#audio-wrap", "#add-transcription", null));
   $("#btn-save").addEventListener("click", saveContribution);
   $("#btn-send").addEventListener("click", send);
   const rs = $("#btn-resend"); if (rs) rs.addEventListener("click", () => { kickReconcile(); toast("Renvoi en cours…", "ok"); });
