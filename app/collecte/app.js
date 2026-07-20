@@ -3266,6 +3266,7 @@ function renderCorrections(panel, id, origText, data) {
   if (ctxt) attachKbTap(ctxt, () => { if (ctxt.getAttribute("inputmode") === "none") openKeyboardFor(ctxt); });
 }
 async function onVote(btn) {
+  if (!requireProfile(t("vote.needprofile"))) return;   // voter = écrire → profil exigé
   btn.disabled = true;
   try {
     await postVote({ id_cible: btn.dataset.cible, device_id: deviceId(), valeur: 1 });
