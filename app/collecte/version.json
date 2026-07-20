@@ -1,6 +1,9 @@
 {
-  "version": "v237",
+  "version": "v238",
   "changelog": {
+    "v238": [
+      "Le QR code (À propos, mode présentation, partages) pointe désormais vers https://www.langial.com"
+    ],
     "v237": [
       "Lecture audio mieux calibrée : le curseur de position atteint désormais la fin de la barre pile quand le son se termine (fini l'arrêt à mi-parcours), la barre est calée sur la vraie durée jouée"
     ],
