@@ -29,7 +29,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v246";
+const APP_VERSION = "v247";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1839,12 +1839,15 @@ function _revealOptional(zoneSel, btnSel, focusSel) {
   if (btn) btn.hidden = true;
   if (focusSel) { const f = $(focusSel); if (f) keepScroll(() => { try { f.focus({ preventScroll: true }); } catch (e) { /* ok */ } }); }
 }
-function enterWork(act) {
+function enterWork(act, forceMode) {
   if (!requireProfile(act === "transcribe"
     ? "Crée ton profil pour enregistrer des prononciations."
     : "Crée ton profil pour proposer des traductions.")) return;
   if (isKbOpen()) hideKeyboard();
+  mode = forceMode || "proposer";   // PAR DÉFAUT « se faire proposer un mot » (Brice) ; « libre » seulement
+                                    // pour les entrées spéciales (réponse à une demande, « dis-le dans ta langue »).
   setActivity(act);
+  applyMode();   // applique le mode (affiche la barre de proposition + propose un mot si « proposer »)
   // Consignes de l'activité, affichées les 3 premières fois (Transcrire ET Traduire).
   maybeShowGuide(act);
   // Rétablit la cible du clavier sur le champ de la langue courante (elle a pu être
@@ -1928,9 +1931,7 @@ function startTranslateWord(frWord) {
   if (!w) return;
   if (!requireProfile(t("req.profile.translate"))) return;   // pas de profil → l'ouvre d'abord
   if (!hasChosenLang()) { openLangChoice(); return; }         // pas de langue → écran des langues
-  mode = "libre";
-  enterWork("translate");
-  applyMode();                                                // applique le mode libre (source vidée)
+  enterWork("translate", "libre");                            // « libre » : on va imposer le mot nous-mêmes
   if (direction !== "fr2nge") { direction = "fr2nge"; applyDirection(); }
   const s = $("#source");
   if (s) { delete s.dataset.canon; s.value = w; s.readOnly = false; s.dispatchEvent(new Event("input", { bubbles: true })); }
@@ -2253,9 +2254,7 @@ function startRequestAnswer(d) {
 const PENDING_REQ_KEY = "langa-pending-req";
 function _openWorkForRequest(item) {
   const act = (item.kind === "transcription" || item.kind === "les_deux") ? "transcribe" : "translate";
-  mode = "libre";   // AVANT d'entrer : empêche le chargement asynchrone d'une proposition
-                    // (mode « proposer ») qui écraserait ensuite le mot imposé par la demande.
-  enterWork(act);
+  enterWork(act, "libre");   // « libre » : pas de proposition auto (le mot est imposé par la demande)
   loadRequestIntoSource(item);
 }
 /** Au démarrage : si une réponse à une demande était en attente d'un changement de langue,

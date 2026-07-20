@@ -1,6 +1,10 @@
 {
-  "version": "v246",
+  "version": "v247",
   "changelog": {
+    "v247": [
+      "En arrivant sur Traduire ou Transcrire, le mode \u00ab Se faire proposer un mot \u00bb est de nouveau s\u00e9lectionn\u00e9 par d\u00e9faut (tu peux toujours basculer sur \u00ab \u00c9crire moi-m\u00eame \u00bb)",
+      "Fiabilit\u00e9 des profils : plus de doublon d'utilisateur pour un m\u00eame appareil (une seule fiche par appareil, mise \u00e0 jour en place)"
+    ],
     "v246": [
       "Traduire et Transcrire ne se ressemblent plus : sur Traduire, l'enregistrement audio (optionnel) est repli\u00e9 derri\u00e8re un bouton \u00ab Ajouter une transcription audio \u00bb ; sur Transcrire, la traduction (optionnelle) est repli\u00e9e derri\u00e8re \u00ab Ajouter une traduction \u00bb. Tu peux d\u00e9plier l'autre volet \u00e0 tout moment pour compl\u00e9ter ton mot (faire les deux)"
     ],
