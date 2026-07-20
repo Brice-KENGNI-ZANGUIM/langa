@@ -1,6 +1,9 @@
 {
-  "version": "v225",
+  "version": "v226",
   "changelog": {
+    "v226": [
+      "Chargement bien plus rapide, surtout sur téléphone : les illustrations de l'accueil et de la page à propos ont été fortement allégées (mêmes images, poids divisé par ~8), pour un affichage quasi immédiat"
+    ],
     "v225": [
       "L'application s'appelle désormais LANGIAL : le nom a été mis à jour partout (accueil, à propos, partages, e-mails). Le mode sombre devient l'affichage par défaut à la première ouverture ; ton choix clair/sombre reste respecté. Le motif de fond défile maintenant avec le contenu, d'un seul tenant"
     ],
