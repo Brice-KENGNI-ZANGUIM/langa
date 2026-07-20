@@ -1148,7 +1148,7 @@ function enterHub() {
   const nom = c.prenom || c.nom || "";
   $("#welcome-user").textContent = nom ? `${t("hub.greeting.hello")} ${nom} 👋` : "";
   const ht = $("#hub-title");
-  if (ht) ht.textContent = nom ? `${t("hub.greeting.hello")} ${nom} 👋 · ${t("hub.greeting")}` : t("hub.greeting.solo");
+  if (ht) ht.textContent = nom ? `${t("hub.greeting.hello")} ${nom} 👋` : t("hub.greeting.solo");
   showView("hub");
   // Notifications : rafraîchit la pastille, puis propose un popup si une activité
   // récente concerne l'utilisateur (prioritaire sur l'invitation générique).

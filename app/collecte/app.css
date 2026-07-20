@@ -2313,15 +2313,19 @@ body::after {
   box-shadow: var(--shadow-card), 0 0 44px -26px var(--cyan), inset 0 1px 0 var(--card-sheen); }
 .page-banner-img { display: block; width: 100%; height: auto; }
 /* Accroche calée à gauche (sur la zone sombre), centrée verticalement. */
-.page-banner-cap { position: absolute; left: clamp(14px, 4%, 46px); top: 50%; transform: translateY(-50%);
-  max-width: 48%; z-index: 2; display: flex; flex-direction: column; gap: clamp(3px, 1vw, 7px); text-align: left; }
-.pb-eye { font-size: clamp(.56rem, 1.5vw, .74rem); letter-spacing: .16em; text-transform: uppercase;
-  font-weight: 800; color: var(--gold); text-shadow: 0 1px 8px rgba(0,0,0,.6); }
-.pb-title { font-family: var(--font-display); font-weight: 800; line-height: 1.08;
-  font-size: clamp(1rem, 3.4vw, 2.1rem);
-  background: linear-gradient(100deg, var(--cyan), var(--green) 52%, var(--gold));
+.page-banner-cap { position: absolute; left: clamp(12px, 3.5%, 40px); top: 50%; transform: translateY(-50%);
+  max-width: 42%; z-index: 2; display: flex; flex-direction: column; gap: clamp(4px, 1.1vw, 9px); text-align: left; }
+/* TITRE prédominant : grand, teinte or/marron dominante à gauche (sur la zone sombre) puis
+   vert/cyan. Taille en vw → remplit la zone vide et s'adapte à tout support, sans déborder
+   sur les personnes (bornée par max-width de la zone + plafond de taille). */
+.pb-title { font-family: var(--font-display); font-weight: 800; line-height: 1.04;
+  font-size: clamp(1.3rem, 4.4vw, 2.8rem); overflow-wrap: break-word;
+  background: linear-gradient(100deg, var(--gold), var(--green) 58%, var(--cyan));
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  filter: drop-shadow(0 2px 14px rgba(0,0,0,.55)); }
+  filter: drop-shadow(0 2px 16px rgba(0,0,0,.6)); }
+/* Accroche EN DESSOUS : grande aussi mais plus petite que le titre. */
+.pb-eye { font-size: clamp(.82rem, 2.5vw, 1.35rem); letter-spacing: .05em; font-weight: 700;
+  color: color-mix(in srgb, var(--gold) 88%, #fff); text-shadow: 0 1px 10px rgba(0,0,0,.7); }
 /* État vide illustré (Explorer, Notifications, Demandes) : illustration + message centrés. */
 .empty-state { text-align: center; padding: 16px 10px 6px; }
 .empty-illus { display: block; width: clamp(140px, 40vw, 220px); height: auto; margin: 0 auto 12px;
