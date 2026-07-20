@@ -96,9 +96,10 @@
 * { box-sizing: border-box; }
 /* Motif africain en fond global (couche fixe, derrière tout le contenu), très discret.
    Variante claire par défaut, plus marquée en sombre (où il se marie mieux). */
-/* Motif ambiant en fond de page (couche fixe, derrière tout le contenu). */
-.bg-motif { position: fixed; inset: 0; z-index: -1; pointer-events: none;
-  background: url("icons/bg-pattern-light.jpg") center top / 520px auto repeat fixed; opacity: .17; }
+/* Motif ambiant en fond de page : couche ABSOLUE couvrant tout le document (pas le
+   viewport) → elle défile solidairement avec le contenu, à la même vitesse. */
+.bg-motif { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+  background: url("icons/bg-pattern-light.jpg") center top / 520px auto repeat; opacity: .17; }
 :root[data-theme="dark"] .bg-motif { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .40; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bg-motif { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .34; } }
 
@@ -117,6 +118,9 @@ body {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  /* Ancre la couche de motif (.bg-motif) : elle couvre toute la hauteur du document
+     et défile AVEC le contenu (solidaires, même vitesse). */
+  position: relative;
 }
 /* Mobile / tablette : trame Ndop ATTÉNUÉE (opacités ~÷2) pour qu'elle ne soit pas
    dominante sur petit écran. On ne redéfinit QUE --lattice-img, rien d'autre. */
