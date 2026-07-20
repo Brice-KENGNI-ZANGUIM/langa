@@ -1,6 +1,9 @@
 {
-  "version": "v255",
+  "version": "v256",
   "changelog": {
+    "v256": [
+      "Si tu \u00e9cris toi-m\u00eame un mot que tu as d\u00e9j\u00e0 trait\u00e9, l'application te pr\u00e9vient : elle grise la saisie d'une nouvelle contribution, te laisse r\u00e9\u00e9couter ou relire ta version pr\u00e9c\u00e9dente, et te propose de la refaire quand m\u00eame ou de passer \u00e0 un autre mot"
+    ],
     "v255": [
       "La liste de tes contributions (en bas) d\u00e9file maintenant dans son cadre au-del\u00e0 d'une dizaine d'items (fini la page interminable), et une barre de recherche permet de retrouver un mot ou une phrase que tu as d\u00e9j\u00e0 envoy\u00e9"
     ],

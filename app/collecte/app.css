@@ -1898,6 +1898,22 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan) 18%, transparent); }
 .send-noresult { color: var(--muted); font-size: .86rem; padding: 10px 4px; }
 .send-noresult[hidden] { display: none; }
+/* Alerte DOUBLON (mode libre) : le mot saisi a déjà été traité par l'utilisateur. */
+.dup-warn { margin-top: 12px; padding: 14px 16px; border-radius: 14px;
+  background: color-mix(in srgb, var(--gold) 9%, var(--panel));
+  border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--border));
+  box-shadow: 0 0 24px -14px var(--gold); }
+.dup-warn[hidden] { display: none; }
+.dup-warn-head { display: flex; align-items: center; gap: 8px; font-weight: 800; color: var(--gold); }
+.dup-warn-msg { margin: 8px 0 10px; color: var(--text); font-size: .9rem; line-height: 1.5; }
+.dup-prev { margin-bottom: 10px; }
+.dup-prev-trad { margin: 8px 0 0; font-size: .92rem; color: var(--text); }
+.dup-prev-lbl { color: var(--muted); }
+.dup-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+/* Saisie d'une NOUVELLE contribution grisée et inerte tant qu'un doublon est signalé (la SOURCE
+   reste modifiable, et le panneau d'alerte reste cliquable : ils sont hors des zones grisées). */
+.work-dup-locked #target-wrap, .work-dup-locked #audio-wrap, .work-dup-locked .actions {
+  opacity: .5; filter: grayscale(.6); pointer-events: none; }
 .item {
   display: flex; align-items: center; justify-content: space-between; gap: 12px;
   padding: 10px 12px; border: 1px solid var(--border); border-radius: 11px; background: var(--bg);

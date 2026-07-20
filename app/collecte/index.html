@@ -412,6 +412,19 @@
           <span id="tag-source" class="lang-tag">FR</span></span>
         <textarea id="source" rows="2" placeholder="Saisis ici…" data-i18n-ph="wk.source.ph"
           spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+        <!-- Alerte DOUBLON : le mot saisi a DÉJÀ été traité par l'utilisateur (mode libre). On
+             l'informe, on grise la saisie de la contribution, et on lui propose de réécouter sa
+             version, d'en refaire une autre malgré tout, ou de passer à un autre mot. -->
+        <div id="dup-warn" class="dup-warn" hidden>
+          <div class="dup-warn-head"><span class="dup-warn-ico" aria-hidden="true">⚠️</span>
+            <span data-i18n="dup.title">Tu as déjà traité ce mot</span></div>
+          <p class="dup-warn-msg" data-i18n="dup.msg">Tu as déjà envoyé une contribution pour ce mot ou cette phrase. Réécoute ou relis ta version, refais-en une autre malgré tout, ou passe à autre chose.</p>
+          <div class="dup-prev" id="dup-prev"></div>
+          <div class="dup-actions">
+            <button id="dup-redo" class="btn btn--sm" type="button" data-i18n="dup.redo">Le refaire quand même</button>
+            <button id="dup-skip" class="chip chip--btn" type="button" data-i18n="dup.skip">Passer à un autre</button>
+          </div>
+        </div>
       </div>
 
       <!-- Bouton pour DÉPLIER la traduction (optionnelle en mode Transcrire) -->

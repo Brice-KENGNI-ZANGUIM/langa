@@ -29,7 +29,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v255";
+const APP_VERSION = "v256";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -809,6 +809,42 @@ function focusSourceCentered() {
   try { if (sw) sw.scrollIntoView({ behavior: "smooth", block: "center" }); } catch (e) { /* ok */ }
   if (s) { try { s.focus({ preventScroll: true }); } catch (e) { try { s.focus(); } catch (e2) { /* ok */ } } }
 }
+// --- Détection de DOUBLON en mode libre : si le mot saisi a déjà été traité par CET utilisateur,
+// on l'informe, on grise la saisie de la contribution, et on lui propose de réécouter/relire sa
+// version, d'en refaire une autre malgré tout, ou de passer à un autre mot. Le mode « proposer »
+// évite déjà les répétitions ; ce garde-fou couvre le cas où l'utilisateur choisit ses propres mots.
+let _dupOverride = "";   // mot que l'utilisateur a explicitement choisi de REFAIRE malgré le doublon
+async function checkSourceDuplicate() {
+  const warn = $("#dup-warn"); if (!warn) return;
+  const n = normTxt(($("#source") && $("#source").value) || "");
+  if (mode !== "libre" || _currentReqId || !n || _dupOverride === n || !_doneTexts.has(n)) {
+    warn.hidden = true; lockDupZone(false); return;
+  }
+  lockDupZone(true);                        // DOUBLON : on grise la saisie de la nouvelle contribution
+  const prev = $("#dup-prev"); if (prev) prev.innerHTML = "";
+  try {
+    const mine = (await DB.all()).filter((r) => normTxt(r.source_text) === n)
+      .sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
+    const it = mine[0];
+    if (it && prev) {
+      if (it.audioBlob) {                   // réécouter sa prononciation précédente
+        const wrap = document.createElement("div"); wrap.className = "dup-prev-audio"; prev.appendChild(wrap);
+        try { mountLocalAudioPlayer(wrap, URL.createObjectURL(it.audioBlob), it.audioMeta && it.audioMeta.duree_ms); } catch (e) { /* ok */ }
+      }
+      if (it.target_text) {                 // relire sa traduction précédente
+        const pp = document.createElement("p"); pp.className = "dup-prev-trad";
+        pp.innerHTML = `<span class="dup-prev-lbl">${escapeHtml(t("dup.your"))}</span> <b>${escapeHtml(it.target_text)}</b>`;
+        prev.appendChild(pp);
+      }
+    }
+  } catch (e) { /* base indispo : on affiche au moins l'alerte */ }
+  warn.hidden = false;
+}
+/** Grise (verrouille) la saisie d'une NOUVELLE contribution tant qu'un doublon est signalé. */
+function lockDupZone(locked) {
+  const wc = $("#work-card"); if (wc) wc.classList.toggle("work-dup-locked", !!locked);
+  ["#target", "#btn-rec", "#btn-save"].forEach((s) => { const e = $(s); if (e) e.disabled = !!locked; });
+}
 
 function resetForm() {
   _currentReqId = null;                // plus de réponse à une demande en cours
@@ -819,6 +855,8 @@ function resetForm() {
   $("#domaine").value = "";
   $("#note").value = "";
   clearAudio();
+  _dupOverride = "";                    // source vidée → plus d'alerte doublon en attente
+  checkSourceDuplicate();
   // Même page → le défilement ne bouge pas (focus sans scroll).
   keepScroll(() => { try { $("#source").focus({ preventScroll: true }); } catch (e) { /* ok */ } });
 }
@@ -1865,6 +1903,7 @@ function enterWork(act, forceMode) {
                                     // pour les entrées spéciales (réponse à une demande, « dis-le dans ta langue »).
   setActivity(act);
   applyMode();   // applique le mode (affiche la barre de proposition + propose un mot si « proposer »)
+  refreshDoneTexts();   // liste des mots déjà faits par l'utilisateur (pour la détection de doublon en mode libre)
   // Consignes de l'activité, affichées les 3 premières fois (Transcrire ET Traduire).
   maybeShowGuide(act);
   // Rétablit la cible du clavier sur le champ de la langue courante (elle a pu être
@@ -4909,6 +4948,22 @@ function initEvents() {
   $("#btn-save").addEventListener("click", saveContribution);
   $("#btn-send").addEventListener("click", send);
   const sSearch = $("#send-search"); if (sSearch) sSearch.addEventListener("input", () => keepScroll(filterSendLists));
+  // Détection de doublon quand l'utilisateur SAISIT lui-même un mot (mode libre).
+  const srcEl = $("#source");
+  if (srcEl) { let _dupT; srcEl.addEventListener("input", () => { clearTimeout(_dupT); _dupT = setTimeout(checkSourceDuplicate, 350); }); }
+  const dupRedo = $("#dup-redo");
+  if (dupRedo) dupRedo.addEventListener("click", () => {
+    _dupOverride = normTxt(($("#source") || {}).value || "");   // il assume de refaire CE mot
+    checkSourceDuplicate();
+    const tg = activity === "transcribe" ? $("#btn-rec") : $("#target");
+    if (tg) keepScroll(() => { try { tg.focus({ preventScroll: true }); } catch (e) { /* ok */ } });
+  });
+  const dupSkip = $("#dup-skip");
+  if (dupSkip) dupSkip.addEventListener("click", () => {
+    const s = $("#source"); if (s) { s.value = ""; s.dispatchEvent(new Event("input", { bubbles: true })); }
+    _dupOverride = ""; checkSourceDuplicate();
+    if (s) keepScroll(() => { try { s.focus({ preventScroll: true }); } catch (e) { /* ok */ } });
+  });
   const rs = $("#btn-resend"); if (rs) rs.addEventListener("click", () => { kickReconcile(); toast(t("toast.resend"), "ok"); });
   window.addEventListener("online", () => { updateServerBadge(); kickReconcile(); });   // retour réseau → renvoi auto
   window.addEventListener("offline", updateServerBadge);

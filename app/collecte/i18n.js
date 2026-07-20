@@ -572,6 +572,11 @@ export const STR = {
   "toast.upd.finalizing": { fr: "Finalisation de la mise à jour…", en: "Finalising the update…" },
   "send.search.ph": { fr: "🔎 Chercher un mot ou une phrase dans tes contributions…", en: "🔎 Search a word or phrase in your contributions…" },
   "send.noresult": { fr: "Aucune de tes contributions ne correspond à cette recherche.", en: "None of your contributions match this search." },
+  "dup.title": { fr: "Tu as déjà traité ce mot", en: "You've already done this word" },
+  "dup.msg": { fr: "Tu as déjà envoyé une contribution pour ce mot ou cette phrase. Réécoute ou relis ta version, refais-en une autre malgré tout, ou passe à autre chose.", en: "You've already submitted a contribution for this word or phrase. Listen to or read your version again, redo it anyway, or move on to something else." },
+  "dup.your": { fr: "Ta version :", en: "Your version:" },
+  "dup.redo": { fr: "Le refaire quand même", en: "Redo it anyway" },
+  "dup.skip": { fr: "Passer à un autre", en: "Move to another" },
   "notif.request_answered": { fr: "{who} a répondu à ta demande de traduction de « {mot} » 🎉", en: "{who} answered your translation request for “{mot}” 🎉" },
   // --- Porte « Demander » (entraide) ---
   "hub.card.demander": { fr: "Demander", en: "Ask" },
