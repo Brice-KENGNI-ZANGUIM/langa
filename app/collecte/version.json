@@ -1,6 +1,9 @@
 {
-  "version": "v240",
+  "version": "v241",
   "changelog": {
+    "v241": [
+      "Sur téléphone : plus aucun défilement horizontal parasite, et les gros textes (titres de page, bannières, texte de présentation) sont légèrement réduits pour un meilleur équilibre visuel"
+    ],
     "v240": [
       "Explorer : par défaut tu ne vois que les contributions de ta langue ; un sélecteur en haut permet d'afficher une autre langue ou toutes les langues. La carte des villages montre désormais chaque village séparément (fini le losange « Autres »), et cliquer un village filtre la liste sur lui",
       "Le fond du mode présentation (à l'écran comme à l'export PNG/PDF) reprend fidèlement le motif du site, en clair comme en sombre",
