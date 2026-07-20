@@ -1,6 +1,10 @@
 {
-  "version": "v241",
+  "version": "v242",
   "changelog": {
+    "v242": [
+      "Les notifications deviennent cliquables et intelligentes : une demande de traduction ou de prononciation t'emmène directement sur la bonne page avec le mot déjà en place, et dès que tu réponds la personne qui avait demandé est prévenue automatiquement. Les retours sur tes contributions ouvrent le mot concerné dans la bibliothèque",
+      "Sur téléphone, les grands textes (titres de page, bannières, présentation) sont un peu plus compacts, mieux proportionnés au reste"
+    ],
     "v241": [
       "Sur téléphone : plus aucun défilement horizontal parasite, et les gros textes (titres de page, bannières, texte de présentation) sont légèrement réduits pour un meilleur équilibre visuel"
     ],

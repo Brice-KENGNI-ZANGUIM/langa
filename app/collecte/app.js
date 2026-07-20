@@ -29,7 +29,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v241";
+const APP_VERSION = "v242";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -760,6 +760,7 @@ async function saveContribution() {
     domaine: $("#domaine").value.trim(),
     note: $("#note").value.trim(),
     contributeur: c,
+    credit_display: creditDisplay(),   // auteur affichable (pour notifier le demandeur d'une réponse)
     consentement: !!c.consentement,
     device_id: deviceId(),
     created_at: new Date().toISOString(),
@@ -1152,6 +1153,10 @@ function enterHub() {
   const ht = $("#hub-title");
   if (ht) ht.textContent = nom ? `${t("hub.greeting.hello")} ${nom} 👋` : t("hub.greeting.solo");
   showView("hub");
+  // Reprise d'une réponse à une demande interrompue par une bascule de langue (clic sur une
+  // notification « on veut une trad/transcription dans telle langue » → rechargement dans
+  // cette langue → on rouvre ici la page de travail avec le mot imposé).
+  try { resumePendingRequestAnswer(); } catch (e) { /* jamais bloquant */ }
   // Notifications : rafraîchit la pastille, puis propose un popup si une activité
   // récente concerne l'utilisateur (prioritaire sur l'invitation générique).
   setTimeout(() => { refreshNotifs().then(() => { try { maybeShowNotifPopup(); } catch (e) { /* ok */ } }); }, 1000);
@@ -2063,6 +2068,7 @@ async function maybeShowIncitation() {
 // que par son crédit d'affichage DÉJÀ consenti (sinon « une personne »).
 const NOTIF_SEEN_KEY = "langa-notif-seen";
 const NOTIF_POPUP_KEY = "langa-notif-popup";   // dernier ts pour lequel un popup a été montré
+let _popupNotif = null;                        // notif actuellement montrée en popup (pour « Ouvrir »)
 let _notifs = [];
 let _notifsReturn = "hub";
 
@@ -2124,12 +2130,90 @@ function relTime(ts) {
   const j = Math.floor(h / 24); if (j < 7) return ti("notif.day", { n: j });
   try { return new Date(ts).toLocaleDateString(getUiLang() === "en" ? "en-GB" : "fr-FR"); } catch (e) { return ""; }
 }
+/** Une notification est ACTIONNABLE si un clic mène quelque part d'utile. Presque toutes
+    le sont : le système sert d'INTERMÉDIAIRE entre utilisateurs, chaque notification
+    ouvre le bon endroit pour agir ou voir le résultat. */
+function notifActionable(n) {
+  return ["request", "request_share", "request_answered", "vote", "suggestion", "milestone"].includes(n.type);
+}
 function notifItemHtml(n) {
   const unread = (n.ts || 0) > _notifSeenTs();
-  return `<li class="notif ${unread ? "notif--unread" : ""}">` +
+  const d = n.data || {};
+  const act = notifActionable(n);
+  const mot = (d.mot || d.texte || "").toString();
+  const data = `data-ntype="${escapeHtml(n.type)}" data-reqid="${escapeHtml(d.req_id || "")}"` +
+    ` data-mot="${escapeHtml(mot)}" data-moten="${escapeHtml(d.texte_en || d.mot_en || "")}"` +
+    ` data-lang="${escapeHtml(d.langue || "")}" data-kind="${escapeHtml(d.kind || "")}"`;
+  return `<li class="notif ${unread ? "notif--unread" : ""}${act ? " notif--action" : ""}"` +
+    (act ? ` role="button" tabindex="0" aria-label="${escapeHtml(notifText(n))}"` : "") + ` ${data}>` +
     `<span class="notif-ico" aria-hidden="true">${notifIcon(n.type)}</span>` +
     `<div class="notif-body"><p class="notif-msg">${escapeHtml(notifText(n))}</p>` +
-    `<span class="notif-time">${escapeHtml(relTime(n.ts))}</span></div></li>`;
+    `<span class="notif-time">${escapeHtml(relTime(n.ts))}</span></div>` +
+    (act ? `<span class="notif-go" aria-hidden="true">→</span>` : "") + `</li>`;
+}
+/** Clic sur une notification du CENTRE : reconstruit la donnée depuis le DOM et route. */
+function onNotifAction(li) {
+  routeNotif(li.dataset.ntype, {
+    req_id: li.dataset.reqid, mot: li.dataset.mot, texte: li.dataset.mot,
+    texte_en: li.dataset.moten, langue: li.dataset.lang, kind: li.dataset.kind,
+  });
+}
+/** ROUTEUR de notification — le cœur de l'intermédiation entre utilisateurs. Selon la
+    nature de la notification, on emmène l'utilisateur EXACTEMENT là où agir :
+    - request          : quelqu'un demande une trad/transcription DANS SA langue
+                         → page Traduire ou Transcrire, mot pré-rempli, réponse reliée à
+                           la demande (le backend notifie ensuite le demandeur).
+    - request_share    : demande dans une langue qu'il ne parle pas → page Demander pour RELAYER.
+    - request_answered : sa demande a reçu une réponse → le mot dans Explorer (voir/écouter).
+    - vote / suggestion: retour sur SA contribution → le mot dans Explorer.
+    - milestone        : cap franchi dans sa langue → Explorer (sa langue). */
+function routeNotif(type, d) {
+  d = d || {};
+  if (type === "request") { startRequestAnswer(d); return; }
+  if (type === "request_share") { enterDemander(d.req_id || null); return; }   // relayer/partager
+  const mot = (d.mot || d.texte || "").toString();
+  if (mot && type !== "milestone") { location.hash = "#/explorer?w=" + encodeURIComponent(mot); return; }
+  location.hash = "#/explorer";   // milestone (ou sans mot) → bibliothèque de sa langue
+}
+/** Démarre la RÉPONSE à une demande depuis une notification : ouvre la bonne page
+    (Traduire/Transcrire) avec le mot imposé, en se plaçant sur la langue de la demande.
+    Si l'utilisateur ne parle pas cette langue, il est dirigé vers Demander pour relayer.
+    Robuste au multi-langue : si un changement de langue courante est nécessaire, la demande
+    est mémorisée et reprise automatiquement après le rechargement. */
+function startRequestAnswer(d) {
+  const langue = canonLangId(d.langue || "");
+  const item = { id: d.req_id || "", texte: (d.texte || d.mot || "").toString(),
+    texte_en: (d.texte_en || "").toString(), kind: d.kind || "traduction", langue };
+  if (!item.id || !item.texte) { enterDemander(item.id || null); return; }   // repli : page Demander
+  if (!requireProfile(t("req.needprofile"))) return;
+  const known = !langue || knownLanguages().some((l) => canonLangId(l.id) === langue);
+  if (langue && !known) { enterDemander(item.id); return; }   // pas locuteur → relayer la demande
+  if (langue && canonLangId(getCurrentLangId()) !== langue) {
+    // bascule nécessaire vers la langue de la demande : on mémorise puis on recharge
+    try { sessionStorage.setItem(PENDING_REQ_KEY, JSON.stringify(item)); } catch (e) { /* ok */ }
+    chooseLang(langue);   // recharge l'app dans la bonne langue (reprise via resumePendingRequestAnswer)
+    return;
+  }
+  _openWorkForRequest(item);
+}
+const PENDING_REQ_KEY = "langa-pending-req";
+function _openWorkForRequest(item) {
+  const act = (item.kind === "transcription" || item.kind === "les_deux") ? "transcribe" : "translate";
+  mode = "libre";   // AVANT d'entrer : empêche le chargement asynchrone d'une proposition
+                    // (mode « proposer ») qui écraserait ensuite le mot imposé par la demande.
+  enterWork(act);
+  loadRequestIntoSource(item);
+}
+/** Au démarrage : si une réponse à une demande était en attente d'un changement de langue,
+    on la reprend automatiquement une fois l'app rechargée dans la bonne langue. */
+function resumePendingRequestAnswer() {
+  let raw = null;
+  try { raw = sessionStorage.getItem(PENDING_REQ_KEY); sessionStorage.removeItem(PENDING_REQ_KEY); } catch (e) { return; }
+  if (!raw) return;
+  let item = null; try { item = JSON.parse(raw); } catch (e) { return; }
+  if (item && item.id && item.texte && canonLangId(getCurrentLangId()) === canonLangId(item.langue || "")) {
+    _openWorkForRequest(item);
+  }
 }
 async function renderNotifs() {
   const feed = $("#notif-feed"), empty = $("#notif-empty");
@@ -2163,6 +2247,7 @@ async function maybeShowNotifPopup() {
   const n = fresh[0];   // la plus récente (liste triée décroissante)
   const pop = $("#notif-popup"), msg = $("#notif-popup-msg");
   if (!pop || !msg) return;
+  _popupNotif = n;      // mémorisée pour que « Ouvrir » agisse selon son type
   msg.textContent = notifText(n);
   // Couleur + icône selon le TYPE : « request » = une demande de la communauté (cyan, 📣),
   // sinon « activity » = un retour sur TES contributions (violet, 🔔). Voir CSS data-ptype.
@@ -2246,12 +2331,31 @@ async function _declareNewLangForRequest() {
   } catch (e) { toast(t("req.fail"), "warn"); }
   finally { if (btn) btn.disabled = false; }
 }
-function enterDemander() {
+async function enterDemander(targetReqId) {
   if (!requireProfile(t("req.needprofile"))) return;
   if (_currentView !== "demander") _reqReturn = _currentView;
   _fillReqLangSelects();
+  // Venant d'une notification ciblant une demande précise : on lève le filtre de langue
+  // pour être certain que la demande visée figure dans la liste.
+  if (targetReqId) { const f = $("#req-filter-lang"); if (f) { f.value = ""; refreshEnhancedSelects(); } }
   showView("demander");
-  renderRequests();
+  await renderRequests();
+  if (targetReqId) _openRequestAnswer(targetReqId);
+}
+/** Ouvre (déplie) la boîte de réponse d'une demande précise et l'amène à l'écran. */
+function _openRequestAnswer(rid) {
+  const list = $("#req-list"); if (!list || !rid) return;
+  const esc = (window.CSS && CSS.escape) ? CSS.escape(rid) : rid.replace(/["\\]/g, "\\$&");
+  const item = list.querySelector(`.req-item[data-id="${esc}"]`);
+  if (!item) { toast(t("req.gone"), "warn"); return; }   // demande résolue/retirée entre-temps
+  item.scrollIntoView({ behavior: "smooth", block: "center" });
+  const box = item.querySelector(".req-answer-box");
+  if (box && box.hidden) {
+    box.hidden = false;
+    const inp = box.querySelector(".req-answer-input"); if (inp) inp.focus({ preventScroll: true });
+  }
+  item.classList.add("req-item--flash");
+  setTimeout(() => item.classList.remove("req-item--flash"), 1700);
 }
 function reqKindLabel(k) {
   return t({ traduction: "req.kind.trad.s", transcription: "req.kind.transc.s", les_deux: "req.kind.both.s" }[k] || "req.kind.trad.s");
@@ -4755,7 +4859,7 @@ function initEvents() {
   const nt = $("#tab-traduire"); if (nt) nt.addEventListener("click", () => enterWork("translate"));
   const nx = $("#tab-transcrire"); if (nx) nx.addEventListener("click", () => enterWork("transcribe"));
   const ne = $("#tab-explorer"); if (ne) ne.addEventListener("click", enterExplore);
-  const nd = $("#tab-demander"); if (nd) nd.addEventListener("click", enterDemander);
+  const nd = $("#tab-demander"); if (nd) nd.addEventListener("click", () => enterDemander());
   const rsl = $("#req-strip-list"); if (rsl) rsl.addEventListener("click", onReqStripClick);   // lot 5 : clic sur une demande
   const eCsv = $("#export-csv"); if (eCsv) eCsv.addEventListener("click", () => downloadDict("csv"));
   const eJson = $("#export-json"); if (eJson) eJson.addEventListener("click", () => downloadDict("json"));
@@ -4785,7 +4889,23 @@ function initEvents() {
   const bNotif = $("#btn-notifs"); if (bNotif) bNotif.addEventListener("click", openNotifs);
   const nBack = $("#notif-back"); if (nBack) nBack.addEventListener("click", () => showView(_notifsReturn || "hub"));
   const nMark = $("#notif-markall"); if (nMark) nMark.addEventListener("click", markNotifsRead);
-  const npGo = $("#notif-popup-go"); if (npGo) npGo.addEventListener("click", () => { _notifPopupClose(); openNotifs(); });
+  // Une notification est CLIQUABLE : elle mène là où agir (répondre à une demande, ou
+  // ouvrir le mot concerné dans Explorer). Corrige BUG-U-mrtcyz9u-8933.
+  const nFeed = $("#notif-feed");
+  if (nFeed) {
+    nFeed.addEventListener("click", (e) => { const li = e.target.closest(".notif--action"); if (li) onNotifAction(li); });
+    nFeed.addEventListener("keydown", (e) => {
+      const li = e.target.closest(".notif--action");
+      if (li && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onNotifAction(li); }
+    });
+  }
+  // Popup de notif : « Ouvrir » agit directement si la notif est actionnable (demande →
+  // y répondre), sinon ouvre le centre de notifications.
+  const npGo = $("#notif-popup-go"); if (npGo) npGo.addEventListener("click", () => {
+    const n = _popupNotif; _notifPopupClose();
+    if (n && notifActionable(n)) { routeNotif(n.type, n.data || {}); return; }
+    openNotifs();
+  });
   const npLater = $("#notif-popup-later"); if (npLater) npLater.addEventListener("click", _notifPopupClose);
   const npClose = $("#notif-popup-close"); if (npClose) npClose.addEventListener("click", _notifPopupClose);
   // Porte « Demander » : publier une demande, retour, filtre langue, réponses/partage.

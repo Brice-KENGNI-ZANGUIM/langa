@@ -37,6 +37,9 @@ async function toPayload(rec) {
     consentement: !!rec.consentement,
     proposition_id: rec.proposition_id || "",
     proposition_cat: rec.proposition_cat || "",
+    langue: rec.langue || "",                       // langue communautaire (jalons + scope)
+    request_id: rec.request_id || "",               // relie la contribution à une DEMANDE (notifie le demandeur)
+    credit_display: rec.credit_display || "",       // auteur affichable (acteur de la notif « réponse »)
     device_id: rec.device_id,
     created_at: rec.created_at,
     audio: rec.audioMeta || { present: false },

@@ -569,6 +569,7 @@ export const STR = {
   "req.by": { fr: "demandé par {who}", en: "requested by {who}" },
   "req.mine": { fr: "Ta demande", en: "Your request" },
   "req.answer": { fr: "Répondre", en: "Answer" },
+  "req.gone": { fr: "Cette demande a déjà été traitée ou retirée.", en: "This request has already been handled or removed." },
   "req.answer.ph": { fr: "Écris la traduction…", en: "Write the translation…" },
   "req.answer.send": { fr: "Envoyer", en: "Send" },
   "req.answer.empty": { fr: "Écris d'abord ta réponse.", en: "Write your answer first." },

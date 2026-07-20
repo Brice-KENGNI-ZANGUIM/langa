@@ -12,6 +12,16 @@
 // Auteur : Brice Kengni Zanguim
 export const BUGS = [
   {
+    id: "BUG-U-mrtcyz9u-8933", titre: "Notification de demande impossible à ouvrir",
+    titre_en: "Request notification could not be opened",
+    description: "Une notification indiquant qu'un utilisateur souhaitait une traduction ou une prononciation dans ta langue ne pouvait pas être ouverte : rien ne se passait au clic, impossible d'aller aider la personne.",
+    description_en: "A notification saying a user wanted a translation or pronunciation in your language could not be opened: clicking it did nothing, so there was no way to go and help.",
+    statut: "resolu", severite: "critique", zone: "Notifications", zone_en: "Notifications",
+    detecte_le: "2026-07-20", resolu_le: "2026-07-20", version: "v242",
+    correctif: "Chaque notification est désormais cliquable et mène droit là où agir : une demande t'emmène sur la page Traduire ou Transcrire avec le mot déjà en place ; dès que tu réponds, la personne qui avait fait la demande est prévenue automatiquement. Les retours sur tes contributions (votes, améliorations) ouvrent le mot concerné dans la bibliothèque.",
+    correctif_en: "Every notification is now clickable and leads straight to where you can act: a request takes you to the Translate or Transcribe page with the word already filled in; as soon as you answer, the person who asked is notified automatically. Feedback on your contributions (votes, improvements) opens the relevant word in the library.",
+  },
+  {
     id: "BUG-010", titre: "Page vide après changement de langue sur « Mon profil »",
     titre_en: "Blank page after switching language on “My profile”",
     description: "Sur la page « Mon profil », changer la langue (français ↔ anglais) rechargeait la page mais laissait le corps vide ; il fallait cliquer sur un bouton du menu pour réafficher une page.",
