@@ -1,6 +1,9 @@
 {
-  "version": "v331",
+  "version": "v332",
   "changelog": {
+    "v332": [
+      "Vitesse : l'application démarre nettement plus vite (code allégé au maximum) ; sur un téléphone modeste, l'écran est prêt en une demi-seconde environ au lieu de plusieurs secondes"
+    ],
     "v331": [
       "Vitesse : la bibliothèque (Explorer) s'affiche instantanément avec le dernier contenu connu dès l'ouverture, puis se met à jour discrètement en arrière-plan, au lieu d'attendre le réseau devant un écran vide"
     ],
