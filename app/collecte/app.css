@@ -414,7 +414,15 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   width: 100%;
 }
 .card {
-  background: var(--card-bg);
+  /* Ornements de coin en losange Ndop (laiton + cyan), comme des ferrures d'orfèvrerie, posés
+     aux 4 angles EN FOND (couche de background, donc derrière le contenu). Discrets et premium. */
+  --corner-orn: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15'><path d='M7.5 1 14 7.5 7.5 14 1 7.5Z' fill='none' stroke='%23c98a2e' stroke-opacity='0.42' stroke-width='1.1'/><path d='M7.5 4.7 10.3 7.5 7.5 10.3 4.7 7.5Z' fill='%232ad4ee' fill-opacity='0.26'/></svg>");
+  background:
+    var(--corner-orn) left 11px top 11px / 15px 15px no-repeat,
+    var(--corner-orn) right 11px top 11px / 15px 15px no-repeat,
+    var(--corner-orn) left 11px bottom 11px / 15px 15px no-repeat,
+    var(--corner-orn) right 11px bottom 11px / 15px 15px no-repeat,
+    var(--card-bg);
   /* PAS de backdrop-filter ici : il crée un bloc conteneur qui casse le
      position:fixed des menus déroulants (combo-list) placés à l'intérieur.
      Les cartes sont opaques → le flou n'apportait rien de visible. */
@@ -2682,7 +2690,16 @@ body::after {
   filter: drop-shadow(0 0 7px color-mix(in srgb, var(--gold) 75%, transparent));
   animation: ngCardBreath 4.2s ease-in-out infinite;
 }
-.ndop-sep i::after { content: none; }
+/* Fleuron ENRICHI : deux petits losanges Ndop encadrent l'ornement central pour un séparateur
+   plus riche et symétrique. */
+.ndop-sep i::before, .ndop-sep i::after {
+  content: ""; position: absolute; top: 50%; width: 7px; height: 7px;
+  transform: translateY(-50%) rotate(45deg); border-radius: 1.5px;
+  background: color-mix(in srgb, var(--cyan) 36%, transparent);
+  border: 1.2px solid color-mix(in srgb, var(--gold) 62%, transparent);
+}
+.ndop-sep i::before { left: -15px; }
+.ndop-sep i::after { right: -15px; }
 @keyframes sepPulse {
   0%,100% { box-shadow: 0 0 8px -2px var(--gold), inset 0 0 6px -2px var(--cyan); }
   50%     { box-shadow: 0 0 18px 1px var(--gold), inset 0 0 9px -1px var(--cyan); }

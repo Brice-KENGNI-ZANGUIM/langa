@@ -1,6 +1,9 @@
 {
-  "version": "v270",
+  "version": "v271",
   "changelog": {
+    "v271": [
+      "D\u00e9cor plus raffin\u00e9 : petits ornements en losange aux coins des cadres, et s\u00e9parateurs de section enrichis (fleuron central encadr\u00e9 de losanges)"
+    ],
     "v270": [
       "Toutes les banni\u00e8res et photos de l'application recr\u00e9\u00e9es \u00e0 partir des images d'origine en haute d\u00e9finition : rendu net et soign\u00e9 sur chaque page"
     ],
