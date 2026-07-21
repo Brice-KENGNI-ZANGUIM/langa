@@ -1,6 +1,9 @@
 {
-  "version": "v315",
+  "version": "v316",
   "changelog": {
+    "v316": [
+      "Nouveaux groupes à traduire/transcrire : Pronoms et Prépositions, avec leurs équivalents anglais adaptés (tu et vous → you, ils et elles → they) ; chaque contribution garde des étiquettes (personne, nombre…) pour de futurs usages linguistiques"
+    ],
     "v315": [
       "Proposition automatique repensée : au lieu de vider un groupe (mots, phrases…) avant le suivant, on alterne un élément par groupe en tournant de l'un à l'autre, l'ordre des groupes changeant à chaque tour ; plus de variété"
     ],

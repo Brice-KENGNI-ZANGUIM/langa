@@ -41,7 +41,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v315";
+const APP_VERSION = "v316";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -322,7 +322,7 @@ function allProps() {
 // RETOUR automatique à un groupe antérieur qui vient d'être enrichi.
 // Ordre EXACT demandé par Brice : MOTS d'abord, puis PHRASES, puis le reste
 // (lettres, chiffres, nombres), et le DICTIONNAIRE TOUJOURS EN DERNIER.
-const GROUP_ORDER = ["mots", "phrases", "lettres", "chiffres", "nombres", "dictionnaire"];
+const GROUP_ORDER = ["mots", "phrases", "pronoms", "prepositions", "lettres", "chiffres", "nombres", "dictionnaire"];
 let _BY_CAT = null;
 function byCat() {
   if (!PROPOSITIONS) return {};   // pas encore chargé → NE PAS mettre en cache un résultat vide
@@ -359,7 +359,11 @@ function _autoGroup() {
   const curated = GROUP_ORDER.filter((k) => k !== "dictionnaire" && groupUndone(k).length > 0);
   if (curated.length) {
     _cycleQueue = _cycleQueue.filter((k) => k !== "dictionnaire" && groupUndone(k).length > 0);   // purge les épuisés
-    if (!_cycleQueue.length) _cycleQueue = _shuffle(curated.slice());   // nouveau cycle = nouvel ordre aléatoire
+    if (!_cycleQueue.length) {
+      _cycleQueue = _shuffle(curated.slice());   // nouveau cycle = nouvel ordre aléatoire
+      // évite que le même groupe se rejoue à la frontière de deux cycles (fin du précédent = début du suivant)
+      if (curated.length > 1 && _cycleQueue[0] === _lastGroup) _cycleQueue.push(_cycleQueue.shift());
+    }
     return _cycleQueue.shift();
   }
   return groupUndone("dictionnaire").length > 0 ? "dictionnaire" : null;   // recours final
@@ -915,6 +919,9 @@ async function saveContribution() {
   if (mode === "proposer" && currentProp) {
     rec.proposition_id = currentProp.id;
     rec.proposition_cat = currentProp.cat;
+    // Métadonnées NLP (conjugaison/pronom/pluriel…) : voyagent avec la contribution → matière
+    // d'entraînement structurée (temps, personne, nombre, singulier…).
+    if (currentProp.meta) rec.proposition_meta = currentProp.meta;
   }
   // lot 5 : réponse à une DEMANDE de la communauté -> relie la contribution à la
   // demande (compte comme réponse + notifie le demandeur, côté backend).

@@ -1370,7 +1370,22 @@ const MOTS = {
   "volupté": "sensual pleasure", "zèle": "zeal",
 };
 
-const DICT = Object.assign({}, NOMBRES, MOTS);
+// Groupes NLP : équivalents anglais LINGUISTIQUEMENT adaptés (spécificités de l'anglais :
+// pas de distinction tu/vous ni de genre au pluriel → tu ET vous = "you", ils ET elles = "they").
+const PRON_PREP = {
+  "je": "I", "tu": "you", "il": "he", "elle": "she",
+  "nous": "we", "vous": "you", "ils": "they", "elles": "they",
+  "à": "to", "de": "of", "dans": "in", "sur": "on", "sous": "under", "avec": "with",
+  "sans": "without", "pour": "for", "par": "by", "vers": "towards", "chez": "at",
+  "entre": "between", "devant": "in front of", "derrière": "behind", "avant": "before",
+  "après": "after", "pendant": "during", "depuis": "since", "contre": "against",
+  "selon": "according to", "malgré": "despite", "parmi": "among", "envers": "towards",
+  "près de": "near", "loin de": "far from", "à côté de": "next to", "au-dessus de": "above",
+  "au-dessous de": "below", "en face de": "opposite", "autour de": "around",
+  "le long de": "along", "grâce à": "thanks to", "à cause de": "because of",
+  "au bord de": "at the edge of", "à travers": "through", "hors de": "out of", "jusqu'à": "until",
+};
+const DICT = Object.assign({}, NOMBRES, MOTS, PRON_PREP);
 
 // ========================= PHRASES =========================================
 // Deux niveaux : (1) phrases IDIOMATIQUES (salutations, questions courantes) traduites
