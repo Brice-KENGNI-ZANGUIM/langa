@@ -1,6 +1,9 @@
 {
-  "version": "v322",
+  "version": "v323",
   "changelog": {
+    "v323": [
+      "Conjugaison beaucoup plus riche : 20 verbes courants à 7 temps (présent, imparfait, futur, conditionnel, passé composé, plus-que-parfait, subjonctif), avec l'équivalent anglais correct à chaque personne (correction d'un sujet erroné au futur)"
+    ],
     "v322": [
       "Conjugaison : ajout du conditionnel et du passé composé (14 verbes désormais à 5 temps), avec les accords corrects et l'équivalent anglais adapté"
     ],
