@@ -98,7 +98,7 @@
    Variante claire par défaut, plus marquée en sombre (où il se marie mieux). */
 /* Motif ambiant en fond de page : couche ABSOLUE couvrant tout le document (pas le
    viewport) → elle défile solidairement avec le contenu, à la même vitesse. */
-.bg-motif { position: absolute; inset: 0; z-index: -1; pointer-events: none;
+.bg-motif { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
   background: url("icons/bg-pattern-light.jpg") center top / 520px auto repeat; opacity: .17; }
 :root[data-theme="dark"] .bg-motif { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .40; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bg-motif { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .34; } }
