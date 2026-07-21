@@ -1,6 +1,9 @@
 {
-  "version": "v332",
+  "version": "v333",
   "changelog": {
+    "v333": [
+      "Vitesse : le centre de notifications s'affiche instantanément avec ce qui est déjà connu, puis se met à jour en arrière-plan ; le démarrage précharge le code essentiel plus tôt"
+    ],
     "v332": [
       "Vitesse : l'application démarre nettement plus vite (code allégé au maximum) ; sur un téléphone modeste, l'écran est prêt en une demi-seconde environ au lieu de plusieurs secondes"
     ],

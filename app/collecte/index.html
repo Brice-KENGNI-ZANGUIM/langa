@@ -53,6 +53,12 @@
   <link rel="stylesheet" href="./keyboard/ngiemboon-keyboard.min.css" />
   <link rel="stylesheet" href="./fonts.min.css" />
   <link rel="stylesheet" href="./app.min.css" />
+  <!-- Préchargement du JS critique (dès le parse du <head>, sans attendre le <script> en fin de
+       body) : le navigateur récupère l'entrée + ses plus gros modules en parallèle. -->
+  <link rel="modulepreload" href="./build/app.js" />
+  <link rel="modulepreload" href="./build/i18n.js" />
+  <link rel="modulepreload" href="./build/sync.js" />
+  <link rel="modulepreload" href="./build/languages.js" />
 </head>
 <body>
   <!-- Motif africain (Ndop/Bogolan) en fond global, très discret, derrière tout le contenu. -->

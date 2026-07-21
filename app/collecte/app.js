@@ -55,7 +55,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v332";
+const APP_VERSION = "v333";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -3049,11 +3049,14 @@ function resumePendingRequestAnswer() {
 }
 async function renderNotifs() {
   const feed = $("#notif-feed"), empty = $("#notif-empty");
+  // 1) rendu INSTANTANÉ depuis ce qu'on a déjà en mémoire (refreshNotifs au boot/intervalle
+  //    a déjà chargé TOUTES les notifs ; `since` ne filtre pas, il ne marque que les non-lues).
+  const paint = () => { if (feed) feed.innerHTML = _notifs.map(notifItemHtml).join(""); if (empty) empty.hidden = _notifs.length > 0; };
+  paint();
+  // 2) revalidation réseau en arrière-plan → met à jour l'affichage si quelque chose a changé.
   let data = null;
   try { data = await fetchNotifications(deviceId(), 0); } catch (e) { data = null; }
-  if (data) _notifs = data.notifications || [];
-  if (feed) feed.innerHTML = _notifs.map(notifItemHtml).join("");
-  if (empty) empty.hidden = _notifs.length > 0;
+  if (data) { _notifs = data.notifications || []; paint(); }
 }
 /** Tout marquer comme lu = mémoriser l'horodatage courant (les suivantes seront « non lues »). */
 function markNotifsRead() {
