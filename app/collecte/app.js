@@ -41,7 +41,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v326";
+const APP_VERSION = "v327";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1663,6 +1663,26 @@ async function pushUserProfile() {
   } catch (e) { /* offline : sans gravité, retenté au prochain enregistrement de profil */ }
 }
 
+/** Mot de salutation selon l'HEURE LOCALE de l'appareil (matin/après-midi/soir). */
+function hubGreetWord() {
+  const h = new Date().getHours();
+  if (h >= 5 && h < 12) return t("hub.greet.morning");
+  if (h >= 12 && h < 18) return t("hub.greet.afternoon");
+  return t("hub.greet.evening");
+}
+/** Heure « de veilleur » : connexion en pleine nuit (1h–4h), où l'on est censé dormir. */
+function isOwlHour() { const h = new Date().getHours(); return h >= 1 && h <= 4; }
+/**
+ * Message d'accueil adaptatif : salutation selon l'heure locale + destinataire selon le
+ * contexte (prénom si profil, « cher visiteur(rice) » sinon) + clin d'œil « cher veilleur »
+ * en pleine nuit. Renvoie le texte complet, emoji compris.
+ */
+function hubGreeting(nom) {
+  const salut = hubGreetWord();
+  const owl = isOwlHour();
+  if (nom) return owl ? `${salut} ${nom}, ${t("hub.greet.owl")} 👋🏾` : `${salut} ${nom} 👋🏾`;
+  return owl ? `${salut} ${t("hub.greet.owl")} 👋🏾` : `${salut} ${t("hub.greet.visitor")} 👋🏾`;
+}
 /** Écran d'accueil « Que veux-tu faire ? » (profil complet requis). */
 function enterHub() {
   // On ne capture le formulaire QUE si l'on arrive de l'écran profil (édition
@@ -1672,9 +1692,10 @@ function enterHub() {
   if (_currentView === "profile") collectContributeur();
   const c = loadContributeur();
   const nom = c.prenom || c.nom || "";
-  const wu = $("#welcome-user"); if (wu) wu.textContent = nom ? `${t("hub.greeting.hello")} ${nom} 👋🏾` : "";
+  const greet = hubGreeting(nom);
+  const wu = $("#welcome-user"); if (wu) wu.textContent = nom ? greet : "";
   const ht = $("#hub-title");
-  if (ht) ht.textContent = nom ? `${t("hub.greeting.hello")} ${nom} 👋🏾` : t("hub.greeting.solo");
+  if (ht) ht.textContent = greet;
   showView("hub");
   // Reprise d'une réponse à une demande interrompue par une bascule de langue (clic sur une
   // notification « on veut une trad/transcription dans telle langue » → rechargement dans

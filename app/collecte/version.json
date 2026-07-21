@@ -1,6 +1,9 @@
 {
-  "version": "v326",
+  "version": "v327",
   "changelog": {
+    "v327": [
+      "Accueil : message de bienvenue adaptatif : « Bonjour/Bonsoir » selon l'heure locale, « cher visiteur(rice) » tant qu'il n'y a pas de profil (ton prénom une fois le profil créé), et un clin d'œil « cher veilleur » si tu te connectes en pleine nuit"
+    ],
     "v326": [
       "Déclaration d'une nouvelle langue depuis la page Demander : même garde anti-doublon que le formulaire principal (si une langue proche existe déjà, on invite à la choisir plutôt que d'en créer une en double)"
     ],
