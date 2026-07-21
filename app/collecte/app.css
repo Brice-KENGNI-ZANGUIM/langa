@@ -3263,3 +3263,19 @@ textarea, [contenteditable="true"] { cursor: text; }
   /* Repère de vote / puces : couleur solide */
   .kw-word { color: var(--cyan); } .kw-who { color: var(--gold); } .kw-lang { color: var(--green); }
 }
+
+/* ============================================================================
+   Icônes fournies par Brice (2026-07-22) : recherche / enregistrer / découper /
+   exporter / présentation. Posées via ::before (sans toucher au fond des boutons),
+   dimensionnées en em (icônes sources 1024px, affichées petit). #80.
+   ============================================================================ */
+.ico-btn::before { content: ""; display: inline-block; width: 1.3em; height: 1.3em;
+  margin-right: .5em; vertical-align: -.32em; background: center / contain no-repeat; }
+#btn-rec::before { background-image: url(./icons/ic-record.png); }
+#btn-trim-audio::before { background-image: url(./icons/ic-trim.png); }
+#present-open::before { background-image: url(./icons/ic-present.png); }
+#export-csv::before, #export-json::before, #export-lift::before,
+#export-cldf::before, #export-elan::before { background-image: url(./icons/ic-export.png); }
+/* Champ de recherche Explorer : icône loupe à gauche. */
+#explore-search { background-image: url(./icons/ic-search.png); background-repeat: no-repeat;
+  background-position: 14px center; background-size: 1.35em; padding-left: 3em; }
