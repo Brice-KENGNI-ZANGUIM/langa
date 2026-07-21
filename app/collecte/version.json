@@ -1,6 +1,9 @@
 {
-  "version": "v266",
+  "version": "v267",
   "changelog": {
+    "v267": [
+      "Flyer remis \u00e0 jour : nouveau nom LANGIAL, adresse langial.com et QR correspondant, fond aux motifs de l'application ; t\u00e9l\u00e9chargeable en image l\u00e9g\u00e8re ou en PDF"
+    ],
     "v266": [
       "Les popups ne se superposent plus jamais : ils s'affichent un par un, \u00e0 tour de r\u00f4le (environ une minute chacun), en boucle, jusqu'\u00e0 ce que tu cliques une action ; apr\u00e8s un rechargement ils reviennent en douceur, pas tout de suite",
       "Illustrations des popups en version dessin\u00e9e, rondes, montrant la personne enti\u00e8re sur un fond l\u00e9g\u00e8rement flout\u00e9"

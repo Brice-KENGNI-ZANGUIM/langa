@@ -44,12 +44,15 @@
     color:var(--tx); font-family:var(--font);
     -webkit-font-smoothing:antialiased;
   }
-  /* Trame Ndop IDENTIQUE au cadre du QR (losange laiton + losange cyan + points),
-     posée en fond de toute la feuille. Équilibrée : présente sans dominer. */
+  /* Fond = le VRAI motif de l'application (bg-pattern Ndop/Bogolan), même échelle (520px) et
+     même opacité que la couche .bg-motif de l'app → le flyer respire la même identité. */
   .sheet::before{
-    content:""; position:absolute; inset:0; pointer-events:none; opacity:1;
-    background-image:var(--lattice-url);
-    background-size:156px 156px;
+    content:""; position:absolute; inset:0; pointer-events:none;
+    background-image:url("../collecte/icons/bg-pattern-dark.jpg");
+    background-size:520px auto; background-repeat:repeat; opacity:.40;
+  }
+  .sheet--light::before{
+    background-image:url("../collecte/icons/bg-pattern-light.jpg"); opacity:.18;
   }
   .wrap{position:relative; padding:44px 80px 44px}
 
