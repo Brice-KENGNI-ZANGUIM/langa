@@ -102,6 +102,20 @@
   background: url("icons/bg-pattern-light.jpg") center top / 520px auto repeat; opacity: .17; }
 :root[data-theme="dark"] .bg-motif { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .40; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bg-motif { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .34; } }
+/* Trame plus VIVANTE : une lueur diagonale (cyan→vert) balaie lentement le motif Ndop, comme un
+   reflet qui glisse sur un tissu. Purement décorative (z-index -1), GPU (transform), n'altère ni
+   la lisibilité ni le fond. Reste visible sur mobile (règle décor mobile) ; gelée clavier ouvert
+   et sous prefers-reduced-motion. */
+.bg-motif::after {
+  content: ""; position: absolute; inset: -30% -30%; pointer-events: none;
+  background: linear-gradient(112deg, transparent 43%,
+    color-mix(in srgb, var(--cyan) 16%, transparent) 49%,
+    color-mix(in srgb, var(--green) 12%, transparent) 53%, transparent 61%);
+  animation: motif-sweep 19s linear infinite; will-change: transform;
+}
+@keyframes motif-sweep { 0% { transform: translate3d(-58%, 0, 0); } 100% { transform: translate3d(58%, 0, 0); } }
+body.kb-docked .bg-motif::after { animation: none; }
+@media (prefers-reduced-motion: reduce) { .bg-motif::after { animation: none; } }
 
 /* Garde-fou anti-défilement HORIZONTAL : `overflow-x: clip` borne la largeur au viewport
    sans créer de conteneur de défilement (contrairement à `hidden`), donc il n'altère PAS le
