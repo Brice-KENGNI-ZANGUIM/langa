@@ -1136,6 +1136,8 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .tr-guide-ico--img { width: auto; height: auto; background: none; box-shadow: none; }
 .tr-guide-ico--img img { width: 66px; height: 66px; display: block;
   filter: drop-shadow(0 4px 10px rgba(0,0,0,.4)); }
+/* Bandeau d'accueil (illustration fournie welcome-first) en tête du popup « profil requis ». */
+.pgate-hero { display: block; width: 100%; height: 158px; object-fit: cover; object-position: 50% 42%; }
 .tr-guide-card h2 { margin: 2px 0 4px; font-size: 1.32rem; color: var(--text); }
 .tr-guide-lead { margin: 0; color: var(--muted); font-size: .92rem; }
 /* Règles en cartes, avec icône + mots-clés surlignés */
