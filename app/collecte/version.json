@@ -1,6 +1,9 @@
 {
-  "version": "v273",
+  "version": "v274",
   "changelog": {
+    "v274": [
+      "Image des popups : le fond flou derri\u00e8re l'illustration est d\u00e9sormais un voile blanc l\u00e9ger (plus assombri), plus doux et coh\u00e9rent"
+    ],
     "v273": [
       "Coh\u00e9rence africaine : l'\u00e9moji g\u00e9n\u00e9rique du titre de la page Profil est remplac\u00e9 par une vraie illustration d'avatar africain, et les \u00e9mojis \u00ab personne \u00bb de l'application prennent une carnation fonc\u00e9e"
     ],
