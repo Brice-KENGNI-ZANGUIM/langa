@@ -581,7 +581,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
    et glow d'icône pulsé. Bien mis en évidence. */
 .nav-tab { --acc: var(--cyan); flex: 1 1 0; min-width: 0; justify-content: center;
   position: relative; overflow: hidden;
-  border: 0.8px solid color-mix(in srgb, var(--acc) 40%, var(--border));   /* contour coloré foncé -20% */
+  border: 1px solid color-mix(in srgb, var(--acc) 40%, var(--border));
   background: radial-gradient(130% 80% at 50% -20%, color-mix(in srgb, var(--acc) 18%, transparent), transparent 62%),
     color-mix(in srgb, var(--acc) 10%, var(--panel)); color: var(--text);
   padding: 6.2px 18px; border-radius: 12px; cursor: pointer; font: inherit; font-size: 1.12rem;   /* hauteur -15% cumulé (padding vertical seul) */

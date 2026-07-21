@@ -1,8 +1,11 @@
 {
-  "version": "v308",
+  "version": "v309",
   "changelog": {
+    "v309": [
+      "Onglets : contour des boutons laissé à son épaisseur d'origine"
+    ],
     "v308": [
-      "Onglets : texte et icône ramenés vers le centre du bouton (marge intérieure), contour coloré foncé aminci de 20% ; hauteur et écart inchangés, aucune troncature"
+      "Onglets : texte et icône ramenés vers le centre du bouton (marge intérieure) ; hauteur et écart inchangés, aucune troncature"
     ],
     "v307": [
       "Téléphone : onglets resserrés (moins d'espace entre eux), icône et libellé légèrement agrandis et bien centrés, sans changer la hauteur ni l'écart avec le header"
