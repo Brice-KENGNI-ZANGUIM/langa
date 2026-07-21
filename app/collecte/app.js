@@ -41,7 +41,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v324";
+const APP_VERSION = "v325";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1110,10 +1110,16 @@ function collectContributeur() {
 }
 
 // --- Profil obligatoire + navigation entre les 2 vues -------------------
+/** E-mail plausible (non vide + forme x@y.z). Le champ e-mail porte un « * » : il DOIT donc
+    être réellement obligatoire (et pas seulement dissuasif). */
+function isEmailValid(e) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || "").trim());
+}
 function profileComplete() {
   const c = loadContributeur();
   return !!(c.nom && c.prenom && c.village && c.role &&
-            c.indicatif && c.telephone && c.consentement);
+            c.indicatif && c.telephone && c.consentement &&
+            isEmailValid(c.email));   // e-mail marqué « * » → réellement exigé (format valide)
 }
 // Seuil LÉGER pour l'AFFICHAGE des popups (informer/inviter) : le téléphone/indicatif ne sont
 // exigés que pour CONTRIBUER (le clic sur un popup revérifie profileComplete via requireProfile).

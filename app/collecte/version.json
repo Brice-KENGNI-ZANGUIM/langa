@@ -1,6 +1,9 @@
 {
-  "version": "v324",
+  "version": "v325",
   "changelog": {
+    "v325": [
+      "Profil : l'e-mail (marqué obligatoire par une étoile) est désormais RÉELLEMENT exigé, avec un format valide, avant de pouvoir valider le profil (avant, l'étoile n'était pas vérifiée)"
+    ],
     "v324": [
       "Identité automatique sans compte ni mot de passe : chaque appareil reçoit une clé unique qui reste sur lui, et le système reconnaît une même personne d'un appareil à l'autre en rapprochant les informations du profil (noms, e-mail, téléphone, langues), pour réduire les doublons"
     ],
