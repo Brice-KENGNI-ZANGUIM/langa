@@ -55,22 +55,30 @@ const NET_SVG = {
   facebook: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.15 8.44 9.94v-7.03H7.9v-2.9h2.54V9.85c0-2.52 1.5-3.9 3.78-3.9 1.1 0 2.24.2 2.24.2v2.46H15.2c-1.24 0-1.63.77-1.63 1.56v1.88h2.78l-.44 2.9h-2.34V22c4.78-.79 8.43-4.94 8.43-9.94z"/></svg>',
   x: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M17.53 3h3.2l-7 8 8.23 10.9h-6.44l-5.04-6.6-5.77 6.6H1.5l7.5-8.57L1.05 3h6.6l4.55 6.02L17.53 3zm-1.12 16.94h1.77L7.68 4.86H5.78l10.63 15.08z"/></svg>',
   telegram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.9 4.27l-3.3 15.55c-.24 1.12-.9 1.38-1.84.86l-5.05-3.72-2.44 2.35c-.27.27-.5.5-1.02.5l.36-5.15L17.3 6.9c.41-.36-.09-.56-.63-.2L6.4 13.18l-4.98-1.55c-1.08-.34-1.1-1.08.23-1.6L20.5 2.72c.9-.33 1.69.2 1.4 1.55z"/></svg>',
+  linkedin: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.35V9h3.41v1.56h.05c.48-.9 1.63-1.85 3.36-1.85 3.6 0 4.27 2.37 4.27 5.45v6.29zM5.34 7.43a2.06 2.06 0 1 1 0-4.13 2.06 2.06 0 0 1 0 4.13zM7.12 20.45H3.55V9h3.57v11.45zM22.22 0H1.77C.8 0 0 .78 0 1.75v20.5C0 23.22.8 24 1.77 24h20.45c.98 0 1.78-.78 1.78-1.75V1.75C24 .78 23.2 0 22.22 0z"/></svg>',
+  email: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 2v.4l8 5 8-5V6H4zm16 2.7l-7.47 4.67a1 1 0 0 1-1.06 0L4 8.7V18h16V8.7z"/></svg>',
   instagram: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.16c3.2 0 3.58.01 4.85.07 1.17.05 1.8.25 2.23.41.56.22.96.48 1.38.9.42.42.68.82.9 1.38.16.43.36 1.06.41 2.23.06 1.27.07 1.65.07 4.85s-.01 3.58-.07 4.85c-.05 1.17-.25 1.8-.41 2.23a3.7 3.7 0 0 1-.9 1.38 3.7 3.7 0 0 1-1.38.9c-.43.16-1.06.36-2.23.41-1.27.06-1.65.07-4.85.07s-3.58-.01-4.85-.07c-1.17-.05-1.8-.25-2.23-.41a3.7 3.7 0 0 1-1.38-.9 3.7 3.7 0 0 1-.9-1.38c-.16-.43-.36-1.06-.41-2.23C2.17 15.58 2.16 15.2 2.16 12s.01-3.58.07-4.85c.05-1.17.25-1.8.41-2.23.22-.56.48-.96.9-1.38.42-.42.82-.68 1.38-.9.43-.16 1.06-.36 2.23-.41C8.42 2.17 8.8 2.16 12 2.16M12 0C8.74 0 8.33.01 7.05.07 5.78.13 4.9.33 4.14.63a5.9 5.9 0 0 0-2.12 1.38A5.9 5.9 0 0 0 .63 4.14C.33 4.9.13 5.78.07 7.05.01 8.33 0 8.74 0 12s.01 3.67.07 4.95c.06 1.27.26 2.15.56 2.91a5.9 5.9 0 0 0 1.38 2.12 5.9 5.9 0 0 0 2.12 1.38c.76.3 1.64.5 2.91.56C8.33 23.99 8.74 24 12 24s3.67-.01 4.95-.07c1.27-.06 2.15-.26 2.91-.56a6.14 6.14 0 0 0 3.5-3.5c.3-.76.5-1.64.56-2.91.06-1.28.07-1.69.07-4.95s-.01-3.67-.07-4.95c-.06-1.27-.26-2.15-.56-2.91a5.9 5.9 0 0 0-1.38-2.12A5.9 5.9 0 0 0 19.86.63c-.76-.3-1.64-.5-2.91-.56C15.67.01 15.26 0 12 0z"/><path d="M12 5.84A6.16 6.16 0 1 0 12 18.16 6.16 6.16 0 0 0 12 5.84m0 10.16A4 4 0 1 1 12 8a4 4 0 0 1 0 8z"/><circle cx="18.41" cy="5.59" r="1.44"/></svg>',
   share: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/></svg>',
   copy: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3.9 12a3.1 3.1 0 0 1 3.1-3.1h4V7H7a5 5 0 0 0 0 10h4v-1.9H7A3.1 3.1 0 0 1 3.9 12zm9.1-5v1.9h4a3.1 3.1 0 0 1 0 6.2h-4V17h4a5 5 0 0 0 0-10h-4zM8 11h8v2H8z"/></svg>',
 };
-const NET_LABEL = { whatsapp: "WhatsApp", facebook: "Facebook", x: "X", telegram: "Telegram" };
+const NET_LABEL = { whatsapp: "WhatsApp", facebook: "Facebook", x: "X", telegram: "Telegram",
+  linkedin: "LinkedIn", email: "E-mail" };
 
-/** Liens de partage par réseau (chaînes encodées). Fonction pure et testable. */
+/** Liens de partage par réseau (chaînes encodées). Fonction pure et testable.
+ *  Chaque lien emporte le MESSAGE déjà rédigé (sauf Facebook/LinkedIn qui n'acceptent
+ *  que l'URL : l'aperçu OG de la page fournit alors le texte). */
 export function siteShareLinks(url, text) {
   const u = encodeURIComponent(clean(url, 300));
   const t = encodeURIComponent(clean(text, 280));
   const tu = encodeURIComponent(clean(text, 280) + " " + clean(url, 300));
+  const subj = encodeURIComponent("LANGIAL");
   return {
     whatsapp: `https://wa.me/?text=${tu}`,
     facebook: `https://www.facebook.com/sharer/sharer.php?u=${u}`,
     x: `https://twitter.com/intent/tweet?text=${t}&url=${u}`,
     telegram: `https://t.me/share/url?url=${u}&text=${t}`,
+    linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${u}`,
+    email: `mailto:?subject=${subj}&body=${tu}`,
   };
 }
 

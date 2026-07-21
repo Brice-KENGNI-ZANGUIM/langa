@@ -1,6 +1,12 @@
 {
-  "version": "v278",
+  "version": "v279",
   "changelog": {
+    "v279": [
+      "Bouton de partage placé sous la bannière (il ne la cache plus), présent sur toutes les pages et plus compact sur mobile",
+      "Nouveau panneau de partage sur ordinateur : un clic sur un réseau (WhatsApp, Facebook, X, Telegram, LinkedIn, e-mail) ouvre la publication avec le message déjà rédigé, ou copie le lien à coller partout",
+      "Illustration du popup de demande : le fond flouté s'affiche désormais comme sur les autres popups",
+      "Avatar du titre du profil affiché plus proprement, dans un cercle à ligne fine"
+    ],
     "v278": [
       "Les deux consentements du profil sont enregistr\u00e9s distinctement : l'accord d'usage des contributions ET l'autorisation d'afficher publiquement le nom"
     ],

@@ -30,7 +30,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v278";
+const APP_VERSION = "v279";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1179,13 +1179,52 @@ function injectBannerShare(name) {
   btn.setAttribute("aria-label", t("banner.share"));
   btn.onclick = () => sharePageBanner(slug);
 }
+function pageShareText(slug) {
+  const key = "share.page." + (slug || "");
+  const v = t(key);
+  return (v && v !== key) ? v : t("share.page.");   // repli sur le texte générique
+}
 async function sharePageBanner(slug) {
   const url = PRESENT_URL.replace(/\/$/, "") + (slug ? "/" + slug : "/");
-  const text = t("share.text");
-  try { if (navigator.share) { await navigator.share({ title: "LANGIAL", text, url }); return; } }
-  catch (e) { return; }   // partage annulé par l'utilisateur
-  try { await navigator.clipboard.writeText(text + " " + url); toast(t("share.copied"), "ok"); }
-  catch (e) { toast(url, "ok"); }
+  const text = pageShareText(slug);
+  // Mobile (écran tactile) : la feuille de partage native ouvre déjà toutes les options du système.
+  const coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
+  if (navigator.share && coarse) {
+    try { await navigator.share({ title: "LANGIAL", text, url }); return; }
+    catch (e) { return; }   // partage annulé
+  }
+  // PC (ou pas de partage natif) : panneau des réseaux avec le message déjà rédigé.
+  openSharePanel(url, text);
+}
+/** Panneau de partage : réseaux (message pré-rédigé) + copier le lien. Réutilise mountShareBar. */
+let _sharePanelEl = null;
+function openSharePanel(url, text) {
+  if (!_sharePanelEl) {
+    const ov = document.createElement("div");
+    ov.id = "share-panel"; ov.className = "tr-guide"; ov.hidden = true;
+    ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true");
+    ov.setAttribute("aria-labelledby", "sp-title");
+    ov.innerHTML = '<div class="tr-guide-card share-panel-card">' +
+      '<button class="incite-close" type="button" aria-label="Fermer">✕</button>' +
+      '<h3 id="sp-title" class="sp-title"></h3><p class="sp-sub"></p>' +
+      '<div class="sp-bar-host"></div></div>';
+    document.body.appendChild(ov);
+    const close = () => { ov.hidden = true; };
+    ov.querySelector(".incite-close").addEventListener("click", close);
+    ov.addEventListener("click", (e) => { if (e.target === ov) close(); });   // clic hors carte = fermer
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !ov.hidden) close(); });
+    _sharePanelEl = ov;
+  }
+  const ov = _sharePanelEl;
+  ov.querySelector(".sp-title").textContent = t("share.panel.title");
+  ov.querySelector(".sp-sub").textContent = t("share.panel.sub");
+  mountShareBar(ov.querySelector(".sp-bar-host"), {
+    url, text, title: "LANGIAL", toast,
+    nets: ["whatsapp", "facebook", "x", "telegram", "linkedin", "email"],
+    shareOnLabel: t("share.on"), nativeLabel: t("share.native"),
+    copyLabel: t("share.copy"), copiedMsg: t("share.copied2"), igMsg: t("share.ig"),
+  });
+  ov.hidden = false;
 }
 
 /** Ouvre la page « À propos » (vraie vue de l'app) en mémorisant d'où l'on vient. */

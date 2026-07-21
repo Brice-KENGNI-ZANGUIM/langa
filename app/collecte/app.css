@@ -728,9 +728,10 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 /* Icône devant un titre de page (Traduire/Transcrire/Explorer) */
 .view-title--ico { display: inline-flex; align-items: center; gap: 10px; }
 .title-ico { width: 34px; height: 34px; flex: 0 0 auto; }
-/* Avatar RÉEL (illustration africaine) en icône de titre : posé TEL QUEL, sans cercle ni cadre
-   (demande Brice) — l'illustration se suffit à elle-même. */
-.title-ico--avatar { width: 46px; height: 46px; object-fit: contain; }
+/* Avatar RÉEL (illustration africaine) en icône de titre : dans un cercle (l'asset a un fond clair
+   intégré → le cercle masque les coins carrés), mais avec une LIGNE DE CERCLE FINE (demande Brice). */
+.title-ico--avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; object-position: 50% 18%;
+  border: 1px solid color-mix(in srgb, var(--cyan) 40%, var(--border)); }
 /* Icône « info » du titre « À propos » (remplace l'ancien symbole étoilé) : teinte
    cyan d'accent, ne rétrécit pas. */
 /* Emblème premium du titre « À propos » : badge en verre dégradé, soleil levant (LANGIAL =
@@ -2919,8 +2920,18 @@ body::after {
 .share-ico--instagram:hover { color: #fff;
   background: linear-gradient(45deg, #F58529, #8134AF, #515BD4);   /* IG sans le magenta */
   box-shadow: 0 7px 16px -6px #8134AF; }
+.share-ico--linkedin { color: #0A66C2; }
+.share-ico--linkedin:hover { background: #0A66C2; color: #fff; box-shadow: 0 7px 16px -6px #0A66C2; }
+.share-ico--email { color: var(--gold); }
+.share-ico--email:hover { background: var(--gold); color: var(--bg); box-shadow: 0 7px 16px -6px var(--gold); }
 .share-ico--copy { color: var(--cyan); }
 .share-ico--copy:hover { background: var(--cyan); color: var(--bg); box-shadow: 0 7px 16px -6px var(--cyan); }
+/* Panneau « Partager cette page » (réseaux avec message pré-rédigé + copier), au clic sur le bouton
+   de partage d'une page. Réutilise le cadre modal .tr-guide / .tr-guide-card. */
+.share-panel-card { max-width: 430px; padding: 24px 22px 26px; position: relative; text-align: center; }
+.share-panel-card .sp-title { margin: 0 0 5px; font-size: 1.2rem; color: var(--text); }
+.share-panel-card .sp-sub { margin: 0 0 18px; font-size: .9rem; line-height: 1.45; color: var(--muted); }
+.share-panel-card .sharebar { justify-content: center; gap: 12px; }
 /* Emplacements */
 .foot-share { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;
   padding: 16px 0 2px; margin-top: 10px; border-top: 1px solid var(--border); }
