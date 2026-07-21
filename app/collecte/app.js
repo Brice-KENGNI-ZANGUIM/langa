@@ -30,7 +30,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v277";
+const APP_VERSION = "v278";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -975,6 +975,9 @@ function collectContributeur() {
     indicatif: $("#c-indicatif").value.trim(),
     telephone: $("#c-tel").value.trim(),
     consentement: $("#c-consent").checked,
+    // DEUXIÈME consentement (distinct du premier) : autorisation d'affichage public du nom.
+    // On garde le booléen explicite (pas seulement son résultat credit_display).
+    consentement_credit: $("#c-credit-on").checked,
     creditMode,
     credit_display: computeCredit(creditMode, prenom, nom),
   });

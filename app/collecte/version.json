@@ -1,6 +1,9 @@
 {
-  "version": "v277",
+  "version": "v278",
   "changelog": {
+    "v278": [
+      "Les deux consentements du profil sont enregistr\u00e9s distinctement : l'accord d'usage des contributions ET l'autorisation d'afficher publiquement le nom"
+    ],
     "v277": [
       "Partage par page : un bouton Partager sur chaque banni\u00e8re, et un aper\u00e7u (image + texte) adapt\u00e9 \u00e0 la page partag\u00e9e sur WhatsApp/Facebook (chaque page a son image, plus la m\u00eame pour tous les liens)"
     ],
