@@ -41,7 +41,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v311";
+const APP_VERSION = "v312";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1217,7 +1217,9 @@ function bannerShareSlug(name) {
 function injectBannerShare(name) {
   const slug = bannerShareSlug(name);
   const view = document.getElementById("view-" + name);
-  const banner = view && view.querySelector(".page-banner");
+  // La page À propos utilise .about-hero (bannière pleine largeur) au lieu de .page-banner :
+  // on accepte les deux → le bouton de partage est présent sur TOUTES les pages à bannière.
+  const banner = view && view.querySelector(".page-banner, .about-hero");
   if (!banner) return;                         // pas de bannière = page transitoire, on n'ajoute rien
   // Bouton SOUS la bannière (barre à l'extérieur) → il ne cache jamais la bannière. Présent sur
   // TOUTES les pages à bannière.

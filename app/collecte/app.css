@@ -525,7 +525,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .view-title::after { content: none; }
 /* Couleur d'activité par page (comme les 4 onglets). */
 #hub-title, .hub-head .view-title { --acc: var(--cyan); }
-.hub-head { text-align: center; }
+.hub-head { text-align: left; }   /* titres de page alignés à gauche (demande Brice) */
 #work-title, #amorce-title { --acc: var(--green); }
 @keyframes ornBead {
   0%, 100% { background-position: 0% 50%, 0 50%; }
@@ -669,7 +669,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 }
 
 /* ---- Accueil « Que veux-tu faire ? » ---- */
-.hub-head { text-align: center; margin-bottom: 4px; }
+.hub-head { text-align: left; margin-bottom: 4px; }
 /* 4 portes : 2 par ligne (PC / tablette), 1 par ligne en mobile étroit. Image à hauteur
    pleine du cadre dans tous les cas. */
 .hub-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
@@ -2697,7 +2697,11 @@ body::after {
   box-shadow: 0 14px 28px -22px rgba(0,0,0,.6); }
 /* Bouton PARTAGER cette page : dans une barre SOUS la bannière (à l'extérieur, à droite) → il ne
    cache jamais la bannière. Présent sur toutes les pages. Partage l'URL propre à la page. */
-.banner-share-bar { display: flex; justify-content: flex-end; margin-top: -10px; }
+/* Barre de partage ENCASTRÉE dans le coin inférieur droit de la bannière, à l'extérieur : marge
+   négative marquée qui la remonte contre le bord bas de la bannière (comme la bannière est soudée
+   sous le header), légère marge droite pour le coin. z-index au-dessus de la bannière. */
+.banner-share-bar { display: flex; justify-content: flex-end; position: relative; z-index: 5;
+  margin-top: -46px; margin-right: 10px; margin-bottom: 10px; }
 .banner-share { display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px; border-radius: 999px;
   cursor: pointer; font: inherit; font-size: .82rem; font-weight: 700; color: #06121a;
   background: var(--cyan);   /* repli Safari ancien (color-mix non supporté avant 16.2) : sinon fond vide */
@@ -2706,7 +2710,7 @@ body::after {
   transition: transform .1s, box-shadow .16s, filter .16s; }
 .banner-share:hover { transform: translateY(-1px); filter: brightness(1.06); box-shadow: 0 6px 20px -8px var(--cyan); }
 .banner-share:active { transform: translateY(1px); }
-@media (max-width: 560px) { .banner-share { padding: 6px 12px; font-size: .74rem; } .banner-share-bar { margin-top: -6px; } }
+@media (max-width: 560px) { .banner-share { padding: 6px 12px; font-size: .74rem; } .banner-share-bar { margin-top: -38px; margin-right: 8px; } }
 .page-banner-img { display: block; width: 100%; height: auto; }
 /* Accroche calée à gauche (sur la zone sombre), centrée verticalement. */
 .page-banner-cap { position: absolute; left: clamp(12px, 3.5%, 40px); top: 50%; transform: translateY(-50%);

@@ -1,6 +1,9 @@
 {
-  "version": "v311",
+  "version": "v312",
   "changelog": {
+    "v312": [
+      "Bouton de partage présent aussi sur la page À propos ; sur toutes les pages il est désormais encastré dans le coin inférieur de la bannière (au bord, à l'extérieur) ; titres de page alignés à gauche"
+    ],
     "v311": [
       "Démarrage nettement plus rapide : le gros corpus de mots (dictionnaire) n'est plus chargé au lancement mais seulement à l'ouverture de Traduire/Transcrire (aucune image compressée ni modifiée)"
     ],
