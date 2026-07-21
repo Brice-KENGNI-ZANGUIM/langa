@@ -55,7 +55,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v329";
+const APP_VERSION = "v330";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -5970,10 +5970,7 @@ async function main() {
   if (getUiLang() === "en") await ensureSourceEn();   // équivalents FR→EN prêts avant le 1er rendu (jamais de FR affiché à un anglophone)
   initSelectAutoEnhance();                // habille TOUS les <select> (auto, présents + futurs)
   initEvents();
-  initTour();
-  initTrim();        // outil de découpe d'un enregistrement (garder une portion)
   applyLanguage();   // applique la langue courante (libellés + clavier dédié/défaut) + sens
-  mountShareBars();  // boutons de partage du site (réseaux) sur les emplacements dédiés
   mode = localStorage.getItem("modeSaisie") || "proposer"; // défaut : proposer
   applyMode();
   updateGate();
@@ -5992,6 +5989,11 @@ async function main() {
   if (route) routeTo(route); else enterHub();
   _replayingHistory = false;
   hideAppLoader();      // 1re vue affichée → on lève le voile (les rafraîchissements ci-dessous suivent en fond)
+  // Init NON critique différée APRÈS le 1er rendu (allège la longue tâche de boot) : visite guidée,
+  // outil de découpe audio, barres de partage. Aucun ne démarre seul (uniquement des écouteurs /
+  // du DOM à la demande) → sûr à monter un instant plus tard.
+  const _idleInit = window.requestIdleCallback ? (cb) => window.requestIdleCallback(cb, { timeout: 1200 }) : (cb) => setTimeout(cb, 1);
+  _idleInit(() => { try { initTour(); initTrim(); mountShareBars(); } catch (e) { /* jamais bloquant */ } });
   refreshLanguages();   // best-effort : récupère les langues déclarées par la communauté
   micStatus();
   $("#send-hint").textContent = t("send.hint");

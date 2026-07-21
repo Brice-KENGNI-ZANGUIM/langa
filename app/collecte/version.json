@@ -1,6 +1,9 @@
 {
-  "version": "v329",
+  "version": "v330",
   "changelog": {
+    "v330": [
+      "Vitesse : le démarrage est encore plus fluide, les préparatifs non essentiels (visite guidée, outil de découpe, boutons de partage) se mettent en place juste après l'affichage de l'écran au lieu de le retarder"
+    ],
     "v329": [
       "Vitesse : l'application s'ouvre beaucoup plus vite, surtout quand tu reviens (les fichiers déjà chargés sont servis instantanément, sans réseau) et sur téléphone",
       "Vitesse : les parties utilisées seulement dans certains cas (mode anglais, pages légales, journal des bugs, export, lecteur audio) ne sont plus chargées au démarrage mais uniquement quand tu en as besoin"
