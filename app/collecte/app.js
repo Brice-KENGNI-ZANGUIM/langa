@@ -1150,24 +1150,32 @@ function showView(name) {
 }
 // --- Partage PAR PAGE : chaque page a son URL (langial.com/traduire…) → aperçu (image + texte)
 //     propre à la page quand on colle le lien sur WhatsApp/Facebook. Bouton posé sur la bannière.
-const PAGE_SLUG = { hub: "", explore: "explorer", demander: "demander", lang: "langues", about: "apropos" };
+// Chaque page a son slug (URL propre). Les pages sans page de partage dédiée (accueil, bugs,
+// notifs, profil, légales) partagent la racine "" → le bouton existe PARTOUT.
+const PAGE_SLUG = { explore: "explorer", demander: "demander", lang: "langues", about: "apropos" };
 function bannerShareSlug(name) {
   if (name === "app") return activity === "transcribe" ? "transcrire" : "traduire";
-  return Object.prototype.hasOwnProperty.call(PAGE_SLUG, name) ? PAGE_SLUG[name] : null;
+  return Object.prototype.hasOwnProperty.call(PAGE_SLUG, name) ? PAGE_SLUG[name] : "";
 }
 function injectBannerShare(name) {
   const slug = bannerShareSlug(name);
-  if (slug == null) return;                    // pas de partage sur profil/bugs/notifs
   const view = document.getElementById("view-" + name);
   const banner = view && view.querySelector(".page-banner");
-  if (!banner) return;
-  let btn = banner.querySelector(".banner-share");
+  if (!banner) return;                         // pas de bannière = page transitoire, on n'ajoute rien
+  // Bouton SOUS la bannière (barre à l'extérieur) → il ne cache jamais la bannière. Présent sur
+  // TOUTES les pages à bannière.
+  let bar = banner.nextElementSibling;
+  if (!bar || !bar.classList || !bar.classList.contains("banner-share-bar")) {
+    bar = document.createElement("div"); bar.className = "banner-share-bar";
+    banner.insertAdjacentElement("afterend", bar);
+  }
+  let btn = bar.querySelector(".banner-share");
   if (!btn) {
-    btn = document.createElement("button");
-    btn.className = "banner-share"; btn.type = "button";
-    btn.innerHTML = '<span aria-hidden="true">↗</span> <span>' + t("banner.share") + "</span>";
-    banner.appendChild(btn);
-  } else { btn.querySelector("span:last-child").textContent = t("banner.share"); }
+    btn = document.createElement("button"); btn.className = "banner-share"; btn.type = "button";
+    btn.innerHTML = '<span aria-hidden="true">↗</span> <span class="bs-txt"></span>';
+    bar.appendChild(btn);
+  }
+  btn.querySelector(".bs-txt").textContent = t("banner.share");
   btn.setAttribute("aria-label", t("banner.share"));
   btn.onclick = () => sharePageBanner(slug);
 }
