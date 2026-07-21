@@ -1,9 +1,23 @@
 // Application de collecte Nguiemboo — logique principale.
 import { NgiemboonKeyboard } from "./keyboard/ngiemboon-keyboard.js";
 import { Predict } from "./predict.js";
-import { mountAudioPlayer } from "./audioplayer.js";
+// audioplayer.js (25 Ko) chargé À LA DEMANDE (uniquement quand un lecteur audio est monté).
+let _mountAudioPlayerFn = null;
+function mountAudioPlayer(box, audio) {
+  if (_mountAudioPlayerFn) { _mountAudioPlayerFn(box, audio); return; }
+  import("./audioplayer.js").then((m) => { _mountAudioPlayerFn = m.mountAudioPlayer; _mountAudioPlayerFn(box, audio); }).catch(() => {});
+}
 import { sliceSamples, encodeWavBytes, detectSilenceBounds, samplesDuration } from "./audiotrim.js";
-import { sourceEn } from "./source_en.js";
+// source_en.js (157 Ko : équivalents FR→EN) chargé À LA DEMANDE, UNIQUEMENT en interface
+// anglaise. Poids mort au boot pour un utilisateur FR (le cas par défaut) : on l'exclut du
+// chemin critique. `sourceEn` renvoie null tant que le module n'est pas chargé (repli propre).
+let _sourceEnFn = null, _sourceEnPromise = null;
+function ensureSourceEn() {
+  if (_sourceEnFn) return Promise.resolve(_sourceEnFn);
+  if (!_sourceEnPromise) _sourceEnPromise = import("./source_en.js").then((m) => { _sourceEnFn = m.sourceEn; return _sourceEnFn; });
+  return _sourceEnPromise;
+}
+function sourceEn(fr) { return _sourceEnFn ? _sourceEnFn(fr) : null; }
 import { DB } from "./db.js";
 import { reconcile, checkServer, serverStats, modeGoogle, browseLibrary,
   fetchSuggestions, postSuggestion, postVote, postBug, fetchBugs,
@@ -22,13 +36,13 @@ function ensurePropositions() {
   if (!_propsPromise) _propsPromise = import("./propositions.js").then((m) => { PROPOSITIONS = m.PROPOSITIONS; return PROPOSITIONS; });
   return _propsPromise;
 }
-import { BUGS } from "./bugs.js";
+// bugs.js (journal versionné) chargé à la demande, uniquement à l'ouverture de la vue Bugs.
 import { CONFIG } from "./config.js";
 import { currentLang, getCurrentLangId, setCurrentLangId, usesDedicatedKeyboard,
   hasChosenLang, knownLanguages, cacheRemoteLanguages, langAlphabet, langLexicon, addKnownLanguage } from "./languages.js";
 import { applyI18n, getUiLang, setUiLang, t, tToast } from "./i18n.js";
-import { legalHtml, LEGAL_SECTIONS } from "./legal.js";
-import { entriesToCSV, entriesToJSON, entriesToLIFT, entriesToCLDF, entriesToELAN, exportFilename } from "./export.js";
+// legal.js (textes légaux) et export.js (formats d'export) : chargés à la demande, uniquement
+// à l'ouverture de la vue légale / au clic d'export (voir openLegal / downloadDict).
 import { shareCardText, shareTitle, mountShareBar } from "./share.js";
 import { shareMessage, shareSubject } from "./sharecopy.js";
 import { findSimilarLanguages } from "./langsim.js";
@@ -527,6 +541,7 @@ function wordInUiLang(fr) {
 async function resolveWordUi(fr) {
   const s = String(fr || "").trim();
   if (getUiLang() !== "en" || !s) return s;
+  await ensureSourceEn();   // garantit la base FR→EN chargée avant résolution (chemin async)
   const known = sourceEn(s); if (known) return known;
   const low = s.toLowerCase();
   if (_wordEnCache.has(low)) return _wordEnCache.get(low);
@@ -1498,6 +1513,7 @@ function bugCardHtml(bug) {
 }
 async function renderBugs() {
   // Fusion : journal VERSIONNÉ (BUGS) + signalements distants + locaux, dédup par id.
+  const { BUGS } = await import("./bugs.js");
   const map = new Map();
   BUGS.forEach((b) => map.set(b.id, b));
   const remote = await fetchBugs();
@@ -1523,7 +1539,8 @@ function openBugs() {
 }
 /** Ouvre les pages légales, ancrées sur la section demandée (mentions|confidentialite|cgu|cgv). */
 let _legalReturn = "hub";
-function openLegal(section) {
+async function openLegal(section) {
+  const { legalHtml, LEGAL_SECTIONS } = await import("./legal.js");
   const sec = LEGAL_SEC_ROUTE[section] ? section : "mentions";
   if (_currentView !== "legal") _legalReturn = _currentView || "hub";
   const en = getUiLang() === "en";
@@ -3662,7 +3679,8 @@ async function shareEntry(src, tgt, dir, hasAudio) {
 }
 
 /** Télécharge le dictionnaire de la LANGUE COURANTE (entrées visibles) en CSV ou JSON. */
-function downloadDict(fmt) {
+async function downloadDict(fmt) {
+  const { entriesToCSV, entriesToJSON, entriesToLIFT, entriesToCLDF, entriesToELAN, exportFilename } = await import("./export.js");
   const lid = getCurrentLangId();
   const entries = _exploreEntries || [];
   let content, mime;
@@ -5949,6 +5967,7 @@ async function main() {
   initPropCategories();
   applyI18n();       // langue d'INTERFACE (FR/EN) sur tout le DOM statique marqué —
                      // AVANT d'habiller les <select> pour qu'ils prennent la bonne langue
+  if (getUiLang() === "en") await ensureSourceEn();   // équivalents FR→EN prêts avant le 1er rendu (jamais de FR affiché à un anglophone)
   initSelectAutoEnhance();                // habille TOUS les <select> (auto, présents + futurs)
   initEvents();
   initTour();
