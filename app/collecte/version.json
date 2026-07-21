@@ -1,6 +1,10 @@
 {
-  "version": "v271",
+  "version": "v272",
   "changelog": {
+    "v272": [
+      "Popups plus intelligents : quand une voix d'un autre contributeur est propos\u00e9e, le message dit clairement d'o\u00f9 elle vient (qui, et dans quelle langue) et t'invite \u00e0 l'\u00e9couter puis \u00e0 le dire dans la tienne",
+      "Image ronde des popups agrandie et mieux d\u00e9tour\u00e9e : fond flout\u00e9 opaque, on ne voit plus la carte \u00e0 travers"
+    ],
     "v271": [
       "D\u00e9cor plus raffin\u00e9 : petits ornements en losange aux coins des cadres, et s\u00e9parateurs de section enrichis (fleuron central encadr\u00e9 de losanges)"
     ],

@@ -2167,14 +2167,15 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 /* Illustration RONDE : la personne est montrée ENTIÈREMENT (object-fit: contain, pas de
    recadrage) ; les parties vides/transparentes sont comblées par la MÊME image agrandie et
    FLOUTÉE (flou gaussien) → aucun « trou » à travers l'illustration. Déborde joliment du coin. */
-.incite-ico .pop-ill { display: block; position: relative; width: 104px; height: 104px;
+.incite-ico .pop-ill { display: block; position: relative; width: 124px; height: 124px;  /* cercle AGRANDI */
   border-radius: 50%; overflow: hidden; isolation: isolate;
   border: 2.5px solid color-mix(in srgb, var(--pop-acc) 80%, transparent);
-  box-shadow: 0 0 22px -2px var(--pop-acc), 0 8px 22px -6px rgba(0,0,0,.5);
-  background: color-mix(in srgb, var(--pop-acc) 14%, var(--card));
-  margin: -30px 2px -8px -34px; }
+  box-shadow: 0 0 24px -2px var(--pop-acc), 0 8px 24px -6px rgba(0,0,0,.5);
+  /* Fond OPAQUE frosté : les zones vides de l'illustration ne laissent PLUS voir la carte. */
+  background: radial-gradient(circle at 50% 42%, color-mix(in srgb, var(--pop-acc) 30%, var(--card)), var(--card) 80%);
+  margin: -34px 2px -8px -44px; }  /* décalée un peu plus vers la GAUCHE */
 .incite-ico .pop-ill-bg { position: absolute; inset: 0; width: 100%; height: 100%;
-  object-fit: cover; transform: scale(1.28); filter: blur(9px) saturate(1.15) brightness(.82); }
+  object-fit: cover; transform: scale(1.5); filter: blur(16px) saturate(1.2) brightness(.78); opacity: .92; }
 .incite-ico .pop-photo { position: relative; display: block; width: 100%; height: 100%;
   object-fit: contain; }
 /* Bouton principal et bouton « Écouter » : teintés dans la couleur du type. */

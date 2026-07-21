@@ -30,7 +30,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v271";
+const APP_VERSION = "v272";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -2375,10 +2375,15 @@ function renderIncitation(pick) {
   bn.dataset.ptype = "contribute"; _setImg("pop-contribute-ill.webp");
   if (go) go.textContent = t("incite.cta");   // rétablit le libellé « traduire » (peut avoir été changé)
   let text;
-  if (pick.ref && pick.ref.name) {
+  // Dès qu'une VOIX est proposée (bouton écouter), on donne sa PROVENANCE : soit le nom de la
+  // personne, soit « quelqu'un » (anonyme) + la LANGUE dans laquelle elle l'a dit. Puis on invite
+  // à le dire dans SA propre langue. Sans voix ni référence, message générique.
+  if (pick.ref && (pick.ref.name || pick.ref.audio)) {
     const ln = pick.ref.langId ? _incLangName(pick.ref.langId) : "";
     const inlang = ln ? ti("incite.inlang", { l: ln }) : "";   // « en {langue} » seulement si connue
-    text = ti("incite.msg.ref", { w: wShow, name: pick.ref.name, inlang });
+    text = pick.ref.name
+      ? ti("incite.msg.ref", { w: wShow, name: pick.ref.name, inlang })
+      : ti("incite.msg.refanon", { w: wShow, inlang });
   } else {
     text = ti("incite.msg", { w: wShow, lang: langName });
   }
