@@ -1,6 +1,9 @@
 {
-  "version": "v269",
+  "version": "v270",
   "changelog": {
+    "v270": [
+      "Toutes les banni\u00e8res et photos de l'application recr\u00e9\u00e9es \u00e0 partir des images d'origine en haute d\u00e9finition : rendu net et soign\u00e9 sur chaque page"
+    ],
     "v269": [
       "Outil de d\u00e9coupe de l'audio plus visible : le bouton D\u00e9couper ressort nettement, et \u00e0 l'int\u00e9rieur les boutons (rogner les silences, \u00e9couter, garder) sont plus grands et plus faciles \u00e0 toucher"
     ],
