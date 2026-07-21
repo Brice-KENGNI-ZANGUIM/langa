@@ -414,14 +414,15 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   width: 100%;
 }
 .card {
-  /* Ornements de coin en losange Ndop (laiton + cyan), comme des ferrures d'orfèvrerie, posés
-     aux 4 angles EN FOND (couche de background, donc derrière le contenu). Discrets et premium. */
-  --corner-orn: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='15' height='15' viewBox='0 0 15 15'><path d='M7.5 1 14 7.5 7.5 14 1 7.5Z' fill='none' stroke='%23c98a2e' stroke-opacity='0.42' stroke-width='1.1'/><path d='M7.5 4.7 10.3 7.5 7.5 10.3 4.7 7.5Z' fill='%232ad4ee' fill-opacity='0.26'/></svg>");
+  /* Ornements de coin : un vrai motif Ndop doré (extrait de motif-ornaments.png), pré-cuit à ~45 %
+     d'opacité, posé PETIT aux 4 angles EN FOND (derrière le contenu) → discret, ne gêne pas la
+     lecture. Remplace l'ancien losange SVG (demande Brice). */
+  --corner-orn: url("icons/orn-corner.webp");
   background:
-    var(--corner-orn) left 11px top 11px / 15px 15px no-repeat,
-    var(--corner-orn) right 11px top 11px / 15px 15px no-repeat,
-    var(--corner-orn) left 11px bottom 11px / 15px 15px no-repeat,
-    var(--corner-orn) right 11px bottom 11px / 15px 15px no-repeat,
+    var(--corner-orn) left 10px top 10px / 20px 19px no-repeat,
+    var(--corner-orn) right 10px top 10px / 20px 19px no-repeat,
+    var(--corner-orn) left 10px bottom 10px / 20px 19px no-repeat,
+    var(--corner-orn) right 10px bottom 10px / 20px 19px no-repeat,
     var(--card-bg);
   /* PAS de backdrop-filter ici : il crée un bloc conteneur qui casse le
      position:fixed des menus déroulants (combo-list) placés à l'intérieur.
