@@ -343,8 +343,8 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 /* Léger fond par bouton (SANS bordure visible) → l'œil distingue des boutons, pas une simple
    suite d'icônes+texte. Repli rgba d'abord (vieux Safari), puis version thème. */
 .chips-nav .chip--btn {
-  border: 1px solid transparent; border-radius: 12px; background-image: none; box-shadow: none;
-  color: var(--text); background: rgba(255, 255, 255, .06); }
+  border: 1px solid transparent; border-radius: 8px; background-image: none; box-shadow: none;
+  color: var(--text); background: rgba(255, 255, 255, .06); }   /* RECTANGLE à coins peu arrondis (pas une pilule) */
 :root[data-theme="light"] .chips-nav .chip--btn { background: rgba(18, 30, 46, .06); }
 .chips-nav .chip--btn:hover {
   background: rgba(34, 211, 238, .16);
@@ -390,6 +390,8 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
      ils débordent (jamais de scroll ni de bouton caché), le groupe outils reste à droite. */
   .chips-nav { flex-wrap: wrap; gap: 4px 4px; }
   .chips-nav .chip--btn { flex: 0 0 auto; }
+  /* Icônes du header AGRANDIES sur mobile/tablette (elles étaient trop petites). */
+  .chips-nav .chip--btn .chip-ico { width: 23px; height: 23px; }
 }
 /* Téléphone étroit : la marque et les deux pastilles d'état doivent tenir sur UNE ligne,
    avec leur libellé (« en ligne », « Drive : prêt ») et le point clignotant. */
