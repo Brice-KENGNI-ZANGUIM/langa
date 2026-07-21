@@ -1,6 +1,9 @@
 {
-  "version": "v296",
+  "version": "v297",
   "changelog": {
+    "v297": [
+      "Écran de chargement : même ambiance que les pages du site, avec la lueur qui balaie doucement le motif et une légère transparence"
+    ],
     "v296": [
       "Écran de chargement : le motif de fond s'affiche désormais immédiatement (préchargé) et de façon plus nette dans les deux modes, sur toute la zone du logo et du cercle"
     ],

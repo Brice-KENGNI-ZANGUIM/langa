@@ -3063,20 +3063,24 @@ body.kb-docked .field--consent {
   gap: 18px; align-content: center; overflow: hidden;
   background: radial-gradient(120% 90% at 50% 32%, var(--panel), var(--bg));
   transition: opacity .5s ease, visibility .5s ease; }
-/* Même trame Ndop que le fond du site (.bg-motif), posée SOUS le logo/anneau, adaptée clair/sombre.
-   Un voile radial (::after) fond les bords vers le centre pour garder le logo bien détaché. */
+/* Même traitement que le fond des pages normales (.bg-motif) : la trame Ndop (::before, légèrement
+   transparente, adaptée clair/sombre) SURVOLÉE par la même TORCHE glissante (::after) — une lueur
+   diagonale cyan→vert qui balaie lentement, comme un reflet sur le tissu. Le dégradé radial de base
+   (.app-loader) fait l'ombre douce des bords. */
 .app-loader::before {
   content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: url("icons/bg-pattern-light.jpg") center top / 520px auto repeat; opacity: .40; }
-:root[data-theme="dark"] .app-loader::before { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .62; }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .app-loader::before { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .58; } }
-/* Voile TRÈS léger : n'assombrit que les coins pour éviter un fond « plein cadre » agressif ;
-   le motif reste nettement visible sur toute la zone du logo et de l'anneau. */
+  background: url("icons/bg-pattern-light.jpg") center top / 520px auto repeat; opacity: .22; }
+:root[data-theme="dark"] .app-loader::before { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .46; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .app-loader::before { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .42; } }
+/* TORCHE : identique à .bg-motif::after (reflet diagonal glissant), pour un fond « vivant » comme
+   les pages. Purement décorative (GPU/transform). Gelée sous prefers-reduced-motion. */
 .app-loader::after {
-  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
-  background: radial-gradient(135% 105% at 50% 45%, transparent 66%, var(--bg) 100%);
-  background: radial-gradient(135% 105% at 50% 45%,
-    transparent 60%, color-mix(in srgb, var(--bg) 72%, transparent) 100%); }
+  content: ""; position: absolute; inset: -30% -30%; z-index: 0; pointer-events: none;
+  background: linear-gradient(112deg, transparent 43%,
+    color-mix(in srgb, var(--cyan) 16%, transparent) 49%,
+    color-mix(in srgb, var(--green) 12%, transparent) 53%, transparent 61%);
+  animation: motif-sweep 19s linear infinite; will-change: transform; }
+@media (prefers-reduced-motion: reduce) { .app-loader::after { animation: none; } }
 .app-loader-mark, .app-loader-txt { position: relative; z-index: 1; }
 .app-loader--hide { opacity: 0; visibility: hidden; pointer-events: none; }
 .app-loader-mark { position: relative; width: 262px; height: 262px; display: grid; place-items: center; }
