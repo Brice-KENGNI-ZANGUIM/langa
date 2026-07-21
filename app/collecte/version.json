@@ -1,6 +1,9 @@
 {
-  "version": "v295",
+  "version": "v296",
   "changelog": {
+    "v296": [
+      "Écran de chargement : le motif de fond s'affiche désormais immédiatement (préchargé) et de façon plus nette dans les deux modes, sur toute la zone du logo et du cercle"
+    ],
     "v295": [
       "Explorer : deux langues qui partagent le même mot français ne sont plus regroupées par erreur ; chaque langue garde son propre code court (nge, bas, dua…) de façon cohérente partout"
     ],

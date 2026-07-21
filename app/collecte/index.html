@@ -29,11 +29,22 @@
        le choix explicite de l'utilisateur, une fois fait, est respecté) → aucun flash. -->
   <script>
     (function () {
+      var t = "dark";
       try {
-        var t = localStorage.getItem("ng-theme");
+        t = localStorage.getItem("ng-theme");
         if (t !== "dark" && t !== "light") t = "dark";
         document.documentElement.setAttribute("data-theme", t);
-      } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); }
+      } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); t = "dark"; }
+      // Précharge la tuile de motif du thème courant DÈS le parsing pour que le fond de
+      // l'écran de chargement s'affiche instantanément (sinon l'image n'arrive qu'après un
+      // aller-retour réseau, donc en retard ou pas du tout si le boot est court).
+      try {
+        var l = document.createElement("link");
+        l.rel = "preload"; l.as = "image";
+        l.href = "./icons/bg-pattern-" + (t === "light" ? "light" : "dark") + ".jpg";
+        l.setAttribute("fetchpriority", "high");
+        document.head.appendChild(l);
+      } catch (e) { /* preload facultatif */ }
     })();
   </script>
   <link rel="manifest" href="./manifest.webmanifest" />
