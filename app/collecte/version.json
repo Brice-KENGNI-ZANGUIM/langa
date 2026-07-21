@@ -1,6 +1,9 @@
 {
-  "version": "v276",
+  "version": "v277",
   "changelog": {
+    "v277": [
+      "Partage par page : un bouton Partager sur chaque banni\u00e8re, et un aper\u00e7u (image + texte) adapt\u00e9 \u00e0 la page partag\u00e9e sur WhatsApp/Facebook (chaque page a son image, plus la m\u00eame pour tous les liens)"
+    ],
     "v276": [
       "Langues d'appartenance plus justes : plus aucune langue devin\u00e9e par d\u00e9faut ; elles ne se remplissent que par une d\u00e9claration ou une vraie contribution, et \u00e0 chaque connexion le profil se r\u00e9aligne automatiquement sur ce que la personne a r\u00e9ellement fait"
     ],

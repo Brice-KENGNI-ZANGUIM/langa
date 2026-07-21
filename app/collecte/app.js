@@ -30,7 +30,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v276";
+const APP_VERSION = "v277";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1142,7 +1142,39 @@ function showView(name) {
   // Sélecteur de langue : visible dès qu'une langue est choisie, partout, sans exception.
   const lc = $("#lang-chip");
   if (lc) lc.hidden = !hasChosenLang();
+  try { injectBannerShare(name); } catch (e) { /* jamais bloquant */ }
   window.scrollTo(0, 0);
+}
+// --- Partage PAR PAGE : chaque page a son URL (langial.com/traduire…) → aperçu (image + texte)
+//     propre à la page quand on colle le lien sur WhatsApp/Facebook. Bouton posé sur la bannière.
+const PAGE_SLUG = { hub: "", explore: "explorer", demander: "demander", lang: "langues", about: "apropos" };
+function bannerShareSlug(name) {
+  if (name === "app") return activity === "transcribe" ? "transcrire" : "traduire";
+  return Object.prototype.hasOwnProperty.call(PAGE_SLUG, name) ? PAGE_SLUG[name] : null;
+}
+function injectBannerShare(name) {
+  const slug = bannerShareSlug(name);
+  if (slug == null) return;                    // pas de partage sur profil/bugs/notifs
+  const view = document.getElementById("view-" + name);
+  const banner = view && view.querySelector(".page-banner");
+  if (!banner) return;
+  let btn = banner.querySelector(".banner-share");
+  if (!btn) {
+    btn = document.createElement("button");
+    btn.className = "banner-share"; btn.type = "button";
+    btn.innerHTML = '<span aria-hidden="true">↗</span> <span>' + t("banner.share") + "</span>";
+    banner.appendChild(btn);
+  } else { btn.querySelector("span:last-child").textContent = t("banner.share"); }
+  btn.setAttribute("aria-label", t("banner.share"));
+  btn.onclick = () => sharePageBanner(slug);
+}
+async function sharePageBanner(slug) {
+  const url = PRESENT_URL.replace(/\/$/, "") + (slug ? "/" + slug : "/");
+  const text = t("share.text");
+  try { if (navigator.share) { await navigator.share({ title: "LANGIAL", text, url }); return; } }
+  catch (e) { return; }   // partage annulé par l'utilisateur
+  try { await navigator.clipboard.writeText(text + " " + url); toast(t("share.copied"), "ok"); }
+  catch (e) { toast(url, "ok"); }
 }
 
 /** Ouvre la page « À propos » (vraie vue de l'app) en mémorisant d'où l'on vient. */

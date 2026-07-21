@@ -288,6 +288,7 @@ export const STR = {
   "share.foot": { fr: "Partage LANGIAL autour de toi :", en: "Share LANGIAL around you:" },
   "share.hub": { fr: "Aide nos langues à rayonner, partage LANGIAL :", en: "Help our languages shine, share LANGIAL:" },
   "share.text": { fr: "Découvre LANGIAL et aidons ensemble à numériser nos langues d'Afrique, en texte et en voix 🌍", en: "Discover LANGIAL and let's help digitize Africa's languages together, in text and voice 🌍" },
+  "banner.share": { fr: "Partager cette page", en: "Share this page" },
   "share.native": { fr: "Partager", en: "Share" },
   "share.copy": { fr: "Copier le lien", en: "Copy link" },
   "share.copied": { fr: "Lien copié ✓", en: "Link copied ✓" },
