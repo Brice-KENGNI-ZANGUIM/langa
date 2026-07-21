@@ -1,6 +1,10 @@
 {
-  "version": "v287",
+  "version": "v288",
   "changelog": {
+    "v288": [
+      "En-tête repensé : boutons de navigation regroupés en deux familles (navigation puis perso) avec un séparateur sur grand écran, style plus épuré (fini l'effet pastille au repos), et la page active nettement mise en évidence ; affichage entièrement responsive (ordinateur, tablette, téléphone)",
+      "Bouton de partage : correction d'un affichage en contour vide sur certains iPhone (Safari ancien)"
+    ],
     "v287": [
       "En-tête épuré et plus lisible sur ordinateur : « · Collecte » retiré, boutons de navigation de gauche agrandis, bouton clair/sombre mieux dimensionné",
       "Bouton des langues toujours visible dans l'en-tête (libellé « Langues » tant qu'aucune langue n'est choisie), pour atteindre la page des langues depuis n'importe quel appareil",

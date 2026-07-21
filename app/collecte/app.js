@@ -31,7 +31,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v287";
+const APP_VERSION = "v288";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1151,6 +1151,11 @@ function showView(name) {
     const cn = $("#lang-chip-name");
     if (cn && !hasChosenLang()) cn.textContent = t("chip.langues");
   }
+  // Page ACTIVE mise en évidence dans le header (style plat, deux groupes) : on marque le
+  // bouton de nav correspondant à la vue courante.
+  const NAV_ACTIVE = { hub: "home-link", lang: "lang-chip", about: "about-link", bugs: "bugs-link", profile: "btn-open-profile", notifs: "btn-notifs" };
+  document.querySelectorAll(".chips-nav .chip--btn.is-active").forEach((b) => b.classList.remove("is-active"));
+  const actId = NAV_ACTIVE[name]; if (actId) { const ab = document.getElementById(actId); if (ab) ab.classList.add("is-active"); }
   try { injectBannerShare(name); } catch (e) { /* jamais bloquant */ }
   window.scrollTo(0, 0);
 }

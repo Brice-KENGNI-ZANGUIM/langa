@@ -335,6 +335,27 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   .chips-nav .chip--icon { padding: 7px 13px; }
   .chips-nav .chip--icon .chip-ico { width: 36px; height: 36px; }
 }
+/* --- STYLE PLAT + DEUX GROUPES (demande Brice : 1+2) ------------------------------
+   Les boutons de nav ne sont plus des « pilules » de verre : fond transparent au repos,
+   léger fond + accent cyan au survol, page ACTIVE mise en évidence. Deux groupes
+   (navigation | perso) séparés d'un fin trait quand ils sont côte à côte (grand écran). */
+.chip-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.chips-nav .chip--btn {
+  border: 1px solid transparent; border-radius: 12px;
+  background: transparent; background-image: none; box-shadow: none; color: var(--text);
+}
+.chips-nav .chip--btn:hover {
+  background: color-mix(in srgb, var(--cyan) 14%, transparent);
+  border-color: color-mix(in srgb, var(--cyan) 34%, transparent);
+  color: var(--cyan); box-shadow: none; }
+.chips-nav .chip--btn.is-active {
+  background: color-mix(in srgb, var(--cyan) 18%, var(--panel));
+  border-color: color-mix(in srgb, var(--cyan) 55%, transparent);
+  color: var(--cyan); font-weight: 700; }
+@media (min-width: 901px) {
+  .chips-nav .chip-group--perso { margin-left: 8px; padding-left: 14px;
+    border-left: 1px solid color-mix(in srgb, var(--border) 80%, transparent); }
+}
 
 /* --- Header MOBILE / TABLETTE (≤900px) : réorganisation lisible -----------------
    Nom LANGIAL agrandi (≈ hauteur du logo) ; boutons de nav AVEC leur texte (l'icône
@@ -393,6 +414,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   #net.chip--on::before, #srv.chip--on::before { margin-right: 3px; width: 4px; height: 4px; }
   #ui-lang-toggle, #theme-toggle { padding: 0; }   /* capsules : le padding est sur les segments */
   .lang-switch .lang-seg, .theme-switch .theme-seg { padding: 4px 8px; font-size: .66rem; }
+  .theme-ico { height: 22px; }   /* bouton thème à la même échelle que FR|EN sur téléphone */
 }
 /* Petits téléphones (≤ 389px) : le nom se réduit d'un cran pour que « LANGIAL · Collecte »
    ET les deux pastilles d'état tiennent sur la même ligne, sans scroll. Dès 390px le nom
@@ -2624,6 +2646,7 @@ body::after {
 .banner-share-bar { display: flex; justify-content: flex-end; margin-top: -10px; }
 .banner-share { display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px; border-radius: 999px;
   cursor: pointer; font: inherit; font-size: .82rem; font-weight: 700; color: #06121a;
+  background: var(--cyan);   /* repli Safari ancien (color-mix non supporté avant 16.2) : sinon fond vide */
   background: color-mix(in srgb, var(--cyan) 88%, #fff); border: 1.5px solid var(--cyan);
   box-shadow: 0 4px 16px -8px var(--cyan), inset 0 1px 0 rgba(255,255,255,.3);
   transition: transform .1s, box-shadow .16s, filter .16s; }

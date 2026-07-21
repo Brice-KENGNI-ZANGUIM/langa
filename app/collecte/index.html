@@ -67,22 +67,25 @@
     <!-- Header en 2 niveaux : NAV (boutons d'action, avec texte) sur une ligne, MÉTA
          (état + version + langue + thème) sur l'autre. Cf. .topbar en grille. -->
     <div class="chips-nav">
-      <button id="home-link" class="chip chip--btn" type="button" data-i18n-title="chip.home.title"
-              title="Retour à l'accueil" aria-label="Retour à l'accueil"><img class="chip-ico" src="icons/ui/hi-home.png" alt="" aria-hidden="true"><span data-i18n="chip.home">Accueil</span></button>
-      <button id="lang-chip" class="chip chip--btn" type="button" hidden data-i18n-title="chip.lang.title"
-              title="Changer de langue" aria-label="Changer de langue"><img class="chip-ico" src="icons/ui/hi-lang.png" alt="" aria-hidden="true"><span id="lang-chip-name">Langue</span></button>
-      <button id="about-link" class="chip chip--btn" type="button" data-i18n-title="chip.about.title"
-              title="À propos du projet" aria-label="À propos du projet"><img class="chip-ico" src="icons/ui/hi-about.png" alt="" aria-hidden="true"><span data-i18n="chip.about">À propos</span></button>
-      <button id="help-btn" class="chip chip--btn" type="button" data-i18n-title="chip.help.title"
-              title="Visite guidée de cette page" aria-label="Visite guidée"><img class="chip-ico" src="icons/ui/hi-help.png" alt="" aria-hidden="true"><span data-i18n="chip.help">Aide</span></button>
-      <button id="btn-notifs" class="chip chip--btn chip--notif chip--icon" type="button" hidden data-i18n-title="chip.notifs.title"
-              title="Mes notifications" aria-label="Mes notifications"><img class="chip-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span id="notif-badge" class="notif-badge" hidden aria-hidden="true">0</span></button>
-      <!-- Saut de ligne forcé : la cloche est le DERNIER bouton de la 1re ligne ;
-           Bugs, Profil et les outils (version, EN, thème) passent en 2e ligne. -->
-      <i class="chips-break" aria-hidden="true"></i>
-      <button id="bugs-link" class="chip chip--btn" type="button" data-i18n-title="chip.bugs.title"
-              title="Suivi des bugs" aria-label="Suivi des bugs"><img class="chip-ico" src="icons/ui/hi-bug.png" alt="" aria-hidden="true"><span data-i18n="chip.bugs">Bugs</span></button>
-      <button id="btn-open-profile" class="chip chip--btn" type="button" hidden><img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="chip.profile">Profil</span></button>
+      <!-- GROUPE 1 : navigation / découverte -->
+      <div class="chip-group chip-group--nav">
+        <button id="home-link" class="chip chip--btn" type="button" data-i18n-title="chip.home.title"
+                title="Retour à l'accueil" aria-label="Retour à l'accueil"><img class="chip-ico" src="icons/ui/hi-home.png" alt="" aria-hidden="true"><span data-i18n="chip.home">Accueil</span></button>
+        <button id="lang-chip" class="chip chip--btn" type="button" data-i18n-title="chip.lang.title"
+                title="Changer de langue" aria-label="Changer de langue"><img class="chip-ico" src="icons/ui/hi-lang.png" alt="" aria-hidden="true"><span id="lang-chip-name">Langues</span></button>
+        <button id="about-link" class="chip chip--btn" type="button" data-i18n-title="chip.about.title"
+                title="À propos du projet" aria-label="À propos du projet"><img class="chip-ico" src="icons/ui/hi-about.png" alt="" aria-hidden="true"><span data-i18n="chip.about">À propos</span></button>
+        <button id="help-btn" class="chip chip--btn" type="button" data-i18n-title="chip.help.title"
+                title="Visite guidée de cette page" aria-label="Visite guidée"><img class="chip-ico" src="icons/ui/hi-help.png" alt="" aria-hidden="true"><span data-i18n="chip.help">Aide</span></button>
+      </div>
+      <!-- GROUPE 2 : perso (notifications, suivi, profil) -->
+      <div class="chip-group chip-group--perso">
+        <button id="btn-notifs" class="chip chip--btn chip--notif chip--icon" type="button" hidden data-i18n-title="chip.notifs.title"
+                title="Mes notifications" aria-label="Mes notifications"><img class="chip-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span id="notif-badge" class="notif-badge" hidden aria-hidden="true">0</span></button>
+        <button id="bugs-link" class="chip chip--btn" type="button" data-i18n-title="chip.bugs.title"
+                title="Suivi des bugs" aria-label="Suivi des bugs"><img class="chip-ico" src="icons/ui/hi-bug.png" alt="" aria-hidden="true"><span data-i18n="chip.bugs">Bugs</span></button>
+        <button id="btn-open-profile" class="chip chip--btn" type="button" hidden><img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="chip.profile">Profil</span></button>
+      </div>
       <!-- Outils (version + langue d'interface + thème) : poussés À DROITE de la ligne
            de nav (margin-left:auto). Ils basculent proprement à la ligne suivante,
            toujours alignés à droite, quand la nav déborde. -->
