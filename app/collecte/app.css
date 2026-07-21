@@ -552,7 +552,11 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 /* Onglets d'activité RAPPROCHÉS des boutons du header : la grille .topbar met 18px entre les
    rangées ; on remonte de 12px → écart ~6px, identique à l'espace entre les deux lignes de
    boutons du header (impression d'un seul bloc, séparations égales). */
-.main-nav { grid-column: 1 / -1; grid-row: 3; display: flex; align-items: center; gap: 12px; margin: -12px 0 0; }   /* écart ligne2↔onglets = écart entre les 2 lignes du header */
+.main-nav { grid-column: 1 / -1; grid-row: 3; display: flex; align-items: center; gap: 12px; margin: -12px 0 0; }   /* écart ligne2↔onglets = écart entre les 2 lignes du header (DESKTOP) */
+/* MOBILE/TABLETTE : la marge négative desktop provoquait un CHEVAUCHEMENT des onglets sur les
+   boutons du header (layout empilé, pas la grille du desktop). Placée APRÈS la base pour gagner
+   la cascade : petit écart POSITIF, aucun recouvrement. */
+@media (max-width: 900px) { .main-nav { margin-top: 6px; } }
 .main-nav[hidden] { display: none; }
 /* Onglets : chaque bouton porte SA couleur d'activité (contour + fond teinté + halo),
    IDENTIQUE sur PC et téléphone. Sur PC ils s'étirent pour remplir la largeur dédiée

@@ -1,6 +1,9 @@
 {
-  "version": "v300",
+  "version": "v301",
   "changelog": {
+    "v301": [
+      "Téléphone : plus aucun chevauchement entre les 4 onglets et les boutons du header (ils étaient légèrement recouverts)"
+    ],
     "v300": [
       "Onglets Transcrire, Traduire, Explorer et Demander : hauteur encore réduite de 5%, alignement conservé avec le header"
     ],
