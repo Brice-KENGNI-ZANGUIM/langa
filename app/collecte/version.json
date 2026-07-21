@@ -1,6 +1,9 @@
 {
-  "version": "v279",
+  "version": "v280",
   "changelog": {
+    "v280": [
+      "Illustrations africaines cohérentes : le formulaire de déclaration de langue, le popup de jalon, le popup 'profil requis' et la page À propos affichent désormais de vraies illustrations plutôt que des émojis ou une photo"
+    ],
     "v279": [
       "Bouton de partage placé sous la bannière (il ne la cache plus), présent sur toutes les pages et plus compact sur mobile",
       "Nouveau panneau de partage sur ordinateur : un clic sur un réseau (WhatsApp, Facebook, X, Telegram, LinkedIn, e-mail) ouvre la publication avec le message déjà rédigé, ou copie le lien à coller partout",
