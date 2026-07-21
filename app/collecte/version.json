@@ -1,6 +1,9 @@
 {
-  "version": "v320",
+  "version": "v321",
   "changelog": {
+    "v321": [
+      "Conjugaison enrichie : 14 verbes courants (être, avoir, aller, faire, dire, voir, venir, prendre, pouvoir, vouloir, savoir, donner, manger, parler) à trois temps, avec leur équivalent anglais correct"
+    ],
     "v320": [
       "Nouveau : « Enrichir ce mot » (facultatif, repliable) lors d'une traduction : nature grammaticale, classe nominale, genre, nombre, pluriel, prononciation, phrase d'exemple et sa traduction, synonymes, antonymes, registre, étymologie ; tout est conservé avec la contribution pour bâtir un vrai dictionnaire"
     ],
