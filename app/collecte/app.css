@@ -99,7 +99,8 @@
 /* Motif ambiant en fond de page : couche ABSOLUE couvrant tout le document (pas le
    viewport) → elle défile solidairement avec le contenu, à la même vitesse. */
 .bg-motif { position: absolute; inset: 0; z-index: -1; pointer-events: none; overflow: hidden;
-  background: url("icons/bg-pattern-light.jpg") center top / 520px auto repeat; opacity: .17; }
+  /* MODE CLAIR : motif nettement plus visible/mis en évidence (moins transparent). */
+  background: url("icons/bg-pattern-light.jpg") center top / 520px auto repeat; opacity: .36; }
 :root[data-theme="dark"] .bg-motif { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .40; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .bg-motif { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .34; } }
 /* Trame plus VIVANTE : une lueur diagonale (cyan→vert) balaie lentement le motif Ndop, comme un
@@ -112,6 +113,19 @@
     color-mix(in srgb, var(--cyan) 16%, transparent) 49%,
     color-mix(in srgb, var(--green) 12%, transparent) 53%, transparent 61%);
   animation: motif-sweep 19s linear infinite; will-change: transform;
+}
+/* MODE CLAIR : sur fond blanc le reflet cyan/vert par défaut est presque invisible → torche
+   dédiée, plus marquée, combinant une OMBRE bleu-nuit douce et un ÉCLAT cyan/vert (relief +
+   éclairage qui glisse), comme la lueur du mode sombre. Repli sans color-mix pour vieux Safari. */
+:root[data-theme="light"] .bg-motif::after {
+  background: linear-gradient(112deg, transparent 38%,
+    rgba(20,52,84,.07) 46%, rgba(34,211,238,.26) 51%, rgba(53,208,127,.18) 55%,
+    rgba(20,52,84,.05) 60%, transparent 66%);
+  background: linear-gradient(112deg, transparent 38%,
+    color-mix(in srgb, #14345a 8%, transparent) 46%,
+    color-mix(in srgb, var(--cyan) 28%, transparent) 51%,
+    color-mix(in srgb, var(--green) 20%, transparent) 55%,
+    color-mix(in srgb, #14345a 6%, transparent) 60%, transparent 66%);
 }
 @keyframes motif-sweep { 0% { transform: translate3d(-58%, 0, 0); } 100% { transform: translate3d(58%, 0, 0); } }
 body.kb-docked .bg-motif::after { animation: none; }

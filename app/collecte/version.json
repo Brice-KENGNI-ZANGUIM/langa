@@ -1,6 +1,10 @@
 {
-  "version": "v297",
+  "version": "v298",
   "changelog": {
+    "v298": [
+      "Fond du site en mode clair : le motif traditionnel est bien plus visible et mis en valeur, avec un reflet lumineux qui glisse doucement (comme en mode sombre)",
+      "Popups d'invitation et de notification : ils réapparaissent même sans numéro de téléphone renseigné (le numéro n'est demandé qu'au moment de contribuer), ce qui les rétablit notamment sur téléphone"
+    ],
     "v297": [
       "Écran de chargement : même ambiance que les pages du site, avec la lueur qui balaie doucement le motif et une légère transparence"
     ],
