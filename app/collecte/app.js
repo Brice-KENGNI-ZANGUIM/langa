@@ -41,7 +41,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v327";
+const APP_VERSION = "v328";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1330,14 +1330,8 @@ const SLUG_CASE = { "": "home", traduire: "traduire", transcrire: "transcrire", 
 async function sharePageBanner(slug) {
   const url = PRESENT_URL.replace(/\/$/, "") + (slug ? "/" + slug : "/");
   const caseKey = SLUG_CASE[slug || ""] || "home";
-  // Mobile (écran tactile) : la feuille de partage native ouvre déjà toutes les options du système.
-  const coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
-  if (navigator.share && coarse) {
-    const text = shareMessage(caseKey, "native", {}, getUiLang());   // texte neutre (sans hashtag) pour la feuille système
-    try { await navigator.share({ title: "LANGIAL", text, url }); return; }
-    catch (e) { return; }   // partage annulé
-  }
-  // PC (ou pas de partage natif) : panneau des réseaux, texte personnalisé PAR réseau.
+  // Panneau de partage CUSTOM (réseaux + texte marketing propre à chaque plateforme) sur TOUS les
+  // supports (mobile/tablette/PC), jamais la feuille native : message soigné et rendu cohérent partout.
   openSharePanel(url, caseKey, {});
 }
 /** Panneau de partage : réseaux (texte marketing propre à chaque plateforme) + copier le lien. */
@@ -3275,13 +3269,7 @@ async function _shareRequest(item) {
   const w = item.dataset.w, lang = _langNameById(item.dataset.lang);
   const url = PRESENT_URL.replace(/\/$/, "");
   const ctx = { w, lang };
-  const coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
-  if (navigator.share && coarse) {
-    const text = shareMessage("request", "native", ctx, getUiLang());
-    try { await navigator.share({ title: "LANGIAL", text: text + "\n" + url }); return; }
-    catch (e) { if (e && e.name === "AbortError") return; }
-  }
-  openSharePanel(url, "request", ctx);   // PC : panneau réseaux, texte propre à chaque plateforme
+  openSharePanel(url, "request", ctx);   // panneau réseaux (texte propre à chaque plateforme), tous supports
 }
 function onReqListClick(e) {
   const openB = e.target.closest(".req-answer-open");
@@ -3661,8 +3649,8 @@ function entryDeepLink(src, dir) {
   const w = encodeURIComponent(shareClean(src, 80));
   return base + "#/explorer?w=" + w + (dir ? "&d=" + encodeURIComponent(dir) : "");
 }
-/** Partage ADAPTATIF d'une entrée : texte marketing (mot, langues, question, CTA) + lien direct.
-    navigator.share si dispo, sinon presse-papiers. Le contenu s'adapte au sens et à ce qui existe. */
+/** Partage ADAPTATIF d'une entrée : texte marketing (mot, langues, question, CTA) + lien direct,
+    via le panneau réseaux custom (tous supports). Le contenu s'adapte au sens et à ce qui existe. */
 async function shareEntry(src, tgt, dir, hasAudio) {
   const L = currentLang();
   const s = shareClean(src), tg = shareClean(tgt);
@@ -3670,13 +3658,7 @@ async function shareEntry(src, tgt, dir, hasAudio) {
   // Cas de partage : une traduction précise (avec cible) ou une prononciation (audio, sans cible).
   const caseKey = (!tg && hasAudio) ? "entry-transc" : "entry-trad";
   const ctx = { w: s, lang: L.nom, tr: tg };
-  const coarse = window.matchMedia && window.matchMedia("(pointer: coarse)").matches;
-  if (navigator.share && coarse) {
-    const text = shareMessage(caseKey, "native", ctx, getUiLang());
-    try { await navigator.share({ title: shareTitle(L.nom), text: text + "\n" + url }); return; }
-    catch (e) { if (e && e.name === "AbortError") return; }
-  }
-  openSharePanel(url, caseKey, ctx);   // PC : panneau réseaux, texte marketing propre à chaque plateforme
+  openSharePanel(url, caseKey, ctx);   // panneau réseaux (texte marketing propre à chaque plateforme), tous supports
 }
 
 /** Télécharge le dictionnaire de la LANGUE COURANTE (entrées visibles) en CSV ou JSON. */

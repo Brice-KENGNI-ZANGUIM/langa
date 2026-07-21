@@ -4,10 +4,23 @@
 //
 // Auteur : Brice Kengni Zanguim.
 
-/** Nettoie une valeur : chaîne, espaces normalisés, sans retours ligne, bornée. */
+/** Nettoie une valeur : chaîne, espaces normalisés, sans retours ligne, bornée.
+    (Pour l'URL et les champs courts d'une seule ligne.) */
 function clean(v, max) {
   let s = v === null || v === undefined ? "" : String(v);
   s = s.replace(/\s+/g, " ").trim();
+  if (max && s.length > max) s = s.slice(0, max - 1).trimEnd() + "…";
+  return s;
+}
+/** Nettoie un MESSAGE en PRÉSERVANT les retours à la ligne (aération voulue), borné.
+    Les espaces/tabulations multiples sont réduits, mais les sauts de ligne restent (au plus
+    une ligne vide d'affilée) : le texte partagé reste ventilé, jamais un pavé compact. */
+function cleanMsg(v, max) {
+  let s = v === null || v === undefined ? "" : String(v);
+  s = s.replace(/[^\S\n]+/g, " ");     // espaces/tabs multiples → 1 espace, garde les \n
+  s = s.replace(/ *\n */g, "\n");       // pas d'espace autour des sauts de ligne
+  s = s.replace(/\n{3,}/g, "\n\n");     // au plus une ligne vide consécutive
+  s = s.trim();
   if (max && s.length > max) s = s.slice(0, max - 1).trimEnd() + "…";
   return s;
 }
@@ -80,18 +93,20 @@ function copyOpenTarget(net, url) {
   if (net === "tiktok") return "https://www.tiktok.com/";
   return "https://www.instagram.com/";
 }
-/** Texte adapté à un réseau : message + hashtags si le réseau les accueille. */
+/** Texte adapté à un réseau : message + hashtags si le réseau les accueille (retours à la ligne
+ *  du message PRÉSERVÉS pour l'aération). */
 export function netText(text, hashtags, net) {
-  const base = clean(text, 400);
+  const base = cleanMsg(text, 400);
   const h = clean(hashtags, 200);
   return h && HASH_NETS.has(net) ? base + "\n\n" + h : base;
 }
 /** Lien de partage d'UN réseau à texte pré-rempli (WhatsApp/Telegram/X/e-mail), avec un message
- *  PROPRE à ce réseau. "" pour les réseaux qui passent par « copier + ouvrir ». */
+ *  PROPRE à ce réseau, retours à la ligne CONSERVÉS. "" pour les réseaux « copier + ouvrir ». */
 export function directLink(net, url, msg, emailSubject) {
   const u = encodeURIComponent(clean(url, 300));
-  const t = encodeURIComponent(clean(msg, 500));
-  const tu = encodeURIComponent(clean(msg, 500) + " " + clean(url, 300));
+  const m = cleanMsg(msg, 500);
+  const t = encodeURIComponent(m);
+  const tu = encodeURIComponent(m + "\n\n" + clean(url, 300));   // message aéré, puis le lien détaché
   if (net === "whatsapp") return "https://wa.me/?text=" + tu;
   if (net === "telegram") return "https://t.me/share/url?url=" + u + "&text=" + t;
   if (net === "x") return "https://twitter.com/intent/tweet?text=" + t + "&url=" + u;
@@ -137,16 +152,9 @@ export function mountShareBar(container, opts) {
   const bar = document.createElement("div");
   bar.className = "sharebar";
 
-  if (navigator.share) {
-    const b = document.createElement("button");
-    b.type = "button";
-    b.className = "share-btn share-btn--native";
-    b.innerHTML = NET_SVG.share + "<span>" + (o.nativeLabel || "Partager") + "</span>";
-    b.addEventListener("click", function () {
-      navigator.share({ title: title, text: text, url: url }).catch(function () {});
-    });
-    bar.appendChild(b);
-  }
+  // Pas de bouton de partage natif : on garde un panneau custom homogène sur tous les supports,
+  // avec un texte marketing propre à chaque réseau et une redirection maîtrisée (pas la feuille
+  // système, dont le rendu et le message échappent à l'app).
 
   nets.forEach(function (n) {
     const netName = NET_LABEL[n] || n;
@@ -161,7 +169,7 @@ export function mountShareBar(container, opts) {
       btn.setAttribute("aria-label", lbl); btn.title = lbl;
       btn.innerHTML = NET_SVG[n];
       btn.addEventListener("click", function () {
-        const caption = netMsg + "\n" + url;
+        const caption = netMsg + "\n\n" + url;
         const go = function () { toast(captionMsg, "ok"); window.open(copyOpenTarget(n, url), "_blank", "noopener"); };
         if (navigator.clipboard && navigator.clipboard.writeText) {
           navigator.clipboard.writeText(caption).then(go).catch(function () { fallbackCopy(caption, go, toast); });

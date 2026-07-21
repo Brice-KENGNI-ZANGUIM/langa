@@ -68,17 +68,21 @@ const CASES = {
   },
 };
 
-/** Assemble le message selon le TON de la plateforme à partir des blocs du cas. */
+/** Assemble le message selon le TON de la plateforme à partir des blocs du cas.
+    Les blocs sont séparés par des RETOURS À LA LIGNE pour aérer le texte (jamais un pavé dense) :
+    ligne vide entre les idées sur les plateformes qui laissent respirer (chat/légende/descr),
+    saut simple là où l'on reste compact (X, LinkedIn). */
 function cap(s) { s = esc(s); return s ? s.charAt(0).toUpperCase() + s.slice(1) : ""; }
 function assemble(tone, c) {
   const hook = esc(c.hook), what = esc(c.what), benefit = esc(c.benefit), cta = esc(c.cta);
-  const join = (arr) => arr.filter(Boolean).join(" ");
+  const join = (arr, sep) => arr.filter(Boolean).join(sep);
   const ben = benefit ? cap(benefit) + "." : "";
-  if (tone === "chat") return join([hook, what + ".", cta + " 👇"]);       // WhatsApp/Telegram : direct, personnel
-  if (tone === "punch") return join([hook, cta + " 👉"]);                   // X : court et percutant
-  if (tone === "pro") return join([what + ".", ben, cta + "."]);            // LinkedIn : sobre
-  if (tone === "caption") return join([hook, ben, cta + " ✨"]);            // Instagram/TikTok : légende
-  return join([hook, what + ".", ben, cta + "."]);                          // descr (Facebook/e-mail)
+  const whatBen = what ? (what + "." + (ben ? " " + ben : "")) : ben;       // « description. bénéfice. » groupés
+  if (tone === "chat") return join([hook, what + ".", cta + " 👇"], "\n\n");        // WhatsApp/Telegram : aéré, personnel
+  if (tone === "punch") return join([hook, cta + " 👉"], "\n");                     // X : compact, 2 lignes
+  if (tone === "pro") return join([what + ".", ben, cta + "."], "\n\n");            // LinkedIn : sobre, aéré
+  if (tone === "caption") return join([hook, ben, cta + " ✨"], "\n\n");            // Instagram/TikTok : légende aérée
+  return join([hook, whatBen, cta + "."], "\n\n");                                  // descr (Facebook/e-mail) : 3 blocs aérés
 }
 
 /**

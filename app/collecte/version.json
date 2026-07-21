@@ -1,6 +1,10 @@
 {
-  "version": "v327",
+  "version": "v328",
   "changelog": {
+    "v328": [
+      "Partage : la fenêtre des réseaux sociaux (WhatsApp, Facebook, X, Telegram, LinkedIn, TikTok, Instagram, e-mail, copier le lien) s'ouvre désormais sur TOUS les appareils, téléphone et tablette compris, puis renvoie vers le réseau choisi",
+      "Partage : les messages pré-rédigés sont mieux aérés (retours à la ligne entre l'accroche, la description et l'appel à l'action) et adaptés à chaque réseau, avec un lien qui pointe au bon endroit"
+    ],
     "v327": [
       "Accueil : message de bienvenue adaptatif : « Bonjour/Bonsoir » selon l'heure locale, « cher visiteur(rice) » tant qu'il n'y a pas de profil (ton prénom une fois le profil créé), et un clin d'œil « cher veilleur » si tu te connectes en pleine nuit"
     ],
