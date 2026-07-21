@@ -1,6 +1,11 @@
 {
-  "version": "v293",
+  "version": "v294",
   "changelog": {
+    "v294": [
+      "Écran de chargement : le motif traditionnel du site apparaît désormais en fond, adapté au mode clair ou sombre",
+      "Onglets Transcrire, Traduire, Explorer et Demander : hauteur légèrement réduite pour un ensemble plus compact",
+      "En anglais, les états d'envoi d'une contribution (envoyée, en attente) s'affichent désormais bien dans la langue de l'interface"
+    ],
     "v293": [
       "Compatibilité avec les anciens iPhone (Safari ancien) : les boutons, cadres et popups qui apparaissaient parfois vides (contour seul) s'affichent désormais correctement avec un fond plein"
     ],

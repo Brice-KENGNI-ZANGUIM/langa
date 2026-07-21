@@ -553,7 +553,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   border: 1px solid color-mix(in srgb, var(--acc) 40%, var(--border));
   background: radial-gradient(130% 80% at 50% -20%, color-mix(in srgb, var(--acc) 18%, transparent), transparent 62%),
     color-mix(in srgb, var(--acc) 10%, var(--panel)); color: var(--text);
-  padding: 10px 18px; border-radius: 12px; cursor: pointer; font: inherit; font-size: 1.12rem;   /* hauteur -5% */
+  padding: 8.7px 18px; border-radius: 12px; cursor: pointer; font: inherit; font-size: 1.12rem;   /* hauteur -5% (padding vertical seul) */
   font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 9px;
   box-shadow: 0 0 26px -14px var(--acc), inset 0 1px 0 var(--card-sheen), 0 2px 8px -4px rgba(0,0,0,.28);
   transition: color .15s ease, background .15s ease, box-shadow .2s ease, border-color .2s ease, transform .12s ease;
@@ -615,7 +615,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   /* Ensemble icône + libellé CENTRÉ dans chaque cadre ; icône et texte agrandis.
      Gap et marges resserrés pour laisser toute la place au libellé (aucune troncature). */
   .nav-tab { flex: 1 1 0; min-width: 0; justify-content: center;
-    gap: 2px; padding: 8px 0; font-size: .6rem; border-radius: 11px; }
+    gap: 2px; padding: 7px 0; font-size: .6rem; border-radius: 11px; }
   .nav-tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
   /* Icônes calibrées une à une pour une même hauteur apparente, sans débordement.
      Les glyphes larges (mégaphone) sont resserrés pour ne pas rogner le libellé. */
@@ -3060,9 +3060,23 @@ body.kb-docked .field--consent {
    Visible d'emblée (posé dans le HTML), retiré en fin d'init par hideAppLoader().
    Anneau conique aux couleurs de la marque qui tourne autour du logo qui respire. */
 .app-loader { position: fixed; inset: 0; z-index: 9999; display: grid; place-items: center;
-  gap: 18px; align-content: center;
+  gap: 18px; align-content: center; overflow: hidden;
   background: radial-gradient(120% 90% at 50% 32%, var(--panel), var(--bg));
   transition: opacity .5s ease, visibility .5s ease; }
+/* Même trame Ndop que le fond du site (.bg-motif), posée SOUS le logo/anneau, adaptée clair/sombre.
+   Un voile radial (::after) fond les bords vers le centre pour garder le logo bien détaché. */
+.app-loader::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: url("icons/bg-pattern-light.jpg") center top / 520px auto repeat; opacity: .17; }
+:root[data-theme="dark"] .app-loader::before { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .40; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .app-loader::before { background-image: url("icons/bg-pattern-dark.jpg"); opacity: .34; } }
+.app-loader::after {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 42%, transparent, var(--bg) 72%);
+  background: radial-gradient(120% 90% at 50% 42%,
+    color-mix(in srgb, var(--bg) 55%, transparent),
+    color-mix(in srgb, var(--bg) 88%, transparent) 70%, var(--bg)); }
+.app-loader-mark, .app-loader-txt { position: relative; z-index: 1; }
 .app-loader--hide { opacity: 0; visibility: hidden; pointer-events: none; }
 .app-loader-mark { position: relative; width: 262px; height: 262px; display: grid; place-items: center; }
 .app-loader-mark img { width: 168px; height: 168px; border-radius: 44px;

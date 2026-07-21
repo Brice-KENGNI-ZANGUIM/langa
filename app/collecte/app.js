@@ -31,7 +31,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v293";
+const APP_VERSION = "v294";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -4250,10 +4250,10 @@ function itemHtml(it, confirmed) {
     `</div>` +
     `<div class="item-side">` +
     (confirmed
-      ? `<span class="badge badge--sent" title="Confirmée présente dans la base">✓ envoyée</span>`
-      : `<span class="badge badge--local" title="Pas encore confirmée dans la base">⟳ en attente</span>` +
-        `<button class="mini" data-resend="${it.client_id}" title="Renvoyer maintenant">↻</button>`) +
-    `<button class="mini" data-del="${it.client_id}" title="Supprimer">✕</button>` +
+      ? `<span class="badge badge--sent" title="${t("send.badge.sent.t")}">${t("send.badge.sent")}</span>`
+      : `<span class="badge badge--local" title="${t("send.badge.pending.t")}">${t("send.badge.pending")}</span>` +
+        `<button class="mini" data-resend="${it.client_id}" title="${t("send.resend.t")}">↻</button>`) +
+    `<button class="mini" data-del="${it.client_id}" title="${t("send.del.t")}">✕</button>` +
     `</div>`;
 }
 
