@@ -314,6 +314,13 @@
           <p id="profile-lock" class="lock-hint" hidden data-i18n="profile.lock">🔒 Complète tous les champs obligatoires
             (marqués <span class="req">*</span>) pour continuer.</p>
         </div>
+        <!-- COUCHE 3 (réversibilité) : l'utilisateur peut CORRIGER la langue d'une de ses
+             propres contributions si elle a été mal étiquetée (jeton de propriété requis). -->
+        <div id="my-contribs" class="my-contribs" hidden>
+          <h3 class="mc-title" data-i18n="mc.title">Mes contributions envoyées</h3>
+          <p class="mc-hint" data-i18n="mc.hint">Si la langue d'une contribution est incorrecte, corrige-la ici.</p>
+          <div id="mc-list" class="mc-list"></div>
+        </div>
       </div>
     </section>
 

@@ -10,7 +10,7 @@ import { reconcile, checkServer, serverStats, modeGoogle, browseLibrary,
   fetchLanguages, declareLanguage, declareUser, fetchDriveAudio,
   proposeMerge, respondMerge, mergesForDevice, fetchNotifications,
   fetchRequests, fetchRequestsToTranslate, postRequest, postAnswer, translateWord,
-  submitTestimonial, fetchTestimonials } from "./sync.js";
+  submitTestimonial, fetchTestimonials, updateContribution } from "./sync.js";
 import { PROPOSITIONS } from "./propositions.js";
 import { BUGS } from "./bugs.js";
 import { CONFIG } from "./config.js";
@@ -31,7 +31,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v302";
+const APP_VERSION = "v303";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1481,6 +1481,60 @@ function openProfile(edit) {
   $("#btn-profile-continue").textContent = edit ? t("profile.save") : t("profile.continue");
   showView("profile");
   updateProfileGate();
+  renderMyContributions();   // Couche 3 : liste de ses contributions envoyées (correction de langue)
+}
+
+/** COUCHE 3 — contributions ENVOYÉES par cet appareil (base locale ; server_id présent = confirmée),
+    avec correction de la langue mal étiquetée. Source = DB local (le browse local ne sert que des
+    exemples). La correction passe par le jeton de propriété (fail-closed côté backend). */
+async function renderMyContributions() {
+  const host = $("#my-contribs"), list = $("#mc-list");
+  if (!host || !list) return;
+  let items = [];
+  try { items = (await DB.all()).filter((r) => r && r.server_id && ((r.source_text || "").trim() || (r.target_text || "").trim())); }
+  catch (e) { items = []; }
+  if (!items.length) { host.hidden = true; list.innerHTML = ""; return; }
+  items.sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
+  const langs = visibleLanguages(knownLanguages());
+  list.innerHTML = items.slice(0, 100).map((r) => {
+    const cur = canonLangId(r.langue || entryLang(r));
+    const opts = langs.map((l) => `<option value="${escapeHtml(l.id)}"${canonLangId(l.id) === cur ? " selected" : ""}>${escapeHtml(l.nom)}</option>`).join("");
+    const w = (r.source_text || "").trim(), tr = (r.target_text || "").trim();
+    const label = escapeHtml(w) + (tr ? ' <span class="mc-arrow">→</span> ' + escapeHtml(tr) : "");
+    return `<div class="mc-item" data-sid="${escapeHtml(String(r.server_id))}">
+      <div class="mc-word">${label || t("mc.audio")}</div>
+      <div class="mc-edit">
+        <label class="mc-lang"><span data-i18n="mc.lang">Langue</span>
+          <select class="mc-lang-sel">${opts}</select></label>
+        <button type="button" class="btn mc-save" data-i18n="mc.save">Corriger</button>
+      </div>
+    </div>`;
+  }).join("");
+  host.hidden = false;
+  refreshEnhancedSelects();   // habille les <select> comme le reste
+}
+async function _mcSave(sid, newLid, itemEl) {
+  const lid = canonLangId(newLid);
+  let rec = null;
+  try { rec = (await DB.all()).find((r) => String(r.server_id) === String(sid)); } catch (e) { rec = null; }
+  if (!rec || !lid) { toast(t("mc.err"), "err"); return; }
+  const orient = dirOrient(rec.direction);
+  const patch = {
+    langue: lid,
+    direction: orient === "l2fr" ? lid + "2fr" : "fr2" + lid,
+    source_lang: orient === "l2fr" ? lid : "fr",
+    target_lang: orient === "l2fr" ? "fr" : lid,
+  };
+  const btn = itemEl && itemEl.querySelector(".mc-save");
+  if (btn) btn.disabled = true;
+  let r = null;
+  try { r = await updateContribution({ id: String(sid), device_id: deviceId(), owner_token: ownerToken(), patch }); }
+  catch (e) { r = null; }
+  if (btn) btn.disabled = false;
+  if (!r || r.ok === false) { toast(t("mc.err"), "err"); return; }
+  try { Object.assign(rec, patch); await DB.put(rec); } catch (e) { /* copie locale best-effort */ }
+  toast(t("mc.saved"), "ok");
+  renderMyContributions();
 }
 
 /** Remonte le PROFIL courant vers la base (best-effort, offline-safe) : tout profil
@@ -5647,6 +5701,14 @@ function initEvents() {
   // Sélecteur de langue (header) + déclaration d'une nouvelle langue.
   const langChip = $("#lang-chip"); if (langChip) langChip.addEventListener("click", openLangChoice);
   const ldSubmit = $("#ld-submit"); if (ldSubmit) ldSubmit.addEventListener("click", submitDeclareLang);
+  // Couche 3 : correction de la langue d'une de SES contributions (délégation de clic).
+  const mcList = $("#mc-list");
+  if (mcList) mcList.addEventListener("click", (e) => {
+    const b = e.target.closest(".mc-save"); if (!b) return;
+    const item = b.closest(".mc-item"); if (!item) return;
+    const sel = item.querySelector(".mc-lang-sel");
+    _mcSave(item.dataset.sid, sel ? sel.value : "", item);
+  });
   // Suggestions de langues proches EN DIRECT à la saisie (anti-doublon).
   ["#ld-nom", "#ld-region", "#ld-pays", "#ld-autonyme", "#ld-alias"].forEach((s) => {
     const e = $(s); if (e) e.addEventListener("input", onDeclareInput);

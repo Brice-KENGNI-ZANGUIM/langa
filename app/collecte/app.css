@@ -536,6 +536,19 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   50%      { box-shadow: 0 0 18px 1px var(--gold), inset 0 0 0 2px rgba(34,211,238,.75), inset 0 0 9px 0 var(--cyan); }
 }
 .profile-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 18px; }
+/* COUCHE 3 — « Mes contributions envoyées » : correction de la langue mal étiquetée. */
+.my-contribs { margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--border); }
+.my-contribs[hidden] { display: none; }
+.mc-title { margin: 0 0 4px; font-size: 1.02rem; }
+.mc-hint { margin: 0 0 12px; color: var(--muted); font-size: .88rem; }
+.mc-list { display: flex; flex-direction: column; gap: 10px; }
+.mc-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
+  padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
+.mc-word { font-weight: 600; min-width: 0; }
+.mc-arrow { color: var(--cyan); }
+.mc-edit { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.mc-lang { display: flex; align-items: center; gap: 6px; font-size: .85rem; color: var(--muted); }
+.mc-save { padding: 6px 14px; font-size: .85rem; }
 .app-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .welcome { color: var(--cyan); font-weight: 600; font-size: .95rem; }
 .mini-profile {
@@ -556,7 +569,7 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 /* MOBILE/TABLETTE : la marge négative desktop provoquait un CHEVAUCHEMENT des onglets sur les
    boutons du header (layout empilé, pas la grille du desktop). Placée APRÈS la base pour gagner
    la cascade : petit écart POSITIF, aucun recouvrement. */
-@media (max-width: 900px) { .main-nav { margin-top: -16px; } }   /* écart onglets = écart entre les 2 lignes du header (~20px), sans recouvrement */
+@media (max-width: 900px) { .main-nav { margin-top: 12px; } }   /* mobile : écart POSITIF (~20px = écart entre les 2 lignes du header), jamais de recouvrement */
 .main-nav[hidden] { display: none; }
 /* Onglets : chaque bouton porte SA couleur d'activité (contour + fond teinté + halo),
    IDENTIQUE sur PC et téléphone. Sur PC ils s'étirent pour remplir la largeur dédiée
