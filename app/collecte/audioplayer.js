@@ -82,6 +82,8 @@ const SVG = {
   pause: '<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="5" width="4.2" height="14" rx="1.4"/><rect x="13.8" y="5" width="4.2" height="14" rx="1.4"/></svg>',
   vol: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 8.5a4 4 0 0 1 0 7" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
   mute: '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9v6h4l5 4V5L8 9H4z"/><path d="M16 9l5 6M21 9l-5 6" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>',
+  // Spinner de chargement (arc qui tourne) : montré tant que l'audio n'est pas prêt à jouer.
+  spin: '<svg viewBox="0 0 24 24" class="aplayer-spin" aria-hidden="true"><path d="M12 3a9 9 0 1 0 9 9" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>',
 };
 
 /**
@@ -108,6 +110,7 @@ export function mountAudioPlayer(box, audio) {
     '<div class="aplayer-mid">' +
       '<canvas class="aplayer-wave" role="slider" tabindex="0" aria-label="Position de lecture" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"></canvas>' +
       '<div class="aplayer-time"><span class="aplayer-cur">0:00</span><span class="aplayer-sep">/</span><span class="aplayer-dur">--:--</span></div>' +
+      '<span class="aplayer-loading" aria-hidden="true">Chargement…</span>' +
     "</div>" +
     '<div class="aplayer-vol">' +
       '<button type="button" class="aplayer-mute" aria-label="Couper le son">' + SVG.vol + "</button>" +
@@ -360,11 +363,23 @@ export function mountAudioPlayer(box, audio) {
   function startLoop() { if (!raf && !REDUCED) raf = requestAnimationFrame(loop); }
   function stopLoop() { if (raf) cancelAnimationFrame(raf); raf = 0; clearWater(); draw(); }
 
+  // --- État de CHARGEMENT : tant que l'audio n'est pas prêt à jouer (fetch réseau depuis le
+  //     Drive, quelques secondes), on le signale clairement (spinner + onde grisée + « Chargement… »)
+  //     au lieu de laisser croire que le bouton est mort. Piloté par les VRAIS évènements média.
+  let _loading = false, _wantPlay = false;
+  function setLoading(on) {
+    if (_loading === on) return;
+    _loading = on;
+    ui.classList.toggle("is-loading", on);
+    canvas.setAttribute("aria-busy", on ? "true" : "false");
+    syncPlayIcon();
+  }
   // --- Évènements audio → UI ---
   const syncPlayIcon = () => {
     const playing = !audio.paused && !audio.ended;
-    playBtn.innerHTML = '<span class="aplayer-ring"></span>' + (playing ? SVG.pause : SVG.play);
-    playBtn.setAttribute("aria-label", playing ? "Pause" : "Lire");
+    const icon = _loading ? SVG.spin : (playing ? SVG.pause : SVG.play);
+    playBtn.innerHTML = '<span class="aplayer-ring"></span>' + icon;
+    playBtn.setAttribute("aria-label", _loading ? "Chargement…" : (playing ? "Pause" : "Lire"));
     ui.classList.toggle("is-playing", playing);
   };
   // Durée FIABLE : les enregistrements WebM/Opus (MediaRecorder) annoncent souvent une
@@ -397,15 +412,27 @@ export function mountAudioPlayer(box, audio) {
     if (audio._acx && audio._acx.state === "suspended") { try { audio._acx.resume(); } catch (e) { /* ok */ } }
     syncPlayIcon(); startLoop();
   });
-  audio.addEventListener("pause", () => { syncPlayIcon(); stopLoop(); });
-  audio.addEventListener("ended", () => { syncPlayIcon(); stopLoop(); curEl.textContent = fmtTime(DUR()); });
+  audio.addEventListener("pause", () => { _wantPlay = false; setLoading(false); syncPlayIcon(); stopLoop(); });
+  audio.addEventListener("ended", () => { _wantPlay = false; setLoading(false); syncPlayIcon(); stopLoop(); curEl.textContent = fmtTime(DUR()); });
+  // Chargement : l'audio met du temps à devenir jouable → on montre l'attente, on la lève dès
+  // que la lecture démarre réellement (`playing`) ou que l'audio est prêt (`canplay`).
+  audio.addEventListener("waiting", () => { if (_wantPlay || !audio.paused) setLoading(true); });
+  audio.addEventListener("stalled", () => { if (_wantPlay || !audio.paused) setLoading(true); });
+  audio.addEventListener("playing", () => { _wantPlay = false; setLoading(false); });
+  audio.addEventListener("canplay", () => { if (!_wantPlay) setLoading(false); });
+  audio.addEventListener("error", () => { _wantPlay = false; setLoading(false); });
   if (DUR() > 0) durEl.textContent = fmtTime(DUR());
 
   // --- Commandes ---
   playBtn.addEventListener("click", () => {
     // Un seul lecteur à la fois : coupe les autres.
     document.querySelectorAll("audio.aplayer-native").forEach((a) => { if (a !== audio) a.pause(); });
-    if (audio.paused) audio.play().catch(() => {}); else audio.pause();
+    if (audio.paused) {
+      // Pas encore prêt à jouer → on affiche tout de suite l'attente (le clic n'est pas « mort »).
+      if (audio.readyState < 3) { _wantPlay = true; setLoading(true); }
+      const pr = audio.play();
+      if (pr && pr.then) pr.catch(() => { _wantPlay = false; setLoading(false); });
+    } else audio.pause();
   });
   const seekAt = (clientX) => {
     const r = canvas.getBoundingClientRect();

@@ -1044,9 +1044,35 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 @keyframes aplayerPulse { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.35); opacity: 0; } }
 .aplayer-play:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
 /* Zone centrale : onde + minuteur */
-.aplayer-mid { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.aplayer-mid { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .aplayer-wave { width: 100%; height: clamp(34px, 9vw, 46px); display: block; cursor: pointer; touch-action: none; border-radius: 6px; }
 .aplayer-wave:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+/* --- État de CHARGEMENT de l'audio (fetch réseau avant d'être jouable) --- */
+/* Spinner sur le bouton play */
+.aplayer-spin { animation: aplayer-rot .8s linear infinite; transform-origin: 12px 12px; }
+@keyframes aplayer-rot { to { transform: rotate(360deg); } }
+.aplayer.is-loading .aplayer-play { cursor: progress; }
+/* Onde grisée + curseur d'attente pendant le chargement */
+.aplayer.is-loading .aplayer-wave { opacity: .32; cursor: progress; pointer-events: none; }
+/* Étiquette « Chargement… » centrée sur l'onde */
+.aplayer-loading { display: none; }
+.aplayer.is-loading .aplayer-loading {
+  display: inline-flex; align-items: center; gap: 7px; position: absolute; z-index: 2;
+  left: 50%; top: clamp(17px, 4.5vw, 23px); transform: translate(-50%, -50%);
+  padding: 4px 11px; border-radius: 999px; font-size: .74rem; font-weight: 600; letter-spacing: .01em;
+  color: var(--text); background: color-mix(in srgb, var(--cyan) 14%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--cyan) 45%, var(--border));
+  box-shadow: 0 4px 16px -8px var(--cyan); white-space: nowrap; pointer-events: none;
+}
+.aplayer.is-loading .aplayer-loading::before {
+  content: ""; width: 11px; height: 11px; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--cyan) 40%, transparent); border-top-color: var(--cyan);
+  animation: aplayer-rot .7s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aplayer-spin, .aplayer.is-loading .aplayer-loading::before { animation-duration: 1.6s; }
+}
 .aplayer-time { display: flex; gap: 5px; font-size: .74rem; color: var(--muted);
   font-variant-numeric: tabular-nums; letter-spacing: .01em; }
 .aplayer-cur { color: var(--cyan); font-weight: 700; }

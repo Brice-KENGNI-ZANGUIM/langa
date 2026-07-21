@@ -1,6 +1,10 @@
 {
-  "version": "v264",
+  "version": "v265",
   "changelog": {
+    "v265": [
+      "Lecteur audio : pendant que le son se charge, un indicateur clair (bouton en rotation, onde gris\u00e9e et mention Chargement) montre qu'il faut patienter, au lieu de laisser croire que le bouton ne r\u00e9pond pas",
+      "D\u00e9cor de fond plus vivant : une lueur douce balaie lentement le motif Ndop"
+    ],
     "v264": [
       "Onde audio en enveloppe de fils : une multitude de barres verticales ultra-fines et denses tracent l'enveloppe du son (comme la forme d'onde de la banni\u00e8re Explorer), qui respire dans le temps et s'anime au passage du curseur"
     ],
