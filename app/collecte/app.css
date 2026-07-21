@@ -886,7 +886,9 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   border-radius: 999px; padding: 3px 10px; }
 .exp-contrib-item b { color: var(--text); font-weight: 800; margin-left: 2px; }
 .lang-declare { margin-top: 16px; }
-.lang-declare h3 { margin: 0 0 4px; color: var(--text); }
+/* Illustration d'en-tête du formulaire de déclaration (illustration fournie, détourée). */
+.lang-declare-illus { display: block; width: 132px; height: 132px; object-fit: contain; margin: 2px auto 6px; }
+.lang-declare h3 { margin: 0 0 4px; color: var(--text); text-align: center; }
 .lang-declare-hint { margin: 0 0 6px; color: var(--muted); font-size: .86rem; }
 .lang-declare-req { margin: 0 0 12px; color: var(--muted); font-size: .82rem; }
 .lang-declare-actions { display: flex; gap: 12px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
