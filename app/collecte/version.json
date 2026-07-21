@@ -1,6 +1,9 @@
 {
-  "version": "v285",
+  "version": "v286",
   "changelog": {
+    "v286": [
+      "Bouton clair/sombre : illustration africaine soleil et lune (à la place des symboles génériques) ; bannières Traduire et Transcrire mises à jour depuis les visuels fournis"
+    ],
     "v285": [
       "Icônes africaines partout : les boutons du header (case à toit de chaume, tam-tam, calebasse, lanterne, scarabée Ndop, buste au foulard) et les icônes de notifications passent en illustrations ancrées dans l'univers africain ; la page À propos reçoit une vraie bannière multigénérationnelle en tête, l'illustration des trois générations descendant au milieu de la page"
     ],
