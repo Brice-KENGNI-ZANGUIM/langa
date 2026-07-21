@@ -1,6 +1,9 @@
 {
-  "version": "v261",
+  "version": "v262",
   "changelog": {
+    "v262": [
+      "Onde audio nettement plus color\u00e9e : trois fois plus de cordes vibrantes (une trentaine), chacune d'une couleur distincte cyan, vert ou or, pour un faisceau franchement multicolore et vivant, proche des ondes lumineuses de la banni\u00e8re Transcrire"
+    ],
     "v261": [
       "Langue de la contribution rendue tr\u00e8s visible sur Traduire et Transcrire (pastille cliquable), avec une confirmation quand elle n'a pas encore \u00e9t\u00e9 valid\u00e9e ou qu'un doute d'\u00e9criture appara\u00eet : plus de risque d'enregistrer dans la mauvaise langue"
     ],

@@ -267,7 +267,9 @@ export function mountAudioPlayer(box, audio) {
       const path = new Path2D(); addBar(path, cx, half, bw);
       ctx.save();
       ctx.fillStyle = isPlayed ? played : "rgba(150,168,186,0.30)";
-      if (isPlayed) { ctx.shadowColor = green; ctx.shadowBlur = 3 + 8 * travel; ctx.globalAlpha = 0.9 + 0.1 * travel; }
+      // Halo de la MÊME teinte que la barre (au lieu d'un vert uniforme qui écrasait les couleurs)
+      // → le multicolore ressort vraiment le long de la progression.
+      if (isPlayed) { ctx.shadowColor = cyc(t * CYCLES + flowOff); ctx.shadowBlur = 2 + 7 * travel; ctx.globalAlpha = 0.92 + 0.08 * travel; }
       ctx.fill(path);
       ctx.restore();
     }
@@ -275,23 +277,28 @@ export function mountAudioPlayer(box, audio) {
     // phases différentes) qui ondulent, ENFLENT et TREMBLENT (mirage) au passage de l'onde et au
     // rythme du son. Aucune corde blanche ; dégradé cyan→vert→or, glow doux.
     ctx.lineCap = "round";
-    const grad = flowGrad();   // même dégradé multicolore que les barres, aligné sur la progression
-    const STR = 10;
+    // ~30 CORDES fines : chacune porte une COULEUR DISTINCTE de la palette (cyan→vert→or) → un
+    // faisceau franchement MULTICOLORE et entrelacé, comme les filaments lumineux qui sortent du
+    // téléphone dans la bannière Transcrire. Les couleurs S'ÉCOULENT (flowOff) et chaque corde
+    // ondule / enfle / tremble (mirage) au passage de l'onde et au rythme du son.
+    const STR = 30;
     for (let k = 0; k < STR; k++) {
-      const f = 1.6 + k * 0.85, ph = wavePhase * (0.9 + k * 0.05) + k * 1.2, dir = k % 2 ? 1 : -1;
-      const ampS = 0.26 + 0.44 * (1 - k / STR);            // faisceau : cordes plus amples au centre
+      const kk = k / STR;
+      const f = 1.3 + k * 0.42, ph = wavePhase * (0.85 + k * 0.02) + k * 0.9, dir = k % 2 ? 1 : -1;
+      const ampS = 0.16 + 0.42 * (0.55 + 0.45 * Math.sin(k * 1.7));   // amplitudes variées (faisceau vivant)
+      const col = cyc(kk * 3 + flowOff);   // 3 cycles cyan→vert→or répartis sur les 30 cordes
       ctx.beginPath();
-      for (let x = 0; x <= W; x += 3) {
+      for (let x = 0; x <= W; x += 4) {
         const tt = x / W, e = envAt(tt), travel = travelAt(tt);
-        const live = 1 + liveAmp * (0.6 + 1.4 * travel);   // enfle au passage de l'onde + au son
-        const mirage = (0.14 + liveAmp * 0.55) * travel * Math.sin(x * 0.55 + wavePhase * 8 + k) * maxA * 0.11; // TREMBLEMENT
+        const live = 1 + liveAmp * (0.6 + 1.5 * travel);   // enfle au passage de l'onde + au son
+        const mirage = (0.13 + liveAmp * 0.55) * travel * Math.sin(x * 0.5 + wavePhase * 8 + k) * maxA * 0.11; // TREMBLEMENT
         const y = midY + dir * (Math.sin(x * 0.02 * f + ph) * maxA * ampS * e * live + mirage);
         if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
-      ctx.strokeStyle = grad;
-      ctx.lineWidth = 0.9 + 0.4 * (1 - k / STR);
-      ctx.globalAlpha = 0.28 + 0.24 * (1 - k / STR);
-      ctx.shadowColor = green; ctx.shadowBlur = 6;
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 0.8 + 0.5 * (1 - kk);
+      ctx.globalAlpha = 0.30 + 0.34 * (0.5 + 0.5 * Math.sin(k * 2.1));   // opacités variées 0.3..0.64
+      ctx.shadowColor = col; ctx.shadowBlur = 4;
       ctx.stroke();
       ctx.globalAlpha = 1; ctx.shadowBlur = 0;
     }
