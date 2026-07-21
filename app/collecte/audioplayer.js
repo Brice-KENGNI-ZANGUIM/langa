@@ -251,33 +251,35 @@ export function mountAudioPlayer(box, audio) {
     const cyc = (v) => { v = ((v % 1) + 1) % 1; const s = v * 3, seg = Math.floor(s) % 3, f = s - Math.floor(s); return mixCol(pal[seg], pal[(seg + 1) % 3], f); };
     const flowGrad = () => { const g = ctx.createLinearGradient(0, 0, W, 0); const NS = 15; for (let i = 0; i <= NS; i++) { const q = i / NS; g.addColorStop(q, cyc(q * CYCLES + flowOff)); } return g; };
     const played = flowGrad();
-    const bw = 2.3, step = bw + 2.3, n = Math.max(1, Math.floor((W - 2) / step));  // barres TRÈS DENSES
+    // ENVELOPPE SONORE en FILS verticaux ULTRA-FINS et TRÈS DENSES (réf. bannière Explorer) :
+    // une multitude de barres fines comme des cheveux, symétriques autour de l'axe, dont les
+    // hauteurs tracent l'enveloppe du son (pics réels). L'enveloppe RESPIRE (fluctuation
+    // temporelle) et se renforce localement au passage du curseur.
+    const bw = 0.85, step = 1.5, n = Math.max(1, Math.floor((W - 2) / step));
     // EXCITATION PHYSIQUE localisée au CURSEUR : la vibration naît au niveau du curseur (playhead)
-    // et DÉCROÎT avec la distance en ~1/distance² (forme lorentzienne 1/(1+(d/σ)²), exactement en
-    // inverse du carré au loin). Loin du curseur → repos. Le curseur se déplaçant pendant la
-    // lecture, la zone qui vibre se PROPAGE avec lui (elle « prend naissance » au curseur, pas
-    // partout à la fois). Au repos (pause), on montre une forme douce et uniforme (rien ne tremble).
+    // et DÉCROÎT avec la distance en ~1/distance² (lorentzienne 1/(1+(d/σ)²)). Loin du curseur →
+    // repos. Le curseur se déplaçant, la zone active se PROPAGE avec lui (pas partout à la fois).
     const playing = !audio.paused && !audio.ended;
     const SIG = 0.085;
     const excite = (t) => { const d = (t - p) / SIG; return 1 / (1 + d * d); };
     const field = (t) => (playing ? excite(t) : 0.5);
+    // Deux passes (lu / non lu) remplies d'un coup : multicolore via le dégradé, et léger.
+    const playedPath = new Path2D(), restPath = new Path2D();
     for (let i = 0; i < n; i++) {
       const cx = 2 + i * step + step / 2;
       const t = cx / W, e = envAt(t);
-      const fx = field(t);
-      // Les barres n'enflent/tremblent QUE près du curseur en lecture ; ailleurs, hauteur statique.
-      const vib = 1 + (0.30 + liveAmp * 1.9) * (playing ? excite(t) : 0);
-      const half = Math.min(maxA, maxA * (0.10 + 0.90 * e) * vib);
-      const isPlayed = cx <= px;
-      const path = new Path2D(); addBar(path, cx, half, bw);
-      ctx.save();
-      ctx.fillStyle = isPlayed ? played : "rgba(150,168,186,0.30)";
-      // Halo de la MÊME teinte que la barre (multicolore le long de la progression), renforcé au
-      // voisinage du curseur (fx) → le point d'énergie se voit là où le curseur passe.
-      if (isPlayed) { ctx.shadowColor = cyc(t * CYCLES + flowOff); ctx.shadowBlur = 2 + 7 * fx; ctx.globalAlpha = 0.9 + 0.1 * fx; }
-      ctx.fill(path);
-      ctx.restore();
+      // Fluctuation temporelle de l'enveloppe (elle respire) + renfort localisé au curseur.
+      const fluct = 0.84 + 0.16 * Math.sin(t * 17 + wavePhase * 0.05) + 0.05 * Math.sin(t * 43 - wavePhase * 0.031);
+      const pulse = 1 + (0.32 + liveAmp * 1.7) * (playing ? excite(t) : 0);
+      const half = Math.max(0.6, Math.min(maxA, maxA * (0.05 + 0.95 * e) * fluct * pulse));
+      addBar(cx <= px ? playedPath : restPath, cx, half, bw);
     }
+    ctx.save(); ctx.fillStyle = "rgba(150,168,186,0.26)"; ctx.fill(restPath); ctx.restore();  // non lu : fils grisés
+    ctx.save();                                                                               // lu : enveloppe multicolore + glow
+    ctx.fillStyle = played;
+    ctx.shadowColor = cyc(0.5 + flowOff); ctx.shadowBlur = 5 + 4 * field(p);
+    ctx.fill(playedPath);
+    ctx.restore();
     // ~10 CORDES fines vibrantes PAR-DESSUS les barres : fins filaments néon tressés (fréquences /
     // phases différentes) qui ondulent, ENFLENT et TREMBLENT (mirage) au passage de l'onde et au
     // rythme du son. Aucune corde blanche ; dégradé cyan→vert→or, glow doux.
@@ -286,12 +288,12 @@ export function mountAudioPlayer(box, audio) {
     // faisceau franchement MULTICOLORE et entrelacé, comme les filaments lumineux qui sortent du
     // téléphone dans la bannière Transcrire. Les couleurs S'ÉCOULENT (flowOff) et chaque corde
     // ondule / enfle / tremble (mirage) au passage de l'onde et au rythme du son.
-    const STR = 30;
+    const STR = 12;
     for (let k = 0; k < STR; k++) {
       const kk = k / STR;
-      const f = 1.3 + k * 0.42, ph = wavePhase * (0.85 + k * 0.02) + k * 0.9, dir = k % 2 ? 1 : -1;
+      const f = 1.3 + k * 0.6, ph = wavePhase * (0.85 + k * 0.03) + k * 0.9, dir = k % 2 ? 1 : -1;
       const ampS = 0.16 + 0.42 * (0.55 + 0.45 * Math.sin(k * 1.7));   // amplitudes variées (faisceau vivant)
-      const col = cyc(kk * 3 + flowOff);   // 3 cycles cyan→vert→or répartis sur les 30 cordes
+      const col = cyc(kk * 3 + flowOff);   // cyan→vert→or répartis sur les cordes
       ctx.beginPath();
       for (let x = 0; x <= W; x += 4) {
         const tt = x / W, e = envAt(tt), fx = field(tt);
@@ -304,8 +306,8 @@ export function mountAudioPlayer(box, audio) {
         if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
       }
       ctx.strokeStyle = col;
-      ctx.lineWidth = 0.8 + 0.5 * (1 - kk);
-      ctx.globalAlpha = 0.30 + 0.34 * (0.5 + 0.5 * Math.sin(k * 2.1));   // opacités variées 0.3..0.64
+      ctx.lineWidth = 0.7 + 0.4 * (1 - kk);
+      ctx.globalAlpha = 0.14 + 0.20 * (0.5 + 0.5 * Math.sin(k * 2.1));   // subtil : l'enveloppe de fils domine
       ctx.shadowColor = col; ctx.shadowBlur = 4;
       ctx.stroke();
       ctx.globalAlpha = 1; ctx.shadowBlur = 0;

@@ -1,6 +1,9 @@
 {
-  "version": "v263",
+  "version": "v264",
   "changelog": {
+    "v264": [
+      "Onde audio en enveloppe de fils : une multitude de barres verticales ultra-fines et denses tracent l'enveloppe du son (comme la forme d'onde de la banni\u00e8re Explorer), qui respire dans le temps et s'anime au passage du curseur"
+    ],
     "v263": [
       "Onde audio plus r\u00e9aliste : les vibrations naissent au niveau du curseur de lecture et d\u00e9croissent avec la distance (seules les cordes proches du curseur bougent, les autres restent au repos) ; l'agitation se propage en suivant le curseur au lieu d'exister partout \u00e0 la fois"
     ],
