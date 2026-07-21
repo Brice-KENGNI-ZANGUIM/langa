@@ -392,6 +392,8 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
   .chips-nav .chip--btn { flex: 0 0 auto; }
   /* Icônes du header AGRANDIES sur mobile/tablette (elles étaient trop petites). */
   .chips-nav .chip--btn .chip-ico { width: 23px; height: 23px; }
+  /* Coins MOINS arrondis sur mobile (petits boutons → 8px paraissait trop « pilule »). */
+  .chips-nav .chip--btn { border-radius: 5px; }
 }
 /* Téléphone étroit : la marque et les deux pastilles d'état doivent tenir sur UNE ligne,
    avec leur libellé (« en ligne », « Drive : prêt ») et le point clignotant. */
