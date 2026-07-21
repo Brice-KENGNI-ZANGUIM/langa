@@ -2576,9 +2576,12 @@ body::after {
 
 /* ============ Page « À propos » (vraie vue de l'app, style app) ============ */
 /* Bannière hero : illustration de communauté, pleine largeur, coins arrondis + halo. */
-.about-hero { display: block; width: 100%; height: auto; border-radius: 18px; margin: 4px 0 18px;
-  border: 1px solid color-mix(in srgb, var(--cyan) 22%, var(--border));
-  box-shadow: var(--shadow-card), 0 0 46px -24px var(--cyan), inset 0 1px 0 var(--card-sheen); }
+/* Hero « À propos » traitée comme les autres bannières : pleine largeur (breakout 100vw),
+   soudée sous le header, recadrée en bandeau (cover) pour ne pas dominer la page. */
+.about-hero { display: block; width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+  margin-top: 6px; margin-bottom: 20px; height: clamp(180px, 34vw, 360px); object-fit: cover; object-position: 50% 36%;
+  border: 0; border-radius: 0; border-bottom: 2px solid color-mix(in srgb, var(--cyan) 52%, var(--gold));
+  box-shadow: 0 14px 28px -22px rgba(0,0,0,.6); }
 /* Bannière en tête de page : CONTENEUR (image entière non recadrée + accroche superposée dans
    la zone sombre de gauche). */
 /* BANNIÈRE SOUDÉE AU HEADER (2026-07-20) : pleine largeur (déborde des marges du .wrap),
