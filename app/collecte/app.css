@@ -2246,7 +2246,8 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   background: color-mix(in srgb, var(--violet) 9%, var(--panel));
   box-shadow: 0 0 16px -8px var(--violet), inset 0 1px 0 var(--card-sheen); }
 .notif--unread .notif-msg { font-weight: 600; }
-.notif-ico { flex: 0 0 auto; font-size: 1.25rem; line-height: 1.3; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+.notif-ico { flex: 0 0 auto; line-height: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+.notif-ico-img { width: 34px; height: 34px; object-fit: contain; display: block; }
 .notif-body { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .notif-msg { margin: 0; font-size: .92rem; line-height: 1.45; color: var(--text); }
 .notif-time { font-size: .74rem; color: var(--muted); }
@@ -2590,12 +2591,16 @@ body::after {
 
 /* ============ Page « À propos » (vraie vue de l'app, style app) ============ */
 /* Bannière hero : illustration de communauté, pleine largeur, coins arrondis + halo. */
-/* Hero « À propos » traitée comme les autres bannières : pleine largeur (breakout 100vw),
-   soudée sous le header, recadrée en bandeau (cover) pour ne pas dominer la page. */
+/* Bannière « À propos » comme les autres bannières : pleine largeur (breakout 100vw), soudée sous
+   le header, affichée ENTIÈREMENT (height:auto, aucune découpe : l'image 3:1 est utilisée telle quelle). */
 .about-hero { display: block; width: 100vw; margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
-  margin-top: 6px; margin-bottom: 20px; height: clamp(180px, 34vw, 360px); object-fit: cover; object-position: 50% 36%;
+  margin-top: -22px; margin-bottom: 20px; height: auto;   /* soudée sous le header, comme .page-banner */
   border: 0; border-radius: 0; border-bottom: 2px solid color-mix(in srgb, var(--cyan) 52%, var(--gold));
   box-shadow: 0 14px 28px -22px rgba(0,0,0,.6); }
+/* Illustration de MILIEU de page (les 3 générations), entre les descriptions : cadrée, arrondie. */
+.about-mid-illus { display: block; width: 100%; height: auto; border-radius: 16px; margin: 8px 0 22px;
+  border: 1px solid color-mix(in srgb, var(--cyan) 22%, var(--border));
+  box-shadow: var(--shadow-card), 0 0 40px -26px var(--cyan); }
 /* Bannière en tête de page : CONTENEUR (image entière non recadrée + accroche superposée dans
    la zone sombre de gauche). */
 /* BANNIÈRE SOUDÉE AU HEADER (2026-07-20) : pleine largeur (déborde des marges du .wrap),

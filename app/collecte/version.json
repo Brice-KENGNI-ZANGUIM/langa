@@ -1,6 +1,9 @@
 {
-  "version": "v284",
+  "version": "v285",
   "changelog": {
+    "v285": [
+      "Icônes africaines partout : les boutons du header (case à toit de chaume, tam-tam, calebasse, lanterne, scarabée Ndop, buste au foulard) et les icônes de notifications passent en illustrations ancrées dans l'univers africain ; la page À propos reçoit une vraie bannière multigénérationnelle en tête, l'illustration des trois générations descendant au milieu de la page"
+    ],
     "v284": [
       "Textes de partage entièrement personnalisés : chaque lien porte un message marketing rédigé spécifiquement pour la plateforme (conversationnel sur WhatsApp/Telegram, court sur X, professionnel sur LinkedIn, légende sur Instagram/TikTok) ET pour le contenu (page, ou une traduction/prononciation/demande précise avec le mot et la langue), avec des hashtags propres à chaque réseau"
     ],
@@ -23,118 +26,118 @@
       "Avatar du titre du profil affiché plus proprement, dans un cercle à ligne fine"
     ],
     "v278": [
-      "Les deux consentements du profil sont enregistr\u00e9s distinctement : l'accord d'usage des contributions ET l'autorisation d'afficher publiquement le nom"
+      "Les deux consentements du profil sont enregistrés distinctement : l'accord d'usage des contributions ET l'autorisation d'afficher publiquement le nom"
     ],
     "v277": [
-      "Partage par page : un bouton Partager sur chaque banni\u00e8re, et un aper\u00e7u (image + texte) adapt\u00e9 \u00e0 la page partag\u00e9e sur WhatsApp/Facebook (chaque page a son image, plus la m\u00eame pour tous les liens)"
+      "Partage par page : un bouton Partager sur chaque bannière, et un aperçu (image + texte) adapté à la page partagée sur WhatsApp/Facebook (chaque page a son image, plus la même pour tous les liens)"
     ],
     "v276": [
-      "Langues d'appartenance plus justes : plus aucune langue devin\u00e9e par d\u00e9faut ; elles ne se remplissent que par une d\u00e9claration ou une vraie contribution, et \u00e0 chaque connexion le profil se r\u00e9aligne automatiquement sur ce que la personne a r\u00e9ellement fait"
+      "Langues d'appartenance plus justes : plus aucune langue devinée par défaut ; elles ne se remplissent que par une déclaration ou une vraie contribution, et à chaque connexion le profil se réaligne automatiquement sur ce que la personne a réellement fait"
     ],
     "v275": [
-      "Outil de d\u00e9coupe audio am\u00e9lior\u00e9 : l'onde montre clairement les zones de forte amplitude (barres cyan vives), et un curseur de progression suit la lecture quand tu \u00e9coutes la s\u00e9lection"
+      "Outil de découpe audio amélioré : l'onde montre clairement les zones de forte amplitude (barres cyan vives), et un curseur de progression suit la lecture quand tu écoutes la sélection"
     ],
     "v274": [
-      "Image des popups : le fond flou derri\u00e8re l'illustration est d\u00e9sormais un voile blanc l\u00e9ger (plus assombri), plus doux et coh\u00e9rent"
+      "Image des popups : le fond flou derrière l'illustration est désormais un voile blanc léger (plus assombri), plus doux et cohérent"
     ],
     "v273": [
-      "Coh\u00e9rence africaine : l'\u00e9moji g\u00e9n\u00e9rique du titre de la page Profil est remplac\u00e9 par une vraie illustration d'avatar africain, et les \u00e9mojis \u00ab personne \u00bb de l'application prennent une carnation fonc\u00e9e"
+      "Cohérence africaine : l'émoji générique du titre de la page Profil est remplacé par une vraie illustration d'avatar africain, et les émojis « personne » de l'application prennent une carnation foncée"
     ],
     "v272": [
-      "Popups plus intelligents : quand une voix d'un autre contributeur est propos\u00e9e, le message dit clairement d'o\u00f9 elle vient (qui, et dans quelle langue) et t'invite \u00e0 l'\u00e9couter puis \u00e0 le dire dans la tienne",
-      "Image ronde des popups agrandie et mieux d\u00e9tour\u00e9e : fond flout\u00e9 opaque, on ne voit plus la carte \u00e0 travers"
+      "Popups plus intelligents : quand une voix d'un autre contributeur est proposée, le message dit clairement d'où elle vient (qui, et dans quelle langue) et t'invite à l'écouter puis à le dire dans la tienne",
+      "Image ronde des popups agrandie et mieux détourée : fond flouté opaque, on ne voit plus la carte à travers"
     ],
     "v271": [
-      "D\u00e9cor plus raffin\u00e9 : petits ornements en losange aux coins des cadres, et s\u00e9parateurs de section enrichis (fleuron central encadr\u00e9 de losanges)"
+      "Décor plus raffiné : petits ornements en losange aux coins des cadres, et séparateurs de section enrichis (fleuron central encadré de losanges)"
     ],
     "v270": [
-      "Toutes les banni\u00e8res et photos de l'application recr\u00e9\u00e9es \u00e0 partir des images d'origine en haute d\u00e9finition : rendu net et soign\u00e9 sur chaque page"
+      "Toutes les bannières et photos de l'application recréées à partir des images d'origine en haute définition : rendu net et soigné sur chaque page"
     ],
     "v269": [
-      "Outil de d\u00e9coupe de l'audio plus visible : le bouton D\u00e9couper ressort nettement, et \u00e0 l'int\u00e9rieur les boutons (rogner les silences, \u00e9couter, garder) sont plus grands et plus faciles \u00e0 toucher"
+      "Outil de découpe de l'audio plus visible : le bouton Découper ressort nettement, et à l'intérieur les boutons (rogner les silences, écouter, garder) sont plus grands et plus faciles à toucher"
     ],
     "v268": [
-      "Langues fiabilis\u00e9es : une langue d\u00e9clar\u00e9e est toujours bien enregistr\u00e9e (fini le cas o\u00f9 elle n'apparaissait pas dans la liste), et \u00e0 chaque connexion l'application compl\u00e8te automatiquement les informations manquantes d'une langue (comme le pays) sans jamais \u00e9craser ce qui existe",
-      "Illustrations en qualit\u00e9 maximale (sans perte) \u00e0 partir des images d'origine"
+      "Langues fiabilisées : une langue déclarée est toujours bien enregistrée (fini le cas où elle n'apparaissait pas dans la liste), et à chaque connexion l'application complète automatiquement les informations manquantes d'une langue (comme le pays) sans jamais écraser ce qui existe",
+      "Illustrations en qualité maximale (sans perte) à partir des images d'origine"
     ],
     "v267": [
-      "Flyer remis \u00e0 jour : nouveau nom LANGIAL, adresse langial.com et QR correspondant, fond aux motifs de l'application ; t\u00e9l\u00e9chargeable en image l\u00e9g\u00e8re ou en PDF"
+      "Flyer remis à jour : nouveau nom LANGIAL, adresse langial.com et QR correspondant, fond aux motifs de l'application ; téléchargeable en image légère ou en PDF"
     ],
     "v266": [
-      "Les popups ne se superposent plus jamais : ils s'affichent un par un, \u00e0 tour de r\u00f4le (environ une minute chacun), en boucle, jusqu'\u00e0 ce que tu cliques une action ; apr\u00e8s un rechargement ils reviennent en douceur, pas tout de suite",
-      "Illustrations des popups en version dessin\u00e9e, rondes, montrant la personne enti\u00e8re sur un fond l\u00e9g\u00e8rement flout\u00e9"
+      "Les popups ne se superposent plus jamais : ils s'affichent un par un, à tour de rôle (environ une minute chacun), en boucle, jusqu'à ce que tu cliques une action ; après un rechargement ils reviennent en douceur, pas tout de suite",
+      "Illustrations des popups en version dessinée, rondes, montrant la personne entière sur un fond légèrement flouté"
     ],
     "v265": [
-      "Lecteur audio : pendant que le son se charge, un indicateur clair (bouton en rotation, onde gris\u00e9e et mention Chargement) montre qu'il faut patienter, au lieu de laisser croire que le bouton ne r\u00e9pond pas",
-      "D\u00e9cor de fond plus vivant : une lueur douce balaie lentement le motif Ndop"
+      "Lecteur audio : pendant que le son se charge, un indicateur clair (bouton en rotation, onde grisée et mention Chargement) montre qu'il faut patienter, au lieu de laisser croire que le bouton ne répond pas",
+      "Décor de fond plus vivant : une lueur douce balaie lentement le motif Ndop"
     ],
     "v264": [
-      "Onde audio en enveloppe de fils : une multitude de barres verticales ultra-fines et denses tracent l'enveloppe du son (comme la forme d'onde de la banni\u00e8re Explorer), qui respire dans le temps et s'anime au passage du curseur"
+      "Onde audio en enveloppe de fils : une multitude de barres verticales ultra-fines et denses tracent l'enveloppe du son (comme la forme d'onde de la bannière Explorer), qui respire dans le temps et s'anime au passage du curseur"
     ],
     "v263": [
-      "Onde audio plus r\u00e9aliste : les vibrations naissent au niveau du curseur de lecture et d\u00e9croissent avec la distance (seules les cordes proches du curseur bougent, les autres restent au repos) ; l'agitation se propage en suivant le curseur au lieu d'exister partout \u00e0 la fois"
+      "Onde audio plus réaliste : les vibrations naissent au niveau du curseur de lecture et décroissent avec la distance (seules les cordes proches du curseur bougent, les autres restent au repos) ; l'agitation se propage en suivant le curseur au lieu d'exister partout à la fois"
     ],
     "v262": [
-      "Onde audio nettement plus color\u00e9e : trois fois plus de cordes vibrantes (une trentaine), chacune d'une couleur distincte cyan, vert ou or, pour un faisceau franchement multicolore et vivant, proche des ondes lumineuses de la banni\u00e8re Transcrire"
+      "Onde audio nettement plus colorée : trois fois plus de cordes vibrantes (une trentaine), chacune d'une couleur distincte cyan, vert ou or, pour un faisceau franchement multicolore et vivant, proche des ondes lumineuses de la bannière Transcrire"
     ],
     "v261": [
-      "Langue de la contribution rendue tr\u00e8s visible sur Traduire et Transcrire (pastille cliquable), avec une confirmation quand elle n'a pas encore \u00e9t\u00e9 valid\u00e9e ou qu'un doute d'\u00e9criture appara\u00eet : plus de risque d'enregistrer dans la mauvaise langue"
+      "Langue de la contribution rendue très visible sur Traduire et Transcrire (pastille cliquable), avec une confirmation quand elle n'a pas encore été validée ou qu'un doute d'écriture apparaît : plus de risque d'enregistrer dans la mauvaise langue"
     ],
     "v260": [
-      "Lecteur audio embelli : onde multicolore (cyan, vert, or) qui s'\u00e9coule le long de la lecture comme les ondes lumineuses de la banni\u00e8re, et effet de mirage o\u00f9 tout le cadre se d\u00e9forme comme dans l'eau agit\u00e9e d\u00e8s que le son brise le silence"
+      "Lecteur audio embelli : onde multicolore (cyan, vert, or) qui s'écoule le long de la lecture comme les ondes lumineuses de la bannière, et effet de mirage où tout le cadre se déforme comme dans l'eau agitée dès que le son brise le silence"
     ],
     "v259": [
-      "Banni\u00e8res illustr\u00e9es sur Traduire et Transcrire, et nouvelles images de la communaut\u00e9 int\u00e9gr\u00e9es partout (hub, popups, \u00e9tats vides), toutes recompress\u00e9es pour rester l\u00e9g\u00e8res et fluides"
+      "Bannières illustrées sur Traduire et Transcrire, et nouvelles images de la communauté intégrées partout (hub, popups, états vides), toutes recompressées pour rester légères et fluides"
     ],
     "v258": [
-      "Visite guid\u00e9e compl\u00e9t\u00e9e : la porte Demander et le centre de notifications ont d\u00e9sormais leur propre visite ; nouvelles \u00e9tapes pour la cloche de notifications, le bandeau des demandes, les boutons Ajouter une traduction ou une voix, et la recherche dans tes contributions envoy\u00e9es"
+      "Visite guidée complétée : la porte Demander et le centre de notifications ont désormais leur propre visite ; nouvelles étapes pour la cloche de notifications, le bandeau des demandes, les boutons Ajouter une traduction ou une voix, et la recherche dans tes contributions envoyées"
     ],
     "v257": [
-      "Onde d'\u00e9coute audio enrichie : barres plus denses, plus une dizaine de fines cordes lumineuses entrelac\u00e9es qui vibrent et tremblent (effet mirage) au passage de l'onde, au rythme du son r\u00e9el"
+      "Onde d'écoute audio enrichie : barres plus denses, plus une dizaine de fines cordes lumineuses entrelacées qui vibrent et tremblent (effet mirage) au passage de l'onde, au rythme du son réel"
     ],
     "v256": [
-      "Si tu \u00e9cris toi-m\u00eame un mot que tu as d\u00e9j\u00e0 trait\u00e9, l'application te pr\u00e9vient : elle grise la saisie d'une nouvelle contribution, te laisse r\u00e9\u00e9couter ou relire ta version pr\u00e9c\u00e9dente, et te propose de la refaire quand m\u00eame ou de passer \u00e0 un autre mot"
+      "Si tu écris toi-même un mot que tu as déjà traité, l'application te prévient : elle grise la saisie d'une nouvelle contribution, te laisse réécouter ou relire ta version précédente, et te propose de la refaire quand même ou de passer à un autre mot"
     ],
     "v255": [
-      "La liste de tes contributions (en bas) d\u00e9file maintenant dans son cadre au-del\u00e0 d'une dizaine d'items (fini la page interminable), et une barre de recherche permet de retrouver un mot ou une phrase que tu as d\u00e9j\u00e0 envoy\u00e9"
+      "La liste de tes contributions (en bas) défile maintenant dans son cadre au-delà d'une dizaine d'items (fini la page interminable), et une barre de recherche permet de retrouver un mot ou une phrase que tu as déjà envoyé"
     ],
     "v254": [
-      "Apr\u00e8s \u00ab Enregistrer la contribution \u00bb, l'application te ram\u00e8ne automatiquement sur le mot \u00e0 traduire/transcrire (celui propos\u00e9, ou le champ \u00e0 remplir), centr\u00e9 \u00e0 l'\u00e9cran et pr\u00eat pour le suivant"
+      "Après « Enregistrer la contribution », l'application te ramène automatiquement sur le mot à traduire/transcrire (celui proposé, ou le champ à remplir), centré à l'écran et prêt pour le suivant"
     ],
     "v253": [
-      "Nouvelle onde d'\u00e9coute audio : retour aux barres verticales (fa\u00e7on message vocal) dimensionn\u00e9es par le son r\u00e9el, partie lue en d\u00e9grad\u00e9 cyan-vert-or et partie non lue gris\u00e9e ; pendant la lecture une vibration se propage le long des barres au rythme du son (des barres statiques, d'autres qui enflent au passage) ; plus de courbe blanche"
+      "Nouvelle onde d'écoute audio : retour aux barres verticales (façon message vocal) dimensionnées par le son réel, partie lue en dégradé cyan-vert-or et partie non lue grisée ; pendant la lecture une vibration se propage le long des barres au rythme du son (des barres statiques, d'autres qui enflent au passage) ; plus de courbe blanche"
     ],
     "v252": [
-      "Traduire/Transcrire : le bouton \u00ab Ajouter\u2026 \u00bb (traduction ou transcription secondaire, optionnelle) est plac\u00e9 tout en bas, apr\u00e8s le contenu principal et juste avant \u00ab Enregistrer \u00bb ; la partie optionnelle se d\u00e9plie juste en dessous"
+      "Traduire/Transcrire : le bouton « Ajouter… » (traduction ou transcription secondaire, optionnelle) est placé tout en bas, après le contenu principal et juste avant « Enregistrer » ; la partie optionnelle se déplie juste en dessous"
     ],
     "v251": [
-      "Tous les messages courts (confirmations, alertes) s'affichent d\u00e9sormais correctement en fran\u00e7ais ET en anglais (ils \u00e9taient rest\u00e9s en fran\u00e7ais en mode anglais)"
+      "Tous les messages courts (confirmations, alertes) s'affichent désormais correctement en français ET en anglais (ils étaient restés en français en mode anglais)"
     ],
     "v250": [
-      "Correction : en Transcrire la traduction (optionnelle) est bien MASQUÉE, et en Traduire l'enregistrement audio (optionnel) est bien masqué, chacun repliable via son bouton \u00ab Ajouter\u2026 \u00bb (un r\u00e9siduel d'affichage forçait la section \u00e0 rester visible)"
+      "Correction : en Transcrire la traduction (optionnelle) est bien MASQUÉE, et en Traduire l'enregistrement audio (optionnel) est bien masqué, chacun repliable via son bouton « Ajouter… » (un résiduel d'affichage forçait la section à rester visible)"
     ],
     "v249": [
-      "Notifications plus justes : une demande pr\u00e9cise d\u00e9sormais s'il s'agit d'une traduction, d'une prononciation ou des deux, et dit \u00ab dans la langue X \u00bb (au lieu de \u00ab dans X \u00bb) ; le jalon dit \u00ab la langue X vient d'atteindre N contributions \u00bb"
+      "Notifications plus justes : une demande précise désormais s'il s'agit d'une traduction, d'une prononciation ou des deux, et dit « dans la langue X » (au lieu de « dans X ») ; le jalon dit « la langue X vient d'atteindre N contributions »"
     ],
     "v248": [
-      "Quand une activit\u00e9 demande un profil et te redirige, un message clair (style \u00ab consignes \u00bb) explique d\u00e9sormais POURQUOI : cr\u00e9diter ta contribution, situer ta variante de village, garder des donn\u00e9es fiables et sans doublon"
+      "Quand une activité demande un profil et te redirige, un message clair (style « consignes ») explique désormais POURQUOI : créditer ta contribution, situer ta variante de village, garder des données fiables et sans doublon"
     ],
     "v247": [
-      "En arrivant sur Traduire ou Transcrire, le mode \u00ab Se faire proposer un mot \u00bb est de nouveau s\u00e9lectionn\u00e9 par d\u00e9faut (tu peux toujours basculer sur \u00ab \u00c9crire moi-m\u00eame \u00bb)",
-      "Fiabilit\u00e9 des profils : plus de doublon d'utilisateur pour un m\u00eame appareil (une seule fiche par appareil, mise \u00e0 jour en place)"
+      "En arrivant sur Traduire ou Transcrire, le mode « Se faire proposer un mot » est de nouveau sélectionné par défaut (tu peux toujours basculer sur « Écrire moi-même »)",
+      "Fiabilité des profils : plus de doublon d'utilisateur pour un même appareil (une seule fiche par appareil, mise à jour en place)"
     ],
     "v246": [
-      "Traduire et Transcrire ne se ressemblent plus : sur Traduire, l'enregistrement audio (optionnel) est repli\u00e9 derri\u00e8re un bouton \u00ab Ajouter une transcription audio \u00bb ; sur Transcrire, la traduction (optionnelle) est repli\u00e9e derri\u00e8re \u00ab Ajouter une traduction \u00bb. Tu peux d\u00e9plier l'autre volet \u00e0 tout moment pour compl\u00e9ter ton mot (faire les deux)"
+      "Traduire et Transcrire ne se ressemblent plus : sur Traduire, l'enregistrement audio (optionnel) est replié derrière un bouton « Ajouter une transcription audio » ; sur Transcrire, la traduction (optionnelle) est repliée derrière « Ajouter une traduction ». Tu peux déplier l'autre volet à tout moment pour compléter ton mot (faire les deux)"
     ],
     "v245": [
-      "Lecture audio corrig\u00e9e : la dur\u00e9e affich\u00e9e redevient la VRAIE dur\u00e9e de l'enregistrement (fini les \u00ab 32 s \u00bb pour 6 s), le curseur avance en phase avec le son et atteint la fin pile \u00e0 la fin ; l'effet de vibration/mirage de l'onde au passage du curseur est renforc\u00e9 et cal\u00e9 sur le son r\u00e9el"
+      "Lecture audio corrigée : la durée affichée redevient la VRAIE durée de l'enregistrement (fini les « 32 s » pour 6 s), le curseur avance en phase avec le son et atteint la fin pile à la fin ; l'effet de vibration/mirage de l'onde au passage du curseur est renforcé et calé sur le son réel"
     ],
     "v244": [
-      "Nouvelle en-t\u00eate : les 4 espaces (Transcrire, Traduire, Explorer, Demander) sont int\u00e9gr\u00e9s au header, et l'image de banni\u00e8re de chaque page est d\u00e9sormais soud\u00e9e au bas de l'en-t\u00eate, pleine largeur, comme une bande qui fait corps avec le d\u00e9cor (fini l'effet \u00ab image pos\u00e9e \u00bb)"
+      "Nouvelle en-tête : les 4 espaces (Transcrire, Traduire, Explorer, Demander) sont intégrés au header, et l'image de bannière de chaque page est désormais soudée au bas de l'en-tête, pleine largeur, comme une bande qui fait corps avec le décor (fini l'effet « image posée »)"
     ],
     "v243": [
-      "Consignes de Traduire : le mot \u00ab \u00e0 \u00e9viter \u00bb porte un panneau \u00ab interdit \u00bb rouge et le mot \u00ab \u00e0 faire \u00bb est en vert, pour une distinction imm\u00e9diate",
-      "Pendant un enregistrement audio, le bouton \u00ab Enregistrer la contribution \u00bb est gris\u00e9 tant que l'enregistrement n'est pas arr\u00eat\u00e9 (fini la confusion avec le bouton Arr\u00eater)"
+      "Consignes de Traduire : le mot « à éviter » porte un panneau « interdit » rouge et le mot « à faire » est en vert, pour une distinction immédiate",
+      "Pendant un enregistrement audio, le bouton « Enregistrer la contribution » est grisé tant que l'enregistrement n'est pas arrêté (fini la confusion avec le bouton Arrêter)"
     ],
     "v242": [
       "Les notifications deviennent cliquables et intelligentes : une demande de traduction ou de prononciation t'emmène directement sur la bonne page avec le mot déjà en place, et dès que tu réponds la personne qui avait demandé est prévenue automatiquement. Les retours sur tes contributions ouvrent le mot concerné dans la bibliothèque",

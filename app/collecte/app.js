@@ -31,7 +31,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v284";
+const APP_VERSION = "v285";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -2668,8 +2668,10 @@ function notifPopupCta(n) {
   return t("notif.see");
 }
 function notifIcon(type) {
-  return ({ vote: "🗳️", suggestion: "✍️", milestone: "🎉", announce: "📣",
-            request: "🙋🏾", request_share: "🔗", request_answered: "🎉" })[type] || "🔔";
+  // Icônes africaines fournies (fond transparent) à la place des émojis génériques.
+  const f = ({ vote: "ni-vote", suggestion: "ni-suggestion", milestone: "ni-milestone", announce: "ni-announce",
+    request: "ni-request", request_share: "ni-share", request_answered: "ni-answered" })[type] || "ni-default";
+  return '<img class="notif-ico-img" src="icons/' + f + '.png" alt="" aria-hidden="true">';
 }
 function relTime(ts) {
   if (!ts) return "";
