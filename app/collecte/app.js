@@ -41,7 +41,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v312";
+const APP_VERSION = "v313";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -2466,7 +2466,7 @@ function startRateWord(frWord, dir) {
 }
 
 // --- Incitation à contribuer (nudge personnalisé) ---------------------------
-// Moteur UNIQUE (réutilisable plus tard pour l'envoi d'e-mails via langia.tech) :
+// Moteur UNIQUE (réutilisable plus tard pour l'envoi d'e-mails via langial.com) :
 // choisit un mot que l'utilisateur n'a PAS encore fait dans sa langue et, si
 // possible, s'appuie sur ce qu'un AUTRE contributeur a déjà partagé (référence
 // sociale) pour l'inviter à le dire à son tour.

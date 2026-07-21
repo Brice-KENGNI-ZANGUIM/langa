@@ -1,7 +1,7 @@
 // Gabarits d'e-mails TYPIQUES de LANGIAL, par cas de figure (FR/EN). Module PUR : il
 // se contente de PRODUIRE le sujet + le corps d'un e-mail à partir de données ; il
-// n'envoie RIEN. L'envoi réel est DIFFÉRÉ jusqu'à l'acquisition du domaine
-// (langia.tech) et d'un service d'e-mail ; ce module sera alors branché sur le même
+// n'envoie RIEN. L'envoi réel est DIFFÉRÉ jusqu'à la mise en place d'un service
+// d'e-mail (domaine langial.com) ; ce module sera alors branché sur le même
 // catalogue d'événements que les notifications in-app (cf. notifText dans app.js).
 //
 // Principe : un même événement peut alimenter (1) une notification in-app et
@@ -10,7 +10,7 @@
 // que s'il a consenti à l'affichage de son nom (déjà filtré en amont : `actor` vide
 // sinon). Aucune donnée personnelle d'un tiers n'est exposée.
 
-const APP_URL_DEFAULT = "https://langia.tech";
+const APP_URL_DEFAULT = "https://langial.com";
 
 function _pick(lang, fr, en) { return lang === "en" ? en : fr; }
 function _who(d, lang) { return (d.actor || "").trim() || _pick(lang, "Une personne", "Someone"); }

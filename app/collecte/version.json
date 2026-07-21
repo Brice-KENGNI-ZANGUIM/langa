@@ -1,6 +1,9 @@
 {
-  "version": "v312",
+  "version": "v313",
   "changelog": {
+    "v313": [
+      "Cohérence finale du nom LANGIAL et du domaine langial.com partout (dernières références internes mises à jour)"
+    ],
     "v312": [
       "Bouton de partage présent aussi sur la page À propos ; sur toutes les pages il est désormais encastré dans le coin inférieur de la bannière (au bord, à l'extérieur) ; titres de page alignés à gauche"
     ],
