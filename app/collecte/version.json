@@ -1,6 +1,9 @@
 {
-  "version": "v259",
+  "version": "v260",
   "changelog": {
+    "v260": [
+      "Lecteur audio embelli : onde multicolore (cyan, vert, or) qui s'\u00e9coule le long de la lecture comme les ondes lumineuses de la banni\u00e8re, et effet de mirage o\u00f9 tout le cadre se d\u00e9forme comme dans l'eau agit\u00e9e d\u00e8s que le son brise le silence"
+    ],
     "v259": [
       "Banni\u00e8res illustr\u00e9es sur Traduire et Transcrire, et nouvelles images de la communaut\u00e9 int\u00e9gr\u00e9es partout (hub, popups, \u00e9tats vides), toutes recompress\u00e9es pour rester l\u00e9g\u00e8res et fluides"
     ],

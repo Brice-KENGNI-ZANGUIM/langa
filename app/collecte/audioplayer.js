@@ -12,6 +12,42 @@
 const REDUCED = typeof matchMedia === "function" &&
   matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+/** #rrggbb → [r,g,b]. Sert au dégradé multicolore ANIMÉ (cyan→vert→or qui s'écoule). */
+function hex2rgb(h) {
+  h = (h || "").replace("#", "");
+  if (h.length === 3) h = h.split("").map((c) => c + c).join("");
+  return [parseInt(h.slice(0, 2), 16) || 0, parseInt(h.slice(2, 4), 16) || 0, parseInt(h.slice(4, 6), 16) || 0];
+}
+function mixCol(a, b, t) {
+  return "rgb(" + Math.round(a[0] + (b[0] - a[0]) * t) + "," +
+    Math.round(a[1] + (b[1] - a[1]) * t) + "," + Math.round(a[2] + (b[2] - a[2]) * t) + ")";
+}
+
+// Filtre EAU partagé (une seule définition dans le DOM) : feTurbulence + feDisplacementMap
+// déforment le cadre du lecteur comme une image vue à travers de l'eau trouble. La turbulence
+// s'anime en continu (seed + baseFrequency) ; l'AMPLITUDE de la déformation (scale) est pilotée
+// par le son en direct → nulle au silence, marquée dès que le silence est brisé.
+let _waterDisp = null, _waterTried = false;
+function ensureWaterFilter() {
+  if (_waterTried) return _waterDisp;
+  _waterTried = true;
+  if (typeof document === "undefined" || !document.body) return null;
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("aria-hidden", "true");
+  svg.style.cssText = "position:absolute;width:0;height:0;overflow:hidden;pointer-events:none";
+  svg.innerHTML =
+    '<defs><filter id="aplayer-water" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">' +
+      '<feTurbulence type="fractalNoise" baseFrequency="0.012 0.038" numOctaves="2" seed="4" result="noise">' +
+        '<animate attributeName="seed" values="2;42;2" dur="7s" repeatCount="indefinite"/>' +
+        '<animate attributeName="baseFrequency" values="0.012 0.03;0.016 0.052;0.012 0.03" dur="5s" repeatCount="indefinite"/>' +
+      "</feTurbulence>" +
+      '<feDisplacementMap in="SourceGraphic" in2="noise" scale="0" xChannelSelector="R" yChannelSelector="G"/>' +
+    "</filter></defs>";
+  document.body.appendChild(svg);
+  _waterDisp = svg.querySelector("feDisplacementMap");
+  return _waterDisp;
+}
+
 /** Durée « m:ss » ; renvoie « --:-- » si inconnue/non finie. */
 function fmtTime(s) {
   if (!isFinite(s) || s < 0) return "--:--";
@@ -206,8 +242,15 @@ export function mountAudioPlayer(box, audio) {
     ctx.save(); ctx.fillStyle = "rgba(4,9,15,0.5)"; const bp = new Path2D();
     if (bp.roundRect) bp.roundRect(0, 0, W, H, 10); else bp.rect(0, 0, W, H);
     ctx.fill(bp); ctx.restore();
-    const played = ctx.createLinearGradient(0, 0, W, 0);
-    played.addColorStop(0, cyan); played.addColorStop(0.5, green); played.addColorStop(1, gold);
+    // Dégradé MULTICOLORE COMPLEXE qui S'ÉCOULE le long de la progression (comme les ondes
+    // lumineuses sortant du téléphone dans la bannière Transcrire) : la palette cyan→vert→or
+    // est répétée CYCLES fois sur la largeur et défile doucement (flowOff), sans couture (les
+    // deux extrémités retombent sur la même couleur car CYCLES est entier).
+    const pal = [hex2rgb(cyan), hex2rgb(green), hex2rgb(gold)];
+    const flowOff = (wavePhase * 0.006) % 1, CYCLES = 3;
+    const cyc = (v) => { v = ((v % 1) + 1) % 1; const s = v * 3, seg = Math.floor(s) % 3, f = s - Math.floor(s); return mixCol(pal[seg], pal[(seg + 1) % 3], f); };
+    const flowGrad = () => { const g = ctx.createLinearGradient(0, 0, W, 0); const NS = 15; for (let i = 0; i <= NS; i++) { const q = i / NS; g.addColorStop(q, cyc(q * CYCLES + flowOff)); } return g; };
+    const played = flowGrad();
     const bw = 2.3, step = bw + 2.3, n = Math.max(1, Math.floor((W - 2) / step));  // barres TRÈS DENSES
     // Position de l'ONDE qui se propage (0→1, boucle), et sa largeur (bosse étroite).
     const wavePos = (wavePhase * 0.016) % 1, sig = 0.07;
@@ -232,8 +275,7 @@ export function mountAudioPlayer(box, audio) {
     // phases différentes) qui ondulent, ENFLENT et TREMBLENT (mirage) au passage de l'onde et au
     // rythme du son. Aucune corde blanche ; dégradé cyan→vert→or, glow doux.
     ctx.lineCap = "round";
-    const grad = ctx.createLinearGradient(0, 0, W, 0);
-    grad.addColorStop(0, cyan); grad.addColorStop(0.5, green); grad.addColorStop(1, gold);
+    const grad = flowGrad();   // même dégradé multicolore que les barres, aligné sur la progression
     const STR = 10;
     for (let k = 0; k < STR; k++) {
       const f = 1.6 + k * 0.85, ph = wavePhase * (0.9 + k * 0.05) + k * 1.2, dir = k % 2 ? 1 : -1;
@@ -269,16 +311,37 @@ export function mountAudioPlayer(box, audio) {
     else { c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
   }
 
+  // Effet EAU TROUBLE : tout le cadre du lecteur se déforme comme une image dans l'eau agitée,
+  // uniquement quand le SON BRISE LE SILENCE. `mirage` (0..1) monte vite dès qu'un son émerge
+  // (attaque) et redescend en douceur dans les blancs (relâche) → la déformation « marque » la
+  // rupture du silence sans clignoter. Coupé au repos et sous prefers-reduced-motion (coût nul).
+  const waterDisp = ensureWaterFilter();
+  let mirage = 0;
+  const SILENCE = 0.05;
+  function applyWater() {
+    if (REDUCED || !waterDisp) return;
+    const target = liveAmp > SILENCE ? Math.min(1, (liveAmp - SILENCE) / 0.22) : 0;
+    mirage += (target - mirage) * (target > mirage ? 0.34 : 0.07);
+    if (mirage > 0.02) {
+      waterDisp.setAttribute("scale", (mirage * (3 + liveAmp * 7)).toFixed(2));  // ~0..10 px
+      if (ui.style.filter !== "url(#aplayer-water)") ui.style.filter = "url(#aplayer-water)";
+    } else if (ui.style.filter) {
+      ui.style.filter = "";
+    }
+  }
+  function clearWater() { mirage = 0; if (ui.style.filter) ui.style.filter = ""; }
+
   let raf = 0;
   function loop() {
     wavePhase += 0.2;
     readLive();
+    applyWater();
     draw();
     if (!audio.paused && !audio.ended) raf = requestAnimationFrame(loop);
     else raf = 0;
   }
   function startLoop() { if (!raf && !REDUCED) raf = requestAnimationFrame(loop); }
-  function stopLoop() { if (raf) cancelAnimationFrame(raf); raf = 0; draw(); }
+  function stopLoop() { if (raf) cancelAnimationFrame(raf); raf = 0; clearWater(); draw(); }
 
   // --- Évènements audio → UI ---
   const syncPlayIcon = () => {
