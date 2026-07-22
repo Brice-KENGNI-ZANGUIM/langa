@@ -1,6 +1,10 @@
 {
-  "version": "v337",
+  "version": "v338",
   "changelog": {
+    "v338": [
+      "Mode clair : les liens du bas de page (« Les espaces », « Le projet ») redeviennent bien lisibles",
+      "Lisibilité : les phrases d'introduction posées sur le fond s'affichent désormais sur un léger cadre en verre dépoli, nettes en mode clair comme en sombre"
+    ],
     "v337": [
       "Ton historique te suit : sur un nouvel appareil, ou après avoir vidé ton navigateur, tu retrouves automatiquement tes traductions et transcriptions déjà envoyées (fini la sensation de les avoir perdues)"
     ],

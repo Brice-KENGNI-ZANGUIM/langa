@@ -12,14 +12,24 @@
 // Auteur : Brice Kengni Zanguim
 export const BUGS = [
   {
+    id: "BUG-footer-light-01", titre: "Mode clair : liens du bas de page peu lisibles (gris sur fond sombre)",
+    titre_en: "Light mode: footer links hard to read (grey on dark)",
+    description: "En mode clair, les liens du pied de page sous « Les espaces » et « Le projet » (Transcrire, Traduire, Accueil…) apparaissaient en gris foncé sur le footer sombre, quasi illisibles.",
+    description_en: "In light mode, the footer navigation links in the two columns (Transcribe, Translate, Home…) appeared dark grey on the dark footer, barely readable.",
+    statut: "resolu", severite: "mineur", zone: "Design / thème", zone_en: "Design / theme",
+    detecte_le: "2026-07-23", resolu_le: "2026-07-23", version: "v338",
+    correctif: "Le pied de page est toujours sombre : la couleur de ces liens est désormais fixée en clair (au lieu de suivre le thème), donc lisible en mode clair comme en sombre.",
+    correctif_en: "The footer is always dark: these links now use a fixed light colour (instead of following the theme), so they read well in both light and dark modes.",
+  },
+  {
     id: "BUG-U-mrvvamtx-5393", titre: "Textes peu lisibles en mode clair (hors cadre, sur le fond)",
     titre_en: "Hard-to-read texts in light mode (outside frames, over the background)",
     description: "En mode clair, certains textes placés directement sur l'arrière-plan (hors cadre), comme les phrases d'introduction des pages, manquaient de contraste et étaient difficiles à lire.",
     description_en: "In light mode, some texts placed directly over the background (outside frames), such as page intro lines, lacked contrast and were hard to read.",
     statut: "resolu", severite: "majeur", zone: "Interface", zone_en: "Interface",
     detecte_le: "2026-07-22", resolu_le: "2026-07-22", version: "v335",
-    correctif: "En mode clair, ces textes sur fond sont désormais assombris, légèrement épaissis et détachés du motif par un léger halo : le contraste est nettement meilleur, sans réduire la visibilité du décor.",
-    correctif_en: "In light mode, these on-background texts are now darker, slightly bolder and lifted off the pattern by a subtle halo: much better contrast, without reducing the decorative pattern's visibility.",
+    correctif: "Ces textes d'introduction posés sur le fond reçoivent désormais un discret cadre en verre dépoli (léger flou) qui masque le motif derrière eux : la lecture est nette dans les deux modes, sans toucher au décor.",
+    correctif_en: "These on-background intro texts now sit on a subtle frosted-glass panel (slight blur) that masks the pattern behind them: crisp reading in both modes, without changing the decoration.",
   },
   {
     id: "BUG-U-mrvvdqx9-517", titre: "Trop peu de choix dans « Zone concernée » du signalement",

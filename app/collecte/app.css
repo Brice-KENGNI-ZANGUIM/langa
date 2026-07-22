@@ -1494,13 +1494,15 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 /* Contributeur */
 .contrib summary { cursor: pointer; font-weight: 600; }
 .hint-inline { color: var(--muted); font-weight: 400; font-size: .8rem; }
-.contrib-why { color: var(--muted); font-size: .8rem; line-height: 1.5; margin: 10px 0 2px; }
-/* #3 (mode clair) : ce texte est posé DIRECTEMENT sur la trame Ndop clairci (hors cadre).
-   En clair on l'assombrit vers --text, on l'épaissit et on ajoute un léger halo blanc pour le
-   détacher du motif → nettement plus lisible, sans toucher au décor (voulu bien visible). */
-:root[data-theme="light"] .contrib-why { color: color-mix(in srgb, var(--text) 82%, var(--muted));
-  font-weight: 500; text-shadow: 0 1px 0 rgba(255, 255, 255, .55); }
-/* Idem pour les textes de statut/vide d'Explorer, eux aussi posés sur le fond. */
+/* #3 (texte d'intro posé DIRECTEMENT sur la trame Ndop, hors cadre) : cadre discret + FLOU (verre
+   dépoli) derrière le texte → masque le motif et rend la lecture nette, dans les DEUX modes, sans
+   toucher au décor voulu (idée Brice). Repli propre si backdrop-filter indisponible (fond translucide). */
+.contrib-why { color: var(--text); font-size: .8rem; line-height: 1.5; margin: 12px 0 4px;
+  background: rgba(10, 16, 24, .38); border: 1px solid var(--border); border-radius: 12px;
+  padding: 10px 14px; backdrop-filter: blur(7px) saturate(1.12); -webkit-backdrop-filter: blur(7px) saturate(1.12); }
+:root[data-theme="light"] .contrib-why { color: color-mix(in srgb, var(--text) 84%, var(--muted));
+  background: rgba(255, 255, 255, .64); border-color: rgba(18, 42, 74, .12); }
+/* Statut/vide d'Explorer (aussi sur le fond) : renforcés en clair pour rester lisibles. */
 :root[data-theme="light"] .explore-status,
 :root[data-theme="light"] .explore-empty { color: color-mix(in srgb, var(--text) 70%, var(--muted)); }
 .req { color: var(--red); font-weight: 700; }
@@ -2657,6 +2659,9 @@ body::after {
 .site-footer { position: relative; overflow: hidden;
   background: url("icons/footer-bg.jpg") center / cover no-repeat;
   --text: #e9f0f6; --muted: #8b97a6; --cyan: #22d3ee; --green: #34d399; --gold: #e5c07b;
+  /* #footer clair : le footer est TOUJOURS sombre → --label doit rester CLAIR (sinon liens
+     « Les espaces » / « Le projet » en gris foncé sur fond sombre = illisibles en mode clair). */
+  --label: #c3cfdd;
   --violet: #a78bfa; --border: #253041; --panel: #12181f; --panel2: #1a2230;
   /* Logos réseaux du footer : fond BLANC dans les deux modes (les marques ressortent). */
   --share-ico-bg: #ffffff; --share-ico-bd: rgba(0,0,0,.14); }
