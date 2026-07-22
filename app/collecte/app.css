@@ -3233,6 +3233,34 @@ textarea, [contenteditable="true"] { cursor: text; }
 #btn-mic-test, .tr-guide-open { animation-name: ngCtaGlowLite !important; }   /* glow CTA moins intense */
 
 /* ============================================================================
+   CTA de DÉCOUVERTE mis EN LUMIÈRE (le regard doit y aller tout seul). Halo pulsé
+   plus marqué que le glow standard, pour les actions qu'un nouvel utilisateur risque
+   de rater : « Ajouter ma langue » (page Langues), « Laisser un mot » (À propos).
+   Halo = box-shadow (couleur de l'action), pulsé en douceur ; coupé en reduced-motion.
+   ============================================================================ */
+@keyframes ngCtaSpotlight {
+  0%, 100% { box-shadow: 0 6px 20px -10px var(--spot-a), 0 0 0 0 var(--spot-a); }
+  50%      { box-shadow: 0 6px 22px -8px var(--spot-b), 0 0 26px 2px var(--spot-b); }
+}
+/* « Ajouter ma langue » : halo doré fort (bat le glow lite via animation !important). */
+.lang-declare-cta {
+  --spot-a: rgba(229, 192, 123, .55); --spot-b: rgba(229, 192, 123, .85);
+  animation: ngCtaSpotlight 2.2s ease-in-out infinite !important;
+}
+/* « Laisser un mot » : passe d'un bouton fantôme discret à un CTA vert mis en évidence. */
+#testi-open {
+  --spot-a: rgba(52, 211, 153, .5); --spot-b: rgba(52, 211, 153, .82);
+  border-color: var(--green); color: var(--green); font-weight: 700;
+  background: color-mix(in srgb, var(--green) 13%, transparent);
+  animation: ngCtaSpotlight 2.4s ease-in-out infinite;
+}
+#testi-open:hover { background: color-mix(in srgb, var(--green) 24%, transparent);
+  color: var(--green); border-color: var(--green); transform: translateY(-1px); }
+@media (prefers-reduced-motion: reduce) {
+  .lang-declare-cta, #testi-open { animation: none !important; }
+}
+
+/* ============================================================================
    COMPATIBILITÉ SAFARI ANCIEN (< 16.2) : color-mix() n'y est PAS supporté → toute
    déclaration « background: color-mix(...) » devient invalide et laisse le fond VIDE
    (transparent), et les bordures color-mix disparaissent. Ce bloc, appliqué UNIQUEMENT

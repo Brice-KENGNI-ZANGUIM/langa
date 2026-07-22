@@ -1,6 +1,11 @@
 {
-  "version": "v338",
+  "version": "v339",
   "changelog": {
+    "v339": [
+      "Le bouton pour ajouter sa langue (page Langues) est désormais bien plus visible, avec un halo lumineux, pour qu'on le remarque tout de suite si sa langue n'est pas dans la liste",
+      "Renommage plus parlant : « Ajouter ma langue » au lieu de « Déclarer ma langue » (partout dans l'app)",
+      "Le bouton « Laisser un mot sur LANGIAL » est mis en évidence (fini le bouton discret)"
+    ],
     "v338": [
       "Mode clair : les liens du bas de page (« Les espaces », « Le projet ») redeviennent bien lisibles",
       "Lisibilité : les phrases d'introduction posées sur le fond s'affichent désormais sur un léger cadre en verre dépoli, nettes en mode clair comme en sombre"

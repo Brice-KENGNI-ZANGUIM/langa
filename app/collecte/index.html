@@ -146,7 +146,7 @@
       <div class="hub-head"><h2 class="view-title" id="lang-title" data-i18n="lang.title">Choisis ta langue 🌍</h2></div>
       <p class="hub-vision" data-i18n="lang.intro">LANGIAL est une plateforme communautaire où chaque langue s'enrichit
         des traductions et des voix de celles et ceux qui la parlent. Choisis la tienne, ou
-        déclare-la si elle n'existe pas encore, pour que d'autres puissent l'enrichir avec toi.</p>
+        ajoute-la si elle n'existe pas encore, pour que d'autres puissent l'enrichir avec toi.</p>
       <!-- Contrôles TOUJOURS visibles en haut (avant la grille) : recherche + le
            bouton « déclarer ma langue » bien distinct, pour ne pas avoir à faire
            défiler toute la liste (utile quand les langues se multiplient). -->
@@ -162,17 +162,17 @@
         </div>
         <button id="lang-declare-btn" class="lang-btn lang-declare-cta" type="button">
           <span aria-hidden="true">➕</span>
-          <span data-i18n="lang.add">Déclarer ma langue</span>
+          <span data-i18n="lang.add">Ajouter ma langue</span>
         </button>
       </div>
       <!-- Jumelage de langues (Phase C) : confirmations en attente pour ce contributeur
            et suggestions de fusion de doublons probables. Rempli par renderMergePanel(). -->
       <div id="lang-merge-panel" class="lang-merge-panel" hidden></div>
       <div id="lang-grid" class="lang-grid" role="list"></div>
-      <p id="lang-empty" class="lang-empty" data-i18n="lang.search.none" hidden>Aucune langue ne correspond. Tu peux la déclarer ci-dessus.</p>
+      <p id="lang-empty" class="lang-empty" data-i18n="lang.search.none" hidden>Aucune langue ne correspond. Tu peux l'ajouter ci-dessus.</p>
       <div id="lang-declare" class="lang-declare card" hidden>
         <img class="lang-declare-illus" src="icons/declare-lang-illus.webp" alt="" aria-hidden="true" loading="lazy" />
-        <h3 data-i18n="lang.declare.h">➕ Déclarer une nouvelle langue</h3>
+        <h3 data-i18n="lang.declare.h">➕ Ajouter une nouvelle langue</h3>
         <p class="lang-declare-hint" data-i18n="lang.declare.hint">Elle deviendra aussitôt visible et enrichissable par toute la communauté.</p>
         <p class="lang-declare-req" data-i18n-html="lang.f.reqlegend">Les champs marqués <span class="req">*</span> sont obligatoires.</p>
         <!-- OBLIGATOIRES d'abord (marqués d'une * rouge), puis les OPTIONNELS. -->
@@ -936,7 +936,7 @@
             <input id="req-note" type="text" maxlength="280" data-i18n-ph="req.f.note.ph" placeholder="ex. ma grand-mère m'a dit ce mot, je n'ai pas compris" autocomplete="off" />
           </label>
           <div id="req-newlang" class="field field--wide req-newlang" hidden>
-            <span data-i18n="req.newlang.h">Déclarer la langue (elle n'est pas dans la liste)</span>
+            <span data-i18n="req.newlang.h">Ajouter la langue (elle n'est pas dans la liste)</span>
             <div class="req-newlang-grid">
               <input id="req-nl-nom" type="text" maxlength="40" data-i18n-ph="req.newlang.nom" placeholder="Nom de la langue (ex. Ghomala)" autocomplete="off" />
               <input id="req-nl-region" type="text" maxlength="80" data-i18n-ph="req.newlang.region" placeholder="Région / localité" autocomplete="off" />
