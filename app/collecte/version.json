@@ -1,6 +1,10 @@
 {
-  "version": "v340",
+  "version": "v341",
   "changelog": {
+    "v341": [
+      "Nouveau slogan : « Nos langues, un héritage à transmettre » (sur l'accueil)",
+      "Toute la communication (accroche d'accueil, textes de partage) est réorientée autour de 3 idées fortes : l'héritage laissé aux générations futures, la transmission par ceux qui savent, et l'apprentissage par tous"
+    ],
     "v340": [
       "Chaque langue a un sigle court (≤ 3 lettres, ex. NGE, SWA, BAS) affiché sur sa carte ; toute langue nouvellement ajoutée en reçoit un automatiquement",
       "Bouton « Laisser un mot sur LANGIAL » : fond plein bien visible (correction du fond transparent qui le rendait trop discret)"

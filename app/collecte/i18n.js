@@ -259,8 +259,8 @@ export const STR = {
   "hub.open": { fr: "Ouvrir →", en: "Open →" },
 
   // — Accueil (contenu) —
-  "hub.vision": { fr: "LANGIAL numérise <b>nos langues d'Afrique</b>, texte et voix. Le <b>ngiemboon</b> est la plus avancée, avec son clavier dédié ; d'autres langues sont déjà ouvertes et tu peux ajouter la tienne. Tout le monde peut y contribuer.",
-                  en: "LANGIAL digitizes <b>our African languages</b>, text and voice. <b>Ngiemboon</b> is the most advanced, with its dedicated keyboard; other languages are already open and you can add your own. Everyone can contribute." },
+  "hub.vision": { fr: "LANGIAL, c'est un <b>héritage</b> qu'on laisse à ceux qui viendront : les mots et les voix de <b>nos langues d'Afrique</b>, pour qu'elles ne s'oublient jamais. Ici, ceux qui savent les <b>transmettent</b>, et chacun <b>apprend</b> des autres. Le <b>ngiemboon</b> est la langue la plus avancée, mais tu peux ajouter la tienne et la faire vivre.",
+                  en: "LANGIAL is a <b>legacy</b> for those who come after us: the words and voices of <b>our African languages</b>, so they are never forgotten. Here, those who know <b>pass them on</b>, and everyone <b>learns</b> from others. <b>Ngiemboon</b> is the most advanced language, but you can add your own and bring it to life." },
   "hub.greeting": { fr: "que veux-tu faire ?", en: "what would you like to do?" },
   "hub.greeting.hello": { fr: "Bonjour", en: "Hello" },
   "hub.greeting.solo": { fr: "Que veux-tu faire ? 👋🏾", en: "What would you like to do? 👋🏾" },
@@ -831,7 +831,7 @@ export const STR = {
   "update.wip": { fr: "Mise à jour…", en: "Updating…" },
   "loader.txt": { fr: "Chargement…", en: "Loading…" },
   "pb.home.eye": { fr: "Bienvenue", en: "Welcome" },
-  "pb.home.title": { fr: "Donne une voix à ta langue", en: "Give your language a voice" },
+  "pb.home.title": { fr: "Nos langues, un héritage à transmettre", en: "Our languages, a heritage to pass on" },
   "pb.profile.eye": { fr: "Ton profil", en: "Your profile" },
   "pb.profile.title": { fr: "Fais-toi connaître", en: "Introduce yourself" },
   "pb.bugs.eye": { fr: "Amélioration continue", en: "Continuous improvement" },
