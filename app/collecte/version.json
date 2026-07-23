@@ -1,6 +1,9 @@
 {
-  "version": "v358",
+  "version": "v359",
   "changelog": {
+    "v359": [
+      "Les textes de Bugs, Notifications, Demander et Ajouter une langue portent aussi la voix de LANGIAL (transmission, héritage)"
+    ],
     "v358": [
       "Les boutons de navigation (logo, cartes d'accueil, onglets, menu) sont maintenant de vrais liens : clic droit -> ouvrir dans un nouvel onglet fonctionne enfin, comme sur les autres sites",
       "Le slogan « Nos langues, un héritage à transmettre » apparaît sous le nom LANGIAL dans le header et le pied de page"

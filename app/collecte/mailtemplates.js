@@ -104,8 +104,8 @@ const GENERATORS = {
       body: [
         _hello(d, lang), "",
         _pick(lang,
-          `Une personne cherche à savoir comment on dit « ${mot} »${langue ? ` en ${langue}` : ""}. Tu parles cette langue : quelques secondes suffisent pour l'aider, en écrivant le mot ou en prêtant ta voix.`,
-          `Someone wants to know how to say “${mot}”${langue ? ` in ${langue}` : ""}. You speak this language: a few seconds are enough to help, by writing the word or lending your voice.`),
+          `Une personne cherche à savoir comment on dit « ${mot} »${langue ? ` en ${langue}` : ""}. Tu parles cette langue : tu es de ceux qui savent, et quelques secondes suffisent pour transmettre, en écrivant le mot ou en prêtant ta voix.`,
+          `Someone wants to know how to say “${mot}”${langue ? ` in ${langue}` : ""}. You speak this language: you're one of those who know, and a few seconds are enough to pass it on, by writing the word or lending your voice.`),
       ].join("\n"),
     };
   },
