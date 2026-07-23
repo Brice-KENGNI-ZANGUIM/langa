@@ -29,6 +29,15 @@ import { reconcile, checkServer, serverStats, modeGoogle, browseLibrary,
 // Traduire/Transcrire (et l'incitation), jamais pour le rendu de l'accueil. On l'importe
 // DYNAMIQUEMENT → son parse ne bloque plus le premier rendu (démarrage nettement plus rapide,
 // surtout sur mobile). Il est préchargé en arrière-plan juste après l'affichage de l'accueil.
+// Planifie un travail non critique pour le moment où le navigateur est VRAIMENT inactif
+// (adaptatif au device, ne dispute pas le fil principal au rendu en cours), avec un filet de
+// sécurité (timeout) pour ne jamais reporter indéfiniment sur un appareil chargé. Repli sur
+// setTimeout si l'API n'existe pas (anciens navigateurs). Réutilisé partout où un délai fixe
+// (ex. setTimeout(…, 700)) devinait un instant plutôt que de le mesurer.
+function idleInit(cb, timeoutMs) {
+  if (window.requestIdleCallback) window.requestIdleCallback(cb, { timeout: timeoutMs || 1200 });
+  else setTimeout(cb, 1);
+}
 let PROPOSITIONS = null;
 let _propsPromise = null;
 function ensurePropositions() {
@@ -55,7 +64,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v359";
+const APP_VERSION = "v360";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1931,9 +1940,9 @@ function enterHub() {
   // Précharge le corpus (import dynamique de propositions.js, 1,37 Mo) HORS du chemin critique,
   // une fois l'accueil affiché : le premier rendu reste rapide, et le corpus est prêt quand
   // l'utilisateur ouvre Traduire/Transcrire ou quand l'incitation se déclenche.
-  setTimeout(() => { ensurePropositions().catch(() => {}); }, 700);
+  idleInit(() => { ensurePropositions().catch(() => {}); }, 1500);
   // Mot du jour (R10) : peuplé en async une fois le corpus prêt (n'impacte pas le 1er rendu).
-  setTimeout(() => { renderWordOfDay().catch(() => {}); }, 750);
+  idleInit(() => { renderWordOfDay().catch(() => {}); }, 1500);
   // Notifications : rafraîchit la pastille, puis propose un popup si une activité
   // récente concerne l'utilisateur (prioritaire sur l'invitation générique).
   setTimeout(() => { refreshNotifs().then(() => { try { maybeShowNotifPopup(); } catch (e) { /* ok */ } }); }, 1000);
@@ -6359,8 +6368,7 @@ async function main() {
   // Init NON critique différée APRÈS le 1er rendu (allège la longue tâche de boot) : visite guidée,
   // outil de découpe audio, barres de partage. Aucun ne démarre seul (uniquement des écouteurs /
   // du DOM à la demande) → sûr à monter un instant plus tard.
-  const _idleInit = window.requestIdleCallback ? (cb) => window.requestIdleCallback(cb, { timeout: 1200 }) : (cb) => setTimeout(cb, 1);
-  _idleInit(() => { try { initTour(); initTrim(); mountShareBars(); } catch (e) { /* jamais bloquant */ } });
+  idleInit(() => { try { initTour(); initTrim(); mountShareBars(); } catch (e) { /* jamais bloquant */ } });
   refreshLanguages();   // best-effort : récupère les langues déclarées par la communauté
   micStatus();
   $("#send-hint").textContent = t("send.hint");

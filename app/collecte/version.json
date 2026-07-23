@@ -1,6 +1,9 @@
 {
-  "version": "v359",
+  "version": "v360",
   "changelog": {
+    "v360": [
+      "Petite amélioration technique : le préchargement en arrière-plan (corpus, mot du jour) s'adapte désormais à la charge réelle de l'appareil au lieu d'un délai fixe"
+    ],
     "v359": [
       "Les textes de Bugs, Notifications, Demander et Ajouter une langue portent aussi la voix de LANGIAL (transmission, héritage)"
     ],
