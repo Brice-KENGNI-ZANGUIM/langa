@@ -1,6 +1,9 @@
 {
-  "version": "v349",
+  "version": "v350",
   "changelog": {
+    "v350": [
+      "Bascule vers une nouvelle base de collecte (nouvelle adresse serveur)"
+    ],
     "v349": [
       "Explorer : les \"Principaux contributeurs\" comptent par PERSONNE, pas par nom : chaque contributeur cumule toutes ses contributions (même faites depuis un autre appareil) et rien ne se perd",
       "Tous les contributeurs apparaissent au classement, y compris ceux qui n'ont pas autorisé l'affichage de leur nom (montrés en \"anonyme\" avec leur nombre, jamais leur nom)"

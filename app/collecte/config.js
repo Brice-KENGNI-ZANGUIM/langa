@@ -10,7 +10,7 @@
 // proposée au contributeur (+ option « Autre » pour saisir un choix libre).
 // Édite librement cette liste (ajoute les quartiers de Bangang, etc.).
 export const CONFIG = {
-  ENDPOINT: "https://script.google.com/macros/s/AKfycbzvRWT-ZMzI3rK4TjkFgeOr7pv2iQ-GFU9MSfxS3MHST8DxWazbknT4vId7LSSHLnNPmQ/exec",
+  ENDPOINT: "https://script.google.com/macros/s/AKfycbx_jaNM030YgVI2RIw0p6wY8lXDMztf7xNY3TqX6TkPxxIGCjtuU6jfN0EJVIQ8PvTa/exec",
   INDICATIF_DEFAUT: "+237", // Cameroun
   // Indicatifs téléphoniques (drapeau + pays + code). Cameroun en tête.
   INDICATIFS: [
