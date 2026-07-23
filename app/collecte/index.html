@@ -781,8 +781,8 @@
           <h3 data-i18n="about.share.h">Partager le projet</h3>
           <p data-i18n="about.share.p">Fais découvrir LANGIAL autour de toi : montre le QR ou partage le flyer</p>
           <div class="about-links">
-            <a class="about-share-btn" href="./flyer/flyer.jpg" target="_blank" rel="noopener" download data-i18n="about.share.img">⬇ Flyer (image)</a>
-            <a class="about-share-btn" href="./flyer/flyer.pdf" target="_blank" rel="noopener" download data-i18n="about.share.pdf">⬇ Flyer (PDF)</a>
+            <a id="flyer-img-link" class="about-share-btn" href="./flyer/flyer.jpg" target="_blank" rel="noopener" download data-i18n="about.share.img">⬇ Flyer (image)</a>
+            <a id="flyer-pdf-link" class="about-share-btn" href="./flyer/flyer.pdf" target="_blank" rel="noopener" download data-i18n="about.share.pdf">⬇ Flyer (PDF)</a>
             <button id="present-open" class="about-share-btn about-share-btn--main ico-btn" type="button" data-i18n="about.share.present">Mode présentation</button>
           </div>
           <p class="share-lead" data-i18n="share.lead">Ou partage le lien en un clic :</p>
@@ -1117,31 +1117,31 @@
   <!-- Mode présentation : affichage plein écran pour montrer le projet (événements,
        réunions). Grand logo + nom + les trois activités + QR pour contribuer. -->
   <div id="present" class="present" hidden>
-    <button id="present-close" class="present-close" type="button" aria-label="Quitter la présentation">✕</button>
+    <button id="present-close" class="present-close" type="button" data-i18n-title="present.close" aria-label="Quitter la présentation">✕</button>
     <div class="present-inner">
       <div class="present-brand">
         <img src="./icons/logo.svg" alt="LANGIAL" class="present-logo" width="150" height="150" />
         <h1 class="present-title">LANGIAL</h1>
-        <p class="present-tag">Numériser les langues d'Afrique, texte et voix</p>
+        <p class="present-tag" data-i18n="present.tag">Nos langues, un héritage à transmettre</p>
       </div>
       <div class="present-acts">
-        <div class="present-act"><img class="present-ico" src="./icons/act-translate.svg" alt="" aria-hidden="true"><b>Traduire</b><span>mots et phrases</span></div>
-        <div class="present-act"><img class="present-ico" src="./icons/mic-real.png" alt="" aria-hidden="true"><b>Transcrire</b><span>ta voix, ta langue</span></div>
-        <div class="present-act"><img class="present-ico" src="./icons/act-explore.svg" alt="" aria-hidden="true"><b>Explorer</b><span>la bibliothèque commune</span></div>
+        <div class="present-act"><img class="present-ico" src="./icons/act-translate.svg" alt="" aria-hidden="true"><b data-i18n="hub.card.translate">Traduire</b><span data-i18n="present.act.translate">transmets ta langue</span></div>
+        <div class="present-act"><img class="present-ico" src="./icons/mic-real.png" alt="" aria-hidden="true"><b data-i18n="hub.card.transcribe">Transcrire</b><span data-i18n="present.act.transcribe">laisse ta voix en héritage</span></div>
+        <div class="present-act"><img class="present-ico" src="./icons/act-explore.svg" alt="" aria-hidden="true"><b data-i18n="hub.card.explore">Explorer</b><span data-i18n="present.act.explore">apprends des autres</span></div>
       </div>
       <div class="present-cta">
-        <div class="present-scan">Scanne pour contribuer</div>
+        <div class="present-scan" data-i18n="present.scan">Scanne pour participer</div>
         <img class="present-qr" src="./flyer/qr.svg" alt="QR code pour ouvrir l'application" />
         <div class="present-url-wrap">
-          <span class="present-url-label">Ou ouvre l'adresse :</span>
+          <span class="present-url-label" data-i18n="present.url">Ou ouvre l'adresse :</span>
           <a class="present-url" href="https://langial.com/"
              target="_blank" rel="noopener">langial.com</a>
         </div>
         <div class="present-stat" id="present-stat"></div>
       </div>
       <div class="present-tools">
-        <button id="present-dl-png" class="btn present-dl" type="button">⤓ Télécharger en image</button>
-        <button id="present-dl-pdf" class="btn present-dl" type="button">⤓ Télécharger en PDF</button>
+        <button id="present-dl-png" class="btn present-dl" type="button" data-i18n="present.dl.png">⤓ Télécharger en image</button>
+        <button id="present-dl-pdf" class="btn present-dl" type="button" data-i18n="present.dl.pdf">⤓ Télécharger en PDF</button>
       </div>
       <div class="present-share share-mount" id="share-present"></div>
     </div>

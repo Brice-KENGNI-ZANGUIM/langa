@@ -55,7 +55,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v344";
+const APP_VERSION = "v345";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -4567,9 +4567,20 @@ function updateCreditUI() {
 
 /** Thème clair/sombre — clair par défaut ; choix mémorisé et appliqué dès le
     <head> (le bouton ne fait qu'inverser). */
+/** #flyer bilingue : sert la bonne version du flyer selon la LANGUE (FR/EN) ET le THÈME
+    (clair/sombre) de l'utilisateur → flyer[-en][-clair].jpg/.pdf. */
+function updateFlyerLinks() {
+  const en = getUiLang() === "en";
+  const light = document.documentElement.getAttribute("data-theme") === "light";
+  const base = "./flyer/flyer" + (en ? "-en" : "") + (light ? "-clair" : "");
+  const img = $("#flyer-img-link"), pdf = $("#flyer-pdf-link");
+  if (img) img.href = base + ".jpg";
+  if (pdf) pdf.href = base + ".pdf";
+}
 function applyTheme(mode) {
   document.documentElement.setAttribute("data-theme", mode);
   try { localStorage.setItem("ng-theme", mode); } catch (e) { /* stockage indispo */ }
+  updateFlyerLinks();   // le flyer téléchargeable suit le thème (et la langue)
   const btn = $("#theme-toggle");
   if (btn) {
     btn.dataset.active = mode;   // capsule ☀|🌙 : la moitié du mode actif est colorée
@@ -6058,6 +6069,7 @@ async function main() {
   initPropCategories();
   applyI18n();       // langue d'INTERFACE (FR/EN) sur tout le DOM statique marqué —
                      // AVANT d'habiller les <select> pour qu'ils prennent la bonne langue
+  updateFlyerLinks();   // flyer téléchargeable dans la langue + le thème de l'utilisateur
   if (getUiLang() === "en") await ensureSourceEn();   // équivalents FR→EN prêts avant le 1er rendu (jamais de FR affiché à un anglophone)
   initSelectAutoEnhance();                // habille TOUS les <select> (auto, présents + futurs)
   initEvents();

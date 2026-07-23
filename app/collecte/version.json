@@ -1,6 +1,10 @@
 {
-  "version": "v344",
+  "version": "v345",
   "changelog": {
+    "v345": [
+      "Le flyer se télécharge désormais dans TA langue (français ou anglais) ET ton thème (clair ou sombre)",
+      "Le mode présentation s'affiche dans ta langue et porte le slogan « Nos langues, un héritage à transmettre »"
+    ],
     "v344": [
       "Popups d'invitation et page Explorer réécrits dans l'esprit transmission / héritage / apprentissage (« transmets-le dans la tienne », « laisse-le en héritage », « apprends de la communauté »)"
     ],
