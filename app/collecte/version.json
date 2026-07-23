@@ -1,6 +1,10 @@
 {
-  "version": "v348",
+  "version": "v349",
   "changelog": {
+    "v349": [
+      "Explorer : les \"Principaux contributeurs\" comptent par PERSONNE, pas par nom : chaque contributeur cumule toutes ses contributions (même faites depuis un autre appareil) et rien ne se perd",
+      "Tous les contributeurs apparaissent au classement, y compris ceux qui n'ont pas autorisé l'affichage de leur nom (montrés en \"anonyme\" avec leur nombre, jamais leur nom)"
+    ],
     "v348": [
       "Les cadres de saisie (mot, traduction, voix) ont un fond plein bien visible : fini l'effet \"cadre vide\" (un fond invalide les rendait transparents)",
       "Les textes d'accueil de Traduire et Transcrire parlent d'abord du sens : transmettre sa langue, léguer sa voix, l'héritage qu'on apprend ensemble"

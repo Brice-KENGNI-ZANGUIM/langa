@@ -55,7 +55,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v348";
+const APP_VERSION = "v349";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1805,8 +1805,16 @@ async function computeLangStats() {
       if (!((e.source_text && e.source_text.trim()) || (e.target_text && e.target_text.trim()) || isPlayable(e.audio_url))) continue;
       const s = by[lid] || (by[lid] = { count: 0, contrib: {} });
       s.count++;
+      // Agrégation par PERSONNE (person_id), pas par chaîne de nom : toutes les contributions
+      // d'une personne se cumulent, même faites depuis un autre appareil. Le nom public opt-in
+      // (credit, dérivé de la personne par le backend) sert d'affichage. (Repli name pré-déploiement.)
       const name = (e.credit || "").trim();   // nom PUBLIC opt-in uniquement (jamais de PII)
-      if (name) s.contrib[name] = (s.contrib[name] || 0) + 1;
+      const pid = (e.person_id && String(e.person_id).trim()) || (name ? "n:" + name : "");
+      if (pid && name) {
+        const c = s.contrib[pid] || (s.contrib[pid] = { name, k: 0 });
+        c.k++;
+        if (!c.name) c.name = name;
+      }
     }
     _langStats = by;
   } catch (e) { _langStats = _langStats || {}; }
@@ -1827,14 +1835,29 @@ function langStatHtml(id) {
 /** Principaux contributeurs (top 5, avec leur nombre) de la LANGUE COURANTE, depuis les
     entrees d'Explorer. Seuls les noms publics opt-in (credit) sont affiches. HTML sur. */
 function topContributorsHtml() {
+  // Agrégation par PERSONNE (person_id) : toutes les contributions d'une personne se cumulent,
+  // même faites depuis un autre appareil ou d'abord enregistrées sans nom (le backend dérive le
+  // credit de la personne canonique = héritage). Repli sur le nom si pas de person_id (pré-déploiement).
+  // On inclut AUSSI les contributeurs sans nom public (consentement décoché) : ils apparaissent
+  // avec leur nombre sous le libellé « anonyme » (jamais leur nom, on respecte leur choix), pour
+  // que le classement reflète TOUS les contributeurs, pas seulement ceux qui ont autorisé leur nom.
   const freq = {};
+  let anonSeq = 0;
   for (const e of (_exploreEntries || [])) {
     const name = (e.credit || "").trim();
-    if (name) freq[name] = (freq[name] || 0) + 1;
+    // clé de personne : person_id si présent, sinon le nom ; à défaut, chaque entrée anonyme
+    // non identifiable compte pour elle-même (repli pré-déploiement, sans person_id ni nom).
+    const pid = (e.person_id && String(e.person_id).trim()) || (name ? "n:" + name : "a:" + (anonSeq++));
+    const f = freq[pid] || (freq[pid] = { name: "", k: 0 });
+    f.k++;
+    if (!f.name && name) f.name = name;
   }
-  const top = Object.entries(freq).sort((a, b) => b[1] - a[1]).slice(0, 5);
+  const top = Object.values(freq).sort((a, b) => b.k - a.k).slice(0, 6);
   if (!top.length) return "";
-  const list = top.map(([name, k]) => `<span class="exp-contrib-item">${escapeHtml(name)} <b>${k}</b></span>`).join("");
+  const list = top.map(({ name, k }) => {
+    const label = name ? escapeHtml(name) : `<i>${t("exp.anon")}</i>`;
+    return `<span class="exp-contrib-item">${label} <b>${k}</b></span>`;
+  }).join("");
   return `<div class="exp-contrib"><span class="exp-contrib-lbl">✍️ ${t("exp.topcontrib")}</span>${list}</div>`;
 }
 /** Peint la grille des langues connues (graine + déclarées) + la carte « déclarer ». */
