@@ -1,6 +1,9 @@
 {
-  "version": "v361",
+  "version": "v362",
   "changelog": {
+    "v362": [
+      "Même principe que les notifications, étendu au témoignage : si tu en as déjà laissé un sur un appareil, on ne te le redemande plus sur un autre"
+    ],
     "v361": [
       "Correctif visuel : les 3 pastilles du header (version/en ligne/DB) avaient perdu leur couleur, et le slogan sous LANGIAL ne s'affichait pas",
       "Notifications : lire une notification sur un appareil la marque lue pour toujours, sur tous tes appareils (avant, l'état ne vivait que sur l'appareil utilisé)"

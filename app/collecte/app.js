@@ -64,7 +64,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v361";
+const APP_VERSION = "v362";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1619,6 +1619,10 @@ async function rehydrateMyContributions() {
   let res = null;
   try { res = await fetchMyContributions({ device_id: deviceId(), owner_hash, device_pubkey, contributeur: c }); }
   catch (e) { res = null; }
+  // TÉMOIGNAGE DÉJÀ LAISSÉ : PAR PERSONNE (tous ses appareils), pas par appareil (Brice
+  // 2026-07-23 : ne plus jamais redemander sur un 2e mobile ce qui est déjà fait sur le 1er).
+  // Le serveur fait autorité ; on synchronise juste le drapeau local pour un accès instantané.
+  if (res && res.testimonial_done) { try { localStorage.setItem(TESTI_DONE_KEY, "1"); } catch (e) { /* ok */ } }
   if (res && Array.isArray(res.contributions) && res.contributions.length) {
     let known = new Set();
     try { known = new Set((await DB.all()).map((r) => String(r.server_id || ""))); } catch (e) { /* ok */ }
