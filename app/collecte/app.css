@@ -567,7 +567,13 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 .my-contribs[hidden] { display: none; }
 .mc-title { margin: 0 0 4px; font-size: 1.02rem; }
 .mc-hint { margin: 0 0 12px; color: var(--muted); font-size: .88rem; }
-.mc-list { display: flex; flex-direction: column; gap: 10px; }
+.mc-count { color: var(--muted); font-weight: 600; font-size: .92rem; }
+.mc-search { width: 100%; box-sizing: border-box; margin: 0 0 12px; padding: 9px 12px; border-radius: 10px;
+  border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: .9rem; }
+.mc-search:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan) 22%, transparent); }
+/* Liste bornée + défilement interne : reste fluide même avec des milliers de contributions. */
+.mc-list { display: flex; flex-direction: column; gap: 10px; max-height: 360px; overflow-y: auto; padding-right: 4px; }
+.mc-more, .mc-empty { color: var(--muted); font-size: .82rem; text-align: center; padding: 8px 4px; }
 .mc-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
   padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
 .mc-word { font-weight: 600; min-width: 0; }

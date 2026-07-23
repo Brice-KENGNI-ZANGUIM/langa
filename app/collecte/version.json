@@ -1,6 +1,9 @@
 {
-  "version": "v350",
+  "version": "v351",
   "changelog": {
+    "v351": [
+      "Profil : la liste de tes contributions affiche leur nombre, défile sans envahir la page, et a une zone de recherche pour retrouver un mot précis"
+    ],
     "v350": [
       "Bascule vers une nouvelle base de collecte (nouvelle adresse serveur)"
     ],

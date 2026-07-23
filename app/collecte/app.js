@@ -55,7 +55,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v350";
+const APP_VERSION = "v351";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1633,16 +1633,42 @@ async function rehydrateMyContributions() {
 /** COUCHE 3 — contributions ENVOYÉES par cet appareil (base locale ; server_id présent = confirmée),
     avec correction de la langue mal étiquetée. Source = DB local (le browse local ne sert que des
     exemples). La correction passe par le jeton de propriété (fail-closed côté backend). */
+let _mcItems = [];
+let _mcSearchWired = false;
 async function renderMyContributions() {
   const host = $("#my-contribs"), list = $("#mc-list");
   if (!host || !list) return;
   let items = [];
   try { items = (await DB.all()).filter((r) => r && r.server_id && ((r.source_text || "").trim() || (r.target_text || "").trim())); }
   catch (e) { items = []; }
-  if (!items.length) { host.hidden = true; list.innerHTML = ""; return; }
+  const cnt = $("#mc-count");
+  if (!items.length) { host.hidden = true; list.innerHTML = ""; _mcItems = []; if (cnt) cnt.textContent = ""; return; }
   items.sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
+  _mcItems = items;
+  host.hidden = false;
+  // La recherche est câblée UNE fois. Le champ vit hors de #mc-list, donc son focus survit au repaint ;
+  // keepScroll garde la position de défilement (règle : une action « même page » ne bouge pas le focus).
+  if (!_mcSearchWired) {
+    const s = $("#mc-search");
+    if (s) { s.addEventListener("input", () => keepScroll(() => _mcPaint(s.value))); _mcSearchWired = true; }
+  }
+  _mcPaint($("#mc-search") ? $("#mc-search").value : "");
+}
+/** Peint la liste filtrée + met à jour le compteur. Plafonnée (CAP) pour rester fluide même avec
+    des milliers de contributions ; au-delà, la recherche permet de retrouver un mot précis. */
+function _mcPaint(q) {
+  const list = $("#mc-list"); if (!list) return;
+  const query = (q || "").trim().toLowerCase();
+  const all = _mcItems || [];
+  const matches = query
+    ? all.filter((r) => ((r.source_text || "") + " " + (r.target_text || "")).toLowerCase().includes(query))
+    : all;
+  const cnt = $("#mc-count");
+  if (cnt) cnt.textContent = query ? "(" + ti("mc.count.match", { n: matches.length, total: all.length }) + ")" : "(" + all.length + ")";
+  const CAP = 300;
+  const shown = matches.slice(0, CAP);
   const langs = visibleLanguages(knownLanguages());
-  list.innerHTML = items.slice(0, 100).map((r) => {
+  list.innerHTML = shown.map((r) => {
     const cur = canonLangId(r.langue || entryLang(r));
     const opts = langs.map((l) => `<option value="${escapeHtml(l.id)}"${canonLangId(l.id) === cur ? " selected" : ""}>${escapeHtml(l.nom)}</option>`).join("");
     const w = (r.source_text || "").trim(), tr = (r.target_text || "").trim();
@@ -1655,8 +1681,9 @@ async function renderMyContributions() {
         <button type="button" class="btn mc-save" data-i18n="mc.save">Corriger</button>
       </div>
     </div>`;
-  }).join("");
-  host.hidden = false;
+  }).join("")
+    + (query && !matches.length ? `<div class="mc-empty">${escapeHtml(t("mc.noresult"))}</div>` : "")
+    + (matches.length > CAP ? `<div class="mc-more">${escapeHtml(ti("mc.more", { n: CAP, total: matches.length }))}</div>` : "");
   refreshEnhancedSelects();   // habille les <select> comme le reste
 }
 async function _mcSave(sid, newLid, itemEl) {
