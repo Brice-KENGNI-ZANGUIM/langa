@@ -1,6 +1,10 @@
 {
-  "version": "v353",
+  "version": "v354",
   "changelog": {
+    "v354": [
+      "Profil : le bouton Corriger la langue fonctionne désormais depuis n'importe quel appareil (fini le \"correction impossible\")",
+      "Profil : chaque contribution indique si c'est une prononciation et/ou une traduction, avec un bouton Écouter pour la voix"
+    ],
     "v353": [
       "Les contributeurs déjà inscrits sont désormais crédités publiquement par leur prénom (appliqué une fois, modifiable à tout moment dans le profil)"
     ],

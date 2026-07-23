@@ -55,7 +55,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v353";
+const APP_VERSION = "v354";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1673,8 +1673,17 @@ function _mcPaint(q) {
     const opts = langs.map((l) => `<option value="${escapeHtml(l.id)}"${canonLangId(l.id) === cur ? " selected" : ""}>${escapeHtml(l.nom)}</option>`).join("");
     const w = (r.source_text || "").trim(), tr = (r.target_text || "").trim();
     const label = escapeHtml(w) + (tr ? ' <span class="mc-arrow">→</span> ' + escapeHtml(tr) : "");
+    const hasAudio = isPlayable(r.audio_url), hasTrad = !!tr;
+    // Type : une contribution peut porter une prononciation (voix) ET/OU une traduction écrite.
+    const badges = (hasAudio ? `<span class="mc-type mc-type--voice">${escapeHtml(t("mc.type.voice"))}</span>` : "")
+                 + (hasTrad ? `<span class="mc-type mc-type--trad">${escapeHtml(t("mc.type.trad"))}</span>` : "");
+    const playBtn = hasAudio ? `<button type="button" class="mc-play" data-audio="${escapeHtml(r.audio_url)}">▶ ${escapeHtml(t("mc.listen"))}</button>` : "";
     return `<div class="mc-item" data-sid="${escapeHtml(String(r.server_id))}">
-      <div class="mc-word">${label || t("mc.audio")}</div>
+      <div class="mc-main">
+        <div class="mc-types">${badges}</div>
+        <div class="mc-word">${label || t("mc.audio")}</div>
+        ${playBtn}
+      </div>
       <div class="mc-edit">
         <label class="mc-lang"><span data-i18n="mc.lang">Langue</span>
           <select class="mc-lang-sel">${opts}</select></label>
@@ -6077,6 +6086,8 @@ function initEvents() {
   // Couche 3 : correction de la langue d'une de SES contributions (délégation de clic).
   const mcList = $("#mc-list");
   if (mcList) mcList.addEventListener("click", (e) => {
+    const play = e.target.closest(".mc-play");
+    if (play) { e.preventDefault(); const u = play.dataset.audio; if (u) keepScroll(() => _incPlayAudio(u)); return; }
     const b = e.target.closest(".mc-save"); if (!b) return;
     const item = b.closest(".mc-item"); if (!item) return;
     const sel = item.querySelector(".mc-lang-sel");

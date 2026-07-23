@@ -574,6 +574,17 @@ a#about-link { color: var(--cyan); border-color: rgba(34,211,238,.4); font-weigh
 /* Liste bornée + défilement interne : reste fluide même avec des milliers de contributions. */
 .mc-list { display: flex; flex-direction: column; gap: 10px; max-height: 360px; overflow-y: auto; padding-right: 4px; }
 .mc-more, .mc-empty { color: var(--muted); font-size: .82rem; text-align: center; padding: 8px 4px; }
+.mc-main { min-width: 0; display: flex; flex-direction: column; gap: 6px; }
+.mc-types { display: flex; flex-wrap: wrap; gap: 6px; }
+.mc-type { font-size: .68rem; font-weight: 800; letter-spacing: .02em; padding: 2px 8px; border-radius: 999px;
+  border: 1px solid var(--border); white-space: nowrap; }
+.mc-type--voice { color: var(--violet); border-color: color-mix(in srgb, var(--violet) 45%, var(--border)); background: color-mix(in srgb, var(--violet) 12%, var(--panel)); }
+.mc-type--trad { color: var(--green); border-color: color-mix(in srgb, var(--green) 45%, var(--border)); background: color-mix(in srgb, var(--green) 12%, var(--panel)); }
+.mc-play { align-self: flex-start; font: inherit; font-weight: 700; font-size: .82rem; cursor: pointer;
+  padding: 5px 12px; border-radius: 999px; border: 1px solid var(--cyan); color: var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 12%, var(--panel)); }
+.mc-play:hover { background: var(--cyan); color: var(--bg); box-shadow: 0 0 16px -5px var(--cyan); }
+.mc-play:active { transform: translateY(1px); }
 .mc-item { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px;
   padding: 10px 12px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); }
 .mc-word { font-weight: 600; min-width: 0; }
