@@ -24,7 +24,7 @@ import { reconcile, checkServer, serverStats, modeGoogle, browseLibrary,
   fetchLanguages, declareLanguage, declareUser, fetchMyContributions, fetchDriveAudio,
   proposeMerge, respondMerge, mergesForDevice, fetchNotifications,
   fetchRequests, fetchRequestsToTranslate, postRequest, postAnswer, translateWord,
-  submitTestimonial, fetchTestimonials, updateContribution } from "./sync.js";
+  submitTestimonial, fetchTestimonials, updateContribution, markNotifRead } from "./sync.js";
 // PROPOSITIONS (1,37 Mo, dont ~68k mots de dictionnaire) n'est utilisé QUE dans le flux
 // Traduire/Transcrire (et l'incitation), jamais pour le rendu de l'accueil. On l'importe
 // DYNAMIQUEMENT → son parse ne bloque plus le premier rendu (démarrage nettement plus rapide,
@@ -64,7 +64,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v360";
+const APP_VERSION = "v361";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -3182,7 +3182,9 @@ function _saveNotifRead(set) {
   _notifReadCache = new Set(arr);
   try { localStorage.setItem(NOTIF_READ_KEY, JSON.stringify(arr)); } catch (e) { /* quota */ }
 }
-function _isNotifRead(n) { return _notifReadSet().has(_notifKey(n)); }
+// LU = vrai côté serveur (par PERSONNE, tous appareils, pour toujours) OU marqué localement en
+// attendant la confirmation réseau (overlay optimiste, pour un retour instantané à l'écran).
+function _isNotifRead(n) { return !!(n && n.read) || _notifReadSet().has(_notifKey(n)); }
 function _markNotifRead(n) { const s = _notifReadSet(); const k = _notifKey(n); if (k && !s.has(k)) { s.add(k); _saveNotifRead(s); } }
 function notifUnreadCount() { return _notifs.filter((n) => !_isNotifRead(n)).length; }
 
@@ -3289,9 +3291,16 @@ function notifItemHtml(n) {
 }
 /** Clic sur une notification du CENTRE : reconstruit la donnée depuis le DOM et route. */
 function onNotifAction(li) {
-  // 1) marque CETTE notification comme lue (état par notif) → ligne en clair + pastille décrémentée.
+  // 1) marque CETTE notification comme lue : overlay LOCAL optimiste (ligne en clair + pastille
+  //    décrémentée à l'instant, sans attendre le réseau) PUIS persistée côté serveur PAR PERSONNE
+  //    (tous ses appareils, pour toujours — Brice 2026-07-23 : ne plus jamais revoir une
+  //    notification déjà lue sur un autre appareil, même après 3 mois d'absence).
   const k = li.dataset.nkey;
-  if (k) { const s = _notifReadSet(); if (!s.has(k)) { s.add(k); _saveNotifRead(s); } }
+  if (k) {
+    const s = _notifReadSet();
+    if (!s.has(k)) { s.add(k); _saveNotifRead(s); }
+    markNotifRead({ device_id: deviceId(), notif_id: k }).catch(() => {});   // best-effort, jamais bloquant
+  }
   li.classList.remove("notif--unread");
   updateNotifBadge(notifUnreadCount());
   // 2) si elle est actionnable, on emmène l'utilisateur là où agir.
@@ -3368,14 +3377,16 @@ async function renderNotifs() {
   try { data = await fetchNotifications(deviceId(), 0); } catch (e) { data = null; }
   if (data) { _notifs = data.notifications || []; paint(); }
 }
-/** Tout marquer comme lu = mémoriser l'horodatage courant (les suivantes seront « non lues »). */
-/** « Tout marquer comme lu » (bouton) : marque TOUTES les notifications chargées comme lues. */
+/** « Tout marquer comme lu » (bouton) : marque TOUTES les notifications chargées comme lues,
+    localement (instantané) ET côté serveur pour la PERSONNE (tous ses appareils, pour toujours). */
 function markNotifsRead() {
   const s = _notifReadSet();
-  _notifs.forEach((n) => { const k = _notifKey(n); if (k) s.add(k); });
+  const keys = [];
+  _notifs.forEach((n) => { const k = _notifKey(n); if (k) { s.add(k); keys.push(k); } });
   _saveNotifRead(s);
   updateNotifBadge(0);
   const feed = $("#notif-feed"); if (feed) feed.querySelectorAll(".notif--unread").forEach((el) => el.classList.remove("notif--unread"));
+  if (keys.length) markNotifRead({ device_id: deviceId(), notif_ids: keys }).catch(() => {});
 }
 function openNotifs() {
   if (_currentView !== "notifs") _notifsReturn = _currentView;

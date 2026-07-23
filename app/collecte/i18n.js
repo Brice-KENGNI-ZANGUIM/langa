@@ -50,8 +50,8 @@ export const STR = {
   "theme.toDark": { fr: "Passer en mode sombre", en: "Switch to dark mode" },
   "combo.see": { fr: "Voir la liste", en: "See the list" },
   "share.on": { fr: "Partager sur {net}", en: "Share on {net}" },
-  "tagline": { fr: "Numériser les langues d'Afrique, texte et voix, par leurs communautés",
-               en: "Digitizing African languages, text and voice, by their communities" },
+  "tagline": { fr: "Nos langues, un héritage à transmettre",
+               en: "Our languages, a heritage to pass on" },
 
   // — Écran de choix de langue —
   "lang.title": { fr: "Choisis ta langue 🌍", en: "Choose your language 🌍" },

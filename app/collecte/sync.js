@@ -321,6 +321,9 @@ export function updateContribution(u) { return postOp(Object.assign({ op: "updat
 
 /** Signale un bug (partagé). Même canal que les contributions ; idempotent par id. */
 export function postBug(b) { return postOp(Object.assign({ op: "bug" }, b)); }
+/** Marque une/plusieurs notifications lues POUR LA PERSONNE (tous ses appareils, pour toujours) :
+    { device_id, notif_id } ou { device_id, notif_ids:[...] }. Fire-and-forget côté appelant. */
+export function markNotifRead(b) { return postOp(Object.assign({ op: "mark_notif_read" }, b)); }
 
 /** Traite/résout un bug (maintenance) : met à jour son statut. Jeton requis côté
     Google (seul le mainteneur peut résoudre) ; la mise à jour est ensuite renvoyée

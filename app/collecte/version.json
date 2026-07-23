@@ -1,6 +1,10 @@
 {
-  "version": "v360",
+  "version": "v361",
   "changelog": {
+    "v361": [
+      "Correctif visuel : les 3 pastilles du header (version/en ligne/DB) avaient perdu leur couleur, et le slogan sous LANGIAL ne s'affichait pas",
+      "Notifications : lire une notification sur un appareil la marque lue pour toujours, sur tous tes appareils (avant, l'état ne vivait que sur l'appareil utilisé)"
+    ],
     "v360": [
       "Petite amélioration technique : le préchargement en arrière-plan (corpus, mot du jour) s'adapte désormais à la charge réelle de l'appareil au lieu d'un délai fixe"
     ],

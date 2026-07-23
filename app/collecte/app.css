@@ -747,10 +747,15 @@ body {
 /* Contrôles de NAVIGATION réels <a href="#/…"> (clic droit → « ouvrir dans un nouvel onglet »
    pointe enfin vers la bonne page, pas vers l'image du bouton). On neutralise les styles par
    défaut du navigateur pour <a> (bleu, souligné) afin de préserver EXACTEMENT l'apparence
-   précédente (bouton/div) : ces classes portent déjà toute leur propre mise en forme. */
-.hub-card, .nav-tab, .chip, .brand--home, .foot-brand--home {
+   précédente (bouton/div) : ces classes portent déjà toute leur propre mise en forme.
+   ⚠️ .chip a déjà SA PROPRE couleur (var(--muted), déclarée plus haut) : ne PAS lui remettre
+   « color: inherit » ici, sinon (même spécificité, mais plus bas dans le fichier) ça écrase
+   .chip--on/.chip--off (pastilles vertes/rouges de statut) qui comptent sur la cascade normale
+   pour la surcharger. Incident 2026-07-23 : les 3 pastilles d'état passées au blanc par erreur. */
+.hub-card, .nav-tab, .brand--home, .foot-brand--home {
   text-decoration: none; color: inherit;
 }
+.chip { text-decoration: none; }
 .hub-cards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
 @media (max-width: 560px) { .hub-cards { grid-template-columns: 1fr; } }
 /* Chaque porte porte SA couleur d'identité (assortie à son icône et au mode
