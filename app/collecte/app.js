@@ -55,7 +55,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v351";
+const APP_VERSION = "v352";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -5877,9 +5877,13 @@ function fillProfileFields() {
   $("#c-email").value = c.email || "";
   $("#c-indicatif").value = c.indicatif || "";
   $("#c-tel").value = c.telephone || "";
-  $("#c-consent").checked = !!c.consentement;
+  // Défaut pour un NOUVEAU profil (jamais enregistré) : les deux consentements COCHÉS + crédit
+  // « prénom » (choix Brice 2026-07-23 : chacun est crédité publiquement par défaut ; libre de
+  // décocher ensuite, son choix fait alors foi). Un profil déjà enregistré garde SES valeurs.
+  const _isNewProfile = c.consentement === undefined && c.creditMode === undefined && !c.nom && !c.prenom;
+  $("#c-consent").checked = _isNewProfile ? true : !!c.consentement;
   $("#c-village").value = c.village || "";
-  $("#c-credit-on").checked = !!(c.creditMode && c.creditMode !== "none");
+  $("#c-credit-on").checked = _isNewProfile ? true : !!(c.creditMode && c.creditMode !== "none");
   $("#c-credit-format").value = c.creditMode === "sigle" ? "sigle" : "prenom";
   refreshEnhancedSelects();
   updateConsentUI();

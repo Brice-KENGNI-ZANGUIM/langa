@@ -1,6 +1,9 @@
 {
-  "version": "v351",
+  "version": "v352",
   "changelog": {
+    "v352": [
+      "Un nouvel utilisateur est par défaut crédité publiquement de ses contributions (prénom), cases cochées à la création ; libre de décocher"
+    ],
     "v351": [
       "Profil : la liste de tes contributions affiche leur nombre, défile sans envahir la page, et a une zone de recherche pour retrouver un mot précis"
     ],
