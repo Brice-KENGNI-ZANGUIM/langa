@@ -1,6 +1,9 @@
 {
-  "version": "v365",
+  "version": "v366",
   "changelog": {
+    "v366": [
+      "Le centre de notifications distingue beaucoup plus nettement une notification lue d'une non lue (liséré, pastille, contraste renforcé), en clair comme en sombre"
+    ],
     "v365": [
       "Les popups d'information, d'incitation et de mise à jour sont nettement plus compacts sur téléphone",
       "Le changelog de mise à jour défile dans son propre cadre au lieu d'agrandir tout le popup",

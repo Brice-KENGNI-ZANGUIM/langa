@@ -2532,14 +2532,28 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 /* Centre de notifications : flux horodaté, non-lues mises en avant. */
 .notif-toolbar { display: flex; justify-content: flex-end; margin: 4px 0 10px; }
 .notif-feed { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
-.notif { display: flex; gap: 12px; align-items: flex-start; padding: 12px 14px; border-radius: 14px;
+.notif { position: relative; display: flex; gap: 12px; align-items: flex-start;
+  padding: 12px 14px 12px 19px; border-radius: 14px; overflow: hidden;
   border: 1px solid var(--border); background: var(--panel);
-  box-shadow: inset 0 1px 0 var(--card-sheen); }
-.notif--unread { border-color: color-mix(in srgb, var(--violet) 55%, var(--border));
-  background: color-mix(in srgb, var(--violet) 9%, var(--panel));
-  box-shadow: 0 0 16px -8px var(--violet), inset 0 1px 0 var(--card-sheen); }
-.notif--unread .notif-msg { font-weight: 600; }
-.notif-ico { flex: 0 0 auto; line-height: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+  box-shadow: inset 0 1px 0 var(--card-sheen); transition: background .15s ease, border-color .15s ease; }
+/* NON LUE : repère à PLUSIEURS niveaux (couleur + forme), pas la couleur seule, pour rester
+   lisible même en cas de faible acuité chromatique (Brice 2026-07-24 : contraste insuffisant
+   entre lu/non-lu). (1) liséré plein à gauche, même langage que les popups d'incitation ;
+   (2) pastille pleine devant le texte ; (3) fond teinté nettement plus marqué ; (4) texte en gras. */
+.notif--unread { border-color: color-mix(in srgb, var(--violet) 70%, var(--border));
+  background: color-mix(in srgb, var(--violet) 17%, var(--panel));
+  box-shadow: 0 0 18px -7px var(--violet), inset 0 1px 0 var(--card-sheen); }
+.notif--unread::before { content: ""; position: absolute; left: 0; top: 9px; bottom: 9px; width: 4px;
+  border-radius: 0 4px 4px 0; background: var(--violet); box-shadow: 0 0 10px -1px var(--violet); }
+.notif--unread .notif-msg { font-weight: 700; color: var(--text); }
+.notif--unread .notif-msg::before { content: "●"; display: inline-block; font-size: .5em;
+  color: var(--violet); vertical-align: middle; margin-right: 7px; }
+/* LUE : VOLONTAIREMENT en retrait (texte et icône atténués, aucun liséré) → l'œil va droit
+   aux non-lues dans la liste. */
+.notif:not(.notif--unread) .notif-msg { color: var(--muted); }
+.notif:not(.notif--unread) .notif-ico { opacity: .58; filter: grayscale(.5) drop-shadow(0 2px 4px rgba(0,0,0,.25)); }
+.notif:not(.notif--unread) .notif-time { opacity: .8; }
+.notif-ico { flex: 0 0 auto; line-height: 0; filter: drop-shadow(0 2px 4px rgba(0,0,0,.25)); transition: opacity .15s ease, filter .15s ease; }
 .notif-ico-img { width: 51px; height: 51px; object-fit: contain; display: block; }   /* ×1.5 (34→51) */
 .notif-body { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .notif-msg { margin: 0; font-size: .92rem; line-height: 1.45; color: var(--text); }

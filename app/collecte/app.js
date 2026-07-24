@@ -65,7 +65,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v365";
+const APP_VERSION = "v366";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
