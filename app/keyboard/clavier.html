@@ -1,0 +1,1300 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Clavier virtuel ngiemboon</title>
+<style>
+:root { color-scheme: dark; }
+body {
+  margin: 0; min-height: 100vh;
+  background: radial-gradient(1200px 620px at 50% -12%, #12222e 0%, #0a0e14 62%);
+  color: #e9f0f6; font-family: "Noto Sans", "DejaVu Sans", system-ui, sans-serif;
+  display: flex; flex-direction: column; align-items: center;
+  padding: 30px 16px 48px; box-sizing: border-box;
+}
+h1 { font-size: 1.35rem; font-weight: 700; margin: 0 0 2px; letter-spacing: .01em; }
+h1 .accent { color: #22d3ee; text-shadow: 0 0 18px rgba(34,211,238,.5); }
+.subtitle { color: #8b97a6; font-size: .85rem; margin: 0 0 24px; }
+.field { width: min(700px, 100%); }
+textarea {
+  width: 100%; box-sizing: border-box; min-height: 96px;
+  background: #0a0e14; color: #e9f0f6; border: 1px solid #2a3441;
+  border-radius: 14px; padding: 15px 18px; font-size: 1.6rem; line-height: 1.5;
+  font-family: "Noto Sans", "DejaVu Sans", sans-serif; resize: vertical;
+}
+textarea:focus { outline: 2px solid #4f8cff; outline-offset: 1px; border-color: #4f8cff; }
+.readout {
+  width: min(700px, 100%); box-sizing: border-box; margin: 10px 0 24px;
+  font-family: "DejaVu Sans Mono", ui-monospace, monospace; font-size: .72rem;
+  color: #8b97a6; background: #0a0e14; border: 1px dashed #2a3441;
+  border-radius: 10px; padding: 9px 12px; min-height: 1.4em; word-break: break-all;
+}
+.readout .cp { color: #34d399; }
+.hint { color:#6b7688; font-size:.72rem; margin-top:18px; text-align:center; max-width:560px; }
+.kb-host { width: min(760px, 100%); display: flex; justify-content: center; }
+.toolbar { width: min(700px, 100%); display: flex; justify-content: flex-end;
+  align-items: center; gap: 10px; margin: 0 0 14px; }
+.switch-row { display: inline-flex; align-items: center; gap: 9px; color: #8b97a6;
+  font-size: .8rem; cursor: pointer; user-select: none; }
+.switch { position: relative; width: 40px; height: 22px; }
+.switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+.slider { position: absolute; inset: 0; border-radius: 999px; background: #1f2733;
+  border: 1px solid #30363d; transition: background .16s ease, border-color .16s ease; }
+.slider::before { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+  border-radius: 50%; background: #8b97a6; transition: transform .16s ease, background .16s ease; }
+.switch input:checked + .slider { background: rgba(34,211,238,.22); border-color: #22d3ee; }
+.switch input:checked + .slider::before { transform: translateX(18px); background: #22d3ee;
+  box-shadow: 0 0 10px rgba(34,211,238,.7); }
+.switch input:focus-visible + .slider { outline: 2px solid #4f8cff; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { .slider, .slider::before { transition: none; } }
+/* Clavier virtuel ngiemboon — édition PREMIUM.
+   Glassmorphism, glow par groupe (voyelles=cyan, tons=vert, consonnes=bleu
+   électrique), lettres spéciales à halo, info-bulles phonétiques.
+   Respecte prefers-reduced-motion et le contraste WCAG AA. */
+
+.ngk {
+  --ngk-bg: #0a0e14;
+  --ngk-panel: rgba(22, 27, 34, 0.72);
+  --ngk-key: rgba(31, 39, 51, 0.92);
+  --ngk-key-hi: rgba(42, 52, 65, 0.98);
+  --ngk-key-border: rgba(120, 140, 165, 0.16);
+  --ngk-text: #e9f0f6;
+  --ngk-muted: #8b97a6;
+
+  --ngk-cyan: #22d3ee;    /* voyelles */
+  --ngk-green: #34d399;   /* tons */
+  --ngk-blue: #4f8cff;    /* consonnes */
+  --ngk-gold: #e5c07b;    /* accents lettres spéciales */
+
+  position: relative;
+  display: inline-block;
+  background:
+    linear-gradient(180deg, rgba(35,44,56,0.55), rgba(13,17,23,0.75)),
+    var(--ngk-panel);
+  border: 1px solid var(--ngk-key-border);
+  border-radius: 20px;
+  padding: 20px 20px 18px;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.55),
+    0 2px 0 rgba(255,255,255,0.04) inset,
+    0 0 0 1px rgba(255,255,255,0.02) inset;
+  backdrop-filter: blur(14px) saturate(1.1);
+  -webkit-backdrop-filter: blur(14px) saturate(1.1);
+  font-family: "Noto Sans", "DejaVu Sans", system-ui, sans-serif;
+  user-select: none;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
+}
+/* liseré lumineux animé sur le pourtour du clavier */
+.ngk::before {
+  content: "";
+  position: absolute; inset: -1px;
+  border-radius: 21px;
+  padding: 1px;
+  background: linear-gradient(120deg,
+    rgba(34,211,238,0.55), rgba(79,140,255,0.15) 35%,
+    rgba(52,211,153,0.5) 65%, rgba(34,211,238,0.55));
+  background-size: 300% 300%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: ngk-border 9s linear infinite;
+  pointer-events: none;
+  opacity: 0.7;
+}
+@keyframes ngk-border { to { background-position: 300% 0; } }
+
+/* ---- Groupes avec éclairage d'ambiance propre ---- */
+.ngk__group {
+  position: relative;
+  border-radius: 14px;
+  padding: 8px 8px 6px;
+  margin-bottom: 12px;
+}
+.ngk__group::after { /* halo d'ambiance derrière le groupe */
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 14px;
+  background: radial-gradient(120% 90% at 50% 120%,
+    var(--glow, transparent) 0%, transparent 62%);
+  opacity: 0.16;
+  pointer-events: none;
+  z-index: 0;
+}
+.ngk__group--vow  { --glow: var(--ngk-cyan); }
+.ngk__group--tone { --glow: var(--ngk-green); }
+.ngk__group--cons { --glow: var(--ngk-blue); }
+.ngk__group--acc  { --glow: var(--ngk-gold); }
+.ngk__group--num  { --glow: var(--ngk-blue); }
+.ngk__group:last-of-type { margin-bottom: 10px; }
+
+.ngk__row {
+  position: relative; z-index: 1;
+  display: flex; gap: 9px; margin-bottom: 9px;
+  justify-content: center; flex-wrap: wrap;
+}
+.ngk__row:last-child { margin-bottom: 0; }
+
+/* Grilles à colonnes fixes : pas de touche orpheline en fin de ligne */
+.ngk__grid {
+  position: relative; z-index: 1;
+  display: grid; gap: 9px; justify-items: stretch; align-items: stretch;
+}
+.ngk__grid--vow  { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+.ngk__grid--cons { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+.ngk__grid--acc  { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+.ngk__grid--num  { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+.ngk__grid--punc { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+.ngk__grid--tone {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 470px; margin: 0 auto;
+}
+/* espacement entre deux grilles d'un même groupe (chiffres puis ponctuation) */
+.ngk__group .ngk__grid + .ngk__grid { margin-top: 9px; }
+
+.ngk__key {
+  position: relative;
+  min-width: 0; height: 58px; padding: 0 8px;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; line-height: 1; color: var(--ngk-text);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 30%,
+      rgba(0,0,0,0.10) 100%),
+    var(--ngk-key);
+  border: 1px solid var(--ngk-key-border);
+  border-radius: 13px;
+  cursor: pointer;
+  /* keycap : relief haut clair, ombre basse, léger biseau interne */
+  box-shadow:
+    0 3px 7px rgba(0,0,0,0.45),
+    0 1px 0 rgba(255,255,255,0.10) inset,
+    0 -2px 5px rgba(0,0,0,0.30) inset;
+  transition: transform 90ms ease, background 140ms ease,
+              box-shadow 160ms ease, border-color 140ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+/* fine ligne de brillance sur le haut de la touche */
+.ngk__key::before {
+  content: ""; position: absolute; left: 8px; right: 8px; top: 3px; height: 40%;
+  border-radius: 10px 10px 14px 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0));
+  pointer-events: none; opacity: 0.7;
+}
+.ngk__key:hover {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.03) 32%,
+      rgba(0,0,0,0.08) 100%),
+    var(--ngk-key-hi);
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 18px rgba(0,0,0,0.5),
+    0 1px 0 rgba(255,255,255,0.14) inset,
+    0 -2px 5px rgba(0,0,0,0.28) inset;
+}
+.ngk__key:focus-visible { outline: 2px solid var(--ngk-blue); outline-offset: 2px; }
+.ngk__key:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 3px 8px rgba(0,0,0,0.55) inset;
+}
+
+/* accents par groupe : glow doux + montée en intensité au survol */
+.ngk__key--vow  { box-shadow: 0 0 0 1px rgba(34,211,238,0.10) inset, 0 2px 8px rgba(0,0,0,0.35); }
+.ngk__key--vow:hover  { border-color: rgba(34,211,238,0.6);  box-shadow: 0 0 16px rgba(34,211,238,0.35), 0 0 0 1px rgba(34,211,238,0.35) inset; }
+.ngk__key--cons:hover { border-color: rgba(79,140,255,0.6);  box-shadow: 0 0 16px rgba(79,140,255,0.30), 0 0 0 1px rgba(79,140,255,0.30) inset; }
+.ngk__key--acc  { font-size: 1.25rem; }
+.ngk__key--acc:hover  { border-color: rgba(229,192,123,0.6); box-shadow: 0 0 16px rgba(229,192,123,0.30), 0 0 0 1px rgba(229,192,123,0.30) inset; }
+.ngk__key--num  { font-size: 1.25rem; color: #cfd8e3; }
+.ngk__key--num:hover  { border-color: rgba(79,140,255,0.6);  box-shadow: 0 0 16px rgba(79,140,255,0.28), 0 0 0 1px rgba(79,140,255,0.28) inset; }
+
+/* lettres spéciales : liseré doré + halo permanent discret + shimmer */
+.ngk__key--special {
+  color: #fff;
+  border-color: rgba(229,192,123,0.45);
+  box-shadow: 0 0 14px rgba(229,192,123,0.18), 0 0 0 1px rgba(229,192,123,0.30) inset;
+}
+.ngk__key--special::after {
+  content: ""; position: absolute; inset: 0; border-radius: 12px;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.22) 48%, transparent 66%);
+  background-size: 250% 100%; opacity: 0; pointer-events: none;
+}
+.ngk__key--special:hover {
+  border-color: var(--ngk-gold);
+  box-shadow: 0 0 22px rgba(229,192,123,0.5), 0 0 0 1px rgba(229,192,123,0.55) inset;
+}
+.ngk__key--special:hover::after { animation: ngk-shimmer 900ms ease; }
+@keyframes ngk-shimmer { from { background-position: 120% 0; opacity: .0; }
+  35% { opacity: .9; } to { background-position: -120% 0; opacity: 0; } }
+
+/* touches de ton : accent vert + voyelle témoin */
+.ngk__key--tone {
+  color: var(--ngk-green);
+  border-color: rgba(52,211,153,0.35);
+  box-shadow: 0 0 0 1px rgba(52,211,153,0.22) inset, 0 2px 8px rgba(0,0,0,0.35);
+  font-size: 1.55rem;
+}
+.ngk__key--tone:hover {
+  border-color: var(--ngk-green);
+  box-shadow: 0 0 18px rgba(52,211,153,0.45), 0 0 0 1px rgba(52,211,153,0.5) inset;
+}
+.ngk__key--tone .ngk__tone-name {
+  position: absolute; bottom: 4px; font-size: 0.55rem;
+  color: var(--ngk-muted); letter-spacing: 0.02em;
+}
+
+/* actions — aspect sobre d'origine (sans keycap glossy ni relief prononcé) */
+.ngk__key--action { color: var(--ngk-muted); font-size: 0.9rem; min-width: 64px; height: 56px; }
+.ngk__key--action::before { content: none; }
+.ngk__key--action {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0) 42%),
+    var(--ngk-key);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.05) inset;
+}
+.ngk__key--action:hover {
+  transform: translateY(-1px);
+  border-color: rgba(120,140,165,0.28);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0) 45%),
+    var(--ngk-key-hi);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.06) inset;
+}
+.ngk__key--action:active { transform: translateY(2px); box-shadow: 0 1px 3px rgba(0,0,0,0.5) inset; }
+.ngk__key--space { min-width: 250px; letter-spacing: 0.12em; }
+.ngk__key--wide { min-width: 92px; }
+.ngk__key--shift.is-on {
+  color: var(--ngk-blue); border-color: var(--ngk-blue);
+  box-shadow: 0 0 16px rgba(79,140,255,0.4), 0 0 0 1px rgba(79,140,255,0.45) inset;
+}
+
+.ngk__section-label {
+  position: relative; z-index: 1;
+  color: var(--ngk-muted); font-size: 0.62rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.16em;
+  margin: 0 0 8px; text-align: center;
+}
+.ngk__section-label .dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  margin-right: 7px; vertical-align: middle;
+  box-shadow: 0 0 8px 1px currentColor;
+}
+.ngk__group--vow  .dot { color: var(--ngk-cyan); }
+.ngk__group--tone .dot { color: var(--ngk-green); }
+.ngk__group--cons .dot { color: var(--ngk-blue); }
+.ngk__group--acc  .dot { color: var(--ngk-gold); }
+.ngk__group--num  .dot { color: var(--ngk-blue); }
+
+/* ---- Info-bulle pédagogique (phonétique + exemple) ---- */
+/* Info-bulle : attachée au <body>, couleurs en dur (hors portée des vars .ngk) */
+.ngk__tip {
+  position: fixed; z-index: 9999;
+  min-width: 150px; max-width: 240px;
+  background: rgba(10,14,20,0.97);
+  border: 1px solid rgba(120,140,165,0.28);
+  border-radius: 12px; padding: 10px 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  color: #e9f0f6; pointer-events: none;
+  font-family: "Noto Sans", "DejaVu Sans", system-ui, sans-serif;
+  opacity: 0; transform: translateY(4px) scale(0.98);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.ngk__tip.is-on { opacity: 1; transform: translateY(0) scale(1); }
+.ngk__tip .tip-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.ngk__tip .tip-glyph { font-size: 1.6rem; line-height: 1; }
+.ngk__tip .tip-ipa { color: #34d399; font-size: 0.95rem; font-family: "DejaVu Sans", sans-serif; }
+.ngk__tip .tip-desc { color: #8b97a6; font-size: 0.74rem; line-height: 1.35; margin-bottom: 5px; }
+.ngk__tip .tip-ex { font-size: 0.8rem; }
+.ngk__tip .tip-ex b { color: #22d3ee; font-weight: 600; }
+.ngk__tip .tip-ex .arrow { color: #8b97a6; margin: 0 5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ngk::before { animation: none; }
+  .ngk__key, .ngk__tip { transition: none; }
+  .ngk__key:hover, .ngk__key:active { transform: none; }
+  .ngk__key--special:hover::after { animation: none; }
+}
+
+/* Réarrangement des colonnes : 24 consonnes = 12×2 / 8×3 / 6×4 (jamais orphelin) */
+@media (max-width: 680px) {
+  .ngk__grid--cons { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .ngk { padding: 14px; }
+  .ngk__key { height: 50px; font-size: 1.2rem; padding: 0 4px; }
+  .ngk__grid { gap: 7px; }
+  .ngk__grid--vow  { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ngk__grid--cons { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .ngk__grid--acc  { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ngk__grid--num  { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .ngk__grid--punc { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ngk__key--space { min-width: 150px; }
+}
+
+/* =======================================================================
+   DISPOSITION PHYSIQUE COMPACTE (façon AZERTY) + coloration par type
+   ======================================================================= */
+.ngk--physique {
+  --k: 42px;            /* taille de touche compacte */
+  padding: 14px 16px 12px;
+  width: max-content; max-width: 100%;
+}
+
+/* Légende de couleurs */
+.ngk__legend {
+  display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center;
+  margin-bottom: 12px; position: relative; z-index: 1;
+}
+.ngk__leg { display: inline-flex; align-items: center; gap: 6px;
+  color: var(--ngk-muted); font-size: 0.62rem; letter-spacing: 0.03em; }
+.ngk__leg i { width: 10px; height: 10px; border-radius: 3px; display: inline-block;
+  box-shadow: 0 0 6px currentColor; }
+.ngk__leg--nge     i { background: #bfe9f5; color: #bfe9f5; }
+.ngk__leg--special i { background: var(--ngk-cyan); color: var(--ngk-cyan); }
+.ngk__leg--tone    i { background: var(--ngk-green); color: var(--ngk-green); }
+.ngk__leg--acc     i { background: var(--ngk-gold); color: var(--ngk-gold); }
+.ngk__leg--num     i { background: #6b7688; color: #6b7688; box-shadow: none; }
+
+/* Rangées physiques : touches carrées, non étirées, décalées façon clavier */
+.ngk--physique .ngk__krow {
+  position: relative; z-index: 1;
+  display: flex; gap: 6px; justify-content: center; margin-bottom: 6px;
+}
+.ngk--physique .ngk__krow--off1 { padding-left: calc(var(--k) * 0.5); }
+.ngk--physique .ngk__krow--off2 { padding-left: calc(var(--k) * 1.0); }
+/* respiration : un peu d'air avant tons / accents / fonction */
+.ngk--physique .ngk__krow--tones { margin-top: 12px; }
+.ngk--physique .ngk__krow--acc   { margin-top: 6px; }
+.ngk--physique .ngk__krow--fn    { margin-top: 12px; }
+
+.ngk--physique .ngk__key {
+  width: var(--k); height: var(--k); min-width: var(--k);
+  padding: 0; font-size: 1.15rem; border-radius: 10px;
+}
+.ngk--physique .ngk__key::before { left: 5px; right: 5px; top: 3px; }
+.ngk--physique .ngk__key--fn { width: calc(var(--k) * 1.35); font-size: 0.9rem; }
+.ngk--physique .ngk__key--space { width: calc(var(--k) * 6); min-width: 0; }
+.ngk--physique .ngk__key--tone { font-size: 1.25rem; }
+.ngk--physique .ngk__key--tone .ngk__tone-name { display: none; } /* compact */
+
+/* ---- COLORATION SPÉCIFIQUE ---- */
+/* Alphabet ngiemboon : teinte identitaire (cyan clair) */
+.ngk__key--nge {
+  color: #d6f3fb;
+  border-color: rgba(34, 211, 238, 0.22);
+  box-shadow: 0 3px 7px rgba(0,0,0,0.45), 0 0 0 1px rgba(34,211,238,0.10) inset;
+}
+.ngk__key--nge:hover { border-color: rgba(34,211,238,0.55);
+  box-shadow: 0 0 14px rgba(34,211,238,0.28), 0 0 0 1px rgba(34,211,238,0.30) inset; }
+
+/* Lettres PROPRES au ngiemboon (ɛ ɔ ʉ ŋ ẅ ÿ ʼ) : les vedettes, cyan vif + halo */
+.ngk__key--nge.ngk__key--special {
+  color: #ffffff; font-weight: 600;
+  background:
+    linear-gradient(180deg, rgba(34,211,238,0.16), rgba(34,211,238,0.04) 55%, rgba(0,0,0,0.10)),
+    var(--ngk-key);
+  border-color: rgba(34,211,238,0.6);
+  box-shadow: 0 0 16px rgba(34,211,238,0.4), 0 0 0 1px rgba(34,211,238,0.55) inset;
+}
+.ngk__key--nge.ngk__key--special:hover {
+  box-shadow: 0 0 24px rgba(34,211,238,0.6), 0 0 0 1px rgba(34,211,238,0.7) inset;
+}
+
+/* Tons : vert */
+.ngk--physique .ngk__key--tone { color: var(--ngk-green); border-color: rgba(52,211,153,0.4); }
+/* Accents FR : doré, plus discret (secondaire) */
+.ngk--physique .ngk__key--acc { color: var(--ngk-gold); border-color: rgba(229,192,123,0.28); }
+/* Chiffres & ponctuation : gris, discret */
+.ngk--physique .ngk__key--num { color: #9aa6b4; border-color: rgba(120,140,165,0.14); }
+
+@media (max-width: 560px) {
+  .ngk--physique { --k: 34px; padding: 12px; }
+  .ngk--physique .ngk__key { font-size: 1rem; }
+  .ngk--physique .ngk__key--space { width: calc(var(--k) * 5); }
+  .ngk__legend { font-size: 0.58rem; gap: 4px 10px; }
+}
+
+</style>
+</head>
+<body>
+<h1>Clavier <span class="accent">ngiemboon</span></h1>
+<p class="subtitle">Édition premium — phonétique, exemples, sortie normalisée NFC</p>
+
+<div class="toolbar">
+  <label class="switch-row" for="tips-toggle">
+    Aide phonétique
+    <span class="switch">
+      <input type="checkbox" id="tips-toggle" checked role="switch" aria-label="Activer l'aide phonétique" />
+      <span class="slider"></span>
+    </span>
+  </label>
+</div>
+
+<div class="field">
+  <textarea id="cible" placeholder="Tape ici en ngiemboon…" autofocus></textarea>
+</div>
+<div class="readout" id="readout" aria-live="polite"></div>
+
+<div class="kb-host" id="host"></div>
+<p class="hint">Survole une touche pour voir sa phonétique et un exemple. Les touches
+de ton s'appliquent à la voyelle qui précède le curseur.</p>
+
+<script>
+// Fichier GÉNÉRÉ depuis data/alphabet_ngiemboon.json — NE PAS ÉDITER.
+// Régénérer : python3 scripts/gen_alphabet_js.py
+const NGIEMBOON = {
+  "langue": "Ngiemboon",
+  "normalisation": "NFC",
+  "mot_signature": "Ngiemboon",
+  "voyelles": [
+    {
+      "min": "a",
+      "maj": "A",
+      "special": false,
+      "ipa": "a",
+      "desc": "voyelle ouverte",
+      "ex": "má",
+      "ex_fr": "mère"
+    },
+    {
+      "min": "e",
+      "maj": "E",
+      "special": false,
+      "ipa": "e",
+      "desc": "voyelle mi-fermée antérieure",
+      "ex": "gem",
+      "ex_fr": "trou"
+    },
+    {
+      "min": "ɛ",
+      "maj": "Ɛ",
+      "special": true,
+      "ipa": "ɛ",
+      "desc": "e ouvert (voyelle ouverte antérieure)",
+      "ex": "mevɛ́",
+      "ex_fr": "huile"
+    },
+    {
+      "min": "i",
+      "maj": "I",
+      "special": false,
+      "ipa": "i",
+      "desc": "voyelle fermée antérieure",
+      "ex": "péli",
+      "ex_fr": "arachide"
+    },
+    {
+      "min": "o",
+      "maj": "O",
+      "special": false,
+      "ipa": "o",
+      "desc": "voyelle mi-fermée postérieure",
+      "ex": "lóŋ",
+      "ex_fr": "cou"
+    },
+    {
+      "min": "ɔ",
+      "maj": "Ɔ",
+      "special": true,
+      "ipa": "ɔ",
+      "desc": "o ouvert (voyelle ouverte postérieure)",
+      "ex": "sɔ̀g",
+      "ex_fr": "savon"
+    },
+    {
+      "min": "u",
+      "maj": "U",
+      "special": false,
+      "ipa": "u",
+      "desc": "voyelle fermée postérieure",
+      "ex": "mekú",
+      "ex_fr": "haricots"
+    },
+    {
+      "min": "ʉ",
+      "maj": "Ʉ",
+      "special": true,
+      "ipa": "ʉ",
+      "desc": "u barré (voyelle centrale haute)",
+      "ex": "lʉ́m",
+      "ex_fr": "langue"
+    }
+  ],
+  "consonnes": [
+    {
+      "graph": "b",
+      "maj": "B",
+      "special": false,
+      "digramme": false,
+      "ipa": "b",
+      "desc": "occlusive bilabiale voisée",
+      "ex": "káb",
+      "ex_fr": "pipe"
+    },
+    {
+      "graph": "c",
+      "maj": "C",
+      "special": false,
+      "digramme": false,
+      "ipa": "tʃ",
+      "desc": "affriquée post-alvéolaire",
+      "ex": "cú",
+      "ex_fr": "profondeur"
+    },
+    {
+      "graph": "d",
+      "maj": "D",
+      "special": false,
+      "digramme": false,
+      "ipa": "d",
+      "desc": "occlusive alvéolaire voisée",
+      "ex": "ndá",
+      "ex_fr": "maison"
+    },
+    {
+      "graph": "f",
+      "maj": "F",
+      "special": false,
+      "digramme": false,
+      "ipa": "f",
+      "desc": "fricative labiodentale sourde",
+      "ex": "fàʼ",
+      "ex_fr": "travail"
+    },
+    {
+      "graph": "g",
+      "maj": "G",
+      "special": false,
+      "digramme": false,
+      "ipa": "g",
+      "desc": "occlusive vélaire voisée",
+      "ex": "gem",
+      "ex_fr": "trou"
+    },
+    {
+      "graph": "h",
+      "maj": "H",
+      "special": false,
+      "digramme": false,
+      "ipa": "h",
+      "desc": "fricative glottale",
+      "ex": "ha",
+      "ex_fr": "vin fort"
+    },
+    {
+      "graph": "j",
+      "maj": "J",
+      "special": false,
+      "digramme": false,
+      "ipa": "j",
+      "desc": "palatale [j~dʒ]",
+      "ex": "jǔɔ",
+      "ex_fr": "hier"
+    },
+    {
+      "graph": "k",
+      "maj": "K",
+      "special": false,
+      "digramme": false,
+      "ipa": "k",
+      "desc": "occlusive vélaire sourde",
+      "ex": "kǔ",
+      "ex_fr": "lit"
+    },
+    {
+      "graph": "l",
+      "maj": "L",
+      "special": false,
+      "digramme": false,
+      "ipa": "l",
+      "desc": "latérale alvéolaire",
+      "ex": "láʼ",
+      "ex_fr": "village"
+    },
+    {
+      "graph": "m",
+      "maj": "M",
+      "special": false,
+      "digramme": false,
+      "ipa": "m",
+      "desc": "nasale bilabiale",
+      "ex": "má",
+      "ex_fr": "mère"
+    },
+    {
+      "graph": "n",
+      "maj": "N",
+      "special": false,
+      "digramme": false,
+      "ipa": "n",
+      "desc": "nasale alvéolaire",
+      "ex": "nɔʼ",
+      "ex_fr": "chefferie"
+    },
+    {
+      "graph": "ŋ",
+      "maj": "Ŋ",
+      "special": true,
+      "digramme": false,
+      "ipa": "ŋ",
+      "desc": "n vélaire (eng) — nasale vélaire",
+      "ex": "ŋàg",
+      "ex_fr": "jugement"
+    },
+    {
+      "graph": "p",
+      "maj": "P",
+      "special": false,
+      "digramme": false,
+      "ipa": "p",
+      "desc": "occlusive bilabiale sourde",
+      "ex": "páʼ",
+      "ex_fr": "comme"
+    },
+    {
+      "graph": "r",
+      "maj": "R",
+      "special": false,
+      "digramme": false,
+      "ipa": "r",
+      "desc": "rhotique (rare, surtout emprunts)",
+      "ex": "",
+      "ex_fr": ""
+    },
+    {
+      "graph": "pf",
+      "maj": "Pf",
+      "special": false,
+      "digramme": true,
+      "ipa": "pf",
+      "desc": "affriquée labiodentale",
+      "ex": "pfó",
+      "ex_fr": "cendre"
+    },
+    {
+      "graph": "s",
+      "maj": "S",
+      "special": false,
+      "digramme": false,
+      "ipa": "s",
+      "desc": "fricative alvéolaire sourde",
+      "ex": "sà",
+      "ex_fr": "lance-pierre"
+    },
+    {
+      "graph": "sh",
+      "maj": "Sh",
+      "special": false,
+      "digramme": true,
+      "ipa": "ʃ",
+      "desc": "fricative post-alvéolaire",
+      "ex": "shú",
+      "ex_fr": "houe"
+    },
+    {
+      "graph": "t",
+      "maj": "T",
+      "special": false,
+      "digramme": false,
+      "ipa": "t",
+      "desc": "occlusive alvéolaire sourde",
+      "ex": "tá",
+      "ex_fr": "père"
+    },
+    {
+      "graph": "ts",
+      "maj": "Ts",
+      "special": false,
+      "digramme": true,
+      "ipa": "ts",
+      "desc": "affriquée alvéolaire",
+      "ex": "tsǎʼ",
+      "ex_fr": "brique"
+    },
+    {
+      "graph": "v",
+      "maj": "V",
+      "special": false,
+      "digramme": false,
+      "ipa": "v",
+      "desc": "fricative labiodentale voisée",
+      "ex": "mvɛ̀",
+      "ex_fr": "corde"
+    },
+    {
+      "graph": "ẅ",
+      "maj": "Ẅ",
+      "special": true,
+      "digramme": false,
+      "ipa": "ɥ",
+      "desc": "w tréma — semi-voyelle palato-labiale [ɥ]",
+      "ex": "",
+      "ex_fr": ""
+    },
+    {
+      "graph": "ÿ",
+      "maj": "Ÿ",
+      "special": true,
+      "digramme": false,
+      "ipa": "ɰ",
+      "desc": "y tréma — semi-voyelle vélaire [ɰ]",
+      "ex": "",
+      "ex_fr": ""
+    },
+    {
+      "graph": "z",
+      "maj": "Z",
+      "special": false,
+      "digramme": false,
+      "ipa": "z",
+      "desc": "fricative alvéolaire voisée",
+      "ex": "zɔ̀b",
+      "ex_fr": "chant"
+    },
+    {
+      "graph": "ʼ",
+      "maj": "ʼ",
+      "special": true,
+      "digramme": false,
+      "ipa": "ʔ",
+      "desc": "coup de glotte (occlusive glottale [ʔ])",
+      "ex": "láʼ",
+      "ex_fr": "village"
+    }
+  ],
+  "tons": [
+    {
+      "nom": "haut",
+      "diacritique": "aigu",
+      "combinant": "́",
+      "marque": true,
+      "exemple": "á",
+      "ipa": "˦",
+      "desc": "ton haut",
+      "ex": "léŋ",
+      "ex_fr": "balançoire"
+    },
+    {
+      "nom": "bas",
+      "diacritique": "aucun",
+      "combinant": "",
+      "marque": false,
+      "exemple": "a",
+      "ipa": "˨",
+      "desc": "ton bas (NON marqué — le plus fréquent sur les noms)",
+      "ex": "leŋ",
+      "ex_fr": "tabouret"
+    },
+    {
+      "nom": "haut-descendant",
+      "diacritique": "circonflexe",
+      "combinant": "̂",
+      "marque": true,
+      "exemple": "â",
+      "ipa": "˥˩",
+      "desc": "ton haut-descendant",
+      "ex": "lâm",
+      "ex_fr": "lampe"
+    },
+    {
+      "nom": "montant",
+      "diacritique": "caron",
+      "combinant": "̌",
+      "marque": true,
+      "exemple": "ǎ",
+      "ipa": "˩˥",
+      "desc": "ton montant",
+      "ex": "lǒŋ",
+      "ex_fr": "paresse"
+    },
+    {
+      "nom": "bas-descendant",
+      "diacritique": "grave",
+      "combinant": "̀",
+      "marque": true,
+      "exemple": "à",
+      "ipa": "˨˩",
+      "desc": "ton bas-descendant (graphème = grave)",
+      "ex": "lèŋ",
+      "ex_fr": "espèce d'écureuil"
+    }
+  ],
+  "chiffres": [
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9",
+    "0"
+  ],
+  "ponctuation": [
+    ".",
+    ",",
+    "?",
+    "!",
+    ";",
+    ":",
+    "-",
+    "'"
+  ],
+  "accents_fr": [
+    {
+      "min": "é",
+      "maj": "É"
+    },
+    {
+      "min": "è",
+      "maj": "È"
+    },
+    {
+      "min": "ê",
+      "maj": "Ê"
+    },
+    {
+      "min": "ë",
+      "maj": "Ë"
+    },
+    {
+      "min": "à",
+      "maj": "À"
+    },
+    {
+      "min": "â",
+      "maj": "Â"
+    },
+    {
+      "min": "ä",
+      "maj": "Ä"
+    },
+    {
+      "min": "î",
+      "maj": "Î"
+    },
+    {
+      "min": "ï",
+      "maj": "Ï"
+    },
+    {
+      "min": "ô",
+      "maj": "Ô"
+    },
+    {
+      "min": "ö",
+      "maj": "Ö"
+    },
+    {
+      "min": "ù",
+      "maj": "Ù"
+    },
+    {
+      "min": "û",
+      "maj": "Û"
+    },
+    {
+      "min": "ü",
+      "maj": "Ü"
+    },
+    {
+      "min": "ç",
+      "maj": "Ç"
+    },
+    {
+      "min": "œ",
+      "maj": "Œ"
+    }
+  ],
+  "disposition_lettres": [
+    [
+      "n",
+      "g",
+      "u",
+      "i",
+      "e",
+      "m",
+      "b",
+      "o",
+      "ɛ",
+      "ɔ",
+      "ʉ"
+    ],
+    [
+      "a",
+      "ŋ",
+      "p",
+      "c",
+      "d",
+      "f",
+      "h",
+      "j",
+      "k",
+      "l",
+      "ʼ"
+    ],
+    [
+      "r",
+      "s",
+      "t",
+      "v",
+      "z",
+      "pf",
+      "sh",
+      "ts",
+      "ẅ",
+      "ÿ"
+    ]
+  ]
+};
+
+// Clavier virtuel ngiemboon — composant autonome (ES module), édition premium.
+// Disposition + métadonnées (phonétique, exemples) dérivées de la source unique
+// de vérité (alphabet.data.js, généré depuis data/alphabet_ngiemboon.json).
+// Sortie toujours normalisée NFC.
+
+const nfc = (s) => s.normalize("NFC");
+
+class NgiemboonKeyboard {
+  /**
+   * @param {HTMLElement} container - hôte où injecter le clavier
+   * @param {HTMLTextAreaElement|HTMLInputElement} target - champ cible
+   */
+  constructor(container, target) {
+    this.container = container;
+    this.target = target;
+    this.shift = false;
+    this.tipsEnabled = true; // aide phonétique (info-bulles) activée par défaut
+    this._build();
+  }
+
+  /** Active/désactive les info-bulles phonétiques. */
+  setTips(on) {
+    this.tipsEnabled = !!on;
+    if (!this.tipsEnabled) this._hideTip();
+  }
+
+  /** Rattache le clavier à un autre champ de saisie. */
+  setTarget(el) {
+    this.target = el;
+  }
+
+  // --- Construction du DOM (disposition physique compacte) ----------------
+  _build() {
+    const kb = document.createElement("div");
+    kb.className = "ngk ngk--physique";
+    kb.setAttribute("role", "group");
+    kb.setAttribute("aria-label", `Clavier ${NGIEMBOON.langue}`);
+
+    // Légende de couleurs
+    kb.appendChild(this._legend());
+
+    // Recherche des lettres par graphème
+    const vowByMin = new Map(NGIEMBOON.voyelles.map((v) => [v.min, v]));
+    const consByGraph = new Map(NGIEMBOON.consonnes.map((c) => [c.graph, c]));
+    const alphaKey = (g) => {
+      if (vowByMin.has(g)) return this._letterKey(vowByMin.get(g), "vow");
+      if (consByGraph.has(g)) return this._letterKey(consByGraph.get(g), "cons");
+      return this._plainKey(g, "num");
+    };
+
+    // Rangée des chiffres
+    const digits = (NGIEMBOON.chiffres || []).map((d) => this._plainKey(d, "num"));
+    if (digits.length) kb.appendChild(this._krow(digits, "ngk__krow--num"));
+
+    // 3 rangées de lettres (disposition physique façon AZERTY, décalées).
+    // Rangée du haut = lettres de NGUIEMBOON. Maj + Effacer sur la dernière.
+    const disp = NGIEMBOON.disposition_lettres || [];
+    disp.forEach((row, i) => {
+      const keys = row.map(alphaKey);
+      const off = i === 1 ? " ngk__krow--off1" : i === 2 ? " ngk__krow--off2" : "";
+      if (i === disp.length - 1) {
+        const shift = this._key("⇧", "ngk__key--action ngk__key--shift ngk__key--fn",
+          () => this._toggleShift());
+        this._shiftBtn = shift;
+        const back = this._key("⌫", "ngk__key--action ngk__key--fn",
+          () => this._backspace(), "Effacer");
+        kb.appendChild(this._krow([shift, ...keys, back], "ngk__krow--letters" + off));
+      } else {
+        kb.appendChild(this._krow(keys, "ngk__krow--letters" + off));
+      }
+    });
+
+    // Rangée des tons
+    const tones = NGIEMBOON.tons.filter((t) => t.marque && t.combinant).map((t) => this._toneKey(t));
+    if (tones.length) kb.appendChild(this._krow(tones, "ngk__krow--tones"));
+
+    // Rangée des accents français
+    const accents = (NGIEMBOON.accents_fr || []).map((a) =>
+      this._letterKey({ min: a.min, maj: a.maj, special: false }, "acc"));
+    if (accents.length) kb.appendChild(this._krow(accents, "ngk__krow--acc"));
+
+    // Ponctuation + barre d'espace (rangée fonction)
+    const punct = (NGIEMBOON.ponctuation || []).map((p) => this._plainKey(p, "num"));
+    const space = this._key("espace", "ngk__key--action ngk__key--space", () => this._insert(" "));
+    kb.appendChild(this._krow([...punct, space], "ngk__krow--fn"));
+
+    // Info-bulle partagée — attachée au <body> (le backdrop-filter du panneau
+    // en ferait sinon le référentiel des position:fixed → décalage).
+    this.tip = document.createElement("div");
+    this.tip.className = "ngk__tip";
+    document.body.appendChild(this.tip);
+
+    this.container.appendChild(kb);
+    this.kb = kb;
+  }
+
+  _legend() {
+    const items = [
+      ["nge", "Alphabet ngiemboon"],
+      ["special", "Lettres propres au ngiemboon"],
+      ["tone", "Tons"],
+      ["acc", "Accents FR"],
+      ["num", "Chiffres"],
+    ];
+    const l = document.createElement("div");
+    l.className = "ngk__legend";
+    l.innerHTML = items
+      .map(([k, label]) => `<span class="ngk__leg ngk__leg--${k}"><i></i>${label}</span>`)
+      .join("");
+    return l;
+  }
+
+  _krow(keys, extra) {
+    const r = document.createElement("div");
+    r.className = "ngk__krow" + (extra ? " " + extra : "");
+    keys.forEach((k) => r.appendChild(k));
+    return r;
+  }
+
+  /**
+   * Ordonne les consonnes en plaçant d'abord celles qui composent le
+   * mot-signature (dans l'ordre du mot, dédupliquées), puis les autres dans
+   * l'ordre officiel. Reconnaissance immédiate de la langue.
+   */
+  _orderConsonnes() {
+    const cons = NGIEMBOON.consonnes;
+    const word = (NGIEMBOON.mot_signature || "").toLowerCase();
+    const byGraph = new Map(cons.map((c) => [c.graph, c]));
+    const lead = [];
+    const seen = new Set();
+    for (const ch of word) {
+      const c = byGraph.get(ch);
+      if (c && !seen.has(ch)) {
+        lead.push(c);
+        seen.add(ch);
+      }
+    }
+    const rest = cons.filter((c) => !seen.has(c.graph));
+    return [...lead, ...rest];
+  }
+
+  _grid(kind, keys) {
+    const g = document.createElement("div");
+    g.className = `ngk__grid ngk__grid--${kind}`;
+    keys.forEach((k) => g.appendChild(k));
+    return g;
+  }
+
+  _key(label, cls, onClick, aria) {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.className = "ngk__key" + (cls ? " " + cls : "");
+    b.textContent = label;
+    if (aria) b.setAttribute("aria-label", aria);
+    b.addEventListener("click", (e) => {
+      e.preventDefault();
+      onClick();
+      this.target.focus();
+    });
+    return b;
+  }
+
+  _letterKey(entry, kind) {
+    const min = entry.min ?? entry.graph;
+    const maj = entry.maj;
+    const isNge = kind === "vow" || kind === "cons";
+    const cls =
+      `ngk__key--${kind}` +
+      (isNge ? " ngk__key--nge" : "") +
+      (entry.special ? " ngk__key--special" : "");
+    const b = this._key(this.shift ? maj : min, cls, () =>
+      this._insert(this.shift ? maj : min)
+    );
+    b.dataset.min = min;
+    b.dataset.maj = maj;
+    this._bindTip(b, {
+      glyph: min,
+      ipa: entry.ipa,
+      desc: entry.desc,
+      ex: entry.ex,
+      ex_fr: entry.ex_fr,
+    });
+    return b;
+  }
+
+  _plainKey(ch, kind) {
+    // touche simple (chiffre / ponctuation) : insertion directe, sans info-bulle
+    return this._key(ch, `ngk__key--${kind}`, () => this._insert(ch));
+  }
+
+  _toneKey(t) {
+    const b = this._key(
+      t.exemple,
+      "ngk__key--tone",
+      () => this._applyTone(t.combinant),
+      `Ton ${t.nom} (${t.diacritique})`
+    );
+    const name = document.createElement("span");
+    name.className = "ngk__tone-name";
+    name.textContent = t.nom;
+    b.appendChild(name);
+    this._bindTip(b, {
+      glyph: t.exemple,
+      ipa: t.ipa,
+      desc: `${t.desc} — accent ${t.diacritique}`,
+      ex: t.ex,
+      ex_fr: t.ex_fr,
+    });
+    return b;
+  }
+
+  _actionRow() {
+    const shift = this._key(
+      "⇧ Maj",
+      "ngk__key--action ngk__key--shift ngk__key--wide",
+      () => this._toggleShift()
+    );
+    this._shiftBtn = shift;
+    const space = this._key("espace", "ngk__key--action ngk__key--space", () =>
+      this._insert(" ")
+    );
+    const back = this._key(
+      "⌫",
+      "ngk__key--action ngk__key--wide",
+      () => this._backspace(),
+      "Effacer"
+    );
+    return this._row([shift, space, back]);
+  }
+
+  // --- Info-bulle ---------------------------------------------------------
+  _bindTip(btn, info) {
+    if (!info.ipa && !info.desc && !info.ex) return;
+    const show = () => this._showTip(btn, info);
+    const hide = () => this._hideTip();
+    btn.addEventListener("mouseenter", show);
+    btn.addEventListener("mouseleave", hide);
+    btn.addEventListener("focus", show);
+    btn.addEventListener("blur", hide);
+  }
+
+  _showTip(btn, info) {
+    if (!this.tipsEnabled) return;
+    const ex = info.ex
+      ? `<div class="tip-ex"><b>${info.ex}</b><span class="arrow">→</span>${info.ex_fr}</div>`
+      : "";
+    this.tip.innerHTML =
+      `<div class="tip-head"><span class="tip-glyph">${info.glyph}</span>` +
+      (info.ipa ? `<span class="tip-ipa">[${info.ipa}]</span>` : "") +
+      `</div>` +
+      (info.desc ? `<div class="tip-desc">${info.desc}</div>` : "") +
+      ex;
+    this.tip.classList.add("is-on");
+    // positionne au-dessus de la touche
+    const r = btn.getBoundingClientRect();
+    const t = this.tip.getBoundingClientRect();
+    let left = r.left + r.width / 2 - t.width / 2;
+    left = Math.max(8, Math.min(left, window.innerWidth - t.width - 8));
+    let top = r.top - t.height - 10;
+    if (top < 8) top = r.bottom + 10;
+    this.tip.style.left = `${left}px`;
+    this.tip.style.top = `${top}px`;
+  }
+
+  _hideTip() {
+    this.tip.classList.remove("is-on");
+  }
+
+  // --- Comportement -------------------------------------------------------
+  _caret() {
+    const el = this.target;
+    const start = el.selectionStart ?? el.value.length;
+    const end = el.selectionEnd ?? el.value.length;
+    return { el, start, end };
+  }
+
+  _setValue(value, caret) {
+    const el = this.target;
+    el.value = value;
+    el.selectionStart = el.selectionEnd = caret;
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  }
+
+  _insert(str) {
+    const { el, start, end } = this._caret();
+    const next = nfc(el.value.slice(0, start) + str + el.value.slice(end));
+    const caret = nfc(el.value.slice(0, start) + str).length;
+    this._setValue(next, caret);
+  }
+
+  _applyTone(combinant) {
+    const { el, start, end } = this._caret();
+    if (start !== end || start === 0) {
+      this._insert(combinant);
+      return;
+    }
+    const before = el.value.slice(0, start);
+    const after = el.value.slice(start);
+    const next = nfc(before + combinant + after);
+    const caret = nfc(before + combinant).length;
+    this._setValue(next, caret);
+  }
+
+  _backspace() {
+    const { el, start, end } = this._caret();
+    if (start !== end) {
+      const next = nfc(el.value.slice(0, start) + el.value.slice(end));
+      this._setValue(next, start);
+    } else if (start > 0) {
+      const arr = Array.from(el.value.slice(0, start));
+      arr.pop();
+      const head = arr.join("");
+      const next = nfc(head + el.value.slice(start));
+      this._setValue(next, head.length);
+    }
+  }
+
+  _toggleShift() {
+    this.shift = !this.shift;
+    this._shiftBtn.classList.toggle("is-on", this.shift);
+    this.kb.querySelectorAll(".ngk__key[data-min]").forEach((b) => {
+      b.textContent = this.shift ? b.dataset.maj : b.dataset.min;
+    });
+  }
+}
+
+
+const cible = document.getElementById("cible");
+const kb = new NgiemboonKeyboard(document.getElementById("host"), cible);
+
+document.getElementById("tips-toggle").addEventListener("change", function(e) {
+  kb.setTips(e.target.checked);
+});
+
+const readout = document.getElementById("readout");
+function render() {
+  const s = cible.value.normalize("NFC");
+  if (!s) { readout.textContent = "points de code : —"; return; }
+  const cps = Array.from(s).map(function(ch) {
+    const cp = ch.codePointAt(0).toString(16).toUpperCase().padStart(4, "0");
+    return "U+" + cp;
+  });
+  readout.innerHTML = "points de code : <span class='cp'>" + cps.join(" ") + "</span>";
+}
+cible.addEventListener("input", render);
+render();
+</script>
+</body>
+</html>

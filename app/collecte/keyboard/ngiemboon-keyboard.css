@@ -1,0 +1,523 @@
+/* Clavier virtuel ngiemboon — édition PREMIUM.
+   Glassmorphism, glow par groupe (voyelles=cyan, tons=vert, consonnes=bleu
+   électrique), lettres spéciales à halo, info-bulles phonétiques.
+   Respecte prefers-reduced-motion et le contraste WCAG AA. */
+
+.ngk {
+  --ngk-bg: #0a0e14;
+  --ngk-panel: #171c24;
+  --ngk-key: rgba(31, 39, 51, 0.92);
+  --ngk-key-hi: rgba(42, 52, 65, 0.98);
+  --ngk-key-border: rgba(120, 140, 165, 0.16);
+  --ngk-text: #e9f0f6;
+  --ngk-muted: #8b97a6;
+
+  --ngk-cyan: #22d3ee;    /* voyelles */
+  --ngk-green: #34d399;   /* tons */
+  --ngk-blue: #4f8cff;    /* consonnes */
+  --ngk-gold: #e5c07b;    /* accents lettres spéciales */
+  --ngk-violet: #a78bfa;  /* symboles */
+
+  position: relative;
+  display: inline-block;
+  background:
+    linear-gradient(180deg, rgba(35,44,56,0.55), rgba(13,17,23,0.75)),
+    var(--ngk-panel);
+  border: 1px solid var(--ngk-key-border);
+  border-radius: 20px;
+  padding: 20px 20px 18px;
+  box-shadow:
+    0 24px 60px rgba(0,0,0,0.55),
+    0 2px 0 rgba(255,255,255,0.04) inset,
+    0 0 0 1px rgba(255,255,255,0.02) inset;
+  /* Pas de backdrop-filter (flou) : sur mobile il se recalcule à CHAQUE frappe
+     (repaint) et fait ramer les GPU faibles. Fond opaque = même rendu partout,
+     et frappe instantanée. */
+  font-family: "Noto Sans", "DejaVu Sans", system-ui, sans-serif;
+  user-select: none;
+  max-width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
+}
+/* liseré lumineux animé sur le pourtour du clavier */
+.ngk::before {
+  content: "";
+  position: absolute; inset: -1px;
+  border-radius: 21px;
+  padding: 1px;
+  background: linear-gradient(120deg,
+    rgba(34,211,238,0.55), rgba(79,140,255,0.15) 35%,
+    rgba(52,211,153,0.5) 65%, rgba(34,211,238,0.55));
+  background-size: 300% 300%;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor; mask-composite: exclude;
+  animation: ngk-border 9s linear infinite;
+  pointer-events: none;
+  opacity: 0.7;
+}
+@keyframes ngk-border { to { background-position: 300% 0; } }
+
+/* ---- Groupes avec éclairage d'ambiance propre ---- */
+.ngk__group {
+  position: relative;
+  border-radius: 14px;
+  padding: 8px 8px 6px;
+  margin-bottom: 12px;
+}
+.ngk__group::after { /* halo d'ambiance derrière le groupe */
+  content: "";
+  position: absolute; inset: 0;
+  border-radius: 14px;
+  background: radial-gradient(120% 90% at 50% 120%,
+    var(--glow, transparent) 0%, transparent 62%);
+  opacity: 0.16;
+  pointer-events: none;
+  z-index: 0;
+}
+.ngk__group--vow  { --glow: var(--ngk-cyan); }
+.ngk__group--tone { --glow: var(--ngk-green); }
+.ngk__group--cons { --glow: var(--ngk-blue); }
+.ngk__group--acc  { --glow: var(--ngk-gold); }
+.ngk__group--num  { --glow: var(--ngk-blue); }
+.ngk__group:last-of-type { margin-bottom: 10px; }
+
+.ngk__row {
+  position: relative; z-index: 1;
+  display: flex; gap: 9px; margin-bottom: 9px;
+  justify-content: center; flex-wrap: wrap;
+}
+.ngk__row:last-child { margin-bottom: 0; }
+
+/* Grilles à colonnes fixes : pas de touche orpheline en fin de ligne */
+.ngk__grid {
+  position: relative; z-index: 1;
+  display: grid; gap: 9px; justify-items: stretch; align-items: stretch;
+}
+.ngk__grid--vow  { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+.ngk__grid--cons { grid-template-columns: repeat(12, minmax(0, 1fr)); }
+.ngk__grid--acc  { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+.ngk__grid--num  { grid-template-columns: repeat(10, minmax(0, 1fr)); }
+.ngk__grid--punc { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+.ngk__grid--tone {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  max-width: 470px; margin: 0 auto;
+}
+/* espacement entre deux grilles d'un même groupe (chiffres puis ponctuation) */
+.ngk__group .ngk__grid + .ngk__grid { margin-top: 9px; }
+
+.ngk__key {
+  position: relative;
+  min-width: 0; height: 58px; padding: 0 8px;
+  touch-action: manipulation;   /* pas de délai « double-tap zoom » → frappe instantanée */
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 1.4rem; line-height: 1; color: var(--ngk-text);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0.02) 30%,
+      rgba(0,0,0,0.10) 100%),
+    var(--ngk-key);
+  border: 1px solid var(--ngk-key-border);
+  border-radius: 13px;
+  cursor: pointer;
+  /* keycap : relief haut clair, ombre basse, léger biseau interne */
+  box-shadow:
+    0 3px 7px rgba(0,0,0,0.45),
+    0 1px 0 rgba(255,255,255,0.10) inset,
+    0 -2px 5px rgba(0,0,0,0.30) inset;
+  transition: transform 90ms ease, background 140ms ease,
+              box-shadow 160ms ease, border-color 140ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+/* fine ligne de brillance sur le haut de la touche */
+.ngk__key::before {
+  content: ""; position: absolute; left: 8px; right: 8px; top: 3px; height: 40%;
+  border-radius: 10px 10px 14px 14px;
+  background: linear-gradient(180deg, rgba(255,255,255,0.12), rgba(255,255,255,0));
+  pointer-events: none; opacity: 0.7;
+}
+.ngk__key:hover {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.03) 32%,
+      rgba(0,0,0,0.08) 100%),
+    var(--ngk-key-hi);
+  transform: translateY(-2px);
+  box-shadow:
+    0 8px 18px rgba(0,0,0,0.5),
+    0 1px 0 rgba(255,255,255,0.14) inset,
+    0 -2px 5px rgba(0,0,0,0.28) inset;
+}
+.ngk__key:focus-visible { outline: 2px solid var(--ngk-blue); outline-offset: 2px; }
+.ngk__key:active {
+  transform: translateY(2px);
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5), 0 3px 8px rgba(0,0,0,0.55) inset;
+}
+
+/* accents par groupe : glow doux + montée en intensité au survol */
+.ngk__key--vow  { box-shadow: 0 0 0 1px rgba(34,211,238,0.10) inset, 0 2px 8px rgba(0,0,0,0.35); }
+.ngk__key--vow:hover  { border-color: rgba(34,211,238,0.6);  box-shadow: 0 0 16px rgba(34,211,238,0.35), 0 0 0 1px rgba(34,211,238,0.35) inset; }
+.ngk__key--cons:hover { border-color: rgba(79,140,255,0.6);  box-shadow: 0 0 16px rgba(79,140,255,0.30), 0 0 0 1px rgba(79,140,255,0.30) inset; }
+.ngk__key--acc  { font-size: 1.25rem; }
+.ngk__key--acc:hover  { border-color: rgba(229,192,123,0.6); box-shadow: 0 0 16px rgba(229,192,123,0.30), 0 0 0 1px rgba(229,192,123,0.30) inset; }
+.ngk__key--num  { font-size: 1.25rem; color: #cfd8e3; }
+.ngk__key--num:hover  { border-color: rgba(79,140,255,0.6);  box-shadow: 0 0 16px rgba(79,140,255,0.28), 0 0 0 1px rgba(79,140,255,0.28) inset; }
+
+/* lettres spéciales : liseré doré + halo permanent discret + shimmer */
+.ngk__key--special {
+  color: #fff;
+  border-color: rgba(229,192,123,0.45);
+  box-shadow: 0 0 14px rgba(229,192,123,0.18), 0 0 0 1px rgba(229,192,123,0.30) inset;
+}
+.ngk__key--special::after {
+  content: ""; position: absolute; inset: 0; border-radius: 12px;
+  background: linear-gradient(115deg, transparent 30%, rgba(255,255,255,0.22) 48%, transparent 66%);
+  background-size: 250% 100%; opacity: 0; pointer-events: none;
+}
+.ngk__key--special:hover {
+  border-color: var(--ngk-gold);
+  box-shadow: 0 0 22px rgba(229,192,123,0.5), 0 0 0 1px rgba(229,192,123,0.55) inset;
+}
+.ngk__key--special:hover::after { animation: ngk-shimmer 900ms ease; }
+@keyframes ngk-shimmer { from { background-position: 120% 0; opacity: .0; }
+  35% { opacity: .9; } to { background-position: -120% 0; opacity: 0; } }
+
+/* touches de ton : accent vert + voyelle témoin */
+.ngk__key--tone {
+  color: var(--ngk-green);
+  border-color: rgba(52,211,153,0.35);
+  box-shadow: 0 0 0 1px rgba(52,211,153,0.22) inset, 0 2px 8px rgba(0,0,0,0.35);
+  font-size: 1.55rem;
+}
+.ngk__key--tone:hover {
+  border-color: var(--ngk-green);
+  box-shadow: 0 0 18px rgba(52,211,153,0.45), 0 0 0 1px rgba(52,211,153,0.5) inset;
+}
+.ngk__key--tone .ngk__tone-name {
+  position: absolute; bottom: 4px; font-size: 0.55rem;
+  color: var(--ngk-muted); letter-spacing: 0.02em;
+}
+
+/* actions — aspect sobre d'origine (sans keycap glossy ni relief prononcé) */
+.ngk__key--action { color: var(--ngk-muted); font-size: 0.9rem; min-width: 64px; height: 56px; }
+.ngk__key--action::before { content: none; }
+.ngk__key--action {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0) 42%),
+    var(--ngk-key);
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35), 0 1px 0 rgba(255,255,255,0.05) inset;
+}
+.ngk__key--action:hover {
+  transform: translateY(-1px);
+  border-color: rgba(120,140,165,0.28);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0) 45%),
+    var(--ngk-key-hi);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4), 0 1px 0 rgba(255,255,255,0.06) inset;
+}
+.ngk__key--action:active { transform: translateY(2px); box-shadow: 0 1px 3px rgba(0,0,0,0.5) inset; }
+.ngk__key--space { min-width: 250px; letter-spacing: 0.12em; }
+.ngk__key--wide { min-width: 92px; }
+.ngk__key--shift.is-on {
+  color: var(--ngk-blue); border-color: var(--ngk-blue);
+  box-shadow: 0 0 16px rgba(79,140,255,0.4), 0 0 0 1px rgba(79,140,255,0.45) inset;
+}
+
+.ngk__section-label {
+  position: relative; z-index: 1;
+  color: var(--ngk-muted); font-size: 0.62rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.16em;
+  margin: 0 0 8px; text-align: center;
+}
+.ngk__section-label .dot {
+  display: inline-block; width: 6px; height: 6px; border-radius: 50%;
+  margin-right: 7px; vertical-align: middle;
+  box-shadow: 0 0 8px 1px currentColor;
+}
+.ngk__group--vow  .dot { color: var(--ngk-cyan); }
+.ngk__group--tone .dot { color: var(--ngk-green); }
+.ngk__group--cons .dot { color: var(--ngk-blue); }
+.ngk__group--acc  .dot { color: var(--ngk-gold); }
+.ngk__group--num  .dot { color: var(--ngk-blue); }
+
+/* ---- Info-bulle pédagogique (phonétique + exemple) ---- */
+/* Info-bulle : attachée au <body>, couleurs en dur (hors portée des vars .ngk) */
+.ngk__tip {
+  position: fixed; z-index: 9999;
+  min-width: 150px; max-width: 240px;
+  background: rgba(10,14,20,0.97);
+  border: 1px solid rgba(120,140,165,0.28);
+  border-radius: 12px; padding: 10px 12px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.03) inset;
+  color: #e9f0f6; pointer-events: none;
+  font-family: "Noto Sans", "DejaVu Sans", system-ui, sans-serif;
+  opacity: 0; transform: translateY(4px) scale(0.98);
+  transition: opacity 120ms ease, transform 120ms ease;
+}
+.ngk__tip.is-on { opacity: 1; transform: translateY(0) scale(1); }
+
+/* --- Popup de variantes (appui long sur a, e, i, o, u, c…) --- */
+.ngk__varpop {
+  position: fixed; z-index: 10000;
+  display: flex; gap: 5px; padding: 6px;
+  background: linear-gradient(180deg, #1b2230, #10151d);
+  border: 1px solid rgba(34,211,238,0.35); border-radius: 14px;
+  box-shadow: 0 18px 44px rgba(0,0,0,0.65), 0 0 0 1px rgba(34,211,238,0.15) inset;
+}
+.ngk__varkey {
+  min-width: 44px; height: 48px; padding: 0 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.5rem; color: #e9f0f6; cursor: pointer;
+  background: var(--ngk-key); border: 1px solid var(--ngk-key-border);
+  border-radius: 10px; user-select: none; touch-action: manipulation;
+  font-family: "Noto Sans", "DejaVu Sans", system-ui, sans-serif;
+}
+.ngk__varkey:hover, .ngk__varkey.is-active, .ngk__varkey:active {
+  color: #04121a; font-weight: 700;
+  background: #2fd3e8; border-color: #22d3ee;
+  box-shadow: 0 0 16px rgba(34,211,238,0.5);
+}
+/* petit repère « … » en haut à droite des touches qui ont des variantes */
+.ngk__key--hasvar::after {
+  content: "···"; position: absolute; top: 1px; right: 5px;
+  font-size: 0.6rem; line-height: 1; letter-spacing: 0.5px;
+  color: rgba(233,240,246,0.45); pointer-events: none;
+}
+.ngk__tip .tip-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+.ngk__tip .tip-glyph { font-size: 1.6rem; line-height: 1; }
+.ngk__tip .tip-ipa { color: #34d399; font-size: 0.95rem; font-family: "DejaVu Sans", sans-serif; }
+.ngk__tip .tip-desc { color: #8b97a6; font-size: 0.74rem; line-height: 1.35; margin-bottom: 5px; }
+.ngk__tip .tip-ex { font-size: 0.8rem; }
+.ngk__tip .tip-ex b { color: #22d3ee; font-weight: 600; }
+.ngk__tip .tip-ex .arrow { color: #8b97a6; margin: 0 5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .ngk::before { animation: none; }
+  .ngk__key, .ngk__tip { transition: none; }
+  .ngk__key:hover, .ngk__key:active { transform: none; }
+  .ngk__key--special:hover::after { animation: none; }
+}
+
+/* Réarrangement des colonnes : 24 consonnes = 12×2 / 8×3 / 6×4 (jamais orphelin) */
+@media (max-width: 680px) {
+  .ngk__grid--cons { grid-template-columns: repeat(8, minmax(0, 1fr)); }
+}
+@media (max-width: 560px) {
+  .ngk { padding: 14px; }
+  .ngk__key { height: 50px; font-size: 1.2rem; padding: 0 4px; }
+  .ngk__grid { gap: 7px; }
+  .ngk__grid--vow  { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ngk__grid--cons { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+  .ngk__grid--acc  { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ngk__grid--num  { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .ngk__grid--punc { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .ngk__key--space { min-width: 150px; }
+}
+
+/* =======================================================================
+   DISPOSITION PHYSIQUE COMPACTE (façon AZERTY) + coloration par type
+   ======================================================================= */
+.ngk--physique {
+  --k: 42px;            /* taille de touche (ajustée en fluide par le JS) */
+  padding: 14px 16px 12px;
+  width: 100%; max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Légende de couleurs */
+.ngk__legend {
+  display: flex; flex-wrap: wrap; gap: 6px 14px; justify-content: center;
+  margin-bottom: 12px; position: relative; z-index: 1;
+}
+.ngk__leg { display: inline-flex; align-items: center; gap: 6px;
+  color: var(--ngk-muted); font-size: 0.62rem; letter-spacing: 0.03em; }
+.ngk__leg i { width: 10px; height: 10px; border-radius: 3px; display: inline-block;
+  box-shadow: 0 0 6px currentColor; }
+.ngk__leg--vow     i { background: #22d3ee; color: #22d3ee; }
+.ngk__leg--cons    i { background: #d6f3fb; color: #d6f3fb; box-shadow: none; }
+.ngk__leg--special i { background: #f4d68a; color: #f4d68a; }
+.ngk__leg--tone    i { background: var(--ngk-green); color: var(--ngk-green); }
+.ngk__leg--acc     i { background: var(--ngk-gold); color: var(--ngk-gold); }
+.ngk__leg--num     i { background: #9aa6b4; color: #9aa6b4; box-shadow: none; }
+.ngk__leg--punc    i { background: #77c4c0; color: #77c4c0; }
+.ngk__leg--sym     i { background: var(--ngk-violet); color: var(--ngk-violet); }
+
+/* Rangées physiques : touches carrées, non étirées, décalées façon clavier */
+.ngk--physique .ngk__krow {
+  position: relative; z-index: 1;
+  display: flex; gap: 6px; justify-content: center; margin-bottom: 6px;
+  flex-wrap: wrap;      /* repli propre si une rangée reste trop large */
+}
+.ngk--physique .ngk__krow--off1 { padding-left: calc(var(--k) * 0.5); }
+.ngk--physique .ngk__krow--off2 { padding-left: calc(var(--k) * 1.0); }
+/* respiration : un peu d'air avant tons / accents / fonction */
+.ngk--physique .ngk__krow--tones { margin-top: 12px; }
+.ngk--physique .ngk__krow--acc   { margin-top: 6px; }
+.ngk--physique .ngk__krow--fn    { margin-top: 12px; }
+
+.ngk--physique .ngk__key {
+  width: var(--k); height: var(--k); min-width: var(--k);
+  padding: 0; font-size: 1.15rem; border-radius: 10px;
+}
+.ngk--physique .ngk__key::before { left: 5px; right: 5px; top: 3px; }
+.ngk--physique .ngk__key--fn { width: calc(var(--k) * 1.35); font-size: 0.9rem; }
+.ngk--physique .ngk__key--space { width: calc(var(--k) * 6); min-width: 0; max-width: 100%; }
+.ngk--physique .ngk__key--tone { font-size: 1.25rem; }
+.ngk--physique .ngk__key--tone .ngk__tone-name { display: none; } /* compact */
+
+/* ---- COLORATION PAR GROUPE ----
+   Chaque groupe = une COULEUR + un FOND teinté propres, repérables d'un coup
+   d'œil (au repos, sans survol) aussi bien sur mobile que sur ordinateur.
+   Palette : voyelles=cyan · consonnes=bleu · lettres propres=halo vedette ·
+   tons=vert · accents FR=or · chiffres=gris · ponctuation=sarcelle · symboles=violet. */
+.ngk__key--nge { box-shadow: 0 3px 7px rgba(0,0,0,0.45); }
+
+/* VOYELLES — MISES EN ÉVIDENCE : touche cyan remplie + glow, nettement isolées
+   des consonnes. On garde le style à effets (dégradé + halo), pas plat. */
+.ngk--physique .ngk__key--vow:not(.ngk__key--special) {
+  color: #ffffff; font-weight: 700;
+  background: linear-gradient(180deg, rgba(34,211,238,0.42), rgba(34,211,238,0.14) 60%), var(--ngk-key);
+  border-color: rgba(34,211,238,0.75);
+  box-shadow: 0 0 14px rgba(34,211,238,0.35), 0 0 0 1px rgba(34,211,238,0.5) inset, 0 3px 7px rgba(0,0,0,0.4);
+}
+.ngk--physique .ngk__key--vow:not(.ngk__key--special):hover {
+  border-color: var(--ngk-cyan);
+  box-shadow: 0 0 22px rgba(34,211,238,0.55), 0 0 0 1px rgba(34,211,238,0.6) inset;
+}
+
+/* CONSONNES — couleur d'ORIGINE (identité ngiemboon, near-white cyan), inchangée */
+.ngk--physique .ngk__key--cons:not(.ngk__key--special) {
+  color: #d6f3fb;
+  border-color: rgba(34,211,238,0.20);
+}
+.ngk--physique .ngk__key--cons:not(.ngk__key--special):hover {
+  border-color: rgba(34,211,238,0.55);
+  box-shadow: 0 0 14px rgba(34,211,238,0.26), 0 0 0 1px rgba(34,211,238,0.3) inset;
+}
+
+/* LETTRES PROPRES au ngiemboon (ɛ ɔ ʉ ŋ ẅ ÿ ʼ) : les vedettes, DORÉ lumineux —
+   nettement distinct du cyan des voyelles. */
+.ngk__key--nge.ngk__key--special {
+  color: #f4d68a; font-weight: 700;
+  background:
+    linear-gradient(180deg, rgba(229,192,123,0.26), rgba(229,192,123,0.06) 55%, rgba(0,0,0,0.10)),
+    var(--ngk-key);
+  border-color: rgba(229,192,123,0.7);
+  box-shadow: 0 0 16px rgba(229,192,123,0.42), 0 0 0 1px rgba(229,192,123,0.55) inset;
+}
+.ngk__key--nge.ngk__key--special:hover {
+  box-shadow: 0 0 24px rgba(229,192,123,0.6), 0 0 0 1px rgba(229,192,123,0.7) inset;
+}
+
+/* TONS — vert */
+.ngk--physique .ngk__key--tone {
+  color: var(--ngk-green);
+  background: linear-gradient(180deg, rgba(52,211,153,0.12), rgba(52,211,153,0.02) 60%), var(--ngk-key);
+  border-color: rgba(52,211,153,0.4);
+}
+/* ACCENTS FR — or */
+.ngk--physique .ngk__key--acc {
+  color: var(--ngk-gold);
+  background: linear-gradient(180deg, rgba(229,192,123,0.10), rgba(229,192,123,0.02) 60%), var(--ngk-key);
+  border-color: rgba(229,192,123,0.34);
+}
+/* CHIFFRES — gris neutre */
+.ngk--physique .ngk__key--num { color: #9aa6b4; border-color: rgba(120,140,165,0.16); }
+/* PONCTUATION — sarcelle, distincte des chiffres */
+.ngk--physique .ngk__key--punc {
+  color: #77c4c0;
+  background: linear-gradient(180deg, rgba(119,196,192,0.10), rgba(119,196,192,0.02) 60%), var(--ngk-key);
+  border-color: rgba(119,196,192,0.30);
+}
+/* SYMBOLES — violet */
+.ngk--physique .ngk__key--sym {
+  color: var(--ngk-violet);
+  background: linear-gradient(180deg, rgba(167,139,250,0.12), rgba(167,139,250,0.02) 60%), var(--ngk-key);
+  border-color: rgba(167,139,250,0.30);
+}
+.ngk--physique .ngk__key--sym:hover { border-color: rgba(167,139,250,0.6);
+  box-shadow: 0 0 14px rgba(167,139,250,0.28), 0 0 0 1px rgba(167,139,250,0.30) inset; }
+
+/* Pages Lettres / Symboles — sur ORDINATEUR, tout est affiché et les touches de
+   bascule sont masquées (on a la place). La bascule ne sert que sur mobile. */
+.ngk__page { position: relative; z-index: 1; }
+.ngk__key--mode { display: none; }
+
+/* --- MOBILE : grille uniforme auto-ajustée -------------------------------
+   Sur écran étroit, chaque rangée devient une grille dont les colonnes se
+   calent automatiquement à la largeur (autant de colonnes de ≥40px que possible,
+   étirées pour remplir). Toutes les touches ont la même taille, alignées en
+   colonnes nettes : compact, bien organisé, et JAMAIS de débordement. La barre
+   d'espace occupe toute la largeur. Le desktop garde la disposition AZERTY. */
+@media (max-width: 560px) {
+  /* Sur mobile on ne change QUE la DISPOSITION (compacte, en grille, 2 pages).
+     Le STYLE visuel — couleurs, glows, relief, gloss — reste IDENTIQUE à celui
+     de l'ordinateur (aucune divergence). La fluidité vient de l'absence de
+     backdrop-filter (retiré partout), pas d'un appauvrissement du mobile. */
+  /* Cadre supprimé sur mobile : le panneau ancré (kb-floating) sert déjà de
+     contenant → on retire bordure, coins arrondis, liseré animé et ombres pour
+     rendre TOUT l'espace aux touches (fond plat, bord à bord). */
+  .ngk--physique {
+    padding: 1px 2px; border: none; border-radius: 0; box-shadow: none;
+  }
+  .ngk::before { content: none; display: none; }   /* liseré lumineux du pourtour */
+  /* légende masquée sur mobile : le code couleur reste visible sur les touches */
+  .ngk__legend { display: none; }
+  .ngk--physique .ngk__krow { padding-left: 0; margin-bottom: 2px; }
+  /* PAGE LETTRES : les 3 rangées fusionnent en UNE grille 8 colonnes → 32
+     lettres = 4 lignes pleines, aucun bouton orphelin. */
+  .ngk--physique .ngk__page--letters {
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px;
+  }
+  .ngk--physique .ngk__page--letters .ngk__krow--letters { display: contents; }
+  /* Rangées pleine largeur DANS la grille de la page Lettres (tons + ponctuation
+     rapatriée) : elles s'étendent sur les 8 colonnes puis se subdivisent.
+     Écart vertical MINIMAL (2px) — même resserrement que les autres rangées. */
+  .ngk--physique .ngk__krow--tones {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 2px; margin-top: 2px;
+  }
+  .ngk--physique .ngk__page--letters .ngk__krow--punc {
+    grid-column: 1 / -1;
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; margin-top: 2px;
+  }
+  /* PAGE SYMBOLES : colonnes qui tombent JUSTE quelle que soit la largeur —
+     chiffres 10, accents 16=2×8, symboles 8 → chaque ligne pleine. */
+  .ngk--physique .ngk__krow--num {
+    display: grid; grid-template-columns: repeat(10, 1fr); gap: 2px;
+  }
+  .ngk--physique .ngk__krow--acc,
+  .ngk--physique .ngk__krow--sym {
+    display: grid; grid-template-columns: repeat(8, 1fr); gap: 2px; margin-top: 2px;
+  }
+  /* Hauteur FLUIDE : la touche grandit avec l'écran (petit tel → tablette) tout
+     en restant confortable au doigt. Ni figée, ni jamais trop petite/grande. */
+  .ngk--physique .ngk__key,
+  .ngk--physique .ngk__key--fn,
+  .ngk--physique .ngk__key--tone {
+    width: auto; min-width: 0;
+    height: clamp(24px, 5.6vw, 33px);   /* resserré au maximum → clavier ~35% de l'écran */
+    font-size: clamp(0.9rem, 3.3vw, 1.12rem);
+    border-radius: 7px;
+  }
+  .ngk--physique .ngk__key::before { top: 2px; left: 4px; right: 4px; }
+  .ngk--physique .ngk__key--space { grid-column: 1 / -1; width: auto; height: clamp(22px, 5.2vw, 31px); }
+
+  /* Bascule de pages : une seule page visible à la fois → clavier court */
+  .ngk--physique[data-page="letters"] .ngk__page--symbols { display: none; }
+  .ngk--physique[data-page="symbols"] .ngk__page--letters { display: none; }
+  .ngk--physique .ngk__key--mode { display: inline-flex; }
+  .ngk--physique[data-page="letters"] .ngk__key--toabc { display: none; }
+  .ngk--physique[data-page="symbols"] .ngk__key--tosym { display: none; }
+
+  /* Rangée basse sur UNE ligne : bascule + espace (élastique) + effacer */
+  .ngk--physique .ngk__krow--bottom {
+    display: flex; gap: 2px; margin-top: 2px; align-items: stretch;
+  }
+  .ngk--physique .ngk__krow--bottom .ngk__key { height: clamp(26px, 6vw, 32px); }
+  .ngk--physique .ngk__krow--bottom .ngk__key--space {
+    flex: 1 1 auto; width: auto; grid-column: auto;
+  }
+  .ngk--physique .ngk__krow--bottom .ngk__key--mode,
+  .ngk--physique .ngk__krow--bottom .ngk__key--fn {
+    flex: 0 0 auto; min-width: 54px; font-size: 0.9rem;
+  }
+}

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256" role="img" aria-label="Traduire">
+  <defs>
+    <linearGradient id="trCyan" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#38bdf8"/><stop offset=".5" stop-color="#0ea5e9"/><stop offset="1" stop-color="#0369a1"/>
+    </linearGradient>
+    <linearGradient id="trGreen" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#4ade80"/><stop offset=".5" stop-color="#16a34a"/><stop offset="1" stop-color="#166534"/>
+    </linearGradient>
+    <linearGradient id="trGloss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".6"/><stop offset=".5" stop-color="#ffffff" stop-opacity=".1"/><stop offset="1" stop-color="#ffffff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="trGold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fde68a"/><stop offset="1" stop-color="#f59e0b"/>
+    </linearGradient>
+    <filter id="trShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#04121a" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <g filter="url(#trShadow)" transform="rotate(-9 96 150)">
+    <rect x="34" y="86" width="118" height="118" rx="26" fill="url(#trGreen)"/>
+    <rect x="34" y="86" width="118" height="60" rx="26" fill="url(#trGloss)"/>
+    <text x="93" y="172" font-family="'Segoe UI','Noto Sans',sans-serif" font-size="86" font-weight="800" fill="#ffffff" text-anchor="middle">ŋ</text>
+  </g>
+  <g filter="url(#trShadow)" transform="rotate(8 168 120)">
+    <rect x="104" y="52" width="118" height="118" rx="26" fill="url(#trCyan)"/>
+    <rect x="104" y="52" width="118" height="60" rx="26" fill="url(#trGloss)"/>
+    <text x="163" y="138" font-family="'Segoe UI','Noto Sans',sans-serif" font-size="86" font-weight="800" fill="#ffffff" text-anchor="middle">A</text>
+  </g>
+  <g stroke="url(#trGold)" stroke-width="10" fill="none" stroke-linecap="round">
+    <path d="M96 214 A46 46 0 0 0 150 196"/>
+    <path d="M160 42 A46 46 0 0 0 106 60"/>
+  </g>
+  <path d="M150 196 l-2 -19 19 8 z" fill="#f59e0b"/>
+  <path d="M106 60 l2 19 -19 -8 z" fill="#fde68a"/>
+</svg>

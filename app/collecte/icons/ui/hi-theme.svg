@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" role="img" aria-label="Thème">
+<defs><linearGradient id="tg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0c4"/><stop offset=".55" stop-color="#f2b84a"/><stop offset="1" stop-color="#d98a2a"/></linearGradient>
+<linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#dff2fb"/><stop offset="1" stop-color="#87b0cc"/></linearGradient></defs>
+<path d="M4 19.5a10.5 10.5 0 0 0 19 4.2A8.4 8.4 0 0 1 12 12a10.5 10.5 0 0 0-8 7.5z" fill="url(#mg)"/>
+<path d="M5.5 19a9 9 0 0 1 6-6.2A9.6 9.6 0 0 0 12 16z" fill="#fff" opacity=".45"/>
+<circle cx="22.5" cy="10.5" r="6" fill="url(#tg)"/>
+<circle cx="20.6" cy="8.6" r="2.4" fill="#fff" opacity=".55"/>
+<g stroke="#d98a2a" stroke-width="1.7" stroke-linecap="round"><line x1="22.5" y1="1.4" x2="22.5" y2="3.6"/><line x1="29.4" y1="3.6" x2="27.8" y2="5.2"/><line x1="31.2" y1="10.5" x2="29" y2="10.5"/><line x1="29.4" y1="17.4" x2="27.8" y2="15.8"/></g>
+</svg>

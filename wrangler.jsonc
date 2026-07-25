@@ -1,0 +1,11 @@
+{
+  // Déploiement Cloudflare Workers (static assets) du site LANGIAL.
+  // Site 100% statique : aucun code Worker, on sert directement le dossier app/collecte
+  // à la racine du domaine (langial.com/). Routage de l'app en hash (#/...), donc
+  // "single-page-application" renvoie index.html pour toute route inconnue.
+  "name": "langial",
+  "compatibility_date": "2024-11-01",
+  "assets": {
+    "directory": "./app/collecte"
+  }
+}

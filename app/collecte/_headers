@@ -1,0 +1,12 @@
+# En-têtes Cloudflare (Workers static assets).
+# Le shell PWA et les métadonnées de version ne doivent PAS être mis en cache par le
+# navigateur, sinon les mises à jour ne sont pas prises en compte. Le Service Worker
+# gère lui-même le cache applicatif.
+/sw.js
+  Cache-Control: no-cache, no-store, must-revalidate
+/index.html
+  Cache-Control: no-cache
+/version.json
+  Cache-Control: no-cache, no-store, must-revalidate
+/manifest.webmanifest
+  Cache-Control: no-cache

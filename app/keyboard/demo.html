@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Clavier virtuel ngiemboon — démo</title>
+  <link rel="stylesheet" href="ngiemboon-keyboard.css" />
+  <style>
+    :root { color-scheme: dark; }
+    body {
+      margin: 0; min-height: 100vh;
+      background: radial-gradient(1200px 600px at 50% -10%, #12202b 0%, #0d1117 60%);
+      color: #e6edf3;
+      font-family: "Noto Sans", "DejaVu Sans", system-ui, sans-serif;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 28px 16px 40px;
+      box-sizing: border-box;
+    }
+    h1 { font-size: 1.25rem; font-weight: 700; margin: 0 0 2px; letter-spacing: .01em; }
+    h1 .accent { color: #22d3ee; }
+    .subtitle { color: #8b949e; font-size: .85rem; margin: 0 0 22px; }
+    .field { width: min(680px, 100%); }
+    textarea {
+      width: 100%; box-sizing: border-box; min-height: 92px;
+      background: #0d1117; color: #e6edf3;
+      border: 1px solid #30363d; border-radius: 12px;
+      padding: 14px 16px; font-size: 1.5rem; line-height: 1.5;
+      font-family: "Noto Sans", "DejaVu Sans", sans-serif; resize: vertical;
+    }
+    textarea:focus { outline: 2px solid #3b82f6; outline-offset: 1px; border-color: #3b82f6; }
+    .readout {
+      width: min(680px, 100%); box-sizing: border-box; margin: 10px 0 22px;
+      font-family: "DejaVu Sans Mono", ui-monospace, monospace;
+      font-size: .72rem; color: #8b949e; background: #0d1117;
+      border: 1px dashed #30363d; border-radius: 10px; padding: 8px 12px;
+      min-height: 1.4em; word-break: break-all;
+    }
+    .readout .cp { color: #34d399; }
+    .kb-host { width: min(680px, 100%); display: flex; justify-content: center; }
+    .toolbar { width: min(680px, 100%); display: flex; justify-content: flex-end;
+      align-items: center; gap: 10px; margin: 0 0 14px; }
+    .switch-row { display: inline-flex; align-items: center; gap: 9px;
+      color: #8b97a6; font-size: .8rem; cursor: pointer; user-select: none; }
+    .switch { position: relative; width: 40px; height: 22px; }
+    .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+    .slider { position: absolute; inset: 0; border-radius: 999px; background: #1f2733;
+      border: 1px solid #30363d; transition: background .16s ease, border-color .16s ease; }
+    .slider::before { content: ""; position: absolute; top: 2px; left: 2px; width: 16px; height: 16px;
+      border-radius: 50%; background: #8b97a6; transition: transform .16s ease, background .16s ease; }
+    .switch input:checked + .slider { background: rgba(34,211,238,.22); border-color: #22d3ee; }
+    .switch input:checked + .slider::before { transform: translateX(18px); background: #22d3ee;
+      box-shadow: 0 0 10px rgba(34,211,238,.7); }
+    .switch input:focus-visible + .slider { outline: 2px solid #4f8cff; outline-offset: 2px; }
+    @media (prefers-reduced-motion: reduce) { .slider, .slider::before { transition: none; } }
+  </style>
+</head>
+<body>
+  <h1>Clavier <span class="accent">ngiemboon</span></h1>
+  <p class="subtitle">Première itération — saisie texte, tons, sortie normalisée NFC</p>
+
+  <div class="toolbar">
+    <label class="switch-row" for="tips-toggle">
+      Aide phonétique
+      <span class="switch">
+        <input type="checkbox" id="tips-toggle" checked
+               role="switch" aria-label="Activer l'aide phonétique" />
+        <span class="slider"></span>
+      </span>
+    </label>
+  </div>
+
+  <div class="field">
+    <textarea id="cible" placeholder="Tape ici en ngiemboon…" autofocus></textarea>
+  </div>
+  <div class="readout" id="readout" aria-live="polite"></div>
+
+  <div class="kb-host" id="host"></div>
+
+  <script type="module">
+    import { NgiemboonKeyboard } from "./ngiemboon-keyboard.js";
+    const cible = document.getElementById("cible");
+    const kb = new NgiemboonKeyboard(document.getElementById("host"), cible);
+
+    // Interrupteur d'aide phonétique
+    document.getElementById("tips-toggle").addEventListener("change", (e) => {
+      kb.setTips(e.target.checked);
+    });
+
+    // Lecteur temps réel des points de code (démontre le pipeline NFC)
+    const readout = document.getElementById("readout");
+    const render = () => {
+      const s = cible.value.normalize("NFC");
+      if (!s) { readout.textContent = "points de code : —"; return; }
+      const cps = Array.from(s).map((ch) => {
+        const cp = ch.codePointAt(0).toString(16).toUpperCase().padStart(4, "0");
+        return `U+${cp}`;
+      });
+      readout.innerHTML = "points de code : <span class='cp'>" + cps.join(" ") + "</span>";
+    };
+    cible.addEventListener("input", render);
+    render();
+  </script>
+</body>
+</html>

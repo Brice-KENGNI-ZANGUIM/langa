@@ -1,0 +1,1021 @@
+{
+  "version": "v391",
+  "changelog": {
+    "v391": [
+      "L'icône du bouton « Partager cette page » est désormais des cauris (motif africain), plus une flèche générique",
+      "La bannière de mise à jour n'affiche plus le détail des changements : juste qu'une nouvelle version est disponible, avec la date et l'heure où elle a été repérée"
+    ],
+    "v390": [
+      "Popups d'incitation : de nouveau permanents tant qu'aucune action n'est prise (retrait de la disparition automatique à 1 min), rotation toutes les 3 min si plusieurs sont en attente",
+      "Correctif de robustesse : une notification ne peut plus s'afficher totalement vide, un message générique s'affiche si son contenu est manquant"
+    ],
+    "v388": [
+      "Réglages sur téléphone : icônes et texte plus grands dans chaque bouton, hauteur inchangée",
+      "Réglages sur téléphone : FR/EN et clair/sombre ont désormais exactement la même hauteur que les autres boutons",
+      "Réglages sur téléphone : les groupes de boutons sont un peu plus rapprochés autour des séparateurs"
+    ],
+    "v387": [
+      "Correctif important : « Mettre à jour » ne retéléchargeait plus les images/audios déjà en cache à chaque mise à jour, ce qui ralentissait fortement l'opération sur mobile",
+      "Accueil : retiré le bloc de partage en bas de page, redondant avec celui déjà présent en pied de page juste en dessous",
+      "Correctif : un double-tap sur Réglages ne peut plus décaler le retour au bon endroit de la page"
+    ],
+    "v386": [
+      "Popups d'incitation : moins de répétition, chaque appareil évite les mots qu'il a déjà vus récemment",
+      "Un popup ignoré (aucune action) disparaît de lui-même après 1 min, et ne revient pas avant 2h",
+      "Les boutons des popups ont des textes plus courts et plus clairs (tiennent sur une ligne)"
+    ],
+    "v385": [
+      "Le pied de page n'affiche plus « · Collecte » après le nom de l'application"
+    ],
+    "v384": [
+      "Le bouton « Créer mon profil » quitte l'accueil et rejoint le header, juste après Accueil : visible seulement sans profil, comme Notifications",
+      "Accueil, Créer mon profil, Notifications et Réglages ont désormais exactement la même hauteur que les 4 boutons d'espace (Transcrire/Traduire/Explorer/Demander)",
+      "Les boutons du menu Réglages ont eux aussi la même hauteur que ceux du header"
+    ],
+    "v383": [
+      "Correctif important : les boutons du menu Réglages (Langues, À propos, Aide, Bugs, Profil) redirigent enfin vers leur page au clic",
+      "Le défilement dans le menu Réglages ne fait plus défiler la page derrière"
+    ],
+    "v382": [
+      "Le bouton Réglages remonte sur la ligne du logo, à l'extrême droite (là où étaient les anciennes pastilles) : Accueil et Notifications tiennent enfin sur une seule ligne sur téléphone",
+      "Accueil, Notifications et Réglages sont un peu moins larges sur téléphone"
+    ],
+    "v381": [
+      "À propos : le texte du cadre « Notre héritage » a désormais la même taille que le texte équivalent de l'accueil",
+      "Sur téléphone, le bouton Retour ferme d'abord le menu Réglages s'il est ouvert, au lieu de quitter la page"
+    ],
+    "v380": [
+      "Correctif urgent mobile : les boutons Accueil/Notifications/Réglages ne débordent plus sur une nouvelle ligne sur téléphone (taille ramenée à un format tactile raisonnable)",
+      "Réglages : les boutons du menu retrouvent une taille raisonnable sur téléphone (l'agrandissement précédent était disproportionné)"
+    ],
+    "v379": [
+      "Réglages : le motif de fond ne recouvre plus les boutons, redevient discret comme sur le reste du site (même échelle, même intensité)",
+      "Fond de toutes les pages : motif un peu plus discret, pour ne jamais gêner la lecture des textes et boutons"
+    ],
+    "v378": [
+      "Réglages : le fond avec effet de lumière ne recouvre plus le texte ni les boutons, tout en restant visible dans les deux thèmes",
+      "Sur téléphone, les popups occupent 75% de la largeur au lieu de 60%",
+      "Le slogan du pied de page reprend désormais celui de l'en-tête"
+    ],
+    "v377": [
+      "Réglages : le fond avec l'effet de lumière est beaucoup plus visible, dans les deux thèmes",
+      "Réglages : les boutons sont bien plus grands sur téléphone (icônes et texte inclus), tous à la même hauteur",
+      "Réglages : le défilement ne montre plus d'espace vide en bas, seulement les boutons"
+    ],
+    "v376": [
+      "Sur téléphone, les popups d'incitation et de notification occupent 60% de la largeur, alignés à droite, au lieu de toute la largeur de l'écran",
+      "Réglages : les boutons reprennent exactement le style du reste de l'application (plus de gros boutons colorés), avec des icônes plus grandes",
+      "Accueil, Notifications et Réglages sont un peu plus grands sur téléphone"
+    ],
+    "v375": [
+      "Réglages : les boutons FR/EN et clair/sombre ne se chevauchent plus",
+      "Réglages : design encore plus soigné (fond avec le même effet de lumière que le reste du site, icônes plus grandes, sections en cartes)"
+    ],
+    "v374": [
+      "Le bouton Accueil revient dans l'en-tête ; le bouton Profil rejoint désormais les Réglages",
+      "Design des Réglages entièrement revu : boutons plus grands et plus lisibles, fond avec le même effet de lumière que le reste du site",
+      "Un popup déjà affiché reste visible même quand tu ouvres les Réglages, au lieu de disparaître"
+    ],
+    "v373": [
+      "Interface épurée : un bouton ☰ Réglages regroupe tout ce qui n'est pas quotidien (langue, à propos, aide, bugs, thème) pour que l'accueil ne montre que l'essentiel",
+      "Un bouton « Créer mon profil » guide directement les nouveaux venus, avec un repère en 3 étapes tant que le profil n'est pas complet",
+      "Les popups d'incitation à contribuer n'apparaissent plus pendant que tu es en train de transcrire, traduire, explorer ou demander, et laissent plus de temps entre deux propositions",
+      "Le profil distingue désormais le village et la langue du côté paternel et du côté maternel, pour mieux refléter les origines de chacun"
+    ],
+    "v372": [
+      "L'application consomme beaucoup moins de données mobiles : les images ne sont plus jamais retéléchargées après une mise à jour si elles n'ont pas changé, et les prononciations déjà écoutées une fois ne sont plus jamais retéléchargées"
+    ],
+    "v371": [
+      "Le thème clair/sombre suit désormais ta personne, pas seulement l'appareil : il se retrouve automatiquement sur tes autres appareils",
+      "Une notification déjà vue en popup sur un appareil n'est plus reproposée sur un autre"
+    ],
+    "v370": [
+      "Les pages Traduire/Transcrire n'affichent plus que tes envois de la session en cours ; ton historique complet reste toujours consultable et modifiable dans ton profil"
+    ],
+    "v369": [
+      "Correction importante : une contribution déjà bien enregistrée en base ne s'affiche plus jamais comme « à renvoyer » sur un autre appareil (et n'est plus jamais renvoyée en double)"
+    ],
+    "v368": [
+      "Le popup de remerciement fête une contribution tous les 5 envois au lieu d'attendre de grands paliers",
+      "Chaque popup de remerciement a désormais un habillage tiré au hasard parmi 7 (or, argent, bronze, améthyste, cuivre, onyx, ivoire) et un message parmi un choix bien plus large, pour ne jamais se répéter"
+    ],
+    "v367": [
+      "Les icônes du header, des notifications et des popups se chargent beaucoup plus vite (fichiers jusqu'à 30 fois plus légers, sans perte de netteté) : elles ne devraient plus apparaître vides sur une connexion lente"
+    ],
+    "v366": [
+      "Le centre de notifications distingue beaucoup plus nettement une notification lue d'une non lue (liséré, pastille, contraste renforcé), en clair comme en sombre"
+    ],
+    "v365": [
+      "Les popups d'information, d'incitation et de mise à jour sont nettement plus compacts sur téléphone",
+      "Le changelog de mise à jour défile dans son propre cadre au lieu d'agrandir tout le popup",
+      "L'image d'accueil du popup « créer un profil » garde toujours son fond clair, même en thème sombre"
+    ],
+    "v364": [
+      "L'image d'accueil du popup « créer un profil » a maintenant un arrière-plan cohérent avec le reste de l'application",
+      "Un petit message de remerciement, varié et personnalisé, apparaît quand une contribution est bien enregistrée dans la base"
+    ],
+    "v363": [
+      "Les 4 onglets Transcrire/Traduire/Explorer/Demander restent visibles sur toutes les pages, y compris l'accueil"
+    ],
+    "v362": [
+      "Même principe que les notifications, étendu au témoignage : si tu en as déjà laissé un sur un appareil, on ne te le redemande plus sur un autre"
+    ],
+    "v361": [
+      "Correctif visuel : les 3 pastilles du header (version/en ligne/DB) avaient perdu leur couleur, et le slogan sous LANGIAL ne s'affichait pas",
+      "Notifications : lire une notification sur un appareil la marque lue pour toujours, sur tous tes appareils (avant, l'état ne vivait que sur l'appareil utilisé)"
+    ],
+    "v360": [
+      "Petite amélioration technique : le préchargement en arrière-plan (corpus, mot du jour) s'adapte désormais à la charge réelle de l'appareil au lieu d'un délai fixe"
+    ],
+    "v359": [
+      "Les textes de Bugs, Notifications, Demander et Ajouter une langue portent aussi la voix de LANGIAL (transmission, héritage)"
+    ],
+    "v358": [
+      "Les boutons de navigation (logo, cartes d'accueil, onglets, menu) sont maintenant de vrais liens : clic droit -> ouvrir dans un nouvel onglet fonctionne enfin, comme sur les autres sites",
+      "Le slogan « Nos langues, un héritage à transmettre » apparaît sous le nom LANGIAL dans le header et le pied de page"
+    ],
+    "v357": [
+      "Corrige un bug qui affichait sans cesse la même mise à jour (le fichier livré restait décalé d'une version)",
+      "Profil : la traduction écrite est modifiable directement, et la voix peut être ré-enregistrée",
+      "Écouter une contribution ne demande plus de choisir une langue au préalable"
+    ],
+    "v356": [
+      "Quand une correction échoue, le motif exact est affiché (au lieu d'un simple « impossible »)"
+    ],
+    "v355": [
+      "Correction de langue possible depuis n'importe quel appareil enregistré (autorisation renforcée)",
+      "Le bouton Écouter d'une contribution indique « Chargement… » puis « Lecture… », comme dans les popups",
+      "Popups et fenêtres : police réduite sur mobile pour ne plus envahir l'écran"
+    ],
+    "v354": [
+      "Profil : le bouton Corriger la langue fonctionne désormais depuis n'importe quel appareil (fini le \"correction impossible\")",
+      "Profil : chaque contribution indique si c'est une prononciation et/ou une traduction, avec un bouton Écouter pour la voix"
+    ],
+    "v353": [
+      "Les contributeurs déjà inscrits sont désormais crédités publiquement par leur prénom (appliqué une fois, modifiable à tout moment dans le profil)"
+    ],
+    "v352": [
+      "Un nouvel utilisateur est par défaut crédité publiquement de ses contributions (prénom), cases cochées à la création ; libre de décocher"
+    ],
+    "v351": [
+      "Profil : la liste de tes contributions affiche leur nombre, défile sans envahir la page, et a une zone de recherche pour retrouver un mot précis"
+    ],
+    "v350": [
+      "Bascule vers une nouvelle base de collecte (nouvelle adresse serveur)"
+    ],
+    "v349": [
+      "Explorer : les \"Principaux contributeurs\" comptent par PERSONNE, pas par nom : chaque contributeur cumule toutes ses contributions (même faites depuis un autre appareil) et rien ne se perd",
+      "Tous les contributeurs apparaissent au classement, y compris ceux qui n'ont pas autorisé l'affichage de leur nom (montrés en \"anonyme\" avec leur nombre, jamais leur nom)"
+    ],
+    "v348": [
+      "Les cadres de saisie (mot, traduction, voix) ont un fond plein bien visible : fini l'effet \"cadre vide\" (un fond invalide les rendait transparents)",
+      "Les textes d'accueil de Traduire et Transcrire parlent d'abord du sens : transmettre sa langue, léguer sa voix, l'héritage qu'on apprend ensemble"
+    ],
+    "v347": [
+      "Le bouton « Langue de ta contribution » a un fond plein bien visible (fini le fond transparent)",
+      "Les boutons d'action centraux de chaque page (Envoyer, Prochain mot, Publier, Rechercher…) sont mis en lumière par un halo qui attire l'œil"
+    ],
+    "v346": [
+      "Notifications : le compteur de non-lues est enfin correct. Ouvrir la page ne les marque plus toutes comme lues ; une notification passe en « lue » seulement quand tu la lis (ou via « Tout marquer comme lu »). Fini le compteur qui gonflait avec le temps.",
+      "Les notifications non lues restent bien en évidence tant que tu ne les as pas lues"
+    ],
+    "v345": [
+      "Le flyer se télécharge désormais dans TA langue (français ou anglais) ET ton thème (clair ou sombre)",
+      "Le mode présentation s'affiche dans ta langue et porte le slogan « Nos langues, un héritage à transmettre »"
+    ],
+    "v344": [
+      "Popups d'invitation et page Explorer réécrits dans l'esprit transmission / héritage / apprentissage (« transmets-le dans la tienne », « laisse-le en héritage », « apprends de la communauté »)"
+    ],
+    "v343": [
+      "Cartes de l'accueil et bas de page réécrits dans l'esprit héritage / transmission / apprentissage (« Laisse ta voix en héritage », « Transmets ta langue », « Apprends des autres »…)"
+    ],
+    "v342": [
+      "Page « À propos » et titres des pages réécrits autour des 3 piliers : héritage, transmission, apprentissage",
+      "Les 3 raisons de participer sont désormais : Héritage (un cadeau aux générations futures), Transmission (ceux qui savent transmettent), Apprentissage (chacun apprend des autres)"
+    ],
+    "v341": [
+      "Nouveau slogan : « Nos langues, un héritage à transmettre » (sur l'accueil)",
+      "Toute la communication (accroche d'accueil, textes de partage) est réorientée autour de 3 idées fortes : l'héritage laissé aux générations futures, la transmission par ceux qui savent, et l'apprentissage par tous"
+    ],
+    "v340": [
+      "Chaque langue a un sigle court (≤ 3 lettres, ex. NGE, SWA, BAS) affiché sur sa carte ; toute langue nouvellement ajoutée en reçoit un automatiquement",
+      "Bouton « Laisser un mot sur LANGIAL » : fond plein bien visible (correction du fond transparent qui le rendait trop discret)"
+    ],
+    "v339": [
+      "Le bouton pour ajouter sa langue (page Langues) est désormais bien plus visible, avec un halo lumineux, pour qu'on le remarque tout de suite si sa langue n'est pas dans la liste",
+      "Renommage plus parlant : « Ajouter ma langue » au lieu de « Déclarer ma langue » (partout dans l'app)",
+      "Le bouton « Laisser un mot sur LANGIAL » est mis en évidence (fini le bouton discret)"
+    ],
+    "v338": [
+      "Mode clair : les liens du bas de page (« Les espaces », « Le projet ») redeviennent bien lisibles",
+      "Lisibilité : les phrases d'introduction posées sur le fond s'affichent désormais sur un léger cadre en verre dépoli, nettes en mode clair comme en sombre"
+    ],
+    "v337": [
+      "Ton historique te suit : sur un nouvel appareil, ou après avoir vidé ton navigateur, tu retrouves automatiquement tes traductions et transcriptions déjà envoyées (fini la sensation de les avoir perdues)"
+    ],
+    "v336": [
+      "Popups : quand tu ouvres une invitation à traduire ou une demande de la communauté, le mot à traduire ou à prononcer est désormais déjà rempli dans la case ; tu n'as plus qu'à donner ta traduction ou ta voix"
+    ],
+    "v335": [
+      "Mode clair : les textes d'introduction posés sur le fond (accueil, profil, Explorer, etc.) sont plus foncés et nettement plus lisibles",
+      "Signalement de bug : beaucoup plus de choix pour la « zone concernée » (Traduire, Transcrire, Explorer, Demander, Notifications, Profil, Langues, Partage, Design, Vitesse…)",
+      "Traduction : l'aperçu du nom dans le profil s'affiche en anglais quand l'interface est en anglais (« Will appear as… »)"
+    ],
+    "v334": [
+      "Nouvelles icônes soignées pour la recherche, l'enregistrement audio, le découpage, l'export et le mode présentation (à la place des symboles génériques)"
+    ],
+    "v333": [
+      "Vitesse : le centre de notifications s'affiche instantanément avec ce qui est déjà connu, puis se met à jour en arrière-plan ; le démarrage précharge le code essentiel plus tôt"
+    ],
+    "v332": [
+      "Vitesse : l'application démarre nettement plus vite (code allégé au maximum) ; sur un téléphone modeste, l'écran est prêt en une demi-seconde environ au lieu de plusieurs secondes"
+    ],
+    "v331": [
+      "Vitesse : la bibliothèque (Explorer) s'affiche instantanément avec le dernier contenu connu dès l'ouverture, puis se met à jour discrètement en arrière-plan, au lieu d'attendre le réseau devant un écran vide"
+    ],
+    "v330": [
+      "Vitesse : le démarrage est encore plus fluide, les préparatifs non essentiels (visite guidée, outil de découpe, boutons de partage) se mettent en place juste après l'affichage de l'écran au lieu de le retarder"
+    ],
+    "v329": [
+      "Vitesse : l'application s'ouvre beaucoup plus vite, surtout quand tu reviens (les fichiers déjà chargés sont servis instantanément, sans réseau) et sur téléphone",
+      "Vitesse : les parties utilisées seulement dans certains cas (mode anglais, pages légales, journal des bugs, export, lecteur audio) ne sont plus chargées au démarrage mais uniquement quand tu en as besoin"
+    ],
+    "v328": [
+      "Partage : la fenêtre des réseaux sociaux (WhatsApp, Facebook, X, Telegram, LinkedIn, TikTok, Instagram, e-mail, copier le lien) s'ouvre désormais sur TOUS les appareils, téléphone et tablette compris, puis renvoie vers le réseau choisi",
+      "Partage : les messages pré-rédigés sont mieux aérés (retours à la ligne entre l'accroche, la description et l'appel à l'action) et adaptés à chaque réseau, avec un lien qui pointe au bon endroit"
+    ],
+    "v327": [
+      "Accueil : message de bienvenue adaptatif : « Bonjour/Bonsoir » selon l'heure locale, « cher visiteur(rice) » tant qu'il n'y a pas de profil (ton prénom une fois le profil créé), et un clin d'œil « cher veilleur » si tu te connectes en pleine nuit"
+    ],
+    "v326": [
+      "Déclaration d'une nouvelle langue depuis la page Demander : même garde anti-doublon que le formulaire principal (si une langue proche existe déjà, on invite à la choisir plutôt que d'en créer une en double)"
+    ],
+    "v325": [
+      "Profil : l'e-mail (marqué obligatoire par une étoile) est désormais RÉELLEMENT exigé, avec un format valide, avant de pouvoir valider le profil (avant, l'étoile n'était pas vérifiée)"
+    ],
+    "v324": [
+      "Identité automatique sans compte ni mot de passe : chaque appareil reçoit une clé unique qui reste sur lui, et le système reconnaît une même personne d'un appareil à l'autre en rapprochant les informations du profil (noms, e-mail, téléphone, langues), pour réduire les doublons"
+    ],
+    "v323": [
+      "Conjugaison beaucoup plus riche : 20 verbes courants à 7 temps (présent, imparfait, futur, conditionnel, passé composé, plus-que-parfait, subjonctif), avec l'équivalent anglais correct à chaque personne (correction d'un sujet erroné au futur)"
+    ],
+    "v322": [
+      "Conjugaison : ajout du conditionnel et du passé composé (14 verbes désormais à 5 temps), avec les accords corrects et l'équivalent anglais adapté"
+    ],
+    "v321": [
+      "Conjugaison enrichie : 14 verbes courants (être, avoir, aller, faire, dire, voir, venir, prendre, pouvoir, vouloir, savoir, donner, manger, parler) à trois temps, avec leur équivalent anglais correct"
+    ],
+    "v320": [
+      "Nouveau : « Enrichir ce mot » (facultatif, repliable) lors d'une traduction : nature grammaticale, classe nominale, genre, nombre, pluriel, prononciation, phrase d'exemple et sa traduction, synonymes, antonymes, registre, étymologie ; tout est conservé avec la contribution pour bâtir un vrai dictionnaire"
+    ],
+    "v319": [
+      "Nouveau groupe : Conjugaison (verbes courants à différents temps : présent, imparfait, futur), avec leur équivalent anglais correct ; chaque contribution garde le verbe, le temps et la personne"
+    ],
+    "v318": [
+      "Notifications : icônes agrandies (1,5 fois plus grandes) pour être mieux visibles"
+    ],
+    "v317": [
+      "Nouveau groupe : Pluriels (formes au pluriel à traduire, avec le singulier associé) ; équivalents anglais corrects y compris irréguliers (pieds→feet, femmes→women, souris→mice, cheveux→hair)"
+    ],
+    "v316": [
+      "Nouveaux groupes à traduire/transcrire : Pronoms et Prépositions, avec leurs équivalents anglais adaptés (tu et vous → you, ils et elles → they) ; chaque contribution garde des étiquettes (personne, nombre…) pour de futurs usages linguistiques"
+    ],
+    "v315": [
+      "Proposition automatique repensée : au lieu de vider un groupe (mots, phrases…) avant le suivant, on alterne un élément par groupe en tournant de l'un à l'autre, l'ordre des groupes changeant à chaque tour ; plus de variété"
+    ],
+    "v314": [
+      "Nouveau : « Mot du jour » sur l'accueil, un mot proposé chaque jour (le même pour tous) à dire dans ta langue en un clic"
+    ],
+    "v313": [
+      "Cohérence finale du nom LANGIAL et du domaine langial.com partout (dernières références internes mises à jour)"
+    ],
+    "v312": [
+      "Bouton de partage présent aussi sur la page À propos ; sur toutes les pages il est désormais encastré dans le coin inférieur de la bannière (au bord, à l'extérieur) ; titres de page alignés à gauche"
+    ],
+    "v311": [
+      "Démarrage nettement plus rapide : le gros corpus de mots (dictionnaire) n'est plus chargé au lancement mais seulement à l'ouverture de Traduire/Transcrire (aucune image compressée ni modifiée)"
+    ],
+    "v310": [
+      "Explorer : les icônes de « Ton avis » et du bouton « Améliorer/voter » sont agrandies (deux fois plus grandes) pour être bien visibles"
+    ],
+    "v309": [
+      "Onglets : contour des boutons laissé à son épaisseur d'origine"
+    ],
+    "v308": [
+      "Onglets : texte et icône ramenés vers le centre du bouton (marge intérieure) ; hauteur et écart inchangés, aucune troncature"
+    ],
+    "v307": [
+      "Téléphone : onglets resserrés (moins d'espace entre eux), icône et libellé légèrement agrandis et bien centrés, sans changer la hauteur ni l'écart avec le header"
+    ],
+    "v306": [
+      "Téléphone : onglets encore rapprochés du header (écart au-dessus de nouveau réduit de moitié)"
+    ],
+    "v305": [
+      "Téléphone : onglets encore rapprochés du header (écart au-dessus de nouveau réduit de moitié)"
+    ],
+    "v304": [
+      "Téléphone : les 4 onglets sont rapprochés du header (écart au-dessus réduit de moitié)"
+    ],
+    "v303": [
+      "Téléphone : correction du recouvrement des boutons du header par les 4 onglets (écart positif régulier ~20px, sans chevauchement) ; largeur, texte et icônes des onglets inchangés, seule la hauteur est réduite",
+      "Profil : nouvel espace « Mes contributions envoyées » pour corriger soi-même la langue d'une contribution mal étiquetée"
+    ],
+    "v302": [
+      "Téléphone : l'écart au-dessus des 4 onglets est désormais identique à l'écart entre les deux lignes de boutons du header (espacement régulier, sans recouvrement)"
+    ],
+    "v301": [
+      "Téléphone : plus aucun chevauchement entre les 4 onglets et les boutons du header (ils étaient légèrement recouverts)"
+    ],
+    "v300": [
+      "Onglets Transcrire, Traduire, Explorer et Demander : hauteur encore réduite de 5%, alignement conservé avec le header"
+    ],
+    "v299": [
+      "Liste des langues : chaque langue montre sa région d'origine avec le pays entre parenthèses (et sans doublon si le pays figure déjà dans la région)",
+      "Onglets Transcrire, Traduire, Explorer et Demander : hauteur encore réduite et parfaitement alignés avec les boutons du haut, sans chevauchement ni débordement"
+    ],
+    "v298": [
+      "Fond du site en mode clair : le motif traditionnel est bien plus visible et mis en valeur, avec un reflet lumineux qui glisse doucement (comme en mode sombre)",
+      "Popups d'invitation et de notification : ils réapparaissent même sans numéro de téléphone renseigné (le numéro n'est demandé qu'au moment de contribuer), ce qui les rétablit notamment sur téléphone"
+    ],
+    "v297": [
+      "Écran de chargement : même ambiance que les pages du site, avec la lueur qui balaie doucement le motif et une légère transparence"
+    ],
+    "v296": [
+      "Écran de chargement : le motif de fond s'affiche désormais immédiatement (préchargé) et de façon plus nette dans les deux modes, sur toute la zone du logo et du cercle"
+    ],
+    "v295": [
+      "Explorer : deux langues qui partagent le même mot français ne sont plus regroupées par erreur ; chaque langue garde son propre code court (nge, bas, dua…) de façon cohérente partout"
+    ],
+    "v294": [
+      "Écran de chargement : le motif traditionnel du site apparaît désormais en fond, adapté au mode clair ou sombre",
+      "Onglets Transcrire, Traduire, Explorer et Demander : hauteur légèrement réduite pour un ensemble plus compact",
+      "En anglais, les états d'envoi d'une contribution (envoyée, en attente) s'affichent désormais bien dans la langue de l'interface"
+    ],
+    "v293": [
+      "Compatibilité avec les anciens iPhone (Safari ancien) : les boutons, cadres et popups qui apparaissaient parfois vides (contour seul) s'affichent désormais correctement avec un fond plein"
+    ],
+    "v292": [
+      "En-tête et onglets d'activité forment désormais un seul bloc : espacement resserré et uniforme (l'écart entre les boutons du header et les onglets égale l'écart entre les deux lignes de boutons), bordures des onglets affinées et hauteur légèrement réduite",
+      "Sur téléphone : FR/EN et le bouton clair/sombre plaqués à droite, Profil et Notifications à gauche, le tout sur 2 lignes"
+    ],
+    "v291": [
+      "Icônes africaines dans la bibliothèque : les boutons Partager et Améliorer/voter, ainsi que le repère de vote, utilisent désormais les illustrations fournies (cauris, calame) au lieu d'émojis génériques"
+    ],
+    "v290": [
+      "En-tête finalisé : tous les boutons tiennent sur 2 lignes (ordinateur, tablette et téléphone) ; Bugs rejoint le groupe de navigation, le groupe perso se limite à Profil et Notifications ; icône Profil agrandie ; bouton clair/sombre à la même hauteur que FR/EN",
+      "Pied de page : la mention « Créé par » a été retirée"
+    ],
+    "v289": [
+      "En-tête : chaque bouton reçoit une légère couleur de fond (sans bordure) pour qu'on distingue clairement les boutons, et le bouton des notifications affiche désormais le texte « Notifications » (placé en dernier)",
+      "Correctifs de langue : en mode anglais, le message de chargement de l'audio et les libellés d'enregistrement s'affichent bien en anglais (plus de français résiduel qui s'affichait à l'action)"
+    ],
+    "v288": [
+      "En-tête repensé : boutons de navigation regroupés en deux familles (navigation puis perso) avec un séparateur sur grand écran, style plus épuré (fini l'effet pastille au repos), et la page active nettement mise en évidence ; affichage entièrement responsive (ordinateur, tablette, téléphone)",
+      "Bouton de partage : correction d'un affichage en contour vide sur certains iPhone (Safari ancien)"
+    ],
+    "v287": [
+      "En-tête épuré et plus lisible sur ordinateur : « · Collecte » retiré, boutons de navigation de gauche agrandis, bouton clair/sombre mieux dimensionné",
+      "Bouton des langues toujours visible dans l'en-tête (libellé « Langues » tant qu'aucune langue n'est choisie), pour atteindre la page des langues depuis n'importe quel appareil",
+      "Page À propos : l'illustration du milieu passe en photo réelle"
+    ],
+    "v286": [
+      "Bouton clair/sombre : illustration africaine soleil et lune (à la place des symboles génériques) ; bannières Traduire et Transcrire mises à jour depuis les visuels fournis"
+    ],
+    "v285": [
+      "Icônes africaines partout : les boutons du header (case à toit de chaume, tam-tam, calebasse, lanterne, scarabée Ndop, buste au foulard) et les icônes de notifications passent en illustrations ancrées dans l'univers africain ; la page À propos reçoit une vraie bannière multigénérationnelle en tête, l'illustration des trois générations descendant au milieu de la page"
+    ],
+    "v284": [
+      "Textes de partage entièrement personnalisés : chaque lien porte un message marketing rédigé spécifiquement pour la plateforme (conversationnel sur WhatsApp/Telegram, court sur X, professionnel sur LinkedIn, légende sur Instagram/TikTok) ET pour le contenu (page, ou une traduction/prononciation/demande précise avec le mot et la langue), avec des hashtags propres à chaque réseau"
+    ],
+    "v283": [
+      "Bouton « Écouter » des popups : un indicateur clair de chargement puis de lecture (comme dans la bibliothèque), pour ne plus croire que le bouton ne répond pas quand l'audio met un instant à charger"
+    ],
+    "v282": [
+      "Popups plus lisibles : le nom du demandeur, le mot demandé et la langue cible sont mis en évidence (gras et couleur) d'un coup d'œil, et le bouton d'action indique la vraie destination (par ex. « Transcrire en medumba » au lieu de « Voir mes notifications »)"
+    ],
+    "v281": [
+      "Partage enrichi : TikTok ajouté aux réseaux, et des hashtags adaptés à chaque réseau (Facebook, X, LinkedIn, TikTok, Instagram). Sur ces réseaux le message prêt à publier est copié et la plateforme s'ouvre pour le coller ; WhatsApp et Telegram gardent un message simple sans hashtags. Vaut aussi pour le partage d'une entrée précise ou d'une demande"
+    ],
+    "v280": [
+      "Illustrations africaines cohérentes : le formulaire de déclaration de langue, le popup de jalon, le popup 'profil requis' et la page À propos affichent désormais de vraies illustrations plutôt que des émojis ou une photo"
+    ],
+    "v279": [
+      "Bouton de partage placé sous la bannière (il ne la cache plus), présent sur toutes les pages et plus compact sur mobile",
+      "Nouveau panneau de partage sur ordinateur : un clic sur un réseau (WhatsApp, Facebook, X, Telegram, LinkedIn, e-mail) ouvre la publication avec le message déjà rédigé, ou copie le lien à coller partout",
+      "Illustration du popup de demande : le fond flouté s'affiche désormais comme sur les autres popups",
+      "Avatar du titre du profil affiché plus proprement, dans un cercle à ligne fine"
+    ],
+    "v278": [
+      "Les deux consentements du profil sont enregistrés distinctement : l'accord d'usage des contributions ET l'autorisation d'afficher publiquement le nom"
+    ],
+    "v277": [
+      "Partage par page : un bouton Partager sur chaque bannière, et un aperçu (image + texte) adapté à la page partagée sur WhatsApp/Facebook (chaque page a son image, plus la même pour tous les liens)"
+    ],
+    "v276": [
+      "Langues d'appartenance plus justes : plus aucune langue devinée par défaut ; elles ne se remplissent que par une déclaration ou une vraie contribution, et à chaque connexion le profil se réaligne automatiquement sur ce que la personne a réellement fait"
+    ],
+    "v275": [
+      "Outil de découpe audio amélioré : l'onde montre clairement les zones de forte amplitude (barres cyan vives), et un curseur de progression suit la lecture quand tu écoutes la sélection"
+    ],
+    "v274": [
+      "Image des popups : le fond flou derrière l'illustration est désormais un voile blanc léger (plus assombri), plus doux et cohérent"
+    ],
+    "v273": [
+      "Cohérence africaine : l'émoji générique du titre de la page Profil est remplacé par une vraie illustration d'avatar africain, et les émojis « personne » de l'application prennent une carnation foncée"
+    ],
+    "v272": [
+      "Popups plus intelligents : quand une voix d'un autre contributeur est proposée, le message dit clairement d'où elle vient (qui, et dans quelle langue) et t'invite à l'écouter puis à le dire dans la tienne",
+      "Image ronde des popups agrandie et mieux détourée : fond flouté opaque, on ne voit plus la carte à travers"
+    ],
+    "v271": [
+      "Décor plus raffiné : petits ornements en losange aux coins des cadres, et séparateurs de section enrichis (fleuron central encadré de losanges)"
+    ],
+    "v270": [
+      "Toutes les bannières et photos de l'application recréées à partir des images d'origine en haute définition : rendu net et soigné sur chaque page"
+    ],
+    "v269": [
+      "Outil de découpe de l'audio plus visible : le bouton Découper ressort nettement, et à l'intérieur les boutons (rogner les silences, écouter, garder) sont plus grands et plus faciles à toucher"
+    ],
+    "v268": [
+      "Langues fiabilisées : une langue déclarée est toujours bien enregistrée (fini le cas où elle n'apparaissait pas dans la liste), et à chaque connexion l'application complète automatiquement les informations manquantes d'une langue (comme le pays) sans jamais écraser ce qui existe",
+      "Illustrations en qualité maximale (sans perte) à partir des images d'origine"
+    ],
+    "v267": [
+      "Flyer remis à jour : nouveau nom LANGIAL, adresse langial.com et QR correspondant, fond aux motifs de l'application ; téléchargeable en image légère ou en PDF"
+    ],
+    "v266": [
+      "Les popups ne se superposent plus jamais : ils s'affichent un par un, à tour de rôle (environ une minute chacun), en boucle, jusqu'à ce que tu cliques une action ; après un rechargement ils reviennent en douceur, pas tout de suite",
+      "Illustrations des popups en version dessinée, rondes, montrant la personne entière sur un fond légèrement flouté"
+    ],
+    "v265": [
+      "Lecteur audio : pendant que le son se charge, un indicateur clair (bouton en rotation, onde grisée et mention Chargement) montre qu'il faut patienter, au lieu de laisser croire que le bouton ne répond pas",
+      "Décor de fond plus vivant : une lueur douce balaie lentement le motif Ndop"
+    ],
+    "v264": [
+      "Onde audio en enveloppe de fils : une multitude de barres verticales ultra-fines et denses tracent l'enveloppe du son (comme la forme d'onde de la bannière Explorer), qui respire dans le temps et s'anime au passage du curseur"
+    ],
+    "v263": [
+      "Onde audio plus réaliste : les vibrations naissent au niveau du curseur de lecture et décroissent avec la distance (seules les cordes proches du curseur bougent, les autres restent au repos) ; l'agitation se propage en suivant le curseur au lieu d'exister partout à la fois"
+    ],
+    "v262": [
+      "Onde audio nettement plus colorée : trois fois plus de cordes vibrantes (une trentaine), chacune d'une couleur distincte cyan, vert ou or, pour un faisceau franchement multicolore et vivant, proche des ondes lumineuses de la bannière Transcrire"
+    ],
+    "v261": [
+      "Langue de la contribution rendue très visible sur Traduire et Transcrire (pastille cliquable), avec une confirmation quand elle n'a pas encore été validée ou qu'un doute d'écriture apparaît : plus de risque d'enregistrer dans la mauvaise langue"
+    ],
+    "v260": [
+      "Lecteur audio embelli : onde multicolore (cyan, vert, or) qui s'écoule le long de la lecture comme les ondes lumineuses de la bannière, et effet de mirage où tout le cadre se déforme comme dans l'eau agitée dès que le son brise le silence"
+    ],
+    "v259": [
+      "Bannières illustrées sur Traduire et Transcrire, et nouvelles images de la communauté intégrées partout (hub, popups, états vides), toutes recompressées pour rester légères et fluides"
+    ],
+    "v258": [
+      "Visite guidée complétée : la porte Demander et le centre de notifications ont désormais leur propre visite ; nouvelles étapes pour la cloche de notifications, le bandeau des demandes, les boutons Ajouter une traduction ou une voix, et la recherche dans tes contributions envoyées"
+    ],
+    "v257": [
+      "Onde d'écoute audio enrichie : barres plus denses, plus une dizaine de fines cordes lumineuses entrelacées qui vibrent et tremblent (effet mirage) au passage de l'onde, au rythme du son réel"
+    ],
+    "v256": [
+      "Si tu écris toi-même un mot que tu as déjà traité, l'application te prévient : elle grise la saisie d'une nouvelle contribution, te laisse réécouter ou relire ta version précédente, et te propose de la refaire quand même ou de passer à un autre mot"
+    ],
+    "v255": [
+      "La liste de tes contributions (en bas) défile maintenant dans son cadre au-delà d'une dizaine d'items (fini la page interminable), et une barre de recherche permet de retrouver un mot ou une phrase que tu as déjà envoyé"
+    ],
+    "v254": [
+      "Après « Enregistrer la contribution », l'application te ramène automatiquement sur le mot à traduire/transcrire (celui proposé, ou le champ à remplir), centré à l'écran et prêt pour le suivant"
+    ],
+    "v253": [
+      "Nouvelle onde d'écoute audio : retour aux barres verticales (façon message vocal) dimensionnées par le son réel, partie lue en dégradé cyan-vert-or et partie non lue grisée ; pendant la lecture une vibration se propage le long des barres au rythme du son (des barres statiques, d'autres qui enflent au passage) ; plus de courbe blanche"
+    ],
+    "v252": [
+      "Traduire/Transcrire : le bouton « Ajouter… » (traduction ou transcription secondaire, optionnelle) est placé tout en bas, après le contenu principal et juste avant « Enregistrer » ; la partie optionnelle se déplie juste en dessous"
+    ],
+    "v251": [
+      "Tous les messages courts (confirmations, alertes) s'affichent désormais correctement en français ET en anglais (ils étaient restés en français en mode anglais)"
+    ],
+    "v250": [
+      "Correction : en Transcrire la traduction (optionnelle) est bien MASQUÉE, et en Traduire l'enregistrement audio (optionnel) est bien masqué, chacun repliable via son bouton « Ajouter… » (un résiduel d'affichage forçait la section à rester visible)"
+    ],
+    "v249": [
+      "Notifications plus justes : une demande précise désormais s'il s'agit d'une traduction, d'une prononciation ou des deux, et dit « dans la langue X » (au lieu de « dans X ») ; le jalon dit « la langue X vient d'atteindre N contributions »"
+    ],
+    "v248": [
+      "Quand une activité demande un profil et te redirige, un message clair (style « consignes ») explique désormais POURQUOI : créditer ta contribution, situer ta variante de village, garder des données fiables et sans doublon"
+    ],
+    "v247": [
+      "En arrivant sur Traduire ou Transcrire, le mode « Se faire proposer un mot » est de nouveau sélectionné par défaut (tu peux toujours basculer sur « Écrire moi-même »)",
+      "Fiabilité des profils : plus de doublon d'utilisateur pour un même appareil (une seule fiche par appareil, mise à jour en place)"
+    ],
+    "v246": [
+      "Traduire et Transcrire ne se ressemblent plus : sur Traduire, l'enregistrement audio (optionnel) est replié derrière un bouton « Ajouter une transcription audio » ; sur Transcrire, la traduction (optionnelle) est repliée derrière « Ajouter une traduction ». Tu peux déplier l'autre volet à tout moment pour compléter ton mot (faire les deux)"
+    ],
+    "v245": [
+      "Lecture audio corrigée : la durée affichée redevient la VRAIE durée de l'enregistrement (fini les « 32 s » pour 6 s), le curseur avance en phase avec le son et atteint la fin pile à la fin ; l'effet de vibration/mirage de l'onde au passage du curseur est renforcé et calé sur le son réel"
+    ],
+    "v244": [
+      "Nouvelle en-tête : les 4 espaces (Transcrire, Traduire, Explorer, Demander) sont intégrés au header, et l'image de bannière de chaque page est désormais soudée au bas de l'en-tête, pleine largeur, comme une bande qui fait corps avec le décor (fini l'effet « image posée »)"
+    ],
+    "v243": [
+      "Consignes de Traduire : le mot « à éviter » porte un panneau « interdit » rouge et le mot « à faire » est en vert, pour une distinction immédiate",
+      "Pendant un enregistrement audio, le bouton « Enregistrer la contribution » est grisé tant que l'enregistrement n'est pas arrêté (fini la confusion avec le bouton Arrêter)"
+    ],
+    "v242": [
+      "Les notifications deviennent cliquables et intelligentes : une demande de traduction ou de prononciation t'emmène directement sur la bonne page avec le mot déjà en place, et dès que tu réponds la personne qui avait demandé est prévenue automatiquement. Les retours sur tes contributions ouvrent le mot concerné dans la bibliothèque",
+      "Sur téléphone, les grands textes (titres de page, bannières, présentation) sont un peu plus compacts, mieux proportionnés au reste"
+    ],
+    "v241": [
+      "Sur téléphone : plus aucun défilement horizontal parasite, et les gros textes (titres de page, bannières, texte de présentation) sont légèrement réduits pour un meilleur équilibre visuel"
+    ],
+    "v240": [
+      "Explorer : par défaut tu ne vois que les contributions de ta langue ; un sélecteur en haut permet d'afficher une autre langue ou toutes les langues. La carte des villages montre désormais chaque village séparément (fini le losange « Autres »), et cliquer un village filtre la liste sur lui",
+      "Le fond du mode présentation (à l'écran comme à l'export PNG/PDF) reprend fidèlement le motif du site, en clair comme en sombre",
+      "Sur téléphone, l'en-tête est allégé (« · Collecte » retiré) pour laisser toute la place au nom"
+    ],
+    "v239": [
+      "Application plus fluide sur téléphone (les animations décoratives les plus lourdes sont allégées sur petit écran) ; le mode présentation reprend le fond du site en clair comme en sombre"
+    ],
+    "v238": [
+      "Le QR code (À propos, mode présentation, partages) pointe désormais vers https://www.langial.com"
+    ],
+    "v237": [
+      "Lecture audio mieux calibrée : le curseur de position atteint désormais la fin de la barre pile quand le son se termine (fini l'arrêt à mi-parcours), la barre est calée sur la vraie durée jouée"
+    ],
+    "v236": [
+      "Nouvelle onde d'écoute audio : des filaments lumineux entrelacés qui ondulent en fuseau autour d'un cœur brillant, façon onde d'énergie, et qui vibrent au rythme du son pendant la lecture"
+    ],
+    "v235": [
+      "L'onde d'écoute audio est désormais opaque et lumineuse (plus de transparence), bien visible pendant la lecture"
+    ],
+    "v234": [
+      "Le curseur revient au comportement classique : curseur coloré cyan sur la page, et main du navigateur au survol des éléments cliquables"
+    ],
+    "v233": [
+      "La zone d'écoute audio devient futuriste : cadre sombre épuré (sans photo) et onde sonore fine, dense et lumineuse en dégradé cyan-vert-or qui vibre au rythme du son"
+    ],
+    "v232": [
+      "L'image de la page « À propos » devient une belle photo réaliste de trois générations qui transmettent leur langue. Nouveau curseur : sur les éléments cliquables, il prend une forme de main cyan entourée d'un léger halo lumineux qui le met en évidence"
+    ],
+    "v231": [
+      "Pied de page enrichi : des raccourcis vers les espaces (Transcrire, Traduire, Explorer, Demander) et les pages du projet (Accueil, À propos, Bugs), et un sous-titre sur deux lignes mieux présenté"
+    ],
+    "v230": [
+      "La zone d'écoute audio est entièrement redessinée : une onde en barres lumineuses, dégradé cyan-vert-or, qui vit et réagit au son pendant la lecture, avec un front de lecture éclatant, pour une écoute belle et immersive"
+    ],
+    "v229": [
+      "Pied de page revu : le nom LANGIAL y est désormais coloré et stylisé comme dans l'en-tête, aligné avec le logo ; les mentions légales et le copyright sont réunis sur une seule ligne bien rangée"
+    ],
+    "v228": [
+      "Images encore allégées sans perte de qualité (illustrations et popups convertis dans un format moderne plus compact), pour une application plus légère et plus rapide"
+    ],
+    "v227": [
+      "Correction majeure du chargement sur le nouveau site : l'application est désormais entièrement autonome (le clavier et ses données sont intégrés), ce qui supprime l'écran de chargement qui restait bloqué. Ouverture rapide et propre"
+    ],
+    "v226": [
+      "Chargement bien plus rapide, surtout sur téléphone : les illustrations de l'accueil et de la page à propos ont été fortement allégées (mêmes images, poids divisé par ~8), pour un affichage quasi immédiat"
+    ],
+    "v225": [
+      "L'application s'appelle désormais LANGIAL : le nom a été mis à jour partout (accueil, à propos, partages, e-mails). Le mode sombre devient l'affichage par défaut à la première ouverture ; ton choix clair/sombre reste respecté. Le motif de fond défile maintenant avec le contenu, d'un seul tenant"
+    ],
+    "v224": [
+      "Chaque titre de page s'inscrit désormais dans un cadre à bordure lumineuse et halo, comme les onglets du haut ; le centre du séparateur devient un véritable ornement ; les logos des réseaux sociaux du footer reposent sur un rond blanc dans les deux thèmes"
+    ],
+    "v223": [
+      "Nouvel accueil : en arrivant tu vois directement les 4 portes (Transcrire, Traduire, Explorer, Demander). Tu peux explorer la bibliothèque, lire les traductions et écouter les prononciations sans créer de profil ; ton profil n'est demandé qu'au moment de contribuer (traduire, transcrire, demander, ou proposer une amélioration). Les illustrations des 4 cartes remplissent joliment tout le cadre, jusqu'en bas à droite"
+    ],
+    "v222": [
+      "L'accueil se pare de nouvelles illustrations : chaque porte (Transcrire, Traduire, Explorer, Demander) s'ouvre sur un dessin aux couleurs de son activité, avec son icône en médaillon, une image qui s'appuie au bas du cadre et une mise en page qui s'adapte à ton écran pour rester lisible partout. Un écran de chargement animé accompagne l'ouverture de l'application, le curseur de saisie prend la couleur de l'activité en cours, et les boutons du haut reprennent l'illustration de chaque espace"
+    ],
+    "v221": [
+      "L'accueil et la page « À propos » s'illustrent : chaque porte (Transcrire, Traduire, Explorer, Demander) s'ouvre sur une photo réaliste, aux vêtements africains, intégrée dans le cadre et fondue vers le texte pour rester lisible ; « À propos » s'ouvre sur une grande image de communauté qui transmet sa langue"
+    ],
+    "v220": [
+      "Les illustrations des fenêtres d'information (popups) sont désormais plus grandes et débordent joliment du cadre, entourées d'un halo lumineux à la couleur du message, pour un rendu plus vivant et plus premium"
+    ],
+    "v219": [
+      "Les fenêtres d'information (popups) montrent maintenant une illustration réaliste et détaillée, aux vêtements africains, propre à chaque type de message : une demande de la communauté, une invitation à contribuer, une invitation à donner ton avis, ou une activité concernant tes contributions. Le dessin et la couleur permettent de reconnaître le type d'un coup d'œil"
+    ],
+    "v218": [
+      "Le rappel d'activité sur tes contributions (quand quelqu'un note ou améliore ton travail) affiche désormais une illustration réaliste de deux personnes en train d'échanger, à la place d'une simple icône"
+    ],
+    "v217": [
+      "Les fenêtres d'information (popups) ont désormais une couleur et une icône selon leur type, pour reconnaître d'un coup d'œil de quoi il s'agit avant même de lire : bleu pour une mise à jour de l'application, vert pour une invitation à ajouter un mot dans ta langue, or pour une invitation à donner ton avis sur une proposition, violet pour une activité concernant tes contributions (une note, une amélioration, un cap franchi), cyan pour une demande venue de la communauté"
+    ],
+    "v216": [
+      "Les quatre onglets (Transcrire, Traduire, Explorer, Demander), présents en haut de toutes les pages, ont désormais les mêmes effets lumineux que les cartes de l'accueil : bordure vive qui chatoie, halo qui respire et icône qui brille, chacun à la couleur de son activité ; leurs libellés sont agrandis et entièrement lisibles, les icônes équilibrées et centrées, y compris sur les petits écrans",
+      "Le sélecteur de langue devient une capsule à deux couleurs (FR | EN) où la langue active ressort en vert, et le bouton clair/sombre une capsule ☀ | 🌙 dont la couleur suit le mode",
+      "En-tête plus net : les pastilles d'état (version, en ligne, base de données) sont à la même hauteur et plus compactes ; la pastille de version passe au vert quand l'application est à jour et au rouge si une mise à jour t'attend ; « en ligne » s'affiche bien « online » en anglais",
+      "Les mots proposés dans les invitations à contribuer et les notifications s'affichent dans ta langue d'affichage : un mot demandé arrive en anglais pour un anglophone, en français pour un francophone ; les messages passent à la ligne après la première phrase pour une lecture plus claire",
+      "Le panneau pour réunir deux langues déclarées identiques et l'encart de présentation de la plateforme sont mieux mis en évidence, avec un texte reformulé plus clair"
+    ],
+    "v215": [
+      "Ajustements d'affichage sur téléphone : les 4 onglets (Transcrire, Traduire, Explorer, Demander) restent sur une seule ligne, chacun bien délimité comme un bouton ; le défilement ne saute plus quand tu passes au mot suivant après un envoi ; les boutons « Revoir les consignes » et « Enregistrer l'audio » ont désormais le même aspect dans Traduire et Transcrire",
+      "Le corpus de mots à traduire s'est enrichi de plusieurs centaines de mots et expressions du quotidien (nature, cuisine, marché, métiers, corps, maison, transport…), avec leur équivalent anglais"
+    ],
+    "v214": [
+      "Quand quelqu'un demande la traduction ou la prononciation d'un mot dans ta langue, cette demande apparaît maintenant directement en haut de « Traduire » et « Transcrire », dans un bandeau « La communauté attend une réponse dans ta langue » : un clic charge le mot et tu donnes ta réponse sur place, qui rejoint la bibliothèque et prévient la personne",
+      "Menu du haut plus clair : sur ordinateur tous les boutons tiennent sur une seule ligne ; sur téléphone la cloche de notifications est le dernier bouton de la première ligne (avec le nombre de messages non lus en rouge) et les boutons occupent bien toute la largeur",
+      "Les quatre onglets (Transcrire, Traduire, Explorer, Demander) sont accessibles depuis toutes les pages sauf l'accueil, et leur libellé s'affiche toujours en entier",
+      "Formulaires plus clairs : plus aucune valeur pré-remplie par défaut (langue, indicatif téléphonique, type de demande…) ; tu vois la case vide et tu choisis toi-même, les champs obligatoires étant marqués d'une étoile rouge"
+    ],
+    "v213": [
+      "Nouvelle porte « Demander » sur l'accueil : tu peux demander à la communauté la traduction ou la prononciation d'un mot ou d'une phrase dans une langue précise (avec le pays, la région et un peu de contexte). Les personnes qui parlent cette langue sont prévenues et peuvent t'aider ; les autres peuvent relayer ta demande autour d'eux avec un message tout prêt à partager",
+      "Répondre à une demande se fait en un geste : ta réponse aide la personne, rejoint la bibliothèque Explorer et prévient le demandeur. LANGIAL devient un vrai outil d'entraide où chacun peut aider chacun",
+      "Si la langue que tu cherches n'est pas encore dans la liste, tu peux la déclarer directement depuis la page « Demander » (juste son nom et sa région), puis lancer ta demande, même si tu ne la parles pas toi-même",
+      "Le menu du haut de l'application est plus compact : « Mon profil » devient « Profil », les notifications sont représentées par une simple cloche, et les 4 espaces (Transcrire, Traduire, Explorer, Demander) sont accessibles d'un onglet sur toutes les pages d'activité"
+    ],
+    "v212": [
+      "Sur ordinateur, l'application occupe désormais une bien plus grande largeur d'écran : les grandes marges vides sur les côtés sont fortement réduites, pour un affichage plus généreux et plus confortable (l'affichage sur téléphone est inchangé)",
+      "Le clavier prédictif (suggestions de mots réels à la frappe) fonctionne désormais pour toutes les langues à clavier dédié, pas seulement le ngiemboon : il propose les mots déjà partagés par la communauté dans ta langue au fur et à mesure que tu écris",
+      "Réorganisation interne en « packs de langue » : le contenu propre à chaque langue (alphabet du clavier, lexique) est maintenant séparé du moteur commun, ce qui rend l'ajout et l'enrichissement d'une langue plus simples et plus fiables (aucun changement visible côté usage)"
+    ],
+    "v211": [
+      "Invitation à contribuer : une fois sur deux, elle te propose désormais d'aller donner ton avis (juste, doute ou faux) sur une proposition de ta langue que tu n'as pas encore notée, pour faire monter la qualité des mots ; le bouton t'amène directement à l'entrée concernée",
+      "Explorer : deux nouveaux formats d'export en plus de CSV, JSON et LIFT : CLDF (listes de mots comparatives, pour les outils de linguistique) et ELAN (fichier .eaf d'annotations, transcription et traduction), pour que les chercheurs réutilisent facilement les données",
+      "Profil et déclaration de langue : un petit ⓘ sur chaque champ ouvre une aide courte qui explique à quoi il sert et ce qui reste privé ou non, en complément de la visite guidée"
+    ],
+    "v210": [
+      "Nouveau centre de notifications (icône cloche en haut) : tu es prévenu dès qu'une activité concerne tes contributions, par exemple quand quelqu'un note ou améliore une de tes traductions ou transcriptions, ou quand ta langue franchit un cap. Chaque notification est datée, les non lues sont mises en avant, et une pastille rouge indique leur nombre",
+      "Le prénom de la personne apparaît dans la notification uniquement si elle a autorisé l'affichage de son nom (même autorisation que le crédit public), sinon la notification reste anonyme",
+      "Un petit rappel peut apparaître à l'ouverture quand une activité récente te concerne, avec un accès direct à tes notifications"
+    ],
+    "v209": [
+      "Explorer : chaque traduction ou transcription peut maintenant être votée par les locuteurs, avec trois choix (juste en vert, j'ai des doutes en jaune, faux en rouge) ; une pastille affiche le nombre de votes pour chacun des trois cas, ton propre choix ressort, et un nouveau clic sur ton choix l'annule"
+    ],
+    "v208": [
+      "Invitation à contribuer : un bouton « Écouter » permet désormais d'entendre la version d'une autre personne (dans sa langue) avant de la dire dans la tienne, pour t'inspirer",
+      "Déclaration d'une langue : le pays et la famille/groupe sont maintenant obligatoires (comme le nom et la région). Les champs obligatoires sont marqués d'une étoile rouge et présentés en premier, avant les champs optionnels",
+      "Explorer : nouvel export au format LIFT (lexique standard), pour réutiliser le vocabulaire d'une langue dans les logiciels de lexicographie (FLEx, WeSay), en plus des exports CSV et JSON"
+    ],
+    "v207": [
+      "Nouvelle invitation à contribuer : jusqu'à trois fois par jour (le matin, l'après-midi et le soir, à ton heure locale), un petit message te propose un mot que tu n'as pas encore fait dans ta langue, en s'appuyant sur ce qu'une autre personne a déjà partagé, avec un lien direct pour le dire dans ta langue"
+    ],
+    "v206": [
+      "Application plus rapide et réactive : les effets animés du décor sont allégés (plus doux, moins gourmands) et se mettent automatiquement en pause pendant que tu écris au clavier, pour une frappe parfaitement fluide ; le décor reprend vie dès que le clavier se ferme"
+    ],
+    "v205": [
+      "Finition : tous les boutons (y compris secondaires comme « Annuler ») ont maintenant le même rendu soigné, avec un léger relief de matière et un halo au survol ; plus aucun bouton ne paraît « plat »",
+      "Numéro de téléphone de contact affiché au format « +33 7 72 08 82 36 » partout (application et flyer)"
+    ],
+    "v204": [
+      "Rendu plus homogène : tous les cadres de l'application ont maintenant le même effet premium (halo doux, bordure lumineuse, matière), et plus seulement ceux de Traduire, Transcrire et Explorer",
+      "Les icônes Accueil et Mon profil apparaissent aussi en haut de leur page (avant le titre), comme sur les autres pages",
+      "Nouvelle icône pour la page « À propos »"
+    ],
+    "v203": [
+      "Icônes du menu du haut désormais en illustrations couleur détaillées et réalistes (maison, globe, lever de soleil, ampoule, coccinelle, personne), nettes et identiques sur tous les appareils ; l'icône coccinelle des bugs est la même dans le menu et sur la page"
+    ],
+    "v202": [
+      "Le décor animé est désormais visible aussi sur téléphone (il n'était figé que sur ordinateur) ; il ne se met en pause que pendant que tu écris au clavier, pour garder la frappe fluide",
+      "Icônes du menu du haut plus faciles à distinguer : chacune a maintenant sa propre couleur (accueil cyan, langue verte, à propos bleu, aide dorée, bugs rouge, profil violet)",
+      "Page « À propos » : nouvel emblème soigné (soleil levant, clin d'œil au sens de LANGIAL, « la lumière ») et cadre « La vision » retravaillé, plus lisible et plus premium",
+      "Cadres de l'application au rendu plus homogène et plus soigné"
+    ],
+    "v201": [
+      "Déclarer une nouvelle langue depuis « Mon profil », sans changer de page : le formulaire s'ouvre directement dans le profil",
+      "Créer une langue, c'est d'abord lui donner de la voix : enregistre des mots de base à l'oral (5 pour qu'elle soit complète), car c'est la voix qui compte, pas l'écriture (beaucoup parlent leur langue sans l'écrire). Tu peux t'arrêter avant 5 : ta langue est gardée, marquée « à compléter », et tout ce que tu as enregistré est conservé pour être repris plus tard, par toi ou par d'autres locuteurs"
+    ],
+    "v200": [
+      "Décor beaucoup plus vivant partout : les cartes d'activité, de langue et de mots ont une bordure lumineuse à la couleur de leur activité, avec des reflets qui passent au survol, un halo qui respire et une onde au clic ; l'en-tête et les boutons brillent davantage (effets allégés sur téléphone et respectant le réglage « animations réduites »)",
+      "Écran des langues : présentation plus compacte de chaque langue (le nom et la pastille de contributions tiennent sur moins de lignes), plus lisible sur téléphone",
+      "L'indicateur en haut à droite affiche « DB » (base de données)"
+    ],
+    "v199": [
+      "Écran des langues : chaque langue affiche désormais son nombre de contributions déjà faites (son degré d'enrichissement)",
+      "Explorer : la page d'une langue montre ses principaux contributeurs, avec le nombre de contributions de chacun"
+    ],
+    "v198": [
+      "Décor plus premium : les cartes gagnent une matière plus profonde (reflet, relief, halo de lumière à la couleur de l'activité) et l'en-tête un léger effet lumineux derrière le nom LANGIAL"
+    ],
+    "v197": [
+      "Beaucoup plus de contenu à traduire : près de deux fois plus de mots (plus de 3200) et plus de deux fois plus de phrases d'exemple (plus de 3100), tous affichés aussi en anglais"
+    ],
+    "v196": [
+      "Nouvelles pages d'informations légales accessibles depuis le pied de page : mentions légales, politique de confidentialité, conditions d'utilisation et de vente, en français et en anglais"
+    ],
+    "v195": [
+      "Beaucoup plus de mots et de phrases à traduire : des centaines de mots et de phrases en plus, tous affichés aussi en anglais pour les anglophones",
+      "Outil audio remanié et plus clair : les boutons « Découper » (cyan) et « retirer » (rouge) sont bien alignés sous le lecteur, jamais devant lui sur téléphone, et « Revoir les consignes » se place à droite de la ligne du titre"
+    ],
+    "v194": [
+      "Correction : sur la page « Mon profil », changer de langue laissait parfois la page vide ; désormais chaque page se réaffiche correctement après un changement de langue",
+      "Beaucoup plus de nombres à traduire : de quelques dizaines à plus de 150 (dizaines, centaines, milliers, millions, ordinaux, fractions), chacun affiché aussi en anglais"
+    ],
+    "v193": [
+      "Mode anglais complet : quand tu choisis l'anglais, tout le site s'affiche en anglais (boutons, menus, aide, visite guidée), et le mot ou la phrase à traduire s'affiche aussi en anglais. Les francophones gardent le français",
+      "Partager une traduction ou une prononciation crée un message clair avec un lien qui ouvre directement ce mot sur le site, pour inviter d'autres personnes à l'écouter, le vérifier ou l'enrichir",
+      "Nouveau bouton « Dis-le dans ta langue » sur chaque mot : d'un geste tu proposes le même mot dans ta propre langue (il t'aide à créer ton profil ou déclarer ta langue si besoin)",
+      "Transcription : une troisième consigne rappelle de parler lentement, à voix haute et posément, pour une prononciation bien claire"
+    ],
+    "v192": [
+      "Enregistrement : un outil pour ne garder qu'une partie de ta voix quand un bruit a gâché le reste (une porte, une radio). Tu délimites la bonne portion sur l'onde ou en secondes, tu l'écoutes, puis tu la gardes ; le reste est supprimé, sans tout refaire",
+      "En anglais, le mot ou le nombre à traduire s'affiche en anglais pour mieux le comprendre avant de le traduire (le français reste pour les francophones)"
+    ],
+    "v191": [
+      "Réunion de langues en double : en plus des ressemblances repérées automatiquement, tu peux maintenant proposer toi-même de réunir deux langues que tu sais identiques",
+      "Le panneau de réunion des langues est traduit (français et anglais) et expliqué dans l'aide guidée"
+    ],
+    "v190": [
+      "Jumelage de langues : LANGIAL repère les langues déclarées en double (mêmes langues sous des orthographes ou régions différentes) et propose de les réunir",
+      "Deux personnes qui ont créé la même langue peuvent la fusionner : chacune confirme « c'est bien la même », et les deux fiches sont réunies sans rien perdre (orthographes gardées comme autres noms, régions et pays cumulés)",
+      "Une langue réunie dans une autre redirige vers elle dans la bibliothèque : aucune contribution n'est perdue"
+    ],
+    "v189": [
+      "En-tête : « LANGIAL · Collecte » rétabli en entier sur tous les écrans, avec « LANGIAL » agrandi et « · Collecte » plus discret ; les deux pastilles d'état restent sur une seule ligne, un peu plus compactes si l'écran est étroit"
+    ],
+    "v188": [
+      "Déclaration d'une langue : le pays est demandé avant la région, du plus général au plus précis"
+    ],
+    "v187": [
+      "En-tête : les deux pastilles d'état (« en ligne » et « Drive : prêt ») tiennent de nouveau sur une seule ligne sur tous les écrans",
+      "Correction du libellé « Drive : prêt »"
+    ],
+    "v186": [
+      "Page « À propos » : le symbole en tête du titre est remplacé par une icône d'information sobre",
+      "Nom LANGIAL agrandi dans l'en-tête, et les boutons descendent sous le logo au plus près du bas",
+      "Textes revus pour une lecture plus naturelle et fluide, dans toute l'application"
+    ],
+    "v185": [
+      "Header plus dense et lisible : logo et nom LANGIAL agrandis, boutons resserrés (horizontalement et entre les lignes) pour remplir l'espace, sur PC comme sur mobile",
+      "« Mon profil » et le sélecteur de langue restent affichés sur toutes les pages dès qu'un profil et une langue existent (ils ne disparaissent plus, même sur la page profil)"
+    ],
+    "v184": [
+      "Header en 2 niveaux (PC + mobile/tablette) : en haut la marque et l'état (« en ligne », « Drive ») avec leur texte et leur point clignotant ; en dessous les boutons de nav qui passent à la ligne quand ils débordent (fini le défilement et les boutons cachés), avec version, EN et thème alignés à droite",
+      "Sur la page de choix de langue : « Mon profil » et le sélecteur de langue restent visibles (ils disparaissaient à tort), et le bouton d'aide y fonctionne enfin avec une visite guidée complète (recherche, déclaration, champs, doublons)"
+    ],
+    "v182": [
+      "Fondation du jumelage de langues (détection de doublons + fusion sans perte, logique pure et testée) — préparation de la confirmation par les déclarants"
+    ],
+    "v181": [
+      "Déclaration de langue plus intelligente : suggère les langues déjà présentes qui ressemblent (même orthographe/région différente, ex. Nguiemboon/Nguiembor) pour éviter les doublons ; nouveaux champs pays, autres noms, famille"
+    ],
+    "v180": [
+      "Partage : section d'accueil dans un cadre opaque soigné ; icônes réseaux sur fond blanc en mode sombre (logos bien visibles). Trame Ndop atténuée sur mobile/tablette"
+    ],
+    "v179": [
+      "Partage : bouton Instagram ajouté (copie le lien et ouvre Instagram) ; les liens de partage ajoutent un paramètre pour que l'aperçu s'affiche même si le réseau avait mis l'ancien en cache"
+    ],
+    "v178": [
+      "Aperçu de lien compatible avec tous les réseaux : image d'aperçu en JPEG léger (90 Ko, lisible par WhatsApp) et balises renforcées"
+    ],
+    "v177": [
+      "La version de l'application réapparaît dans le header sur mobile (elle avait été masquée par erreur au passage header compact)"
+    ],
+    "v176": [
+      "Boutons de partage du site (WhatsApp, Facebook, X, Telegram, copier le lien + partage natif) sur l'accueil, « À propos », le pied de page et le mode présentation"
+    ],
+    "v174": [
+      "Aperçu de lien soigné : image Open Graph dédiée (logo + accroche) au partage sur Facebook/WhatsApp/X, au lieu d'une image de la page recadrée"
+    ],
+    "v173": [
+      "Traduire/Transcrire : chaque zone (mot source, traduction, voix) est encadrée avec sa couleur (bleu/vert/violet) et son libellé plus grand — démarcation nette entre les parties"
+    ],
+    "v172": [
+      "« Revoir les consignes » : en Transcrire il reste dans la zone audio (inchangé) ; en Traduire il s'affiche sur la même ligne que « Traduction », à droite (fini le chevauchement)"
+    ],
+    "v171": [
+      "Barre d'onglets : Transcrire avant Traduire (comme l'accueil) ; sur mobile, les 3 onglets tiennent sur une seule ligne (un tiers chacun)"
+    ],
+    "v170": [
+      "Transcrire : icône principale = micro ultra-réaliste ; l'ancienne icône passe en tête du panneau de consignes"
+    ],
+    "v169": [
+      "« Revoir les consignes » se place selon l'activité : sous la traduction en mode Traduire, dans la zone audio en mode Transcrire"
+    ],
+    "v168": [
+      "Nouvelle identité typographique : titres en Space Grotesk (display géométrique), logo et étiquettes techniques en IBM Plex Mono ; polices embarquées hors-ligne"
+    ],
+    "v167": [
+      "Accueil : titre à droite de l'icône sur les cartes (gain de hauteur, meilleur usage de la largeur)",
+      "Mobile : header compact (logo réduit, sous-titre et méta masqués, boutons en icône seule) pour libérer l'écran"
+    ],
+    "v166": [
+      "Accueil : la Transcription est proposée en première carte, avant la Traduction"
+    ],
+    "v164": [
+      "« Transcription audio » affiche l'étiquette de la langue transcrite (ex. « Ngiemboon (NGE) »), comme les autres champs, et s'adapte à la langue courante"
+    ],
+    "v163": [
+      "Le lecteur audio moderne s'affiche PARTOUT où l'on écoute un son (aperçu après enregistrement, corrections, Explorer)",
+      "Nouvelle forme d'onde : une vraie onde du son (l'amplitude épouse le son réel — forte quand ça parle, faible dans les silences), qui se remplit à la lecture et ondule en direct selon le son joué",
+      "Icône de micro réaliste sur le bouton « Enregistrer l'audio »"
+    ],
+    "v162": [
+      "Les consignes s'affichent les 3 premières fois (au lieu d'une), pour Transcrire ET pour Traduire (une consigne dédiée à la traduction a été ajoutée) ; « Revoir les consignes » reste dispo",
+      "En Transcrire, le cadre d'enregistrement est placé juste après le mot à transcrire (avant la traduction, facultative), avec un intitulé « Transcription audio »",
+      "Boutons « Tester le micro » et « Revoir les consignes » bien plus visibles et dynamiques"
+    ],
+    "v161": [
+      "Boutons encore plus vivants : un halo lumineux qui respire (comme le logo) entoure les boutons d'action et de navigation, en plus du reflet qui balaie — impossible de les confondre avec du texte statique"
+    ],
+    "v160": [
+      "Consignes de transcription : boîte plus soignée (en-tête à icône, règles en cartes avec pictos, mots-clés mis en évidence par la couleur, exemples « À éviter / À faire » étiquetés) pour bien faire comprendre les points importants"
+    ],
+    "v159": [
+      "Boutons plus vivants : un reflet lumineux balaie en continu les boutons d'action et de navigation (et un reflet net au survol) — on voit tout de suite que ce sont des boutons cliquables"
+    ],
+    "v158": [
+      "Logo (en-tête et pied de page) : en mode clair, fini l'effet de « feuille blanche » derrière le logo — un fin anneau lumineux qui tourne remplace le halo diffus, et le mode sombre garde son aura",
+      "Boutons de navigation en or : même teinte douce en clair et en sombre (plus d'ambre trop intense en clair)"
+    ],
+    "v157": [
+      "Avant la première transcription, une consigne claire s'affiche et doit être validée : enregistrer dans un endroit calme, et dire seulement le mot dans la langue, une seule fois (pas le mot français, pas deux fois). Un lien « Revoir les consignes » reste disponible."
+    ],
+    "v156": [
+      "Durée de l'audio EXACTE : le lecteur affiche la vraie durée de l'enregistrement (mesurée à la prise de son), et la barre se remplit précisément jusqu'à la fin — fini les durées fausses annoncées par le navigateur pour les enregistrements vocaux"
+    ],
+    "v155": [
+      "Lecteur audio : la durée affichée correspond maintenant à la vraie durée de l'enregistrement (fini le « 18 s » pour un audio de 6 s), et la barre de progression se remplit exactement jusqu'à la fin",
+      "Message d'attente plus sobre pendant le chargement d'un audio"
+    ],
+    "v154": [
+      "Lecture des enregistrements dans Explorer : les prononciations se jouent directement dans le lecteur moderne, de façon fiable"
+    ],
+    "v153": [
+      "Le lecteur audio moderne s'affiche dans tous les cas : l'ancien lecteur classique ne réapparaît plus jamais"
+    ],
+    "v152": [
+      "Le lecteur audio moderne s'affiche pour tous les enregistrements (il ne repasse plus en lecteur classique)",
+      "En-tête : libellé d'état raccourci"
+    ],
+    "v151": [
+      "Explorer : nouveau lecteur audio sur-mesure, moderne et responsive — bouton lecture rond, forme d'onde qui se remplit avec une crête lumineuse à mesure de l'écoute, minuteur « position / durée », réglage du volume ; s'adapte à toutes les tailles d'écran (mobile, tablette, ordinateur)"
+    ],
+    "v150": [
+      "Boutons du site harmonisés en couleur unie (fini les dégradés) : les boutons d'action (Enregistrer, Envoyer, Prochain mot, sélecteurs…) en cyan, le bouton « Déclarer ma langue » en or — deux couleurs distinctes, lisibles en clair comme en sombre"
+    ],
+    "v149": [
+      "Écran des langues : boutons en couleur unie (fini le dégradé), lisibles en clair comme en sombre ; « Rechercher » à côté de la barre, et « Déclarer ma langue » en pleine largeur juste en dessous"
+    ],
+    "v148": [
+      "Écran « Choisis ta langue » : une barre de RECHERCHE pour trouver ta langue sans faire défiler toute la liste, et le bouton « Déclarer ma langue » remonté tout en haut, bien distinct (plus besoin de scroller jusqu'en bas)"
+    ],
+    "v147": [
+      "Clavier ngiemboon PRÉDICTIF : pendant que tu écris en ngiemboon, une barre te propose des mots RÉELS (jamais inventés) — touche une suggestion pour l'insérer. Le dictionnaire de suggestions s'enrichit tout seul avec les contributions de la communauté"
+    ],
+    "v146": [
+      "Décor plus atmosphérique sur toutes les pages : l'effet « torche » de fond (halos de lumière) est renforcé, avec une touche dorée au sommet — le texte reste parfaitement lisible en clair comme en sombre"
+    ],
+    "v145": [
+      "Boutons d'action principaux plus vivants : un léger halo « respirant » dans leur couleur (Enregistrer en vert, Prochain mot en cyan, Envoyer en bleu), désactivé si tu préfères réduire les animations"
+    ],
+    "v144": [
+      "Explorer aux couleurs de son activité (or) : chaque carte de la bibliothèque gagne un liseré et une bordure dorés, avec un halo au survol ; les liens et données restent en cyan pour rester bien repérables"
+    ],
+    "v143": [
+      "Menu du haut plus vivant : l'onglet actif prend la couleur de son activité (Traduire vert, Transcrire violet, Explorer or) avec un halo, et les boutons de l'en-tête réagissent mieux au survol"
+    ],
+    "v142": [
+      "Accueil plus vivant : chaque activité porte sa couleur d'identité (Traduire en vert, Transcrire en violet, Explorer en or) — liseré, halo d'icône, bordure et fleuron colorés, avec un léger relief au survol"
+    ],
+    "v141": [
+      "Mode Présentation (à l'écran ET affiche téléchargée) : les trois cadres sont plus écartés (affiche élargie), et le lien de l'application sous le QR est mis davantage en évidence (pastille dorée plus dense, bordure épaisse, halo, texte agrandi)"
+    ],
+    "v140": [
+      "Mode Présentation À L'ÉCRAN : les mêmes effets de lumière que l'affiche téléchargée (halos cyan renforcés sur le logo et le QR, effet « torche » qui éclaire le fond, lumière colorée propre à chaque activité) ; les trois cadres sont plus épais et répartis équitablement sur toute la largeur"
+    ],
+    "v139": [
+      "Affiche du mode Présentation plus lumineuse : halos cyan renforcés autour du logo et du QR, effet « torche » qui éclaire le fond, et une lumière de couleur propre à chaque activité (Traduire en vert, Transcrire en violet, Explorer en or)"
+    ],
+    "v138": [
+      "Rafraîchir une page te garde exactement dessus : plus jamais renvoyé à l'écran de choix de langue ou au profil au rechargement (le profil n'est demandé qu'au moment d'une action : Traduire, Transcrire, Explorer, déclarer une langue)",
+      "Mode Présentation : plus d'espace sous le cadre du QR (l'affiche ne colle plus au bas)"
+    ],
+    "v136": [
+      "Affiche du mode Présentation agrandie et plus aérée : éléments mieux séparés à la verticale, les trois activités occupent toute la largeur, textes des cartes ajustés"
+    ],
+    "v135": [
+      "Téléchargement du mode Présentation : une affiche propre et soignée (logo, activités colorées, QR avec halo doux, lien encadré) — sans aucun bouton ni autorisation"
+    ],
+    "v132": [
+      "Mode Présentation : éléments à nouveau bien espacés ; le fichier téléchargé est une affiche fidèle (halo doux, lien dans son cadre, icônes colorées)"
+    ],
+    "v131": [
+      "Mode Présentation téléchargé : rendu fidèle à l'écran — halo de lumière doux et identique, lien de l'app toujours dans son cadre (avec le libellé « Ou ouvre l'adresse : »)",
+      "Icônes des activités plus colorées et distinctes (Traduire vert/cyan, Transcrire violet, Explorer or) ; textes Traduire/Transcrire/Explorer agrandis",
+      "Icônes PWA sans fond blanc (plus de « bordure » blanche sur fond clair)"
+    ],
+    "v130": [
+      "Nouvelles icônes premium partout : Traduire, Transcrire, Explorer (accueil, onglets, titres) et tous les boutons du header (Accueil, Langue, À propos, Aide, Bugs, Thème, Mon profil) — fini les emoji en noir et blanc",
+      "Mode Présentation : le lien de l'application reste toujours dans son cadre (plus de débordement), et l'intensité des halos dans le fichier téléchargé correspond exactement à l'affichage à l'écran"
+    ],
+    "v129": [
+      "Le téléchargement du mode Présentation capture désormais les effets de lumière (halo autour du QR, du logo et du panneau) exactement comme à l'écran, et utilise des icônes premium au lieu des emoji"
+    ],
+    "v128": [
+      "L'application a maintenant une adresse par écran : l'URL change selon la page (Traduire, Explorer, À propos…), le bouton Précédent/Suivant du navigateur fonctionne, et un rafraîchissement te garde sur le même écran",
+      "Changer la langue FR/EN (ou ta langue) ne te ramène plus à l'accueil : tu restes sur l'écran où tu étais",
+      "Le téléchargement du mode Présentation s'adapte à ton thème (clair ou sombre) avec le fond, et n'affiche plus de mention d'auteur en bas"
+    ],
+    "v127": [
+      "Mode Présentation : l'adresse publique du site s'affiche désormais sous le QR code, dans un bloc d'appel à l'action mieux mis en valeur (encadré et coloré)",
+      "Mode Présentation : plus aucune coupure des bords ni débordement sur les écrans peu hauts (le contenu se centre et défile proprement)",
+      "Page « À propos » : les trois boutons « Partager le projet » (flyer image, flyer PDF, mode présentation) sont plus visibles et mieux mis en avant"
+    ],
+    "v126": [
+      "QR code agrandi (À propos et mode Présentation) avec un logo central plus grand et bien lisible",
+      "Le mode Présentation se télécharge en image (PNG) ou en PDF, prêt à imprimer ou partager lors d'un événement"
+    ],
+    "v125": [
+      "Profil désormais requis pour contribuer : Traduire, Transcrire, Explorer et la déclaration d'une langue s'ouvrent une fois ton profil créé (choisir une langue reste libre). Tout profil créé est enregistré dans la base, même sans contribution",
+      "Créer une langue lui donne aussitôt ses premières voix : un parcours « amorce sonore » invite à enregistrer quelques mots de base (au moins 5) — et si tu t'arrêtes en route, ta langue est créée quand même avec ce que tu as fait",
+      "Dans ton profil, déclare une ou plusieurs langues d'appartenance (touche une puce pour l'ajouter, retouche-la pour en faire ta langue principale)"
+    ],
+    "v124": [
+      "Partage un mot depuis Explorer : le bouton « 🔗 Partager » crée une jolie carte texte (mot, traduction, langue) à envoyer sur WhatsApp, SMS ou n'importe où — ou copiée dans le presse-papiers",
+      "Textes rafraîchis : LANGIAL accueille déjà plusieurs langues d'Afrique (le ngiemboon reste la plus avancée), fini les mentions « langue pilote / point de départ »"
+    ],
+    "v123": [
+      "Exporte le dictionnaire d'une langue en CSV ou JSON depuis Explorer (appropriation et partage des données)"
+    ],
+    "v122": [
+      "Claviers dédiés pour Bassa, Douala, Fulfuldé et Haoussa : les lettres spéciales (ɓ ɗ ŋ ɛ ɔ ƴ ƙ) et les tons sont accessibles directement, comme pour le ngiemboon"
+    ],
+    "v121": [
+      "5 langues africaines pré-remplies (Swahili, Bassa, Douala, Fulfuldé, Haoussa) : choisis la tienne et commence à contribuer sans attendre"
+    ],
+    "v120": [
+      "Dictionnaire public : navigue et consulte tout le site (Explorer, prononciations) SANS compte ; crée un profil seulement pour contribuer",
+      "Interface disponible en français ET en anglais (bouton FR|EN)"
+    ],
+    "v113": [
+      "Explorer : plus d'entrée « fantôme » sans mot ni audio ni traduction (bug signalé corrigé)"
+    ],
+    "v112": [
+      "LANGIAL devient MULTI-LANGUE et communautaire : choisis ta langue au démarrage, ou déclare-la si elle manque — elle devient enrichissable par tous. Le ngiemboon garde son clavier dédié ; les autres langues utilisent le clavier standard. Un sélecteur de langue est toujours accessible dans l'en-tête."
+    ],
+    "v108": [
+      "Les cadres posés sur le fond sont désormais opaques (la trame ne les traverse plus)",
+      "La perle de lumière des titres s'anime aussi sur mobile"
+    ],
+    "v106": [
+      "Le pied de page reste ancré tout en bas de l'écran, même sur les pages courtes",
+      "Ornement de titre affiné : ~un tiers de largeur, la barre passe derrière le losange (invisible dessous) avec une perle de lumière"
+    ],
+    "v101": [
+      "Bouton « Accueil » dans l'en-tête : reviens à l'écran des trois portes (Traduire, Transcrire, Explorer) d'un seul geste, depuis n'importe quelle page"
+    ],
+    "v100": [
+      "Décor Ndop vivant : trame en losanges tissée sur tout le fond, séparateurs qui rayonnent, bordures de cartes qui chatoient et fleurons de coin (animé sur ordinateur, figé sur mobile pour rester rapide)"
+    ],
+    "v96": [
+      "Mode présentation plein écran (pour montrer le projet lors d'événements)"
+    ],
+    "v95": [
+      "Carte des variantes dans Explorer : d'où viennent les contributions, village par village"
+    ],
+    "v94": [
+      "Petite célébration à l'enregistrement d'une contribution (halo + confettis)"
+    ],
+    "v93": [
+      "Décor enrichi : motifs Ndop (séparateurs et titres de section ornés)"
+    ],
+    "v92": [
+      "La bannière détaille les améliorations de CHAQUE version manquée, regroupées version par version"
+    ],
+    "v91": [
+      "Le logo et le nom (en haut et en bas) ramènent à l'accueil d'un simple clic"
+    ],
+    "v90": [
+      "Aide plus riche et plus claire sur chaque zone, et une box d'aide pour tout, jusqu'aux boutons du haut"
+    ],
+    "v89": [
+      "Mise à jour auto-vérifiée : si elle n'a pas pris, l'app la relance seule (plus jamais bloqué sur une ancienne version)"
+    ],
+    "v88": [
+      "La bannière de mise à jour disparaît vraiment après avoir mis à jour (plus besoin de Ctrl+Shift+R)"
+    ],
+    "v87": [
+      "La bannière n'affiche plus que les nouveautés réelles de la mise à jour (fini le texte figé)"
+    ],
+    "v86": [
+      "Propositions dans l'ordre : Mots puis Phrases en priorité (dictionnaire en dernier)"
+    ],
+    "v85": [
+      "La bannière de mise à jour se ferme bien une fois à jour"
+    ],
+    "v84": [
+      "Alerte automatique quand une nouvelle version est disponible + mise à jour en un clic"
+    ],
+    "v83": [
+      "Suivi des bugs de bout en bout : signaler, suivre et voir les bugs résolus"
+    ],
+    "v82": [
+      "Aide détaillée et bien cadrée sur chaque page"
+    ],
+    "v81": [
+      "Beaucoup plus de mots et de phrases à traduire (base enrichie)"
+    ],
+    "v80": [
+      "Progression affichée par groupe, dans un ordre clair"
+    ],
+    "v79": [
+      "Menus déroulants toujours au premier plan"
+    ],
+    "v77": [
+      "Un même mot n'est plus jamais reproposé deux fois au même contributeur"
+    ],
+    "v76": [
+      "Envoi des contributions bien plus fiable (renvoi automatique jusqu'à confirmation)"
+    ]
+  }
+}

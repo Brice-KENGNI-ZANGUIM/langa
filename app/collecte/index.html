@@ -1,0 +1,1393 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>LANGIAL · Collecte des langues</title>
+  <meta name="theme-color" content="#f4f8fc" />
+  <meta name="description" content="LANGIAL : plateforme communautaire pour numériser les langues d'Afrique, en texte et en voix. Transcris, traduis, explore, gratuitement." />
+  <!-- Open Graph : aperçu de lien (Facebook, WhatsApp, X…). Sans ces balises, les
+       réseaux « devinent » et affichent une image au hasard de la page. -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="LANGIAL" />
+  <meta property="og:title" content="LANGIAL : Numériser les langues d'Afrique, texte et voix" />
+  <meta property="og:description" content="Plateforme communautaire pour numériser nos langues, en texte et en voix. Transcris, traduis, explore, gratuitement." />
+  <meta property="og:url" content="https://langial.com/" />
+  <meta property="og:image" content="https://langial.com/icons/og-share.jpg" />
+  <meta property="og:image:secure_url" content="https://langial.com/icons/og-share.jpg" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="LANGIAL : numériser les langues d'Afrique, texte et voix" />
+  <meta property="og:locale" content="fr_FR" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="LANGIAL : Numériser les langues d'Afrique, texte et voix" />
+  <meta name="twitter:description" content="Plateforme communautaire pour numériser nos langues, en texte et en voix. Transcris, traduis, explore, gratuitement." />
+  <meta name="twitter:image" content="https://langial.com/icons/og-share.jpg" />
+  <!-- Thème posé AVANT le premier rendu (SOMBRE par défaut sur toutes les machines ;
+       le choix explicite de l'utilisateur, une fois fait, est respecté) → aucun flash. -->
+  <script>
+    (function () {
+      var t = "dark";
+      try {
+        t = localStorage.getItem("ng-theme");
+        if (t !== "dark" && t !== "light") t = "dark";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) { document.documentElement.setAttribute("data-theme", "dark"); t = "dark"; }
+      // Précharge la tuile de motif du thème courant DÈS le parsing pour que le fond de
+      // l'écran de chargement s'affiche instantanément (sinon l'image n'arrive qu'après un
+      // aller-retour réseau, donc en retard ou pas du tout si le boot est court).
+      try {
+        var l = document.createElement("link");
+        l.rel = "preload"; l.as = "image";
+        l.href = "./icons/bg-pattern-" + (t === "light" ? "light" : "dark") + ".jpg";
+        l.setAttribute("fetchpriority", "high");
+        document.head.appendChild(l);
+      } catch (e) { /* preload facultatif */ }
+    })();
+  </script>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icons/logo.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="./icons/icon-192.png" />
+  <link rel="stylesheet" href="./keyboard/ngiemboon-keyboard.min.css" />
+  <link rel="stylesheet" href="./fonts.min.css" />
+  <link rel="stylesheet" href="./app.min.css" />
+  <!-- Préchargement du JS critique (dès le parse du <head>, sans attendre le <script> en fin de
+       body) : le navigateur récupère l'entrée + ses plus gros modules en parallèle. -->
+  <link rel="modulepreload" href="./build/app.js" />
+  <link rel="modulepreload" href="./build/i18n.js" />
+  <link rel="modulepreload" href="./build/sync.js" />
+  <link rel="modulepreload" href="./build/languages.js" />
+</head>
+<body>
+  <!-- Motif africain (Ndop/Bogolan) en fond global, très discret, derrière tout le contenu. -->
+  <div class="bg-motif" aria-hidden="true"></div>
+  <!-- Voile de CHARGEMENT : visible d'emblée (couvre le boot / le rechargement), retiré par
+       le script en fin d'initialisation. Le logo « respire » au centre d'un anneau qui tourne. -->
+  <div id="app-loader" class="app-loader" role="status" aria-live="polite">
+    <div class="app-loader-mark">
+      <span class="app-loader-ring" aria-hidden="true"></span>
+      <img src="./icons/logo.svg" alt="" width="76" height="76" />
+    </div>
+    <p class="app-loader-txt" data-i18n="loader.txt">Chargement…</p>
+  </div>
+  <header class="topbar">
+    <a class="brand brand--home" id="brand-home" href="#/accueil"
+         data-i18n-title="brand.home.title" title="Revenir à l'accueil" aria-label="Revenir à l'accueil : Traduire, Transcrire, Explorer">
+      <span class="brand-mark"><img src="./icons/logo.svg" alt="LANGIAL" width="52" height="52" /></span>
+      <div class="brand-txt">
+        <h1>LANGIAL</h1>
+        <p class="tagline" data-i18n="tagline">Nos langues, un héritage à transmettre</p>
+      </div>
+    </a>
+    <!-- Header épuré (Brice 2026-07-25) : Accueil + Notifications restent visibles (quotidien),
+         le bouton ☰ ouvre le tiroir de réglages pour tout le reste (langues, à propos, aide,
+         bugs, interface, pastilles, ET « Mon profil » — pas consulté à chaque visite). -->
+    <!-- Réglages remonté sur la ligne du logo, à l'extrême droite (2026-07-25q) : c'est
+         l'emplacement qu'occupaient les 3 pastilles avant l'épuration du header. Regroupé
+         dans un conteneur `.chips-nav` (même classe, pas le même élément) pour hériter
+         SANS dupliquer le style plat des boutons de nav (.chips-nav .chip--btn). -->
+    <div class="chips-nav chips-nav--top">
+      <button id="settings-toggle" class="chip chip--btn settings-toggle" type="button" data-i18n-title="chip.settings.title"
+              title="Réglages" aria-label="Réglages" aria-haspopup="dialog" aria-controls="settings-drawer" aria-expanded="false">
+        <span class="settings-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span data-i18n="chip.settings">Réglages</span>
+      </button>
+    </div>
+    <div class="chips-nav">
+      <div class="chip-group chip-group--perso">
+        <a id="home-link" class="chip chip--btn" href="#/accueil" data-i18n-title="chip.home.title"
+                title="Retour à l'accueil" aria-label="Retour à l'accueil"><img class="chip-ico" src="icons/ui/hi-home.png" alt="" aria-hidden="true"><span data-i18n="chip.home">Accueil</span></a>
+        <!-- CTA proactif (déplacé du hub vers le header, 2026-07-25s) : visible seulement sans
+             profil, ouvre exactement le même popup explicatif que requireProfile() (#profile-gate). -->
+        <button id="btn-create-profile" class="chip chip--btn" type="button" hidden data-i18n-title="hub.card.profile.title"
+                title="Créer mon profil" aria-label="Créer mon profil"><img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="hub.card.profile">Créer mon profil</span></button>
+        <a id="btn-notifs" class="chip chip--btn chip--notif" href="#/notifications" hidden data-i18n-title="chip.notifs.title"
+                title="Mes notifications" aria-label="Mes notifications"><img class="chip-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span data-i18n="chip.notifs">Notifications</span><span id="notif-badge" class="notif-badge" hidden aria-hidden="true">0</span></a>
+      </div>
+    </div>
+    <!-- Barre des 4 ESPACES, intégrée au header (3e rangée). Masquée sur l'accueil, où les
+         grandes portes du hub jouent déjà ce rôle. -->
+    <nav id="main-nav" class="main-nav">
+      <div class="nav-tabs" role="tablist" aria-label="Espaces">
+        <a id="tab-transcrire" class="nav-tab" href="#/transcrire" role="tab"><img class="nav-ico" src="icons/mic-real.png" alt="" aria-hidden="true"><span data-i18n="nav.transcribe">Transcrire</span></a>
+        <a id="tab-traduire" class="nav-tab" href="#/traduire" role="tab"><img class="nav-ico" src="icons/act-translate.svg" alt="" aria-hidden="true"><span data-i18n="nav.translate">Traduire</span></a>
+        <a id="tab-explorer" class="nav-tab" href="#/explorer" role="tab"><img class="nav-ico" src="icons/act-explore.svg" alt="" aria-hidden="true"><span data-i18n="nav.explore">Explorer</span></a>
+        <a id="tab-demander" class="nav-tab" href="#/demander" role="tab"><img class="nav-ico" src="icons/act-request.png" alt="" aria-hidden="true"><span data-i18n="nav.demander">Demander</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Tiroir de réglages (☰) : tout ce qui n'est pas quotidien (Brice 2026-07-25). Regroupe
+       langue de contribution, à propos, aide, bugs, langue d'interface, thème, pastilles de
+       diagnostic — pour que le header reste épuré et qu'un nouvel arrivant ne se perde pas. -->
+  <div id="settings-drawer" class="settings-drawer" hidden role="dialog" aria-modal="true" aria-labelledby="settings-drawer-title">
+    <div class="settings-drawer-backdrop" id="settings-drawer-backdrop"></div>
+    <div class="settings-drawer-panel">
+     <div class="settings-drawer-scroll">
+      <div class="settings-drawer-head">
+        <h2 id="settings-drawer-title" data-i18n="settings.title">Réglages</h2>
+        <button id="settings-close" class="settings-close" type="button" aria-label="Fermer">✕</button>
+      </div>
+      <div class="settings-drawer-body">
+        <div class="settings-section">
+          <h3 data-i18n="settings.sec.account">Mon compte</h3>
+          <a id="btn-open-profile" class="chip chip--btn settings-link" href="#/profil" hidden>
+            <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="chip.profile">Profil</span></a>
+        </div>
+        <div class="settings-section">
+          <h3 data-i18n="settings.sec.interface">Interface</h3>
+          <div class="settings-row">
+            <!-- Bascule de langue en CAPSULE FR|EN : la moitié de la langue ACTIVE est verte,
+                 l'autre grisée ; les couleurs s'inversent à chaque changement de langue. -->
+            <button id="ui-lang-toggle" class="chip lang-switch settings-toggle-big" type="button" data-i18n-title="chip.ui.title"
+                    title="Switch to English" aria-label="Changer de langue">
+              <span class="lang-seg" data-seg="fr">FR</span><span class="lang-seg" data-seg="en">EN</span>
+            </button>
+            <!-- Bascule clair/sombre en CAPSULE ☀|🌙 (comme FR|EN) : la moitié du mode ACTIF
+                 est colorée selon le mode (chaud = clair, froid = sombre), l'autre grisée. -->
+            <button id="theme-toggle" class="chip theme-switch settings-toggle-big" type="button" data-i18n-title="theme.title"
+                    title="Basculer clair / sombre" aria-label="Basculer clair / sombre"><img class="theme-ico" src="icons/hi-theme.webp" alt="" aria-hidden="true" /></button>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3 data-i18n="settings.sec.discover">Découvrir</h3>
+          <a id="lang-chip" class="chip chip--btn settings-link" href="#/langue" data-i18n-title="chip.lang.title"
+                  title="Changer de langue" aria-label="Changer de langue"><img class="chip-ico" src="icons/ui/hi-lang.png" alt="" aria-hidden="true"><span id="lang-chip-name">Langues</span></a>
+          <a id="about-link" class="chip chip--btn settings-link" href="#/apropos" data-i18n-title="chip.about.title"
+                  title="À propos du projet" aria-label="À propos du projet"><img class="chip-ico" src="icons/ui/hi-about.png" alt="" aria-hidden="true"><span data-i18n="chip.about">À propos</span></a>
+          <button id="help-btn" class="chip chip--btn settings-link" type="button" data-i18n-title="chip.help.title"
+                  title="Visite guidée de cette page" aria-label="Visite guidée"><img class="chip-ico" src="icons/ui/hi-help.png" alt="" aria-hidden="true"><span data-i18n="chip.help">Aide</span></button>
+        </div>
+        <div class="settings-section">
+          <h3 data-i18n="settings.sec.report">Signaler</h3>
+          <a id="bugs-link" class="chip chip--btn settings-link" href="#/bugs" data-i18n-title="chip.bugs.title"
+                  title="Suivi des bugs" aria-label="Suivi des bugs"><img class="chip-ico" src="icons/ui/hi-bug.png" alt="" aria-hidden="true"><span data-i18n="chip.bugs">Bugs</span></a>
+        </div>
+      </div>
+      <div class="settings-drawer-foot">
+        <!-- Version : décorée comme les autres pastilles (dot + halo) ; VERTE si l'app est à
+             jour, ROUGE si une mise à jour est disponible. -->
+        <span id="app-ver" class="chip chip--on" data-i18n-title="app.ver.title" title="Version de l'application"></span>
+        <span id="net" class="chip">…</span>
+        <span id="srv" class="chip">…</span>
+      </div>
+     </div>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <!-- ============= VUE 0 : CHOIX DE LA LANGUE (1er accès + à tout moment) ====== -->
+    <section id="view-lang" class="view" hidden>
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-langues.jpg" alt="" aria-hidden="true">
+        <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.lang.eye">Les langues</span><span class="pb-title" data-i18n="pb.lang.title">Chaque langue compte</span></div></div>
+      <div class="hub-head"><h2 class="view-title" id="lang-title" data-i18n="lang.title">Choisis ta langue 🌍</h2></div>
+      <p class="hub-vision" data-i18n="lang.intro">LANGIAL est une plateforme communautaire où chaque langue s'enrichit
+        des traductions et des voix de celles et ceux qui la parlent. Choisis la tienne, ou
+        ajoute-la si elle n'existe pas encore, pour que d'autres puissent l'enrichir avec toi.</p>
+      <!-- Contrôles TOUJOURS visibles en haut (avant la grille) : recherche + le
+           bouton « déclarer ma langue » bien distinct, pour ne pas avoir à faire
+           défiler toute la liste (utile quand les langues se multiplient). -->
+      <div class="lang-controls">
+        <div class="lang-search-row">
+          <input id="lang-search" class="lang-search" type="search" autocomplete="off"
+                 placeholder="Rechercher une langue (nom, région…)" data-i18n-ph="lang.search.ph"
+                 data-i18n-title="lang.search.ph" aria-label="Rechercher une langue" />
+          <button id="lang-search-btn" class="lang-btn lang-search-btn" type="button">
+            <span aria-hidden="true">🔎</span>
+            <span data-i18n="lang.search.go">Rechercher</span>
+          </button>
+        </div>
+        <button id="lang-declare-btn" class="lang-btn lang-declare-cta" type="button">
+          <span aria-hidden="true">➕</span>
+          <span data-i18n="lang.add">Ajouter ma langue</span>
+        </button>
+      </div>
+      <!-- Jumelage de langues (Phase C) : confirmations en attente pour ce contributeur
+           et suggestions de fusion de doublons probables. Rempli par renderMergePanel(). -->
+      <div id="lang-merge-panel" class="lang-merge-panel" hidden></div>
+      <div id="lang-grid" class="lang-grid" role="list"></div>
+      <p id="lang-empty" class="lang-empty" data-i18n="lang.search.none" hidden>Aucune langue ne correspond. Tu peux l'ajouter ci-dessus.</p>
+      <div id="lang-declare" class="lang-declare card" hidden>
+        <img class="lang-declare-illus" src="icons/declare-lang-illus.webp" alt="" aria-hidden="true" loading="lazy" />
+        <h3 data-i18n="lang.declare.h">➕ Ajouter une nouvelle langue</h3>
+        <p class="lang-declare-hint" data-i18n="lang.declare.hint">Elle devient aussitôt un bien commun : visible et enrichissable par toute la communauté, un héritage qui grandit.</p>
+        <p class="lang-declare-req" data-i18n-html="lang.f.reqlegend">Les champs marqués <span class="req">*</span> sont obligatoires.</p>
+        <!-- OBLIGATOIRES d'abord (marqués d'une * rouge), puis les OPTIONNELS. -->
+        <div class="grid2">
+          <label class="field"><span class="field-lbl"><span data-i18n="lang.f.nom">Nom de la langue</span> <span class="req">*</span></span>
+            <input id="ld-nom" type="text" placeholder="ex. Bassa" autocomplete="off" maxlength="40" /></label>
+          <label class="field"><span class="field-lbl"><span data-i18n="lang.f.region">Région / localité</span> <span class="req">*</span></span>
+            <input id="ld-region" type="text" placeholder="ex. Ouest (Bamiléké)" autocomplete="off" maxlength="60" /></label>
+          <label class="field"><span class="field-lbl"><span data-i18n="lang.f.pays">Pays</span> <span class="req">*</span></span>
+            <input id="ld-pays" type="text" placeholder="ex. Cameroun" autocomplete="off" maxlength="40" /></label>
+          <label class="field"><span class="field-lbl"><span data-i18n="lang.f.famille">Famille / groupe</span> <span class="req">*</span></span>
+            <input id="ld-famille" type="text" placeholder="ex. bamiléké, bantou" data-i18n-ph="lang.f.famille.ph" autocomplete="off" maxlength="60" /></label>
+          <label class="field"><span data-i18n="lang.f.autonym">Autonyme (optionnel)</span>
+            <input id="ld-autonyme" type="text" placeholder="le nom dans la langue elle-même" data-i18n-ph="lang.f.autonym.ph" autocomplete="off" maxlength="40" /></label>
+          <label class="field"><span data-i18n="lang.f.alias">Autres noms / orthographes (optionnel)</span>
+            <input id="ld-alias" type="text" placeholder="ex. Nguiembor, Nguiembow" data-i18n-ph="lang.f.alias.ph" autocomplete="off" maxlength="120" /></label>
+          <label class="field field--wide"><span data-i18n="lang.f.note">Note sur l'alphabet (optionnel)</span>
+            <input id="ld-note" type="text" placeholder="lettres ou tons particuliers (futur clavier dédié)" data-i18n-ph="lang.f.note.ph" autocomplete="off" maxlength="140" /></label>
+        </div>
+        <!-- Suggestions de langues DÉJÀ présentes qui ressemblent (anti-doublon), rempli en JS -->
+        <div id="ld-similar" class="ld-similar" hidden></div>
+        <p id="ld-error" class="lang-declare-err" hidden></p>
+        <div class="lang-declare-actions">
+          <button id="ld-cancel" class="chip chip--btn" type="button" data-i18n="lang.cancel">Annuler</button>
+          <button id="ld-submit" class="btn btn--next" type="button" data-i18n="lang.submit">Créer et donner voix →</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ VUE AMORCE SONORE : premières voix d'une langue créée ======== -->
+    <section id="view-amorce" class="view" hidden>
+      <div class="card amorce">
+        <h2 class="view-title" id="amorce-title">Donne voix à ta langue 🎙️</h2>
+        <p class="amorce-intro" id="amorce-intro" data-i18n-html="amorce.intro">Ta langue est <b>créée</b> ✓.
+          Pour lui donner ses toutes premières voix, enregistre-toi en prononçant quelques mots de
+          base. Vise au moins <b id="amorce-min">5</b> mots, mais tu peux t'arrêter quand tu veux,
+          car tout ce que tu enregistres est gardé.</p>
+
+        <div class="amorce-progress" aria-hidden="false">
+          <div class="amorce-bar"><span id="amorce-bar-fill" class="amorce-bar-fill"></span></div>
+          <div class="amorce-count"><b id="amorce-done">0</b> <span data-i18n="amorce.done.sep">/</span>
+            <span id="amorce-goal">5</span> <span data-i18n="amorce.done.min">minimum</span></div>
+        </div>
+
+        <div class="amorce-word">
+          <span class="amorce-word-cat" id="amorce-cat"></span>
+          <span class="amorce-word-fr" id="amorce-fr">…</span>
+          <span class="amorce-word-hint" data-i18n="amorce.word.hint">Prononce ce mot à voix haute dans ta langue</span>
+        </div>
+
+        <div class="amorce-rec">
+          <button id="amorce-rec-btn" class="btn btn--rec" type="button" data-i18n="amorce.rec">● Enregistrer</button>
+          <span id="amorce-rec-status" class="amorce-rec-status" aria-live="polite"></span>
+          <audio id="amorce-audio" class="amorce-audio" controls hidden></audio>
+        </div>
+
+        <div class="amorce-actions">
+          <button id="amorce-skip" class="chip chip--btn" type="button" data-i18n="amorce.skip">Passer ce mot</button>
+          <button id="amorce-validate" class="btn btn--primary" type="button" disabled data-i18n="amorce.validate">Valider &amp; suivant →</button>
+          <button id="amorce-finish" class="btn btn--next" type="button">Créer ma langue ✓</button>
+        </div>
+        <p id="amorce-note" class="amorce-note" hidden></p>
+      </div>
+    </section>
+
+    <!-- ================= VUE 1 : PROFIL (accueil obligatoire / édition) ========= -->
+    <section id="view-profile" class="view" hidden>
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-profile.jpg" alt="" aria-hidden="true">
+        <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.profile.eye">Ton profil</span><span class="pb-title" data-i18n="pb.profile.title">Fais-toi connaître</span></div></div>
+      <div class="card contrib">
+        <h2 class="view-title view-title--ico"><img class="title-ico title-ico--avatar" src="icons/avatar-default.webp" alt="" aria-hidden="true"><span id="profile-title">Bienvenue 👋🏾</span></h2>
+        <p class="contrib-why" data-i18n-html="p.intro">Avant de commencer, renseigne ton profil. Ces informations servent
+          à <b>te créditer</b> comme contributeur et à <b>revenir vers toi</b> si une traduction
+          demande une précision. Elles sont enregistrées sur ton appareil : tu ne les saisiras
+          qu'une seule fois. <span class="req">* obligatoire</span></p>
+        <div class="grid2">
+          <label class="field">
+            <span data-i18n-html="p.nom">Nom <span class="req">*</span></span>
+            <input id="c-nom" type="text" placeholder="Ton nom" data-i18n-ph="p.nom.ph" autocomplete="family-name" />
+          </label>
+          <label class="field">
+            <span data-i18n-html="p.prenom">Prénom <span class="req">*</span></span>
+            <input id="c-prenom" type="text" placeholder="Ton prénom" data-i18n-ph="p.prenom.ph" autocomplete="given-name" />
+          </label>
+          <!-- Double lignage (2026-07-25) : réalité africaine où le village/la langue du père et
+               de la mère sont souvent distincts. Les deux paires sont obligatoires (identité +
+               différenciation entre utilisateurs, cf. server/google_apps_script.gs conflict_()). -->
+          <div class="field">
+            <span data-i18n-html="p.village.pere">Village (côté paternel) <span class="req">*</span></span>
+            <div class="combo" id="village-combo-pere">
+              <input id="c-village-pere" type="text" autocomplete="off" data-i18n-ph="p.village.ph"
+                     placeholder="Choisis dans la liste ou tape ton village / quartier" />
+              <button type="button" id="village-toggle-pere" class="combo-toggle" data-i18n-title="combo.see" aria-label="Voir la liste">▾</button>
+              <ul id="village-list-pere" class="combo-list" hidden></ul>
+            </div>
+          </div>
+          <div class="field">
+            <span data-i18n-html="p.langue.pere">Langue paternelle <span class="req">*</span></span>
+            <select id="c-langue-pere">
+              <option value="" disabled selected data-i18n="p.langue.choose">Choisir…</option>
+            </select>
+          </div>
+          <div class="field">
+            <span data-i18n-html="p.village.mere">Village (côté maternel) <span class="req">*</span></span>
+            <div class="combo" id="village-combo-mere">
+              <input id="c-village-mere" type="text" autocomplete="off" data-i18n-ph="p.village.ph"
+                     placeholder="Choisis dans la liste ou tape ton village / quartier" />
+              <button type="button" id="village-toggle-mere" class="combo-toggle" data-i18n-title="combo.see" aria-label="Voir la liste">▾</button>
+              <ul id="village-list-mere" class="combo-list" hidden></ul>
+            </div>
+          </div>
+          <div class="field">
+            <span data-i18n-html="p.langue.mere">Langue maternelle <span class="req">*</span></span>
+            <select id="c-langue-mere">
+              <option value="" disabled selected data-i18n="p.langue.choose">Choisir…</option>
+            </select>
+          </div>
+          <div class="field">
+            <span data-i18n-html="p.role">Rôle <span class="req">*</span></span>
+            <select id="c-role">
+              <option value="" disabled selected data-i18n="p.role.choose">Choisir…</option>
+              <option value="natif" data-i18n="p.role.natif">Locuteur natif</option>
+              <option value="apprenant" data-i18n="p.role.apprenant">Apprenant</option>
+              <option value="linguiste" data-i18n="p.role.linguiste">Linguiste</option>
+            </select>
+          </div>
+          <label class="field">
+            <span data-i18n-html="p.email">E-mail <span class="req">*</span></span>
+            <input id="c-email" type="text" inputmode="email" placeholder="ton@email.com" data-i18n-ph="p.email.ph" autocomplete="off" />
+          </label>
+          <div class="field">
+            <span data-i18n-html="p.tel">Téléphone (avec indicatif) <span class="req">*</span></span>
+            <div class="tel-row">
+              <select id="c-indicatif" class="tel-ind" aria-label="Indicatif du pays"></select>
+              <input id="c-tel" type="text" inputmode="tel" class="tel-num" placeholder="6XX XX XX XX" autocomplete="off" />
+            </div>
+          </div>
+          <div class="field field--langs">
+            <span data-i18n-html="p.langs">Mes langues d'appartenance
+              <span class="hint-inline">(touche une langue pour l'ajouter, retouche-la pour en faire la principale)</span></span>
+            <div id="profile-langs" class="lang-chips" role="group" data-i18n-title="p.langs.aria" aria-label="Mes langues"></div>
+            <!-- Le formulaire de déclaration (#lang-declare) est DÉPLACÉ ici quand on déclare
+                 une langue depuis le profil : un seul formulaire, jamais dupliqué (source unique). -->
+            <div id="profile-declare-host"></div>
+          </div>
+          <label class="field field--check field--consent">
+            <input id="c-consent" type="checkbox" checked />
+            <span data-i18n-html="p.consent">J'accepte que mes contributions (texte et voix) servent à documenter et outiller la
+              langue, et qu'on puisse me contacter à ce sujet. <span class="req">*</span></span>
+          </label>
+          <label class="field field--check field--credit">
+            <input id="c-credit-on" type="checkbox" checked />
+            <span data-i18n-html="p.credit">J'autorise l'affichage de mon nom (prénom ou sigle) sur mes contributions dans la
+              <b>bibliothèque publique</b>, ainsi que dans les <b>notifications</b> envoyées aux autres et la communication
+              autour de la plateforme. <span class="hint-inline">(facultatif, sinon tu restes anonyme)</span></span>
+          </label>
+          <div class="field" id="credit-format-wrap" hidden>
+            <span data-i18n="p.credit.label">Nom affiché dans la bibliothèque</span>
+            <select id="c-credit-format">
+              <option value="prenom" data-i18n="p.credit.prenom">Prénom seul</option>
+              <option value="sigle" data-i18n="p.credit.sigle">Sigle (ex. « Brice K.Z. »)</option>
+            </select>
+            <span class="credit-preview" id="credit-preview"></span>
+          </div>
+        </div>
+        <div class="actions profile-actions">
+          <button id="btn-profile-continue" class="btn btn--primary" type="button" disabled data-i18n="profile.continue">Continuer →</button>
+          <button id="btn-profile-cancel" class="btn" type="button" hidden data-i18n="profile.cancel">Annuler</button>
+          <p id="profile-lock" class="lock-hint" hidden data-i18n="profile.lock">🔒 Complète tous les champs obligatoires
+            (marqués <span class="req">*</span>) pour continuer.</p>
+        </div>
+        <!-- COUCHE 3 (réversibilité) : l'utilisateur peut CORRIGER la langue d'une de ses
+             propres contributions si elle a été mal étiquetée (jeton de propriété requis). -->
+        <div id="my-contribs" class="my-contribs" hidden>
+          <h3 class="mc-title"><span data-i18n="mc.title">Mes contributions envoyées</span> <span id="mc-count" class="mc-count"></span></h3>
+          <p class="mc-hint" data-i18n="mc.hint">Si la langue d'une contribution est incorrecte, corrige-la ici.</p>
+          <input id="mc-search" class="mc-search" type="search" autocomplete="off" data-i18n-ph="mc.search.ph" placeholder="Rechercher un mot ou une phrase…" />
+          <div id="mc-list" class="mc-list"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============== VUE HUB : « Que veux-tu faire ? » ==================== -->
+    <section id="view-hub" class="view" hidden>
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-home.jpg" alt="" aria-hidden="true">
+        <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.home.eye">Bienvenue</span><span class="pb-title" data-i18n="pb.home.title">Donne une voix à ta langue</span></div></div>
+      <div class="hub-head">
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-home.png" alt="" aria-hidden="true"><span id="hub-title">Bonjour 👋🏾</span></h2>
+        <p class="contrib-why" data-i18n="hub.choose">Choisis une activité pour commencer. Tu passeras de l'une à l'autre
+          quand tu veux, grâce au menu en haut.</p>
+        <p class="hub-vision" data-i18n-html="hub.vision">LANGIAL numérise <b>nos langues d'Afrique</b>, texte et voix. Le <b>ngiemboon</b> est la plus avancée, avec son clavier dédié ; d'autres langues sont déjà ouvertes et tu peux déclarer la tienne. Tout le monde peut y contribuer.</p>
+      </div>
+      <!-- Repère d'accueil (Brice 2026-07-25) : 3 étapes pour un nouvel arrivant qui ne sait pas
+           par où commencer. Visible seulement tant que le profil n'est pas complet ; disparaît
+           entièrement une fois les 3 étapes franchies. -->
+      <div id="onboard-ribbon" class="onboard-ribbon" hidden>
+        <span class="onboard-step" id="onboard-step-profile" data-step="1">
+          <span class="onboard-num">1</span><span data-i18n="onboard.profile">Crée ton profil</span>
+        </span>
+        <span class="onboard-arrow" aria-hidden="true">→</span>
+        <span class="onboard-step" id="onboard-step-lang" data-step="2">
+          <span class="onboard-num">2</span><span data-i18n="onboard.lang">Choisis ta langue</span>
+        </span>
+        <span class="onboard-arrow" aria-hidden="true">→</span>
+        <span class="onboard-step" id="onboard-step-contrib" data-step="3">
+          <span class="onboard-num">3</span><span data-i18n="onboard.contrib">Transcris ou traduis ton premier mot</span>
+        </span>
+      </div>
+      <!-- MOT DU JOUR (R10) : un mot proposé chaque jour (le même pour tous), à dire dans sa langue. -->
+      <div id="word-of-day" class="wod" hidden>
+        <span class="wod-eye" data-i18n="wod.eye">◆ Mot du jour</span>
+        <div class="wod-body">
+          <span class="wod-word" id="wod-word"></span>
+          <button type="button" class="btn btn--primary wod-cta" id="wod-cta" data-i18n="wod.cta">Dis-le dans ta langue →</button>
+        </div>
+      </div>
+      <div class="ndop-sep" aria-hidden="true"><i></i></div>
+      <div class="hub-cards">
+        <a class="hub-card hub-card--illus" href="#/transcrire" data-go="transcribe">
+          <span class="hub-text">
+            <span class="hub-card-head">
+              <img class="hub-ico" src="icons/mic-real.png" alt="" aria-hidden="true">
+              <span class="hub-name" data-i18n="hub.card.transcribe">Transcrire</span>
+            </span>
+            <span class="hub-desc" data-i18n="hub.card.transcribe.desc">Laisse ta voix en héritage : enregistre la prononciation d'un mot ou d'une phrase. La voix est l'essentiel.</span>
+            <span class="hub-go" data-i18n="hub.start">Commencer →</span>
+          </span>
+          <span class="hub-illus-wrap"><img class="hub-illus" src="icons/hub-transcribe-ill.webp" alt="" aria-hidden="true"></span>
+        </a>
+        <a class="hub-card hub-card--illus" href="#/traduire" data-go="translate">
+          <span class="hub-text">
+            <span class="hub-card-head">
+              <img class="hub-ico" src="icons/act-translate.svg" alt="" aria-hidden="true">
+              <span class="hub-name" data-i18n="hub.card.translate">Traduire</span>
+            </span>
+            <span class="hub-desc" data-i18n="hub.card.translate.desc">Transmets ta langue : donne la traduction d'un mot ou d'une phrase (français ↔ ta langue). Tu peux ajouter ta voix.</span>
+            <span class="hub-go" data-i18n="hub.start">Commencer →</span>
+          </span>
+          <span class="hub-illus-wrap"><img class="hub-illus" src="icons/hub-translate-ill.webp" alt="" aria-hidden="true"></span>
+        </a>
+        <a class="hub-card hub-card--illus" href="#/explorer" data-go="explore">
+          <span class="hub-text">
+            <span class="hub-card-head">
+              <img class="hub-ico" src="icons/act-explore.svg" alt="" aria-hidden="true">
+              <span class="hub-name" data-i18n="hub.card.explore">Explorer</span>
+            </span>
+            <span class="hub-desc" data-i18n="hub.card.explore.desc">Apprends des autres : écoute les prononciations, découvre les traductions et propose des améliorations.</span>
+            <span class="hub-go" data-i18n="hub.open">Ouvrir →</span>
+          </span>
+          <span class="hub-illus-wrap"><img class="hub-illus" src="icons/hub-explore-ill.webp" alt="" aria-hidden="true"></span>
+        </a>
+        <a class="hub-card hub-card--illus" href="#/demander" data-go="demander">
+          <span class="hub-text">
+            <span class="hub-card-head">
+              <img class="hub-ico" src="icons/act-request.png" alt="" aria-hidden="true">
+              <span class="hub-name" data-i18n="hub.card.demander">Demander</span>
+            </span>
+            <span class="hub-desc" data-i18n="hub.card.demander.desc">Reçois l'aide de ceux qui savent : demande la traduction ou la prononciation d'un mot dans la langue de ton choix.</span>
+            <span class="hub-go" data-i18n="hub.ask">Demander →</span>
+          </span>
+          <span class="hub-illus-wrap"><img class="hub-illus" src="icons/hub-request-ill.webp" alt="" aria-hidden="true"></span>
+        </a>
+      </div>
+    </section>
+
+    <!-- ============== VUE OUTILS : Traduire / Transcrire =================== -->
+    <section id="view-app" class="view" hidden data-act="translate">
+      <div class="page-banner"><img id="work-banner-img" class="page-banner-img" src="icons/banner-translate.jpg" alt="" aria-hidden="true">
+        <div class="page-banner-cap"><span class="pb-eye" id="work-banner-eye" data-i18n="pb.translate.eye">Traduire</span><span class="pb-title" id="work-banner-title" data-i18n="pb.translate.title">Transmets ta langue, mot à mot</span></div></div>
+      <div class="work-head">
+        <h2 class="view-title view-title--ico"><img id="work-ico" class="title-ico" src="icons/act-translate.svg" alt="" aria-hidden="true"><span id="work-title">Traduire</span></h2>
+        <p class="work-help" id="work-help"></p>
+        <!-- Indicateur FORT de la langue de la contribution (anti-mauvais étiquetage) :
+             toujours visible, cliquable pour changer de langue. -->
+        <button type="button" id="work-lang" class="work-lang" aria-label="Changer de langue">
+          <span class="work-lang-ico" aria-hidden="true">🎙️</span>
+          <span class="work-lang-lead" data-i18n="work.lang.lead">Langue de ta contribution</span>
+          <span class="work-lang-name" id="work-lang-name">—</span>
+          <span class="work-lang-chev" aria-hidden="true">▾</span>
+        </button>
+      </div>
+
+    <!-- Bandeau LOT 5 « Demander » : demandes ouvertes de la communauté DANS LA
+         LANGUE de l'utilisateur, à traiter directement (clic = charge le mot en
+         source ; la réponse devient une contribution reliée à la demande). -->
+    <div class="req-strip" id="req-strip" hidden>
+      <div class="req-strip-head">
+        <img class="req-strip-ico" src="icons/act-request.png" alt="" aria-hidden="true">
+        <span data-i18n="reqx.strip.h">La communauté attend une réponse dans ta langue</span>
+      </div>
+      <div class="req-strip-list" id="req-strip-list" role="list"></div>
+    </div>
+
+    <!-- Sens de traduction -->
+    <div class="card" id="work-card">
+      <div class="mode-toggle" role="group" aria-label="Mode de saisie">
+        <button id="mode-prop" class="dir-btn" data-i18n="work.mode.proposed">Se faire proposer un mot</button>
+        <button id="mode-libre" class="dir-btn" data-i18n="work.mode.free">Écrire moi-même</button>
+      </div>
+
+      <div class="prop-bar" id="prop-bar">
+        <label class="prop-catwrap"><span id="prop-cat-label">À traduire :</span>
+          <select id="prop-cat" class="prop-cat"></select>
+        </label>
+        <span id="prop-progress" class="prop-progress"></span>
+        <button id="prop-next" class="btn btn--next" type="button" data-i18n="wk.next">Prochain mot →</button>
+      </div>
+
+      <div class="dir-toggle" id="dir-toggle" role="group" aria-label="Sens de traduction">
+        <button id="dir-fr2nge" class="dir-btn">Français → Ngiemboon</button>
+        <button id="dir-nge2fr" class="dir-btn">Ngiemboon → Français</button>
+      </div>
+
+      <div class="field zone zone--source" id="source-wrap">
+        <span class="field-label"><span id="lbl-source">Mot / phrase</span>
+          <span id="tag-source" class="lang-tag">FR</span></span>
+        <textarea id="source" rows="2" placeholder="Saisis ici…" data-i18n-ph="wk.source.ph"
+          spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+        <!-- Alerte DOUBLON : le mot saisi a DÉJÀ été traité par l'utilisateur (mode libre). On
+             l'informe, on grise la saisie de la contribution, et on lui propose de réécouter sa
+             version, d'en refaire une autre malgré tout, ou de passer à un autre mot. -->
+        <div id="dup-warn" class="dup-warn" hidden>
+          <div class="dup-warn-head"><span class="dup-warn-ico" aria-hidden="true">⚠️</span>
+            <span data-i18n="dup.title">Tu as déjà traité ce mot</span></div>
+          <p class="dup-warn-msg" data-i18n="dup.msg">Tu as déjà envoyé une contribution pour ce mot ou cette phrase. Réécoute ou relis ta version, refais-en une autre malgré tout, ou passe à autre chose.</p>
+          <div class="dup-prev" id="dup-prev"></div>
+          <div class="dup-actions">
+            <button id="dup-redo" class="btn btn--sm" type="button" data-i18n="dup.redo">Le refaire quand même</button>
+            <button id="dup-skip" class="chip chip--btn" type="button" data-i18n="dup.skip">Passer à un autre</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bouton pour DÉPLIER la traduction (optionnelle en mode Transcrire) -->
+      <button id="add-translation" class="add-optional" type="button" hidden>
+        <span class="add-optional-ico" aria-hidden="true">＋</span>
+        <span data-i18n="wk.add.translation">Ajouter une traduction</span></button>
+
+      <div class="field zone zone--target" id="target-wrap">
+        <span class="field-label"><span id="lbl-target">Traduction</span>
+          <span id="tag-target" class="lang-tag">NGE</span>
+          <button id="tr-guide-open-t" class="mini tr-guide-open" type="button" data-i18n="tr.guide.open">📋 Revoir les consignes</button></span>
+        <textarea id="target" rows="2" placeholder="Traduction…" data-i18n-ph="wk.target.ph"
+          spellcheck="false" autocapitalize="off" autocomplete="off"></textarea>
+        <!-- Le clavier ngiemboon est déplacé ici ou sous #source selon le sens -->
+        <div class="kb-block" id="kb-block">
+          <!-- Clavier masqué par défaut : s'ouvre quand on touche le champ ngiemboon
+               (ou via ce bouton), se referme en touchant ailleurs. -->
+          <button type="button" id="kb-open-btn" class="kb-open-btn" data-i18n="wk.kb.open">⌨ Ouvrir le clavier ngiemboon</button>
+          <div class="kb-panel" id="kb-panel">
+            <div class="kb-bar">
+              <span id="kb-host-label" class="kb-label">Clavier ngiemboon</span>
+              <div class="kb-bar-right">
+                <label class="switch-row" for="tips-toggle">Aide phonétique
+                  <span class="switch"><input id="tips-toggle" type="checkbox" checked role="switch" />
+                    <span class="slider"></span></span>
+                </label>
+                <button type="button" id="kb-close-btn" class="kb-close-btn" aria-label="Fermer le clavier" data-i18n="wk.kb.close">✕ Fermer</button>
+              </div>
+            </div>
+            <!-- Zone d'aide phonétique : affiche la lettre pressée (phonétique +
+                 exemple) quand l'aide est activée, au lieu d'une info-bulle au survol -->
+            <div id="tip-panel" class="tip-panel" aria-live="polite"></div>
+            <!-- Barre de suggestions (clavier prédictif ngiemboon) : mots RÉELS
+                 proposés à la frappe, façon clavier de téléphone. Masquée s'il
+                 n'y a rien à proposer. -->
+            <div id="kb-suggest" class="kb-suggest" aria-live="polite" hidden></div>
+            <div id="kb-host" class="kb-host"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid2">
+        <label class="field">
+          <span data-i18n="work.domaine">Domaine (facultatif)</span>
+          <input id="domaine" type="text" placeholder="ex. parenté, nourriture, nature…" data-i18n-ph="work.domaine.ph" />
+        </label>
+        <label class="field">
+          <span data-i18n="work.note">Note (facultatif)</span>
+          <input id="note" type="text" placeholder="registre, contexte d'emploi…" data-i18n-ph="work.note.ph" />
+        </label>
+      </div>
+
+      <!-- R4 : ENRICHIR LE MOT (tout facultatif) — métadonnées linguistiques structurées pour
+           bâtir un vrai dictionnaire ET nourrir un futur modèle. Repliable (native <details>)
+           pour ne pas alourdir la saisie courante ; chaque champ rempli est stocké avec la contribution. -->
+      <details id="word-enrich" class="word-enrich">
+        <summary data-i18n="enrich.title">Enrichir ce mot (facultatif) : nature, classe, exemple…</summary>
+        <div class="enrich-grid">
+          <label class="field"><span data-i18n="enrich.nature">Nature grammaticale</span>
+            <select id="we-nature">
+              <option value=""></option>
+              <option value="nom" data-i18n="enrich.nature.nom">Nom</option>
+              <option value="verbe" data-i18n="enrich.nature.verbe">Verbe</option>
+              <option value="adjectif" data-i18n="enrich.nature.adjectif">Adjectif</option>
+              <option value="adverbe" data-i18n="enrich.nature.adverbe">Adverbe</option>
+              <option value="pronom" data-i18n="enrich.nature.pronom">Pronom</option>
+              <option value="preposition" data-i18n="enrich.nature.preposition">Préposition</option>
+              <option value="conjonction" data-i18n="enrich.nature.conjonction">Conjonction</option>
+              <option value="determinant" data-i18n="enrich.nature.determinant">Déterminant</option>
+              <option value="numeral" data-i18n="enrich.nature.numeral">Numéral</option>
+              <option value="interjection" data-i18n="enrich.nature.interjection">Interjection</option>
+            </select></label>
+          <label class="field"><span data-i18n="enrich.classe">Classe nominale (langues bantoues)</span>
+            <input id="we-classe" type="text" data-i18n-ph="enrich.classe.ph" placeholder="ex. classe 1, mu-/ba-…" /></label>
+          <label class="field"><span data-i18n="enrich.genre">Genre</span>
+            <select id="we-genre">
+              <option value=""></option>
+              <option value="masculin" data-i18n="enrich.genre.m">Masculin</option>
+              <option value="feminin" data-i18n="enrich.genre.f">Féminin</option>
+              <option value="neutre" data-i18n="enrich.genre.n">Neutre</option>
+            </select></label>
+          <label class="field"><span data-i18n="enrich.nombre">Nombre</span>
+            <select id="we-nombre">
+              <option value=""></option>
+              <option value="singulier" data-i18n="enrich.nombre.sg">Singulier</option>
+              <option value="pluriel" data-i18n="enrich.nombre.pl">Pluriel</option>
+              <option value="invariable" data-i18n="enrich.nombre.inv">Invariable</option>
+            </select></label>
+          <label class="field"><span data-i18n="enrich.pluriel">Forme au pluriel</span>
+            <input id="we-pluriel" type="text" data-i18n-ph="enrich.pluriel.ph" placeholder="le mot au pluriel" /></label>
+          <label class="field"><span data-i18n="enrich.prononciation">Prononciation (API)</span>
+            <input id="we-prononciation" type="text" data-i18n-ph="enrich.prononciation.ph" placeholder="ex. [ndɔ]" /></label>
+          <label class="field"><span data-i18n="enrich.registre">Registre</span>
+            <select id="we-registre">
+              <option value=""></option>
+              <option value="courant" data-i18n="enrich.registre.courant">Courant</option>
+              <option value="familier" data-i18n="enrich.registre.familier">Familier</option>
+              <option value="soutenu" data-i18n="enrich.registre.soutenu">Soutenu</option>
+              <option value="argot" data-i18n="enrich.registre.argot">Argot</option>
+            </select></label>
+          <label class="field"><span data-i18n="enrich.etymologie">Étymologie / origine</span>
+            <input id="we-etymologie" type="text" data-i18n-ph="enrich.etymologie.ph" placeholder="origine du mot" /></label>
+          <label class="field field--wide"><span data-i18n="enrich.exemple">Phrase d'exemple (en français)</span>
+            <input id="we-exemple" type="text" data-i18n-ph="enrich.exemple.ph" placeholder="une phrase qui emploie le mot" /></label>
+          <label class="field field--wide"><span data-i18n="enrich.exemple.trad">L'exemple dans ta langue</span>
+            <input id="we-exemple-trad" type="text" data-i18n-ph="enrich.exemple.trad.ph" placeholder="la même phrase traduite" /></label>
+          <label class="field"><span data-i18n="enrich.synonymes">Synonymes</span>
+            <input id="we-synonymes" type="text" data-i18n-ph="enrich.liste.ph" placeholder="séparés par des virgules" /></label>
+          <label class="field"><span data-i18n="enrich.antonymes">Antonymes (contraires)</span>
+            <input id="we-antonymes" type="text" data-i18n-ph="enrich.liste.ph" placeholder="séparés par des virgules" /></label>
+        </div>
+      </details>
+
+      <!-- Audio (zone encadrée à part) : label + « revoir les consignes » à droite,
+           ligne de contrôles, PUIS le cadre de progression SEUL, PUIS les actions
+           (découper / retirer) en bas. Aucun bouton devant l'onde, surtout sur mobile. -->
+      <!-- Bouton pour DÉPLIER l'audio/transcription (optionnel en mode Traduire) -->
+      <button id="add-transcription" class="add-optional" type="button" hidden>
+        <span class="add-optional-ico" aria-hidden="true">＋</span>
+        <span data-i18n="wk.add.transcription">Ajouter une transcription audio</span></button>
+
+      <div class="zone zone--audio" id="audio-wrap">
+        <span class="field-label audio-label">
+          <span id="lbl-audio">Transcription audio</span>
+          <span id="tag-audio" class="lang-tag">NGE</span>
+          <button id="tr-guide-open" class="mini tr-guide-open" type="button" data-i18n="tr.guide.open">📋 Revoir les consignes</button>
+        </span>
+        <div class="audio-row">
+          <button id="btn-rec" class="btn btn--rec ico-btn" type="button"><span data-i18n="rec.start">Enregistrer l'audio</span></button>
+          <span id="rec-timer" class="rec-timer" hidden aria-live="polite">00:00</span>
+          <span id="rec-state" class="rec-state"></span>
+          <button id="btn-mic-test" class="mini" type="button" data-i18n="wk.mic.test">🔎 Tester le micro</button>
+        </div>
+        <div id="audio-preview" class="audio-preview"></div>
+        <div id="audio-actions" class="audio-actions" hidden>
+          <button id="btn-trim-audio" class="audio-act audio-act--trim ico-btn" type="button" data-i18n="trim.open">Découper</button>
+          <button id="btn-clear-audio" class="audio-act audio-act--del" type="button" data-i18n="wk.audio.remove">retirer</button>
+        </div>
+        <div id="mic-diag" class="mic-diag" hidden></div>
+      </div>
+
+      <div class="actions">
+        <button id="btn-save" class="btn btn--primary" type="button" data-i18n="work.save">Enregistrer la contribution</button>
+        <p id="save-lock" class="lock-hint" hidden data-i18n-html="save.lock">🔒 Renseigne d'abord <b>ton profil</b> tout
+          en haut (tous les champs marqués <span class="req">*</span>) pour activer ce bouton.</p>
+      </div>
+    </div>
+
+    <!-- Envoi + suivi (2 groupes : envoyés / à renvoyer) -->
+    <div class="card">
+      <div class="send-row">
+        <div class="counters">
+          <span class="counter counter--ok"><b id="count-sent">0</b> <span data-i18n="count.sent">envoyés&nbsp;✓</span></span>
+          <span class="counter counter--todo"><b id="count-pending">0</b> <span data-i18n="count.pending">à renvoyer</span></span>
+          <span class="counter"><b id="count-total">0</b> <span data-i18n="count.total">au total</span></span>
+        </div>
+        <div class="send-actions">
+          <span id="send-status" class="send-status"></span>
+          <button id="btn-send" class="btn btn--send" type="button" disabled data-i18n="work.send">
+            Envoyer les données →
+          </button>
+        </div>
+      </div>
+      <p id="send-lock" class="lock-hint" hidden>🔒 Renseigne d'abord <b>ton profil</b> tout en
+        haut (tous les champs marqués <span class="req">*</span>) pour activer l'envoi.</p>
+      <p class="send-hint" id="send-hint">L'envoi est <b>automatique et redondant</b> : chaque
+        contribution est renvoyée jusqu'à ce qu'elle soit <b>confirmée présente dans la base</b>.
+        Hors connexion, tout reste en sécurité sur l'appareil.</p>
+
+      <!-- Recherche dans TES contributions (utile pour vérifier si un mot est déjà fait/envoyé). -->
+      <div class="send-search-wrap" id="send-search-wrap" hidden>
+        <input id="send-search" type="text" class="send-search" data-i18n-ph="send.search.ph"
+               placeholder="🔎 Chercher un mot ou une phrase dans tes contributions…" autocomplete="off" />
+      </div>
+      <p class="send-noresult" id="send-noresult" hidden data-i18n="send.noresult">Aucune de tes contributions ne correspond à cette recherche.</p>
+
+      <!-- Groupe À RENVOYER : non encore confirmés dans la base distante -->
+      <div id="grp-pending" class="sendgrp sendgrp--todo" hidden>
+        <div class="sendgrp-head">
+          <span class="sendgrp-title"><span class="dot dot--todo"></span>À envoyer / en cours
+            <b id="grp-pending-n">0</b></span>
+          <button id="btn-resend" class="mini-btn" type="button">↻ Renvoyer maintenant</button>
+        </div>
+        <ul id="list-pending" class="list"></ul>
+      </div>
+
+      <!-- Groupe ENVOYÉS : confirmés, faits sur CET appareil pendant CETTE session (le
+           rechargement du site la réinitialise). L'historique complet vit dans le Profil. -->
+      <div id="grp-sent" class="sendgrp sendgrp--ok" hidden>
+        <div class="sendgrp-head">
+          <span class="sendgrp-title"><span class="dot dot--ok"></span><span data-i18n="send.sent.title">Envoyés cette session</span>
+            <b id="grp-sent-n">0</b></span>
+        </div>
+        <ul id="list-sent" class="list"></ul>
+      </div>
+      <!-- Indépendant du groupe « Envoyés » (qui peut être vide si rien n'a encore été envoyé
+           CETTE session) : reste visible dès qu'un historique plus ancien existe sur cet appareil. -->
+      <a id="send-more-link" class="send-more-link" href="#/profil" hidden data-i18n="send.sent.more">Voir tout mon historique dans mon profil →</a>
+    </div>
+    </section>
+
+    <!-- ============== VUE EXPLORER (bibliothèque communautaire) =========== -->
+    <section id="view-explore" class="view" hidden>
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-explore.jpg" alt="" aria-hidden="true">
+        <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.explore.eye">La bibliothèque</span><span class="pb-title" data-i18n="pb.explore.title">Explore, écoute, apprends</span></div></div>
+      <div class="card">
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/act-explore.svg" alt="" aria-hidden="true"><span data-i18n="exp.title">Explorer la bibliothèque</span></h2>
+        <p class="contrib-why" data-i18n="exp.intro">Apprends de la communauté : écoute les prononciations, découvre les traductions et les voix déjà transmises, et repère ce qui pourrait être amélioré. Chaque entrée montre son contexte, comme le domaine, la variante du village et le rôle du contributeur.</p>
+        <div class="explore-controls">
+          <input id="explore-search" type="text" class="explore-search" data-i18n-ph="exp.search.ph"
+                 placeholder="🔎 Rechercher un mot, une phrase…" autocomplete="off" />
+          <div class="explore-filters">
+            <select id="filter-lang" class="filter-lang" aria-label="Langue affichée">
+              <option value="" data-i18n="exp.f.lang.all">Toutes les langues</option>
+            </select>
+            <select id="filter-direction" aria-label="Sens de traduction">
+              <option value="" data-i18n="exp.f.dir">Tous les sens</option>
+              <option value="fr2nge">Français → Ngiemboon</option>
+              <option value="nge2fr">Ngiemboon → Français</option>
+            </select>
+            <select id="filter-role" aria-label="Rôle du contributeur">
+              <option value="" data-i18n="exp.f.role">Tous les rôles</option>
+              <option value="natif">Locuteur natif</option>
+              <option value="apprenant">Apprenant</option>
+              <option value="linguiste">Linguiste</option>
+            </select>
+            <select id="filter-variante" aria-label="Variante">
+              <option value="" data-i18n="exp.f.variante">Toutes les variantes</option>
+            </select>
+            <select id="filter-domaine" aria-label="Domaine">
+              <option value="" data-i18n="exp.f.domaine">Tous les domaines</option>
+            </select>
+          </div>
+          <div class="explore-export">
+            <button id="export-csv" class="chip chip--btn ico-btn" type="button" data-i18n="exp.export.csv">Exporter (CSV)</button>
+            <button id="export-json" class="chip chip--btn ico-btn" type="button" data-i18n="exp.export.json">Exporter (JSON)</button>
+            <button id="export-lift" class="chip chip--btn ico-btn" type="button" data-i18n-title="exp.export.lift.title" title="Format LIFT (lexique standard, pour FLEx/WeSay)" data-i18n="exp.export.lift">Exporter (LIFT)</button>
+            <button id="export-cldf" class="chip chip--btn ico-btn" type="button" data-i18n-title="exp.export.cldf.title" title="Format CLDF (wordlist comparative, pour pycldf/CLLD)" data-i18n="exp.export.cldf">Exporter (CLDF)</button>
+            <button id="export-elan" class="chip chip--btn ico-btn" type="button" data-i18n-title="exp.export.elan.title" title="Format ELAN (.eaf, annotations time-alignées)" data-i18n="exp.export.elan">Exporter (ELAN)</button>
+          </div>
+        </div>
+        <div class="explore-status" id="explore-status"></div>
+      </div>
+      <div id="variant-map" class="vmap" hidden></div>
+      <div id="explore-list" class="explore-list"></div>
+    </section>
+
+    <!-- ================= VUE : À PROPOS (page entière de l'app) ============== -->
+    <section id="view-about" class="view" hidden>
+      <img class="about-hero" src="icons/banner-apropos.jpg" alt="Communauté africaine multigénérationnelle transmettant sa langue et ses histoires" loading="lazy" />
+
+      <div class="about-head">
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-about.png" alt="" aria-hidden="true"><span data-i18n="about.title">À propos de LANGIAL</span></h2>
+        <p class="contrib-why" data-i18n-html="about.lead"><b>LANGIAL</b> a pour ambition de donner une <b>voix numérique</b> à nos langues d'Afrique, portées par leurs communautés.</p>
+      </div>
+
+      <div class="card about-vision">
+        <span class="about-vision-eyebrow" aria-hidden="true" data-i18n="about.vision.eyebrow">NOTRE AMBITION</span>
+        <h3 data-i18n="about.vision.h">La vision : nos langues d'Afrique, en texte, en voix</h3>
+        <p data-i18n-html="about.vision.p1">LANGIAL est un projet <b>ouvert à tous</b>. Il rassemble <b>les mots et les voix</b> de <b>nos
+          langues</b> pour bâtir ensemble les outils qui les font vivre, qu'il s'agisse <b>de dictionnaires, de claviers ou d'intelligences artificielles</b> qui les comprennent.</p>
+        <p data-i18n-html="about.vision.p2">LANGIAL donne une <b>voix numérique</b> à <b>nos langues d'Afrique</b>. Le <b>ngiemboon</b> est aujourd'hui
+          la langue la plus avancée, car il possède déjà son clavier dédié et le corpus le plus riche, mais la plateforme accueille plusieurs langues et chacun peut y ajouter la sienne. Où que tu sois, un simple <b>téléphone ou ordinateur</b> suffit pour y contribuer.</p>
+      </div>
+
+      <img class="about-mid-illus" src="icons/about-hero.jpg" alt="Une famille africaine, plusieurs générations réunies, partageant et transmettant sa langue" loading="lazy" />
+
+      <h3 class="about-sec" id="about-sec-why" data-i18n="about.why.h">Pourquoi participer</h3>
+      <div class="about-grid" id="about-grid-why">
+        <div class="card about-cell" style="--a:#2ad4ee">
+          <div class="about-ic"><svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3l11 6v8c0 7-5 10-11 12C10 27 5 24 5 17V9z"/><path d="M11 16l3.5 3.5L21 12"/></svg></div>
+          <h4 data-i18n="about.why.1.h">Héritage</h4>
+          <p data-i18n="about.why.1.p">Chaque mot et chaque voix enregistrés aujourd'hui sont un cadeau laissé aux générations à venir, pour qu'elles n'oublient pas leur langue</p>
+        </div>
+        <div class="card about-cell" style="--a:#34d399">
+          <div class="about-ic"><svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="8" y="6" width="16" height="14" rx="3"/><path d="M12 25h8M16 20v5M12 11h.01M20 11h.01M13 15c1.8 1.4 4.2 1.4 6 0"/></svg></div>
+          <h4 data-i18n="about.why.2.h">Transmission</h4>
+          <p data-i18n="about.why.2.p">Ceux qui connaissent la langue la transmettent, par leurs traductions et leurs voix, à celles et ceux qui veulent l'apprendre.</p>
+        </div>
+        <div class="card about-cell" style="--a:#5aa0ff">
+          <div class="about-ic"><svg width="28" height="28" viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="12" r="4"/><circle cx="22" cy="14" r="3.2"/><path d="M4 27c0-4 3.5-7 7-7s7 3 7 7M18.5 26c.4-3 2.4-5 5-5 2.2 0 4.1 1.4 4.9 3.6"/></svg></div>
+          <h4 data-i18n="about.why.3.h">Apprentissage</h4>
+          <p data-i18n="about.why.3.p">Chacun apprend des autres : leur langue, leur façon de dire et de prononcer les choses, quel que soit son village</p>
+        </div>
+      </div>
+
+      <h3 class="about-sec" id="about-sec-how" data-i18n="about.how.h">Trois façons de contribuer</h3>
+      <div class="about-grid" id="about-grid-how">
+        <div class="card about-cell" style="--a:#e2b56f">
+          <div class="about-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1L20 7a2.1 2.1 0 0 0-3-3L5 16l-1 4z"/><path d="M14.5 6.5l3 3"/></svg></div>
+          <h4 data-i18n="about.how.1.h">Traduire</h4>
+          <p data-i18n="about.how.1.p">Donne la traduction de mots et de phrases entières (français ↔ ngiemboon)</p>
+        </div>
+        <div class="card about-cell" style="--a:#a78bfa">
+          <div class="about-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg></div>
+          <h4 data-i18n="about.how.2.h">Transcrire</h4>
+          <p data-i18n="about.how.2.p">Enregistre ta voix quand tu prononces les mots : un trésor à préserver</p>
+        </div>
+        <div class="card about-cell" style="--a:#2dd4bf">
+          <div class="about-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6c3-1.5 6-1.5 9 0v13c-3-1.5-6-1.5-9 0zM21 6c-3-1.5-6-1.5-9 0v13c3-1.5 6-1.5 9 0z"/></svg></div>
+          <h4 data-i18n="about.how.3.h">Explorer</h4>
+          <p data-i18n="about.how.3.p">Écoute, apprends et vote pour les meilleures améliorations</p>
+        </div>
+      </div>
+
+      <!-- « Ils parlent de nous » : témoignages RÉELS d'utilisateurs, rendus depuis des données.
+           Masqué tant qu'il n'y a aucun avis réel (on n'invente JAMAIS de faux témoignage). -->
+      <h3 class="about-sec" id="about-sec-say" data-i18n="about.say.h" hidden>Ils parlent de nous</h3>
+      <div class="say-grid" id="about-say" hidden></div>
+      <div class="say-invite">
+        <button id="testi-open" class="btn btn--ghost" type="button" data-i18n="testi.open">💬 Laisser un mot sur LANGIAL</button>
+      </div>
+
+      <div class="card about-share">
+        <div class="about-share-txt">
+          <h3 data-i18n="about.share.h">Partager le projet</h3>
+          <p data-i18n="about.share.p">Fais découvrir LANGIAL autour de toi : montre le QR ou partage le flyer</p>
+          <div class="about-links">
+            <a id="flyer-img-link" class="about-share-btn" href="./flyer/flyer.jpg" target="_blank" rel="noopener" download data-i18n="about.share.img">⬇ Flyer (image)</a>
+            <a id="flyer-pdf-link" class="about-share-btn" href="./flyer/flyer.pdf" target="_blank" rel="noopener" download data-i18n="about.share.pdf">⬇ Flyer (PDF)</a>
+            <button id="present-open" class="about-share-btn about-share-btn--main ico-btn" type="button" data-i18n="about.share.present">Mode présentation</button>
+          </div>
+          <p class="share-lead" data-i18n="share.lead">Ou partage le lien en un clic :</p>
+          <div class="share-mount" id="share-about"></div>
+        </div>
+        <img class="about-qr" src="./flyer/qr.svg" alt="QR code vers l'application, encadré de motifs Ndop" />
+      </div>
+
+      <div class="ndop-sep" aria-hidden="true"><i></i></div>
+      <div class="about-cta">
+        <button class="btn btn--primary" id="about-start" type="button" data-i18n="about.cta.start">Commencer à contribuer →</button>
+        <button class="btn btn--ghost" id="about-back" type="button" data-i18n="btn.back">← Retour</button>
+      </div>
+    </section>
+
+    <!-- ============== VUE SUIVI DES BUGS ================================== -->
+    <section id="view-bugs" class="view" hidden>
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-bugs.jpg" alt="" aria-hidden="true">
+        <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.bugs.eye">Amélioration continue</span><span class="pb-title" data-i18n="pb.bugs.title">Signale, on corrige ensemble</span></div></div>
+      <div class="about-head">
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-bug.png" alt="" aria-hidden="true"><span data-i18n="bugs.title">Suivi des bugs</span></h2>
+        <p class="contrib-why" data-i18n-html="bugs.intro">Un outil fiable sert mieux la transmission de nos langues. Chaque bug est <b>identifié</b>, décrit, daté et suivi jusqu'à sa
+          résolution. Tu peux <b>signaler</b> un problème : il rejoint la liste et tu suis son
+          avancement (⏳ en attente → ✅ résolu).</p>
+      </div>
+
+      <div class="card bug-report">
+        <h3 data-i18n="bugs.report.h">Signaler un bug</h3>
+        <div class="bug-form">
+          <label><span data-i18n="bugs.f.title">Titre court</span>
+            <input id="bug-titre" type="text" data-i18n-ph="bug.titre.ph" placeholder="ex. Le bouton « Envoyer » ne répond pas" maxlength="120" />
+          </label>
+          <label><span data-i18n="bugs.f.desc">Description</span>
+            <textarea id="bug-desc" rows="3" data-i18n-ph="bug.desc.ph" placeholder="Que s'est-il passé ? Sur quel écran ? Comment le reproduire ?"></textarea>
+          </label>
+          <div class="bug-form-row">
+            <label><span data-i18n="bugs.f.sev">Gravité</span>
+              <select id="bug-sev">
+                <option value="mineur" data-i18n="bug.sev.mineur">Mineur</option>
+                <option value="majeur" data-i18n="bug.sev.majeur">Majeur</option>
+                <option value="critique" data-i18n="bug.sev.critique">Critique</option>
+              </select>
+            </label>
+            <label><span data-i18n="bugs.f.zone">Zone concernée</span>
+              <select id="bug-zone">
+                <option value="Interface" data-i18n="bugs.zone.interface">Interface</option>
+                <option value="Design / thème" data-i18n="bugs.zone.design">Design / thème</option>
+                <option value="Traduire" data-i18n="bugs.zone.translate">Traduire</option>
+                <option value="Transcrire" data-i18n="bugs.zone.transcribe">Transcrire</option>
+                <option value="Explorer" data-i18n="bugs.zone.explore">Explorer</option>
+                <option value="Demander" data-i18n="bugs.zone.request">Demander</option>
+                <option value="Notifications" data-i18n="bugs.zone.notifs">Notifications</option>
+                <option value="Propositions" data-i18n="bugs.zone.props">Propositions</option>
+                <option value="Profil / compte" data-i18n="bugs.zone.profile">Profil / compte</option>
+                <option value="Langues" data-i18n="bugs.zone.langs">Langues</option>
+                <option value="Clavier" data-i18n="bugs.zone.keyboard">Clavier</option>
+                <option value="Partage" data-i18n="bugs.zone.share">Partage</option>
+                <option value="Audio" data-i18n="bugs.zone.audio">Audio</option>
+                <option value="Envoi / synchro" data-i18n="bugs.zone.sync">Envoi / synchro</option>
+                <option value="Traduction de l'app (FR/EN)" data-i18n="bugs.zone.i18n">Traduction de l'app (FR/EN)</option>
+                <option value="Vitesse / performance" data-i18n="bugs.zone.perf">Vitesse / performance</option>
+                <option value="Autre" data-i18n="bugs.zone.other">Autre</option>
+              </select>
+            </label>
+          </div>
+          <div class="send-actions">
+            <span id="bug-status" class="send-status"></span>
+            <button id="bug-send" class="btn btn--primary" type="button" data-i18n="bug.send">Envoyer le signalement →</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="bugs-grp-open" class="sendgrp sendgrp--todo" hidden>
+        <div class="sendgrp-head"><span class="sendgrp-title"><span class="dot dot--todo"></span>En attente <b id="bugs-open-n">0</b></span></div>
+        <ul id="bugs-open" class="bug-list"></ul>
+      </div>
+      <div id="bugs-grp-done" class="sendgrp sendgrp--ok" hidden>
+        <div class="sendgrp-head"><span class="sendgrp-title"><span class="dot dot--ok"></span>Résolus <b id="bugs-done-n">0</b></span></div>
+        <ul id="bugs-done" class="bug-list"></ul>
+      </div>
+
+      <div class="about-cta">
+        <button class="btn btn--ghost" id="bugs-back" type="button" data-i18n="btn.back">← Retour</button>
+      </div>
+    </section>
+
+    <!-- ============== VUE NOTIFICATIONS =================================== -->
+    <section id="view-notifs" class="view" hidden>
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-notifs.jpg" alt="" aria-hidden="true">
+        <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.notifs.eye">Notifications</span><span class="pb-title" data-i18n="pb.notifs.title">L'écho de ta communauté</span></div></div>
+      <div class="about-head">
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span data-i18n="notif.title">Mes notifications</span></h2>
+        <p class="contrib-why" data-i18n-html="notif.intro">Tu es tenu au courant de <b>tout ce qui se passe autour de tes
+          contributions</b> (quand on note ou améliore une de tes traductions ou transcriptions) et de la <b>vie de la
+          plateforme</b>. Chaque notification est datée ; les non lues sont mises en avant.</p>
+      </div>
+      <div class="notif-toolbar">
+        <button id="notif-markall" class="btn btn--ghost" type="button" data-i18n="notif.markall">Tout marquer comme lu</button>
+      </div>
+      <ul id="notif-feed" class="notif-feed" aria-live="polite"></ul>
+      <div id="notif-empty" class="empty-state" hidden>
+        <img class="empty-illus" src="icons/empty-notifs.webp" alt="" aria-hidden="true">
+        <p class="notif-empty" data-i18n="notif.empty">Aucune notification pour l'instant. Contribue et
+          échange avec la communauté qui transmet et apprend : tu seras prévenu ici dès qu'il se passe quelque chose autour de ce que tu as laissé.</p>
+      </div>
+      <div class="about-cta">
+        <button class="btn btn--ghost" id="notif-back" type="button" data-i18n="btn.back">← Retour</button>
+      </div>
+    </section>
+
+    <!-- ============== VUE DEMANDER (axe social : entraide traduction) ======= -->
+    <section id="view-demander" class="view" hidden>
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-demander.jpg" alt="" aria-hidden="true">
+        <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.demander.eye">Entraide</span><span class="pb-title" data-i18n="pb.demander.title">Demande à la communauté</span></div></div>
+      <div class="about-head">
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/act-request.png" alt="" aria-hidden="true"><span data-i18n="req.title">Demander une traduction</span></h2>
+        <p class="contrib-why" data-i18n-html="req.intro">Demande à ceux qui savent de te <b>transmettre</b> la <b>traduction</b> ou la <b>prononciation</b>
+          d'un mot ou d'une phrase dans une langue précise. Les personnes qui parlent cette langue sont prévenues et peuvent
+          t'aider ; les autres peuvent <b>relayer ta demande</b> autour d'eux. N'importe qui peut aider n'importe qui.</p>
+      </div>
+
+      <div class="card req-form">
+        <h3 data-i18n="req.form.h">Lancer une demande</h3>
+        <p class="lang-declare-req" data-i18n-html="req.f.reqlegend">Les champs marqués <span class="req">*</span> sont obligatoires.</p>
+        <div class="grid2">
+          <label class="field"><span data-i18n-html="req.f.texte">Mot ou phrase <span class="req">*</span></span>
+            <input id="req-texte" type="text" maxlength="280" data-i18n-ph="req.f.texte.ph" placeholder="ex. mangue" autocomplete="off" />
+          </label>
+          <div class="field"><span data-i18n-html="req.f.langue">Langue demandée <span class="req">*</span></span>
+            <select id="req-langue"></select>
+          </div>
+          <div class="field"><span data-i18n-html="req.f.kind">Ce que tu demandes <span class="req">*</span></span>
+            <select id="req-kind">
+              <option value="" disabled selected data-i18n="req.kind.choose">Choisir…</option>
+              <option value="traduction" data-i18n="req.kind.trad">La traduction (écrite)</option>
+              <option value="transcription" data-i18n="req.kind.transc">La prononciation (voix)</option>
+              <option value="les_deux" data-i18n="req.kind.both">Les deux</option>
+            </select>
+          </div>
+          <label class="field"><span data-i18n="req.f.pays">Pays / région (facultatif)</span>
+            <input id="req-pays" type="text" maxlength="80" data-i18n-ph="req.f.pays.ph" placeholder="ex. Cameroun, Ouest" autocomplete="off" />
+          </label>
+          <label class="field field--wide"><span data-i18n="req.f.note">Contexte (facultatif)</span>
+            <input id="req-note" type="text" maxlength="280" data-i18n-ph="req.f.note.ph" placeholder="ex. ma grand-mère m'a dit ce mot, je n'ai pas compris" autocomplete="off" />
+          </label>
+          <div id="req-newlang" class="field field--wide req-newlang" hidden>
+            <span data-i18n="req.newlang.h">Ajouter la langue (elle n'est pas dans la liste)</span>
+            <div class="req-newlang-grid">
+              <input id="req-nl-nom" type="text" maxlength="40" data-i18n-ph="req.newlang.nom" placeholder="Nom de la langue (ex. Ghomala)" autocomplete="off" />
+              <input id="req-nl-region" type="text" maxlength="80" data-i18n-ph="req.newlang.region" placeholder="Région / localité" autocomplete="off" />
+              <input id="req-nl-pays" type="text" maxlength="40" data-i18n-ph="req.newlang.pays" placeholder="Pays" autocomplete="off" />
+              <button id="req-nl-declare" class="btn btn--sm btn--primary" type="button" data-i18n="req.newlang.declare">Déclarer et choisir</button>
+            </div>
+            <p id="req-nl-error" class="lock-hint" hidden></p>
+          </div>
+        </div>
+        <div class="actions">
+          <button id="req-send" class="btn btn--primary" type="button" data-i18n="req.form.send">Publier ma demande →</button>
+          <p id="req-error" class="lock-hint" hidden></p>
+        </div>
+      </div>
+
+      <div class="req-list-head">
+        <h3 data-i18n="req.list.h">Demandes en attente</h3>
+        <label class="req-filter"><span data-i18n="req.filter">Langue :</span>
+          <select id="req-filter-lang"></select>
+        </label>
+      </div>
+      <ul id="req-list" class="req-list" aria-live="polite"></ul>
+      <div id="req-empty" class="empty-state" hidden>
+        <img class="empty-illus" src="icons/empty-explore.webp" alt="" aria-hidden="true">
+        <p class="notif-empty" data-i18n="req.empty">Aucune demande en attente pour l'instant. Sois le premier
+          à demander de l'aide à la communauté.</p>
+      </div>
+
+      <div class="about-cta">
+        <button class="btn btn--ghost" id="req-back" type="button" data-i18n="btn.back">← Retour</button>
+      </div>
+    </section>
+
+    <!-- Pages légales : mentions légales, confidentialité, CGU, CGV (bilingue) -->
+    <section id="view-legal" class="view" hidden>
+      <div class="view-head">
+        <h2 class="view-title" data-i18n="legal.title">Informations légales</h2>
+      </div>
+      <nav class="legal-nav" id="legal-nav" aria-label="Sections légales"></nav>
+      <div id="legal-content" class="legal-content"></div>
+      <div class="about-cta">
+        <button class="btn btn--ghost" id="legal-back" type="button" data-i18n="btn.back">← Retour</button>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="foot-inner">
+      <a class="foot-brand foot-brand--home" id="foot-home" href="#/accueil"
+           data-i18n-title="brand.home.title" title="Revenir à l'accueil" aria-label="Revenir à l'accueil : Traduire, Transcrire, Explorer">
+        <span class="foot-mark"><img src="./icons/logo.svg" alt="LANGIAL" width="52" height="52" /></span>
+        <div>
+          <div class="foot-title">LANGIAL</div>
+          <div class="foot-sub" data-i18n="tagline">Nos langues, un héritage à transmettre</div>
+        </div>
+      </a>
+      <nav class="foot-nav" aria-label="Accès rapide">
+        <div class="foot-nav-col">
+          <span class="foot-nav-title" data-i18n="footnav.spaces">Les espaces</span>
+          <a href="#/transcrire" data-i18n="nav.transcribe">Transcrire</a>
+          <a href="#/traduire" data-i18n="nav.translate">Traduire</a>
+          <a href="#/explorer" data-i18n="hub.card.explore">Explorer</a>
+          <a href="#/demander" data-i18n="hub.card.demander">Demander</a>
+        </div>
+        <div class="foot-nav-col">
+          <span class="foot-nav-title" data-i18n="footnav.project">Le projet</span>
+          <a href="#/accueil" data-i18n="chip.home">Accueil</a>
+          <a href="#/apropos" data-i18n="chip.about">À propos</a>
+          <a href="#/bugs" data-i18n="chip.bugs">Bugs</a>
+        </div>
+      </nav>
+      <div class="foot-info">
+        <p class="foot-contact" data-i18n="foot.contact">Un problème ou une suggestion ?</p>
+        <p class="foot-contact"><a href="mailto:kenzabri2@yahoo.com">kenzabri2@yahoo.com</a></p>
+        <p class="foot-contact"><a href="https://wa.me/33772088236" target="_blank" rel="noopener">WhatsApp&nbsp;: +33 7 72 08 82 36</a></p>
+      </div>
+    </div>
+    <div class="foot-share">
+      <span class="share-lead" data-i18n="share.foot">Partage LANGIAL autour de toi :</span>
+      <div class="share-mount" id="share-foot"></div>
+    </div>
+    <div class="foot-bottom">
+      <nav class="foot-legal" aria-label="Informations légales">
+        <a href="#/mentions-legales" class="foot-legal-link" data-legal="mentions" data-i18n="legal.mentions">Mentions légales</a>
+        <a href="#/confidentialite" class="foot-legal-link" data-legal="confidentialite" data-i18n="legal.confidentialite">Confidentialité</a>
+        <a href="#/cgu" class="foot-legal-link" data-legal="cgu" data-i18n="legal.cgu">CGU</a>
+        <a href="#/cgv" class="foot-legal-link" data-legal="cgv" data-i18n="legal.cgv">CGV</a>
+      </nav>
+      <div class="foot-copy">© 2026 Brice Kengni Zanguim · <span data-i18n="foot.thanks">Merci à chaque contributeur de la langue</span></div>
+    </div>
+  </footer>
+
+  <!-- Visite guidée : projecteur sur un élément + bulle explicative -->
+  <div id="tour" class="tour" hidden>
+    <div class="tour-spot" id="tour-spot"></div>
+    <div class="tour-card" id="tour-card">
+      <div class="tour-step" id="tour-step"></div>
+      <div class="tour-title" id="tour-title"></div>
+      <div class="tour-text" id="tour-text"></div>
+      <div class="tour-actions">
+        <button class="tour-skip" id="tour-skip" type="button" data-i18n="tour.skip">Passer</button>
+        <button class="tour-next" id="tour-next" type="button" data-i18n="tour.next">Suivant</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Découpe d'un enregistrement : garder une portion, jeter le reste. Ouvert par
+       « ✂️ Découper ». La forme d'onde + deux poignées OU les champs début/fin. -->
+  <div id="trim-modal" class="trim-modal" hidden role="dialog" aria-modal="true" aria-labelledby="trim-title">
+    <div class="trim-card">
+      <h3 id="trim-title" data-i18n="trim.h">Garder une partie de l'enregistrement</h3>
+      <p class="trim-hint" data-i18n="trim.hint">Fais glisser les deux poignées sur l'onde, ou saisis le début et la fin en secondes, pour ne conserver que la bonne partie. Le reste sera supprimé.</p>
+      <div class="trim-wave-wrap">
+        <canvas id="trim-wave" class="trim-wave" width="640" height="130" aria-hidden="true"></canvas>
+      </div>
+      <div class="trim-times">
+        <label class="trim-time"><span data-i18n="trim.start">Début (s)</span>
+          <input id="trim-start" type="number" min="0" step="0.05" inputmode="decimal" /></label>
+        <label class="trim-time"><span data-i18n="trim.end">Fin (s)</span>
+          <input id="trim-end" type="number" min="0" step="0.05" inputmode="decimal" /></label>
+        <span id="trim-dur" class="trim-dur"></span>
+      </div>
+      <div class="trim-actions">
+        <button id="trim-silence" class="chip chip--btn" type="button" data-i18n="trim.silence">Rogner les silences</button>
+        <button id="trim-play" class="chip chip--btn" type="button" data-i18n="trim.play">▶ Écouter la sélection</button>
+        <span class="trim-spacer"></span>
+        <button id="trim-cancel" class="chip chip--btn" type="button" data-i18n="trim.cancel">Annuler</button>
+        <button id="trim-keep" class="btn btn--next" type="button" data-i18n="trim.keep">Garder cette partie</button>
+      </div>
+      <audio id="trim-audio" preload="metadata"></audio>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Bannière « nouvelle version disponible » : voyante, avec bouton de mise à jour
+       qui vide le cache + recharge (équivalent Ctrl+Shift+R, automatique). -->
+  <div id="update-banner" class="update-banner" hidden role="alertdialog"
+       aria-live="assertive" aria-label="Nouvelle version disponible">
+    <span class="update-dot" aria-hidden="true"></span>
+    <div class="update-body">
+      <div class="update-title">Nouvelle version disponible <b id="update-ver"></b></div>
+      <p id="update-sub" class="update-sub" data-i18n="update.sub">Une nouvelle version est disponible.</p>
+      <p id="update-when" class="update-when"></p>
+      <div class="update-actions">
+        <button id="update-now" class="btn btn--primary update-btn" type="button">⟳ Mettre à jour maintenant</button>
+        <button id="update-later" class="update-later" type="button">Plus tard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Invitation à contribuer (nudge quotidien personnalisé) : un mot que tu n'as pas
+       encore fait dans ta langue, en t'appuyant sur ce qu'un autre a déjà partagé. -->
+  <div id="incite-banner" class="incite-banner" hidden role="dialog" aria-live="polite"
+       data-i18n-label="incite.aria" aria-label="Invitation à contribuer">
+    <span class="incite-ico" aria-hidden="true">💬</span>
+    <div class="incite-body">
+      <p id="incite-msg" class="incite-msg"></p>
+      <div class="incite-actions">
+        <button id="incite-listen" class="incite-listen" type="button" hidden>🔊 Écouter</button>
+        <button id="incite-go" class="btn btn--primary" type="button" data-i18n="incite.cta">Le dire dans ma langue →</button>
+        <button id="incite-later" class="incite-later" type="button" data-i18n="incite.later">Plus tard</button>
+      </div>
+    </div>
+    <button id="incite-close" class="incite-close" type="button" data-i18n-title="incite.close" title="Fermer" aria-label="Fermer">✕</button>
+    <audio id="incite-audio" preload="none" style="display:none"></audio>
+  </div>
+
+  <!-- Popup de NOTIFICATION personnelle : apparaît à l'ouverture quand une activité
+       récente concerne tes contributions (on t'a noté, on t'a corrigé…). Réutilise
+       le style de la bannière d'invitation. « Voir » ouvre le centre de notifications. -->
+  <div id="notif-popup" class="incite-banner notif-popup" hidden role="dialog" aria-live="polite"
+       data-i18n-label="notif.aria" aria-label="Notification">
+    <span class="incite-ico" aria-hidden="true">🔔</span>
+    <div class="incite-body">
+      <p id="notif-popup-msg" class="incite-msg"></p>
+      <div class="incite-actions">
+        <button id="notif-popup-go" class="btn btn--primary" type="button" data-i18n="notif.see">Voir mes notifications →</button>
+        <button id="notif-popup-later" class="incite-later" type="button" data-i18n="incite.later">Plus tard</button>
+      </div>
+    </div>
+    <button id="notif-popup-close" class="incite-close" type="button" data-i18n-title="incite.close" title="Fermer" aria-label="Fermer">✕</button>
+  </div>
+
+  <!-- Mode présentation : affichage plein écran pour montrer le projet (événements,
+       réunions). Grand logo + nom + les trois activités + QR pour contribuer. -->
+  <div id="present" class="present" hidden>
+    <button id="present-close" class="present-close" type="button" data-i18n-title="present.close" aria-label="Quitter la présentation">✕</button>
+    <div class="present-inner">
+      <div class="present-brand">
+        <img src="./icons/logo.svg" alt="LANGIAL" class="present-logo" width="150" height="150" />
+        <h1 class="present-title">LANGIAL</h1>
+        <p class="present-tag" data-i18n="present.tag">Nos langues, un héritage à transmettre</p>
+      </div>
+      <div class="present-acts">
+        <div class="present-act"><img class="present-ico" src="./icons/act-translate.svg" alt="" aria-hidden="true"><b data-i18n="hub.card.translate">Traduire</b><span data-i18n="present.act.translate">transmets ta langue</span></div>
+        <div class="present-act"><img class="present-ico" src="./icons/mic-real.png" alt="" aria-hidden="true"><b data-i18n="hub.card.transcribe">Transcrire</b><span data-i18n="present.act.transcribe">laisse ta voix en héritage</span></div>
+        <div class="present-act"><img class="present-ico" src="./icons/act-explore.svg" alt="" aria-hidden="true"><b data-i18n="hub.card.explore">Explorer</b><span data-i18n="present.act.explore">apprends des autres</span></div>
+      </div>
+      <div class="present-cta">
+        <div class="present-scan" data-i18n="present.scan">Scanne pour participer</div>
+        <img class="present-qr" src="./flyer/qr.svg" alt="QR code pour ouvrir l'application" />
+        <div class="present-url-wrap">
+          <span class="present-url-label" data-i18n="present.url">Ou ouvre l'adresse :</span>
+          <a class="present-url" href="https://langial.com/"
+             target="_blank" rel="noopener">langial.com</a>
+        </div>
+        <div class="present-stat" id="present-stat"></div>
+      </div>
+      <div class="present-tools">
+        <button id="present-dl-png" class="btn present-dl" type="button" data-i18n="present.dl.png">⤓ Télécharger en image</button>
+        <button id="present-dl-pdf" class="btn present-dl" type="button" data-i18n="present.dl.pdf">⤓ Télécharger en PDF</button>
+      </div>
+      <div class="present-share share-mount" id="share-present"></div>
+    </div>
+  </div>
+
+  <!-- Consignes OBLIGATOIRES avant la 1re transcription (qualité des enregistrements).
+       L'utilisateur doit lire puis valider « J'ai compris le principe ». -->
+  <div id="tr-guide" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="tr-guide-title">
+    <div class="tr-guide-card" id="tr-guide-card" data-show="transcribe">
+      <!-- Variante TRANSCRIRE -->
+      <div class="tr-guide-variant" data-guide="transcribe">
+        <div class="tr-guide-head">
+          <div class="tr-guide-ico tr-guide-ico--img" aria-hidden="true"><img src="icons/act-transcribe.svg" alt=""></div>
+          <h2 id="tr-guide-title" data-i18n="tr.guide.title">Avant d'enregistrer ta voix</h2>
+          <p class="tr-guide-lead" data-i18n="tr.guide.lead">Deux règles simples pour un bon enregistrement :</p>
+        </div>
+        <div class="tr-guide-rules">
+          <div class="tr-guide-rule">
+            <span class="tr-guide-ri" aria-hidden="true">🤫</span>
+            <div class="tr-guide-rtext">
+              <b data-i18n-html="tr.guide.r1.t">Enregistre dans un endroit <mark class="ok">calme</mark></b>
+              <span data-i18n="tr.guide.r1.d">Pas de bruit autour : ni rue, ni télé, ni ventilateur. On doit bien entendre ta voix.</span>
+            </div>
+          </div>
+          <div class="tr-guide-rule">
+            <span class="tr-guide-ri" aria-hidden="true">🗣️</span>
+            <div class="tr-guide-rtext">
+              <b data-i18n-html="tr.guide.r2.t">Dis <mark class="ok">seulement le mot dans ta langue</mark>, <mark class="ok">une seule fois</mark></b>
+              <span data-i18n-html="tr.guide.r2.d">Ne dis <mark class="no">pas</mark> le mot français avant. Ne le répète <mark class="no">pas</mark> deux fois.</span>
+            </div>
+          </div>
+          <div class="tr-guide-rule">
+            <span class="tr-guide-ri" aria-hidden="true">🐢</span>
+            <div class="tr-guide-rtext">
+              <b data-i18n-html="tr.guide.r3.t">Parle <mark class="ok">lentement</mark>, <mark class="ok">à voix haute</mark> et posément</b>
+              <span data-i18n-html="tr.guide.r3.d">Ne te presse pas : articule bien chaque son et garde une intonation naturelle. D'autres apprendront la langue en t'écoutant, et une voix claire et posée aide aussi les outils qui l'apprennent.</span>
+            </div>
+          </div>
+        </div>
+        <div class="tr-guide-ex">
+          <div class="tr-guide-ex-card bad">
+            <span class="tr-guide-ex-label" data-i18n="tr.guide.ex.badl">✗ À éviter</span>
+            <span class="tr-guide-ex-txt" data-i18n="tr.guide.ex.bad">« eau… jʉ… jʉ »</span>
+          </div>
+          <div class="tr-guide-ex-card good">
+            <span class="tr-guide-ex-label" data-i18n="tr.guide.ex.goodl">✓ À faire</span>
+            <span class="tr-guide-ex-txt" data-i18n="tr.guide.ex.good">« jʉ »</span>
+          </div>
+        </div>
+      </div>
+      <!-- Variante TRADUIRE -->
+      <div class="tr-guide-variant" data-guide="translate">
+        <div class="tr-guide-head">
+          <div class="tr-guide-ico" aria-hidden="true">🔤</div>
+          <h2 data-i18n="tra.guide.title">Avant de traduire</h2>
+          <p class="tr-guide-lead" data-i18n="tra.guide.lead">Deux règles simples pour une bonne traduction :</p>
+        </div>
+        <div class="tr-guide-rules">
+          <div class="tr-guide-rule">
+            <span class="tr-guide-ri" aria-hidden="true">🎯</span>
+            <div class="tr-guide-rtext">
+              <b data-i18n-html="tra.guide.r1.t">Donne le <mark class="ok">vrai mot</mark>, celui qu'on dit vraiment</b>
+              <span data-i18n-html="tra.guide.r1.d">Pas une approximation ni un mot inventé. Si tu ne connais <mark class="no">pas</mark>, passe au suivant.</span>
+            </div>
+          </div>
+          <div class="tr-guide-rule">
+            <span class="tr-guide-ri" aria-hidden="true">⌨️</span>
+            <div class="tr-guide-rtext">
+              <b data-i18n-html="tra.guide.r2.t">Écris avec les <mark class="ok">bonnes lettres</mark> et les <mark class="ok">tons</mark></b>
+              <span data-i18n="tra.guide.r2.d">Le clavier ngiemboon donne les lettres spéciales (ŋ, ɛ, ɔ, ʉ) et les tons. Une lettre change le sens.</span>
+            </div>
+          </div>
+        </div>
+        <div class="tr-guide-ex">
+          <div class="tr-guide-ex-card bad">
+            <span class="tr-guide-ex-label" data-i18n="tr.guide.ex.badl">✗ À éviter</span>
+            <span class="tr-guide-ex-txt" data-i18n="tra.guide.ex.bad">« ju »</span>
+          </div>
+          <div class="tr-guide-ex-card good">
+            <span class="tr-guide-ex-label" data-i18n="tr.guide.ex.goodl">✓ À faire</span>
+            <span class="tr-guide-ex-txt" data-i18n="tra.guide.ex.good">« jʉ »</span>
+          </div>
+        </div>
+      </div>
+      <button id="tr-guide-ok" class="btn btn--primary tr-guide-ok" type="button" data-i18n="tr.guide.ok">J'ai compris le principe</button>
+    </div>
+  </div>
+
+  <!-- Popup EXPLICATIF de redirection profil : quand un nouvel arrivant (sans profil) clique
+       sur une activité et se voit rediriger vers la page de profil, on lui explique POURQUOI
+       et pourquoi remplir un profil est indispensable, façon « consignes ». -->
+  <div id="profile-gate" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="pg-title">
+    <div class="tr-guide-card profile-gate-card">
+      <div class="pgate-hero-wrap"><img class="pgate-hero" src="icons/welcome-first.webp" alt="" aria-hidden="true" /></div>
+      <div class="tr-guide-head">
+        <h2 id="pg-title" data-i18n="pgate.title">Un profil, puis c'est parti</h2>
+        <p class="tr-guide-lead" id="pg-reason"></p>
+      </div>
+      <div class="tr-guide-rules">
+        <div class="tr-guide-rule">
+          <span class="tr-guide-ri" aria-hidden="true">✍️</span>
+          <div class="tr-guide-rtext">
+            <b data-i18n="pgate.r1.t">Ta contribution t'est créditée</b>
+            <span data-i18n="pgate.r1.d">Ton nom (si tu l'autorises) accompagne ce que tu partages, et on peut te recontacter au besoin</span>
+          </div>
+        </div>
+        <div class="tr-guide-rule">
+          <span class="tr-guide-ri" aria-hidden="true">📍</span>
+          <div class="tr-guide-rtext">
+            <b data-i18n="pgate.r2.t">Ta variante est bien située</b>
+            <span data-i18n="pgate.r2.d">Ton village et ta langue situent ta façon de parler : les mots changent d'un village à l'autre</span>
+          </div>
+        </div>
+        <div class="tr-guide-rule">
+          <span class="tr-guide-ri" aria-hidden="true">🛡️</span>
+          <div class="tr-guide-rtext">
+            <b data-i18n="pgate.r3.t">Des données fiables et sans doublon</b>
+            <span data-i18n="pgate.r3.d">Un profil par personne garde la base propre et évite les répétitions : chaque voix compte une fois</span>
+          </div>
+        </div>
+      </div>
+      <div class="pg-actions">
+        <button id="pg-ok" class="btn btn--primary" type="button" data-i18n="pgate.ok">Créer mon profil →</button>
+        <button id="pg-later" class="btn btn--ghost" type="button" data-i18n="pgate.later">Plus tard</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirmation de la LANGUE de la contribution (anti-mauvais étiquetage) : apparaît à
+       l'enregistrement quand la langue n'a pas encore été confirmée cette session, ou quand un
+       doute d'écriture est détecté. Empêche d'inscrire une contribution dans la mauvaise langue. -->
+  <div id="lang-confirm" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="lc-title">
+    <div class="tr-guide-card lang-confirm-card">
+      <div class="tr-guide-head">
+        <div class="tr-guide-ico" aria-hidden="true">🌍</div>
+        <h2 id="lc-title" data-i18n="langconfirm.title">Confirme la langue</h2>
+        <p class="tr-guide-lead" id="lc-msg"></p>
+      </div>
+      <p class="lc-doubt" id="lc-doubt" hidden></p>
+      <div class="pg-actions">
+        <button id="lc-ok" class="btn btn--primary" type="button">Oui</button>
+        <button id="lc-change" class="btn btn--ghost" type="button" data-i18n="langconfirm.change">Non, changer de langue</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulaire « Laisser un mot » (témoignage). Publication auto (garde-fous côté serveur). -->
+  <div id="testi-form" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="testi-title">
+    <div class="tr-guide-card testi-card">
+      <div class="tr-guide-head">
+        <div class="tr-guide-ico" aria-hidden="true">💬</div>
+        <h2 id="testi-title" data-i18n="testi.title">Ton mot sur LANGIAL</h2>
+        <p class="tr-guide-lead" data-i18n="testi.lead">En une ou deux phrases, dis ce que LANGIAL t'apporte ou ce que tu en penses. Ton mot pourra apparaître publiquement dans « Ils parlent de nous ».</p>
+      </div>
+      <label class="field field--wide">
+        <textarea id="testi-text" rows="4" maxlength="400" data-i18n-ph="testi.ph" placeholder="ex. Enfin une application pour écrire et entendre ma langue. J'y ajoute un mot chaque jour."></textarea>
+      </label>
+      <p class="testi-who" id="testi-who"></p>
+      <p class="lock-hint testi-error" id="testi-error" hidden></p>
+      <div class="pg-actions">
+        <button id="testi-send" class="btn btn--primary" type="button" data-i18n="testi.send">Publier mon mot →</button>
+        <button id="testi-cancel" class="btn btn--ghost" type="button" data-i18n="testi.cancel">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./build/app.js"></script>
+</body>
+</html>
