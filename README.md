@@ -50,7 +50,10 @@ L'application s'organise autour de quatre activités :
 - 📣 &nbsp;**Demander** : solliciter la communauté lorsqu'un mot nous échappe.
 
 Ces quatre portes sont accessibles à tout moment depuis le menu du haut, et l'on passe
-librement de l'une à l'autre.
+librement de l'une à l'autre. Avant de contribuer, un profil se crée en une minute,
+demandé une seule fois : il crédite chaque contribution à son auteur (si celui-ci le
+souhaite), situe sa façon de parler par le village et la langue de ses deux parents, et
+garde la base propre en évitant les doublons d'une même personne.
 
 Les captures qui suivent alternent le **thème sombre** et le **thème clair** :
 l'application propose les deux ambiances, au choix de chacun.
@@ -65,7 +68,9 @@ L'accueil présente les quatre activités comme des portes distinctes, chacune a
 couleur d'identité : le violet pour la transcription, le vert pour la traduction, l'or
 pour l'exploration et le cyan pour la demande. On reconnaît ainsi chaque espace d'un
 coup d'œil, et l'on ouvre celui que l'on veut. Le menu du haut reste présent partout
-pour changer d'activité, de langue ou de thème.
+pour changer d'activité ; un bouton **Réglages** regroupe tout le reste, langue de
+contribution, langue d'interface, thème clair ou sombre, aide et suivi des bugs, pour
+que l'accueil garde l'essentiel sous les yeux.
 
 ### ✍️ Traduire, avec un clavier fait pour la langue
 
