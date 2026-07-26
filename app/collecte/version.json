@@ -1,6 +1,9 @@
 {
-  "version": "v426",
+  "version": "v427",
   "changelog": {
+    "v427": [
+      "Barre de navigation basse : cadre et icônes agrandis ×1.2, plus visibles"
+    ],
     "v426": [
       "Audit qualité : 2 messages manquants ajoutés (auraient affiché la clé technique brute au lieu d'un vrai texte dans un cas rare) ; nettoyage d'un ancien composant audio totalement abandonné, jamais utilisé (code mort)"
     ],

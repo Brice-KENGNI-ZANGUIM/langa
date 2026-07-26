@@ -159,9 +159,9 @@ body {
      sur TOUTES les pages (y compris celles qui gardent le footer classique), rien ne doit
      jamais se retrouver caché dessous, footer inclus. Barre devenue FLOTTANTE (2026-07-26m,
      détachée du bord bas) : marge un peu plus généreuse pour dégager aussi son espace flottant. */
-  padding-bottom: 74px;
+  padding-bottom: 89px;   /* ×1.2 (2026-07-26) suite à l'agrandissement de la barre basse */
 }
-@media (max-width: 560px) { body { padding-bottom: 66px; } }
+@media (max-width: 560px) { body { padding-bottom: 79px; } }
 /* Mobile / tablette : trame Ndop ATTÉNUÉE (opacités ~÷2) pour qu'elle ne soit pas
    dominante sur petit écran. On ne redéfinit QUE --lattice-img, rien d'autre. */
 @media (max-width: 1024px) {
@@ -924,8 +924,10 @@ body {
   z-index: 1; background: linear-gradient(90deg, transparent, var(--cyan), var(--green), var(--gold), transparent);
   opacity: .8; pointer-events: none; }
 .bottom-nav-tabs { max-width: var(--wrap-max); margin: 0 auto; display: flex; position: relative; z-index: 2; }
+/* Cadre + icônes ×1.2 (2026-07-26, Brice : « je trouve cette barre beaucoup trop petite ») :
+   hauteur uniquement (padding vertical du bouton + hauteur des icônes), largeurs inchangées. */
 .bottom-nav-tab { --acc: var(--cyan); flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 3px; padding: 8px 4px 7px; text-decoration: none;
+  align-items: center; justify-content: center; gap: 3px; padding: 9.6px 4px 8.4px; text-decoration: none;
   color: var(--muted); font: inherit; font-size: .68rem; font-weight: 600;
   transition: color .16s ease, background .16s ease; }
 .bottom-nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--acc) 8%, transparent); }
@@ -934,7 +936,7 @@ body {
    contraignait à la largeur, les rendant visuellement PLUS PETITES à hauteur inégale. Chaque
    fichier icons/ui/*.png est déjà exporté à une hauteur de contenu identique (220px) : ne pas
    forcer une largeur ici préserve cette cohérence. */
-.bottom-nav-ico { width: auto; height: 23px; flex: none;
+.bottom-nav-ico { width: auto; height: 27.6px; flex: none;
   filter: grayscale(35%) opacity(.85); transition: filter .16s ease, transform .12s ease; }
 .bottom-nav-tab:hover .bottom-nav-ico { transform: translateY(-1px); filter: grayscale(0%) opacity(1); }
 #tab-transcrire { --acc: var(--violet); }
@@ -950,8 +952,8 @@ body {
               0 0 14px -4px var(--acc); }
 .bottom-nav-tab.is-active .bottom-nav-ico { filter: none; }
 @media (max-width: 560px) {
-  .bottom-nav-tab { font-size: .6rem; padding: 7px 2px 6px; }
-  .bottom-nav-ico { width: auto; height: 21px; }
+  .bottom-nav-tab { font-size: .6rem; padding: 8.4px 2px 7.2px; }
+  .bottom-nav-ico { width: auto; height: 25.2px; }
 }
 /* Accueil, INCRUSTÉ au centre de la barre basse (2026-07-26, Brice), entre Traduire et Explorer :
    ICÔNE SEULE, aucun cadre/fond associé (Brice : « juste l'icône ») — même matière que la barre,
@@ -967,13 +969,13 @@ body {
    align-items:stretch d'un PARENT à hauteur elle-même auto (déterminée par ses enfants) crée une
    dépendance circulaire — Chromium retombe alors sur la taille NATURELLE du fichier source
    (220px), qui fait exploser la hauteur de toute la barre. Piège vérifié en pratique. */
-.bottom-nav-home-ico { width: auto; height: 46px; flex: none;
+.bottom-nav-home-ico { width: auto; height: 55.2px; flex: none;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,.35)); transition: transform .12s ease, filter .16s ease; }
 .bottom-nav-home:hover .bottom-nav-home-ico { transform: scale(1.06);
   filter: drop-shadow(0 0 10px color-mix(in srgb, var(--acc) 65%, transparent)); }
 @media (max-width: 560px) {
   .bottom-nav-home { width: 48px; }
-  .bottom-nav-home-ico { height: 47px; }
+  .bottom-nav-home-ico { height: 56.4px; }
 }
 
 /* ---- Accueil « Que veux-tu faire ? » ---- */
