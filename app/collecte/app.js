@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v422";
+const APP_VERSION = "v423";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -3479,7 +3479,14 @@ async function maybeShowReqPopup() {
 }
 function renderReqPopup(item) {
   const bn = $("#incite-banner"); if (!bn || !item) return;
-  bn.dataset.ptype = "reqpop";
+  // "request" (PAS "reqpop", qui est l'id de FILE `_pq` — un identifiant différent, cf.
+  // enqueuePopup ci-dessus) : seule cette valeur correspond à la règle CSS déjà prête
+  // (.incite-banner[data-ptype="request"], accent cyan). Bug trouvé (Brice 2026-07-26,
+  // « popup Demander mal affiché sur téléphone ») : avec "reqpop" aucune règle ne matchait,
+  // donc ni l'accent ni surtout le DIMENSIONNEMENT de l'icône (cf. plus bas) ne s'appliquaient —
+  // l'image (220px de haut, pipeline hauteur fixe) s'affichait alors à sa taille NATURELLE,
+  // explosant la mise en page du popup sur petit écran.
+  bn.dataset.ptype = "request";
   const ico = bn.querySelector(".incite-ico");
   if (ico) ico.innerHTML = '<img src="icons/ui/ni-request.png" alt="" aria-hidden="true">';
   const show = (getUiLang() === "en" && item.texte_en) ? item.texte_en : item.texte;

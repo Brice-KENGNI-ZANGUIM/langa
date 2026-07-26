@@ -2704,7 +2704,8 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .incite-banner[data-ptype="activity"]   { --pop-acc: var(--violet); }
 .incite-banner[data-ptype="request"]    { --pop-acc: var(--cyan); }
 .incite-banner[data-ptype="wod"]        { --pop-acc: var(--cyan); }   /* Mot du jour : même accent cyan qu'avant (R10) */
-.incite-banner[data-ptype="wod"] .incite-ico img { width: 34px; height: 34px; }
+.incite-banner[data-ptype="wod"] .incite-ico img,
+.incite-banner[data-ptype="request"] .incite-ico img { width: 34px; height: 34px; object-fit: contain; }
 .incite-ico { flex: 0 0 auto; font-size: 1.7rem; line-height: 1.2;
   filter: drop-shadow(0 2px 5px rgba(0,0,0,.3)) drop-shadow(0 0 10px color-mix(in srgb, var(--pop-acc) 60%, transparent)); }
 /* Certaines catégories utilisent une VRAIE image (illustration) plutôt qu'un emoji :
