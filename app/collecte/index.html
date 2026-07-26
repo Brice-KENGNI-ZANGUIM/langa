@@ -1194,6 +1194,11 @@
         <button id="incite-listen" class="incite-listen" type="button" hidden>🔊 Écouter</button>
         <button id="incite-go" class="btn btn--primary" type="button" data-i18n="incite.cta">Le dire dans ma langue →</button>
         <button id="incite-later" class="incite-later" type="button" data-i18n="incite.later">Plus tard</button>
+        <!-- « Supprimer » (Brice 2026-07-26 : « les utilisateurs se sentent envahis ») : mute
+             CE TYPE de popup (incitation à traduire/noter, OU mot du jour) pendant 24h, plus
+             radical que « Plus tard » (qui ne fait que fermer pour la session en cours). -->
+        <button id="incite-mute" class="incite-later incite-mute" type="button"
+                data-i18n="incite.mute" data-i18n-title="incite.mute.title" title="N'affiche plus ce type de popup pendant 24h">Supprimer</button>
       </div>
     </div>
     <button id="incite-close" class="incite-close" type="button" data-i18n-title="incite.close" title="Fermer" aria-label="Fermer">✕</button>

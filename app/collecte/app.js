@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v414";
+const APP_VERSION = "v415";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -3213,11 +3213,28 @@ function _popIllHTML(file) {
     "</span>";
 }
 
+// Mute 24h par TYPE de popup (« Supprimer », Brice 2026-07-26 : « j'ai l'impression que les
+// utilisateurs se sentent envahis »), INDÉPENDANT du système de slots (am/pm/eve) : une fois
+// actionné, ce type de popup n'est même plus PROPOSÉ, quel que soit le slot, pendant 24h.
+const POPUP_MUTE_KEY = "langa-popup-mute";
+function _popupMutedUntil(type) {
+  try { return (JSON.parse(localStorage.getItem(POPUP_MUTE_KEY) || "{}") || {})[type] || 0; }
+  catch (e) { return 0; }
+}
+function _popupIsMuted(type) { return Date.now() < _popupMutedUntil(type); }
+function _muteType(type) {
+  try {
+    const map = JSON.parse(localStorage.getItem(POPUP_MUTE_KEY) || "{}") || {};
+    map[type] = Date.now() + 24 * 3600000;
+    localStorage.setItem(POPUP_MUTE_KEY, JSON.stringify(map));
+  } catch (e) { /* stockage indispo */ }
+}
 function incitationDue() {
   // Inviter à contribuer ne demande qu'une langue choisie + consentement ; le profil complet
   // (téléphone…) est revérifié au CLIC (startTranslateWord/startRateWord → requireProfile).
   const c = loadContributeur();
   if (!hasChosenLang() || !c.consentement) return false;
+  if (_popupIsMuted("incite")) return false;
   const slot = _incSlot(); if (!slot) return false;
   return !_incShownSlots().includes(slot);
 }
@@ -3395,6 +3412,15 @@ async function maybeShowIncitation() {
   if (!pick || !incitationDue()) return;          // re-vérifie après l'await (course éventuelle)
   // Résout l'équivalent dans la langue de l'UI AVANT d'afficher (jamais de FR à un anglophone).
   try { pick.wordUi = await resolveWordUi(pick.word); } catch (e) { /* repli sync */ }
+  // Marque le SLOT comme montré dès qu'un mot est choisi et enfilé, pas seulement au clic
+  // d'action (Brice 2026-07-26 : « le popup s'est affiché 4 fois avec 4 mots différents en
+  // 15 min », alors qu'au plus 3×/jour était demandé). Avant ce correctif, un « Plus tard »/✕
+  // retirait le popup de la file SANS marquer le slot ; revenir sur l'accueil (bouton Accueil
+  // désormais bien plus visible, cf. v406) redéclenchait `incitationDue()` → un mot TOUT
+  // NEUF à chaque fois, sans plafond réel dans la journée. Marquer ici respecte le plafond de
+  // 3 slots/jour tout en laissant le popup persister (pas d'auto-disparition) tant qu'il reste
+  // affiché : seul le changement de CONTENU était le problème, pas la persistance elle-même.
+  _incMarkShown();
   enqueuePopup("incite", () => renderIncitation(pick));   // jamais deux popups à la fois : la file gère
 }
 
@@ -3410,6 +3436,7 @@ const WOD_SEEN_KEY = "langa-wod-seen-day";
 function wodDue() {
   const c = loadContributeur();
   if (!hasChosenLang() || !c.consentement) return false;
+  if (_popupIsMuted("wod")) return false;
   try { return parseInt(localStorage.getItem(WOD_SEEN_KEY) || "-1", 10) !== _dayIndex(); }
   catch (e) { return true; }
 }
@@ -3423,6 +3450,7 @@ async function maybeShowWod() {
   const fr = mots[_dayIndex() % mots.length].texte;
   let show = fr;
   try { show = wordInUiLang(fr) || fr; } catch (e) { /* repli FR */ }
+  _wodMarkShown();   // marqué au moment de l'enfilage, même correctif que l'incitation générique.
   enqueuePopup("wod", () => renderWodPopup(fr, show));
 }
 function renderWodPopup(fr, show) {
@@ -6569,9 +6597,14 @@ function initEvents() {
   const legalBack = $("#legal-back");
   if (legalBack) legalBack.addEventListener("click", () => routeTo(viewToRoute(_legalReturn) || "accueil"));
   const bugSend = $("#bug-send"); if (bugSend) bugSend.addEventListener("click", submitBug);
-  // Invitation à contribuer : « Plus tard » et « Fermer » l'écartent pour la journée.
+  // Invitation à contribuer : « Plus tard » et « Fermer » l'écartent (le slot du jour est de
+  // toute façon déjà marqué montré dès l'enfilage, cf. maybeShowIncitation/maybeShowWod).
   const inLater = $("#incite-later"); if (inLater) inLater.addEventListener("click", _incDismiss);
   const inClose = $("#incite-close"); if (inClose) inClose.addEventListener("click", _incDismiss);
+  // « Supprimer » : mute 24h le TYPE réellement affiché (_pqCurrent vaut "incite" ou "wod",
+  // selon lequel des deux partage ce même bandeau), quel que soit le slot restant du jour.
+  const inMute = $("#incite-mute");
+  if (inMute) inMute.addEventListener("click", () => { _muteType(_pqCurrent || "incite"); _incDismiss(); });
   // Notifications : cloche = vraie ancre <a href="#/notifications">, navigation via hashchange.
   // (retour, tout marquer comme lu, popup restent des actions, pas de la navigation.)
   const nBack = $("#notif-back"); if (nBack) nBack.addEventListener("click", () => showView(_notifsReturn || "hub"));

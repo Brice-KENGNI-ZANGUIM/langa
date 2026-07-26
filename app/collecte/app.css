@@ -2740,6 +2740,11 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .incite-actions .btn--primary { padding: 9px 16px; font-size: .9rem; }
 .incite-later { background: none; border: none; color: var(--muted); font: inherit; cursor: pointer; text-decoration: underline; }
 .incite-later:hover { color: var(--text); }
+/* « Supprimer » (mute 24h) : même sobriété que « Plus tard », teinte légèrement plus discrète
+   au repos (option plus radicale, pas mise en avant), accent rouge au survol pour signaler
+   une action plus définitive que « Plus tard ». */
+.incite-mute { opacity: .75; }
+.incite-mute:hover { color: var(--danger, #f87171); opacity: 1; }
 .incite-listen[hidden] { display: none; }
 .incite-listen { font: inherit; font-weight: 700; font-size: .85rem; cursor: pointer; white-space: nowrap;
   color: var(--pop-acc); border: 1.5px solid color-mix(in srgb, var(--pop-acc) 55%, var(--border)); border-radius: 999px; padding: 8px 14px;

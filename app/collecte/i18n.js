@@ -813,6 +813,8 @@ export const STR = {
   "send.offline.auto": { fr: "Hors connexion, renvoi automatique dès le retour du réseau.", en: "Offline: will resend automatically once the network is back." },
   "incite.listen.name": { fr: "🔊 Écouter {name}", en: "🔊 Hear {name}" },
   "incite.later": { fr: "Plus tard", en: "Later" },
+  "incite.mute": { fr: "Supprimer", en: "Remove" },
+  "incite.mute.title": { fr: "N'affiche plus ce type de popup pendant 24h", en: "Don't show this type of popup for 24h" },
   "incite.close": { fr: "Fermer", en: "Close" },
   "incite.inlang": { fr: " en {l}", en: " in {l}" },
   "incite.msg.ref": { fr: "Comment dit-on « {w} » dans ta langue ?\n{name} l'a déjà partagé{inlang}. Écoute sa voix, puis transmets-le dans la tienne.",

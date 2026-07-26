@@ -1,6 +1,10 @@
 {
-  "version": "v414",
+  "version": "v415",
   "changelog": {
+    "v415": [
+      "Popup d'invitation à contribuer et mot du jour : ne proposent plus un mot tout neuf à chaque retour sur l'accueil (corrigé le vrai plafond de 3 fois par jour maximum, chacun pour son propre type)",
+      "Nouveau bouton « Supprimer » sur ce popup : n'affiche plus ce type de popup pendant 24h, plus radical que « Plus tard »"
+    ],
     "v414": [
       "Barre de navigation basse : fond quasi opaque (95%), le correctif précédent restait encore trop transparent sur certains téléphones"
     ],
