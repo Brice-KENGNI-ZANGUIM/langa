@@ -1,6 +1,12 @@
 {
-  "version": "v434",
+  "version": "v436",
   "changelog": {
+    "v436": [
+      "Correctif : le trait sous l'icône Accueil de la barre basse restait affiché en permanence, même en étant sur une autre page ; il ne s'affiche plus que quand on est vraiment sur l'accueil"
+    ],
+    "v435": [
+      "L'affiche téléchargeable du mode présentation (celle montrée lors des événements/réunions de village) portait encore l'ancien discours « numériser les langues » : corrigée sur le vrai slogan"
+    ],
     "v434": [
       "Correctif technique : toucher le rappel de langue (« Langue de ta contribution ») déclenchait la page Langues et son calcul de statistiques en double à chaque fois (invisible à l'usage, mais deux fois plus de travail réseau que nécessaire)"
     ],

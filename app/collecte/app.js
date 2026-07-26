@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v434";
+const APP_VERSION = "v436";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1455,7 +1455,13 @@ function showView(name) {
   // Page ACTIVE mise en évidence dans le header (style plat, deux groupes) : on marque le
   // bouton de nav correspondant à la vue courante.
   const NAV_ACTIVE = { hub: "home-link", lang: "lang-chip", about: "about-link", bugs: "bugs-link", profile: "btn-open-profile" };
-  document.querySelectorAll(".chips-nav .chip--btn.is-active").forEach((b) => b.classList.remove("is-active"));
+  // Retire « is-active » des 5 cibles PAR ID (bug trouvé par Brice, audit 2026-07-27 : l'ancien
+  // sélecteur `.chips-nav .chip--btn.is-active` ne correspondait plus à AUCUNE d'elles depuis
+  // qu'elles vivent dans le tiroir Réglages — home-link n'a d'ailleurs jamais été dans .chips-nav.
+  // « is-active » restait donc posé pour toujours dès la 1re visite de chaque vue, invisible tant
+  // qu'aucune règle CSS n'en dépendait, jusqu'à ce que le soulignement de la barre basse, v429,
+  // s'appuie dessus pour home-link : le trait actif restait alors affiché sous Accueil en permanence).
+  Object.values(NAV_ACTIVE).forEach((id) => { const el = document.getElementById(id); if (el) el.classList.remove("is-active"); });
   const actId = NAV_ACTIVE[name]; if (actId) { const ab = document.getElementById(actId); if (ab) ab.classList.add("is-active"); }
   try { injectBannerShare(name); } catch (e) { /* jamais bloquant */ }
   window.scrollTo(0, 0);
@@ -5733,7 +5739,7 @@ async function presentPosterCanvas() {
   g.fillStyle = tg; g.font = "800 176px system-ui, 'Segoe UI', sans-serif";
   g.fillText("LANGIAL", W / 2, 700);
   g.fillStyle = muted; g.font = "400 48px system-ui, 'Segoe UI', sans-serif";
-  g.fillText("Numériser les langues d'Afrique, texte et voix", W / 2, 810);
+  g.fillText("Nos langues d'Afrique, un héritage à transmettre", W / 2, 810);
 
   // Trois cartes ESPACÉES sur toute la largeur, PLUS GRANDES pour de plus grandes icônes.
   const acts = [["ui/ic-write.png", "Traduire", "mots et phrases"], ["ui/ic-record.png", "Transcrire", "ta voix, ta langue"], ["ui/ic-browse.png", "Explorer", "la bibliothèque commune"]];
