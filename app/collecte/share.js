@@ -45,7 +45,7 @@ export function shareCardText(entry, langName, url) {
   else head = "Un mot de notre langue";
   if (lang) head += ` (${lang})`;
 
-  const lines = [head, "Partagé via LANGIAL, pour numériser nos langues"];
+  const lines = [head, "Partagé via LANGIAL, un héritage de nos langues à transmettre"];
   const u = clean(url, 200);
   if (u) lines.push(u);
   return lines.join("\n");
@@ -139,7 +139,7 @@ export function mountShareBar(container, opts) {
   if (!container) return;
   const o = opts || {};
   const url = o.url || location.href;
-  const text = o.text || "Découvre LANGIAL et aidons ensemble à numériser nos langues d'Afrique, en texte et en voix";
+  const text = o.text || "LANGIAL rassemble les mots et les voix de nos langues d'Afrique : ceux qui les connaissent les transmettent, chacun peut les apprendre";
   const title = o.title || "LANGIAL";
   const hashtags = o.hashtags || "";
   const toast = typeof o.toast === "function" ? o.toast : function () {};

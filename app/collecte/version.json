@@ -1,6 +1,9 @@
 {
-  "version": "v430",
+  "version": "v431",
   "changelog": {
+    "v431": [
+      "Les aperçus de partage sur les réseaux (WhatsApp, Facebook, X…) parlaient encore de « numériser les langues » : ils reprennent désormais le vrai discours de LANGIAL, l'héritage à transmettre"
+    ],
     "v430": [
       "Chargement du premier écran nettement allégé (mesuré : environ 10 Mo → 6,5 Mo) : les images des pages pas encore ouvertes (profil, bugs, notifications, langues, pied de page) ne se téléchargent plus qu'au moment où on les visite réellement"
     ],
