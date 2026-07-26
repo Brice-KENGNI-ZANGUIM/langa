@@ -1,6 +1,9 @@
 {
-  "version": "v424",
+  "version": "v425",
   "changelog": {
+    "v425": [
+      "Traduire/Transcrire : les champs Domaine et Note (facultatifs) sont désormais repliés dans un tiroir, comme « Enrichir ce mot », pour une page moins chargée"
+    ],
     "v424": [
       "Icône de la bulle de notification agrandie ×2 sur téléphone, plus visible",
       "Le compteur de notifications a disparu de l'icône Réglages et le bouton Notifications a disparu du menu Réglages : la bulle flottante est désormais l'unique accès"

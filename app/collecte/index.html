@@ -574,16 +574,22 @@
         </div>
       </div>
 
-      <div class="grid2">
-        <label class="field">
-          <span data-i18n="work.domaine">Domaine (facultatif)</span>
-          <input id="domaine" type="text" placeholder="ex. parenté, nourriture, nature…" data-i18n-ph="work.domaine.ph" />
-        </label>
-        <label class="field">
-          <span data-i18n="work.note">Note (facultatif)</span>
-          <input id="note" type="text" placeholder="registre, contexte d'emploi…" data-i18n-ph="work.note.ph" />
-        </label>
-      </div>
+      <!-- Repliée (Brice 2026-07-26 : « ne pas trop saturer la page »), même patron que
+           « Enrichir ce mot » juste en dessous : 2 champs facultatifs qui n'ont pas besoin
+           d'être visibles en permanence pour la plupart des contributions. -->
+      <details class="word-enrich" id="domaine-note-wrap">
+        <summary data-i18n="work.domnote.title">Domaine ou note (facultatif)</summary>
+        <div class="enrich-grid">
+          <label class="field">
+            <span data-i18n="work.domaine">Domaine</span>
+            <input id="domaine" type="text" placeholder="ex. parenté, nourriture, nature…" data-i18n-ph="work.domaine.ph" />
+          </label>
+          <label class="field">
+            <span data-i18n="work.note">Note</span>
+            <input id="note" type="text" placeholder="registre, contexte d'emploi…" data-i18n-ph="work.note.ph" />
+          </label>
+        </div>
+      </details>
 
       <!-- R4 : ENRICHIR LE MOT (tout facultatif) — métadonnées linguistiques structurées pour
            bâtir un vrai dictionnaire ET nourrir un futur modèle. Repliable (native <details>)

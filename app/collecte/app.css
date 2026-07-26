@@ -1725,7 +1725,7 @@ body {
    (repliée derrière « Ajouter une traduction ») TOUT EN BAS, juste avant « Enregistrer ». */
 #view-app[data-act="transcribe"] #source-wrap     { order: 1; }
 #view-app[data-act="transcribe"] .zone--audio     { order: 2; }
-#view-app[data-act="transcribe"] .grid2           { order: 3; }
+#view-app[data-act="transcribe"] #domaine-note-wrap { order: 3; }
 #view-app[data-act="transcribe"] #add-translation { order: 4; }
 #view-app[data-act="transcribe"] #target-wrap     { order: 5; }
 #view-app[data-act="transcribe"] .actions         { order: 6; }
@@ -1733,7 +1733,7 @@ body {
    (replié derrière « Ajouter une transcription ») TOUT EN BAS, juste avant « Enregistrer ». */
 #view-app[data-act="translate"] #source-wrap        { order: 1; }
 #view-app[data-act="translate"] #target-wrap        { order: 2; }
-#view-app[data-act="translate"] .grid2              { order: 3; }
+#view-app[data-act="translate"] #domaine-note-wrap  { order: 3; }
 #view-app[data-act="translate"] #add-transcription  { order: 4; }
 #view-app[data-act="translate"] .zone--audio        { order: 5; }
 #view-app[data-act="translate"] .actions            { order: 6; }
