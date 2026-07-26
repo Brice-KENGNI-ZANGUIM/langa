@@ -791,7 +791,20 @@ body {
 /* Couleur d'activité par page (comme les 4 onglets). */
 #hub-title, .hub-head .view-title { --acc: var(--cyan); }
 .hub-head { text-align: left; }   /* titres de page alignés à gauche (demande Brice) */
-#work-title, #amorce-title { --acc: var(--green); }
+#amorce-title { --acc: var(--green); }
+/* Titre de Transcrire/Traduire (2026-07-26, Brice : « chaque page a sa couleur, la même
+   partout ») : #work-title n'est que le SPAN de texte à l'intérieur du <h2 class="view-title">,
+   pas le h2 lui-même — lui donner --acc ici n'aurait aucun effet sur le fond/la bordure du
+   titre (les propriétés personnalisées ne remontent jamais vers un ANCÊTRE). Ciblé correctement
+   ici sur le vrai h2 (.work-head .view-title), aligné sur la même couleur que la barre basse et
+   les cartes d'accueil (violet Transcrire / vert Traduire). */
+#view-app[data-act="transcribe"] .work-head .view-title { --acc: #a78bfa; }
+#view-app[data-act="translate"] .work-head .view-title { --acc: var(--green); }
+/* Explorer (déjà gold par défaut, coïncidence avec sa couleur canonique) et Demander (tombait
+   sur le gold par défaut au lieu du cyan attendu) : rendu explicite pour les 2 pour éviter que
+   ça se recasse au prochain changement du défaut. */
+#view-explore .view-title { --acc: var(--gold); }
+#view-demander .view-title { --acc: var(--cyan); }
 @keyframes ornBead {
   0%, 100% { background-position: 0% 50%, 0 50%; }
   50%      { background-position: 100% 50%, 0 50%; }
@@ -1001,8 +1014,11 @@ body {
 /* Ciblé par [data-go] plutôt que :nth-child (2026-07-25) : la couleur d'identité reste
    attachée à l'ACTIVITÉ, jamais à sa position dans le DOM (le CTA « Créer mon profil »,
    inséré en tête sans profil, aurait sinon décalé toutes les couleurs suivantes). */
-.hub-card[data-go="transcribe"] { --acc: var(--green); }
-.hub-card[data-go="translate"] { --acc: #a78bfa; }
+/* Couleur d'activité alignée sur la barre basse (#tab-transcrire/#tab-traduire) — Brice
+   2026-07-26 : Transcrire et Traduire étaient inversées entre les cartes d'accueil et la barre,
+   chaque page doit avoir SA couleur, la même partout. */
+.hub-card[data-go="transcribe"] { --acc: #a78bfa; }
+.hub-card[data-go="translate"] { --acc: var(--green); }
 .hub-card[data-go="explore"] { --acc: var(--gold); }
 .hub-card[data-go="demander"] { --acc: var(--cyan); }
 /* Illustration africaine en FOND de carte, sous un filtre assombrissant (dégradé vers la
@@ -1027,7 +1043,10 @@ body {
    position:relative et l'image est en absolute inset:0 → l'image NE participe PLUS au calcul de
    la hauteur (fini la dépendance circulaire qui variait selon le navigateur). Largeur 52% pour
    que l'image carrée atteigne bien 100% de la hauteur du cadre. */
-.hub-illus-wrap { flex: 0 0 48%; align-self: stretch; position: relative; overflow: hidden; min-width: 0; }
+/* Réduit de 48%→36% (2026-07-26, Brice : le texte revenait à la ligne trop tôt, sans occuper
+   pleinement sa largeur disponible) : l'illustration gardait la moitié de la carte, ne laissant
+   au texte qu'une colonne étroite. Le texte dispose maintenant de ~64% au lieu de ~52%. */
+.hub-illus-wrap { flex: 0 0 36%; align-self: stretch; position: relative; overflow: hidden; min-width: 0; }
 /* L'image occupe tout le conteneur (= hauteur du cadre), sans recadrage (contain), plaquée à
    DROITE et en bas. */
 .hub-illus { position: absolute; right: 0; bottom: 0; width: 100%; height: 98%;

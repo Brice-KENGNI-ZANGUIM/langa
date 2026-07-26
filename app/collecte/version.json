@@ -1,6 +1,10 @@
 {
-  "version": "v411",
+  "version": "v412",
   "changelog": {
+    "v412": [
+      "Correction de cohérence : Transcrire et Traduire avaient leurs couleurs inversées entre les cartes d'accueil et la barre de navigation basse ; chaque page a maintenant sa propre couleur, la même partout (titre de page inclus, Demander avait aussi la mauvaise couleur)",
+      "Accueil : les textes des 4 cartes principales utilisent mieux la largeur disponible, avec moins de retours à la ligne prématurés"
+    ],
     "v411": [
       "Barre de navigation basse : fond nettement moins transparent (le flou ne s'affichait toujours pas sur certains téléphones)"
     ],
