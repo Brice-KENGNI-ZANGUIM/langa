@@ -73,7 +73,7 @@ export const STR = {
   "lang.provisoire": { fr: " · alphabet à valider", en: " · alphabet to confirm" },
   "lang.add": { fr: "Ajouter ma langue", en: "Add my language" },
   "lang.add.sub": { fr: "Elle n'est pas là ? Ajoute-la pour la communauté", en: "Not listed? Add it for the community" },
-  "lang.search.ph": { fr: "Rechercher une langue (nom, région…)", en: "Search a language (name, region…)" },
+  "lang.search.ph": { fr: "Rechercher (nom, région)…", en: "Search (name, region)…" },
   "lang.search.go": { fr: "Rechercher", en: "Search" },
   "tr.guide.title": { fr: "Avant d'enregistrer ta voix", en: "Before you record your voice" },
   "tr.guide.lead": { fr: "Trois règles simples pour un bon enregistrement :", en: "Three simple rules for a good recording:" },
