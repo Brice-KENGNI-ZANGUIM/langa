@@ -89,12 +89,9 @@
          dans un conteneur `.chips-nav` (même classe, pas le même élément) pour hériter
          SANS dupliquer le style plat des boutons de nav (.chips-nav .chip--btn). -->
     <div class="chips-nav chips-nav--top">
-      <!-- Accueil et Réglages, icône SEULE (sans texte NI cadre/fond de bouton) : symboles
-           illustrés directement posés sur le décor, universellement reconnus (maison = accueil,
-           icône dédiée = menu/réglages), regroupés au même endroit pour un header encore plus
-           épuré (Brice 2026-07-26/26b). -->
-      <a id="home-link" class="chip-bare" href="#/accueil" data-i18n-title="chip.home.title"
-              title="Retour à l'accueil" aria-label="Retour à l'accueil"><img class="chip-bare-ico" src="icons/ui/hi-home.png" alt="" aria-hidden="true"></a>
+      <!-- Réglages, icône SEULE (sans texte NI cadre/fond de bouton) : symbole illustré
+           directement posé sur le décor, universellement reconnu (icône dédiée = menu/réglages).
+           Accueil déplacé au centre de la barre basse (2026-07-26, Brice), cf. plus bas. -->
       <button id="settings-toggle" class="chip-bare" type="button" data-i18n-title="chip.settings.title"
               title="Réglages" aria-label="Réglages" aria-haspopup="dialog" aria-controls="settings-drawer" aria-expanded="false">
         <img class="chip-bare-ico" src="icons/ui/hi-menu.png" alt="" aria-hidden="true">
@@ -1108,6 +1105,11 @@
     <div class="bottom-nav-tabs" role="tablist" aria-label="Espaces">
       <a id="tab-transcrire" class="bottom-nav-tab" href="#/transcrire" role="tab"><img class="bottom-nav-ico" src="icons/ui/ic-record.png" alt="" aria-hidden="true"><span data-i18n="nav.transcribe">Transcrire</span></a>
       <a id="tab-traduire" class="bottom-nav-tab" href="#/traduire" role="tab"><img class="bottom-nav-ico" src="icons/ui/ic-write.png" alt="" aria-hidden="true"><span data-i18n="nav.translate">Traduire</span></a>
+      <!-- Accueil déplacé du header vers le CENTRE de la barre basse (2026-07-26, Brice) :
+           incrusté à même hauteur que la barre, entre les 2 premiers et les 2 derniers boutons
+           (illusion de coupure en deux, sans vrai espace créé). -->
+      <a id="home-link" class="bottom-nav-home" href="#/accueil" data-i18n-title="chip.home.title"
+              title="Retour à l'accueil" aria-label="Retour à l'accueil"><img class="bottom-nav-home-ico" src="icons/ui/hi-home.png" alt="" aria-hidden="true"></a>
       <a id="tab-explorer" class="bottom-nav-tab" href="#/explorer" role="tab"><img class="bottom-nav-ico" src="icons/ui/ic-browse.png" alt="" aria-hidden="true"><span data-i18n="nav.explore">Explorer</span></a>
       <a id="tab-demander" class="bottom-nav-tab" href="#/demander" role="tab"><img class="bottom-nav-ico" src="icons/ui/ni-request.png" alt="" aria-hidden="true"><span data-i18n="nav.demander">Demander</span></a>
     </div>

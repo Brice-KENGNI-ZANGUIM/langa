@@ -1,6 +1,9 @@
 {
-  "version": "v405",
+  "version": "v406",
   "changelog": {
+    "v406": [
+      "Le bouton Accueil quitte le header pour s'installer au centre de la barre de navigation basse, entre Traduire et Explorer"
+    ],
     "v405": [
       "Réglages : fond légèrement plus transparent, boutons un peu moins transparents, pastilles de statut placées avant les liens légaux et le copyright",
       "Réglages : le tiroir se referme maintenant systématiquement après un clic sur n'importe quel bouton ou lien (certains, dont les liens légaux, le laissaient ouvert)",
