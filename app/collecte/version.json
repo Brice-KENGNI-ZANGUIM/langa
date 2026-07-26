@@ -1,6 +1,10 @@
 {
-  "version": "v419",
+  "version": "v420",
   "changelog": {
+    "v420": [
+      "Traduire/Transcrire : le bandeau « La communauté attend une réponse dans ta langue » a disparu de la page (redondant) ; la même demande arrive désormais en popup, comme le mot du jour",
+      "« Supprimer » sur un popup le fait taire jusqu'au jour d'après (minuit), pas seulement 24h glissantes"
+    ],
     "v419": [
       "Icônes des 4 activités désormais IDENTIQUES partout (titre de page, cartes d'accueil, barre de navigation basse, mode présentation) : plus aucune icône générique, seulement les illustrations aux couleurs de l'Afrique",
       "Le slogan quitte finalement le header (clair et sombre, PC et mobile) pour un en-tête plus épuré",

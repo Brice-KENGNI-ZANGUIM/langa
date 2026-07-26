@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v419";
+const APP_VERSION = "v420";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1025,7 +1025,7 @@ async function saveContribution() {
   } else {
     resetForm();
   }
-  if (reqId) { _currentReqId = null; refreshReqStrip(); }   // la demande traitée disparaît du bandeau
+  if (reqId) { _currentReqId = null; }
   await refresh();
   kickReconcile();            // tente l'envoi tout de suite, puis en boucle jusqu'à confirmation
   toast(t("toast.saved.local"), "ok");
@@ -2157,6 +2157,9 @@ function enterHub() {
   setTimeout(() => { try { maybeShowIncitation(); } catch (e) { /* jamais bloquant */ } }, 1400);
   // Invitation à laisser un mot (« Ils parlent de nous ») pour les contributeurs actifs.
   setTimeout(() => { try { maybeInviteTestimonial(); } catch (e) { /* jamais bloquant */ } }, 1800);
+  // Demande de la communauté dans SA langue (remplace l'ancien bandeau fixe de Traduire/
+  // Transcrire, 2026-07-26) : au plus 1×/jour, comme le mot du jour.
+  setTimeout(() => { try { maybeShowReqPopup(); } catch (e) { /* jamais bloquant */ } }, 2000);
   // Les collecteurs ci-dessus ENFILENT leurs popups ; la file les affiche un par un, en alternance,
   // après le délai de grâce (jamais deux à la fois, persistant au rafraîchissement).
   startPopupQueue();
@@ -2997,46 +3000,21 @@ async function enterWork(act, forceMode) {
     _kbField = null;
   }
   showView("app");
-  refreshReqStrip(act);   // lot 5 : demandes de la communauté dans SA langue à traiter ici
   return true;
 }
 
-// --- LOT 5 « Demander » : bandeau des demandes de la communauté à traiter -----
-// Les demandes ouvertes DANS LA LANGUE de l'utilisateur apparaissent en haut de
-// Traduire/Transcrire. Un clic charge le mot demandé en source ; la réponse
-// devient une contribution reliée à la demande (compte comme réponse + notifie le
-// demandeur). On ne montre que les demandes pertinentes pour l'activité courante.
-let _reqStripItems = [];
+// --- LOT 5 « Demander » : demandes de la communauté à traiter -----------------
+// Les demandes ouvertes DANS LA LANGUE de l'utilisateur étaient affichées en
+// bandeau fixe en haut de Traduire/Transcrire (redondant, Brice 2026-07-26 :
+// « l'utilisateur est déjà sur la bonne page, plus besoin de le lui rappeler
+// là ») : retiré, la même fonctionnalité vit désormais en POPUP (rejoint la
+// file commune `_pq`), au même titre que l'incitation générique et le mot du
+// jour. Un clic sur le CTA ouvre directement la bonne activité (Traduire ou
+// Transcrire selon le type de demande) avec le mot chargé en source ; la
+// réponse devient une contribution reliée à la demande (notifie le demandeur).
 function _reqMatchesActivity(kind, act) {
   if (act === "transcribe") return kind === "transcription" || kind === "les_deux";
   return kind === "traduction" || kind === "les_deux";   // translate
-}
-async function refreshReqStrip(act) {
-  const strip = $("#req-strip"), list = $("#req-strip-list");
-  if (!strip || !list) return;
-  act = act || activity;
-  let data = null;
-  try { data = await fetchRequestsToTranslate(deviceId()); } catch (e) { data = null; }
-  const items = ((data && data.items) || []).filter((r) => _reqMatchesActivity(r.kind, act));
-  _reqStripItems = items;
-  if (!items.length) { strip.hidden = true; list.innerHTML = ""; return; }
-  list.innerHTML = items.map(reqStripChipHtml).join("");
-  strip.hidden = false;
-}
-function reqStripChipHtml(r) {
-  const label = (getUiLang() === "en" && r.texte_en) ? r.texte_en : r.texte;
-  const by = (r.credit || "").trim();
-  return `<button type="button" class="req-chip" role="listitem" data-rid="${escapeHtml(r.id)}"` +
-    ` title="${escapeHtml(by ? ti("reqx.by", { who: by }) : t("reqx.chip.title"))}">` +
-    `<span class="req-chip-word">${escapeHtml(label)}</span>` +
-    (r.note ? `<span class="req-chip-note">${escapeHtml(r.note)}</span>` : "") +
-    `</button>`;
-}
-function onReqStripClick(e) {
-  const btn = e.target.closest && e.target.closest(".req-chip");
-  if (!btn) return;
-  const item = _reqStripItems.find((x) => x.id === btn.dataset.rid);
-  if (item) loadRequestIntoSource(item);
 }
 /** Charge le mot d'une demande comme SOURCE à traiter (traduire/prononcer). La
     source est imposée (comme un item proposé) ; on retient l'id de la demande pour
@@ -3213,9 +3191,13 @@ function _popIllHTML(file) {
     "</span>";
 }
 
-// Mute 24h par TYPE de popup (« Supprimer », Brice 2026-07-26 : « j'ai l'impression que les
+// Mute par TYPE de popup (« Supprimer », Brice 2026-07-26 : « j'ai l'impression que les
 // utilisateurs se sentent envahis »), INDÉPENDANT du système de slots (am/pm/eve) : une fois
-// actionné, ce type de popup n'est même plus PROPOSÉ, quel que soit le slot, pendant 24h.
+// actionné, ce type de popup n'est même plus PROPOSÉ jusqu'au JOUR D'APRÈS (Brice 2026-07-26,
+// précision : « ne lui proposera le même type de popup qu'à compter du jour d'après », pas un
+// simple +24h glissant — cliqué à 23h50, il resterait muet jusqu'à minuit le lendemain SOIR avec
+// un +24h ; avec le minuit civil ci-dessous, il redevient dû dès 0h, comme n'importe quelle heure
+// de clic).
 const POPUP_MUTE_KEY = "langa-popup-mute";
 function _popupMutedUntil(type) {
   try { return (JSON.parse(localStorage.getItem(POPUP_MUTE_KEY) || "{}") || {})[type] || 0; }
@@ -3225,7 +3207,8 @@ function _popupIsMuted(type) { return Date.now() < _popupMutedUntil(type); }
 function _muteType(type) {
   try {
     const map = JSON.parse(localStorage.getItem(POPUP_MUTE_KEY) || "{}") || {};
-    map[type] = Date.now() + 24 * 3600000;
+    const minuit = new Date(); minuit.setHours(24, 0, 0, 0);   // minuit civil du jour d'après
+    map[type] = minuit.getTime();
     localStorage.setItem(POPUP_MUTE_KEY, JSON.stringify(map));
   } catch (e) { /* stockage indispo */ }
 }
@@ -3461,6 +3444,45 @@ function renderWodPopup(fr, show) {
   const msg = $("#incite-msg"); if (msg) msg.innerHTML = ti("wod.popup.msg", { w: kw("word", show, true) });
   const go = $("#incite-go");
   if (go) { go.textContent = t("wod.cta"); go.onclick = () => { _wodMarkShown(); bn.hidden = true; dismissPopup("wod"); startTranslateWord(fr); }; }
+  const lis = $("#incite-listen"); if (lis) { lis.hidden = true; lis.onclick = null; }
+  bn.hidden = false;
+}
+
+// --- Demande de la communauté (POPUP) ---------------------------------------
+// Reprend la fonctionnalité de l'ancien bandeau fixe de Traduire/Transcrire (retiré 2026-07-26,
+// Brice : redondant sur cette page), désormais un POPUP de plus dans la file `_pq`, montré au
+// plus 1×/jour (comme le mot du jour : une simple demande en attente n'a pas besoin d'un rythme
+// aussi soutenu que l'incitation générique).
+const REQPOP_SEEN_KEY = "langa-reqpop-seen-day";
+function reqpopDue() {
+  const c = loadContributeur();
+  if (!hasChosenLang() || !c.consentement) return false;
+  if (_popupIsMuted("reqpop")) return false;
+  try { return parseInt(localStorage.getItem(REQPOP_SEEN_KEY) || "-1", 10) !== _dayIndex(); }
+  catch (e) { return true; }
+}
+function _reqpopMarkShown() { try { localStorage.setItem(REQPOP_SEEN_KEY, String(_dayIndex())); } catch (e) { /* ok */ } }
+/** À l'arrivée sur l'accueil : ENFILE une demande de la communauté (dans SA langue) si due. */
+async function maybeShowReqPopup() {
+  if (!reqpopDue()) return;
+  let data = null;
+  try { data = await fetchRequestsToTranslate(deviceId()); } catch (e) { data = null; }
+  const items = (data && data.items) || [];
+  if (!items.length || !reqpopDue()) return;   // re-vérifie après l'await (course éventuelle)
+  const item = items[0];   // la plus récente (déjà triée par le backend)
+  _reqpopMarkShown();      // marqué dès l'enfilage (cf. correctif #incite/#wod, même principe)
+  enqueuePopup("reqpop", () => renderReqPopup(item));
+}
+function renderReqPopup(item) {
+  const bn = $("#incite-banner"); if (!bn || !item) return;
+  bn.dataset.ptype = "reqpop";
+  const ico = bn.querySelector(".incite-ico");
+  if (ico) ico.innerHTML = '<img src="icons/ui/ni-request.png" alt="" aria-hidden="true">';
+  const show = (getUiLang() === "en" && item.texte_en) ? item.texte_en : item.texte;
+  const msg = $("#incite-msg"); if (msg) msg.innerHTML = ti("reqx.popup.msg", { w: kw("word", show, true) });
+  const go = $("#incite-go");
+  if (go) { go.textContent = t("reqx.popup.cta"); go.onclick = () => { bn.hidden = true; dismissPopup("reqpop");
+    startRequestAnswer({ req_id: item.id, texte: item.texte, texte_en: item.texte_en, kind: item.kind, langue: item.langue }); }; }
   const lis = $("#incite-listen"); if (lis) { lis.hidden = true; lis.onclick = null; }
   bn.hidden = false;
 }
@@ -4049,8 +4071,6 @@ const TOURS = {
       en: { title: "Two ways to work", text: "“Get a word to work on” rolls out a queue of items to handle for you, without asking what to do next. “Write my own” lets you freely type the word or sentence you care about. You can change your mind anytime" } },
     { sel: "#prop-bar", title: "Ton fil de propositions", text: "En mode automatique les items arrivent groupe par groupe : d'abord les mots, puis les phrases, et le dictionnaire tout à la fin. Le compteur (par exemple « Mots · 7/335 ») marque ta progression ; « Prochain mot » avance sans jamais te resservir ce que tu as déjà traité",
       en: { title: "Your suggestion feed", text: "In automatic mode the items come group by group: first the words, then the sentences, and the dictionary right at the end. The counter (for example “Words · 7/335”) marks your progress; “Next word” moves on without ever serving you again what you've already handled" } },
-    { sel: "#req-strip", title: "Les demandes de la communauté", text: "Quand quelqu'un réclame un mot dans ta langue, il apparaît ici, juste au-dessus de ton travail. Touche-le pour le traiter tout de suite : ta réponse lui parviendra automatiquement, sans que tu aies à le recontacter. C'est le pont entre celui qui cherche et toi qui sais",
-      en: { title: "The community's requests", text: "When someone asks for a word in your language, it appears here, right above your work. Tap it to handle it at once: your answer reaches them automatically, without you having to contact them back. It's the bridge between whoever is looking and you who know" } },
     { sel: "#dir-toggle", title: "Le sens de traduction", text: "Choisis si tu pars du français vers le ngiemboon ou l'inverse. Les étiquettes FR et NGE des champs suivent ton choix, pour que tu saches toujours quelle langue va où. Bien utile selon la langue dans laquelle tu penses le mieux",
       en: { title: "The translation direction", text: "Choose whether you go from French to ngiemboon or the other way. The FR and NGE labels of the fields follow your choice, so you always know which language goes where. Quite useful depending on the language you think best in" } },
     { sel: "#source", title: "L'item de départ", text: "Le mot ou la phrase à traiter s'affiche ici. En mode proposé il est déjà rempli pour toi ; en mode libre c'est toi qui l'écris. C'est le point d'appui auquel ta réponse va répondre",
@@ -6575,7 +6595,6 @@ function initEvents() {
   );
   // Onglets de navigation permanents : VRAIES ancres <a href="#/…"> désormais, la navigation
   // passe par l'écouteur hashchange global (plus de handler de clic direct ici).
-  const rsl = $("#req-strip-list"); if (rsl) rsl.addEventListener("click", onReqStripClick);   // lot 5 : clic sur une demande
   const eCsv = $("#export-csv"); if (eCsv) eCsv.addEventListener("click", () => downloadDict("csv"));
   const eJson = $("#export-json"); if (eJson) eJson.addEventListener("click", () => downloadDict("json"));
   const eLift = $("#export-lift"); if (eLift) eLift.addEventListener("click", () => downloadDict("lift"));

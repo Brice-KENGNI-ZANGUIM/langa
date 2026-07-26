@@ -742,6 +742,8 @@ export const STR = {
   "reqx.chip.title": { fr: "Répondre à cette demande", en: "Answer this request" },
   "reqx.by": { fr: "Demandé par {who} : réponds-y", en: "Requested by {who}: answer it" },
   "reqx.loaded": { fr: "Demande chargée : « {w} ». Donne ta réponse ci-dessous.", en: "Request loaded: “{w}”. Give your answer below." },
+  "reqx.popup.msg": { fr: "La communauté attend une réponse dans ta langue : {w}", en: "The community is waiting for an answer in your language: {w}" },
+  "reqx.popup.cta": { fr: "Répondre →", en: "Answer →" },
   "req.title": { fr: "Demander une traduction", en: "Ask for a translation" },
   "req.intro": { fr: "Demande la <b>traduction</b> ou la <b>prononciation</b> d'un mot dans la langue de ton choix. Les personnes qui la parlent sont prévenues et peuvent t'aider.",
                 en: "Ask for the <b>translation</b> or <b>pronunciation</b> of a word in the language of your choice. Speakers of that language are notified and can help." },
