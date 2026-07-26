@@ -1,6 +1,9 @@
 {
-  "version": "v415",
+  "version": "v416",
   "changelog": {
+    "v416": [
+      "Correction mode clair : le violet de Transcrire (carte d'accueil, onglet, titre, mode présentation) utilisait la teinte du mode SOMBRE même en clair ; utilise désormais la bonne teinte selon le thème actif, comme les autres couleurs"
+    ],
     "v415": [
       "Popup d'invitation à contribuer et mot du jour : ne proposent plus un mot tout neuf à chaque retour sur l'accueil (corrigé le vrai plafond de 3 fois par jour maximum, chacun pour son propre type)",
       "Nouveau bouton « Supprimer » sur ce popup : n'affiche plus ce type de popup pendant 24h, plus radical que « Plus tard »"
