@@ -488,7 +488,7 @@ body {
      façon de la doser ici sans faire pâlir aussi le texte/les boutons (un `opacity` sur
      l'élément entier les affaiblirait aussi). */
   background-image:
-    linear-gradient(color-mix(in srgb, var(--panel) 75%, transparent), color-mix(in srgb, var(--panel) 75%, transparent)),
+    linear-gradient(color-mix(in srgb, var(--panel) 84%, transparent), color-mix(in srgb, var(--panel) 84%, transparent)),
     url("icons/bg-pattern-dark.jpg");
   background-position: center top, center top; background-size: auto, 520px auto; background-repeat: no-repeat, repeat;
   backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px);
@@ -496,10 +496,10 @@ body {
   box-shadow: -28px 0 70px -22px rgba(0,0,0,.55);
   transform: translateX(100%); transition: transform .26s ease; }
 :root[data-theme="light"] .settings-drawer-panel { background-image:
-    linear-gradient(color-mix(in srgb, var(--panel) 75%, transparent), color-mix(in srgb, var(--panel) 75%, transparent)),
+    linear-gradient(color-mix(in srgb, var(--panel) 84%, transparent), color-mix(in srgb, var(--panel) 84%, transparent)),
     url("icons/bg-pattern-light.jpg"); }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .settings-drawer-panel { background-image:
-    linear-gradient(color-mix(in srgb, var(--panel) 75%, transparent), color-mix(in srgb, var(--panel) 75%, transparent)),
+    linear-gradient(color-mix(in srgb, var(--panel) 84%, transparent), color-mix(in srgb, var(--panel) 84%, transparent)),
     url("icons/bg-pattern-dark.jpg"); } }
 .settings-drawer.is-open .settings-drawer-panel { transform: translateX(0); }
 /* Le VRAI conteneur défilant : uniquement le contenu (tête/corps/pied), jamais le décor. */
@@ -564,7 +564,7 @@ body {
    pleine largeur (liste verticale) et icône/texte un peu plus grands pour bien remplir le cadre. */
 .settings-link {
   border: 1px solid transparent; border-radius: 8px; background-image: none; box-shadow: none;
-  color: var(--text); background: rgba(255, 255, 255, .06);
+  color: var(--text); background: rgba(255, 255, 255, .11);
   width: 100%; box-sizing: border-box; justify-content: flex-start; align-items: center;
   /* Même hauteur que les boutons du header (.chips-nav .chip--btn, calée sur .nav-tab) —
      Brice 2026-07-25s : 45px desktop. Icône et remplissage vertical réduits pour que ce soit
@@ -573,7 +573,7 @@ body {
   gap: 14px; padding: 8px 16px; font-size: .95rem; font-weight: 600;
   min-height: 45px;
   transition: background .16s ease, color .16s ease, transform .1s ease; }
-:root[data-theme="light"] .settings-link { background: rgba(18, 30, 46, .06); }
+:root[data-theme="light"] .settings-link { background: rgba(18, 30, 46, .11); }
 .settings-link:hover {
   background: rgba(34, 211, 238, .16);
   background: color-mix(in srgb, var(--cyan) 16%, transparent);
@@ -602,16 +602,17 @@ body {
 /* Interface (FR|EN, thème) : mêmes capsules que partout, agrandies EN VRAIE TAILLE de boîte
    (jamais transform:scale — un scale visuel sans le vrai encombrement ferait chevaucher les
    2 capsules dans la même ligne, corrigé 2026-07-25c). */
-.settings-toggle-big.lang-switch .lang-seg { padding: 12px 20px; font-size: 1rem; min-width: 3.4ch; }
-.settings-toggle-big.theme-switch .theme-ico { height: 38px; }
+/* Hauteur ×0.8 (Brice 2026-07-26 : « je les trouve beaucoup trop haut »). */
+.settings-toggle-big.lang-switch .lang-seg { padding: 9.6px 16px; font-size: .8rem; min-width: 2.7ch; }
+.settings-toggle-big.theme-switch .theme-ico { height: 30px; }
 /* Sur téléphone, FR|EN et clair/sombre étaient nettement plus hauts que les autres boutons du
    tiroir (Brice 2026-07-25v) : ramenés à exactement la même hauteur (40px, le même plancher que
-   .settings-link ci-dessus). theme-ico gouverne seul la hauteur du bouton thème (ni padding ni
-   bordure sur .theme-switch) → 40px direct ; lang-seg doit composer avec la bordure de la
-   capsule (2px) + son remplissage vertical. */
+   .settings-link ci-dessus), puis ×0.8 en plus (2026-07-26). theme-ico gouverne seul la hauteur
+   du bouton thème (ni padding ni bordure sur .theme-switch) → hauteur directe ; lang-seg doit
+   composer avec la bordure de la capsule (2px) + son remplissage vertical. */
 @media (max-width: 900px) {
-  .settings-toggle-big.lang-switch .lang-seg { padding: 11.5px 16px; font-size: .92rem; min-width: 3ch; }
-  .settings-toggle-big.theme-switch .theme-ico { height: 40px; }
+  .settings-toggle-big.lang-switch .lang-seg { padding: 9.2px 13px; font-size: .74rem; min-width: 2.4ch; }
+  .settings-toggle-big.theme-switch .theme-ico { height: 32px; }
 }
 .settings-drawer-foot { position: relative; z-index: 1; padding: 14px 18px; border-top: 1px solid var(--border);
   display: flex; flex-direction: column; gap: 10px; flex: 0 0 auto; }
@@ -3129,26 +3130,24 @@ body::after {
   border: 0; border-radius: 0;
   border-bottom: 2px solid color-mix(in srgb, var(--cyan) 52%, var(--gold));
   box-shadow: 0 14px 28px -22px rgba(0,0,0,.6); }
-/* Bouton PARTAGER cette page (2026-07-26, refonte) : ICÔNE SEULE, en overlay discret dans le
-   coin haut-droit de l'ancre (bannière ou bloc de titre) — ne consomme plus une ligne entière du
-   flux de la page (Brice : épurer, ce n'est pas un élément central de travail). `.bs-anchor`
+/* Bouton PARTAGER cette page (2026-07-26, refonte) : ICÔNE SEULE, SANS cadre (Brice : le cercle
+   la rendait peu visible, juste l'icône), en overlay discret dans le coin haut-droit de l'ancre
+   (bannière ou bloc de titre) — ne consomme plus une ligne entière du flux de la page. `.bs-anchor`
    (posé en JS sur l'ancre) fournit le repère de positionnement sans toucher au reste de son
-   style. Présent sur toutes les pages, discret mais toujours accessible au même endroit. */
+   style. Même traitement que les icônes nues du header (.chip-bare-ico) : pas de fond/bordure,
+   juste une ombre portée pour rester lisible sur n'importe quel arrière-plan. */
 .bs-anchor { position: relative; }
-.banner-share { position: absolute; top: 10px; right: 10px; z-index: 5;
-  display: flex; align-items: center; justify-content: center; width: 34px; height: 34px;
-  border-radius: 50%; cursor: pointer; padding: 0;
-  background: color-mix(in srgb, var(--panel) 78%, transparent);
-  border: 1.5px solid color-mix(in srgb, var(--cyan) 55%, var(--border));
-  box-shadow: 0 4px 14px -6px rgba(0,0,0,.5), inset 0 1px 0 var(--card-sheen);
-  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
-  transition: transform .1s, box-shadow .16s, filter .16s; }
-.banner-share:hover { transform: translateY(-1px); filter: brightness(1.15); box-shadow: 0 6px 18px -6px var(--cyan); }
-.banner-share:active { transform: translateY(1px); }
-.banner-share .bs-ico { width: 17px; height: 17px; flex: 0 0 auto; }
+.banner-share { position: absolute; top: 8px; right: 8px; z-index: 5;
+  display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;
+  background: none; border: none; box-shadow: none; cursor: pointer; padding: 0;
+  transition: transform .1s ease, filter .16s ease; }
+.banner-share:hover { transform: translateY(-1px) scale(1.08); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--cyan) 65%, transparent)); }
+.banner-share:active { transform: translateY(0) scale(.96); }
+.banner-share .bs-ico { width: 26px; height: 26px; flex: 0 0 auto;
+  filter: drop-shadow(0 2px 5px rgba(0,0,0,.5)) drop-shadow(0 0 4px rgba(0,0,0,.4)); }
 @media (max-width: 560px) {
-  .banner-share { width: 30px; height: 30px; top: 8px; right: 8px; }
-  .banner-share .bs-ico { width: 15px; height: 15px; }
+  .banner-share { width: 26px; height: 26px; top: 7px; right: 7px; }
+  .banner-share .bs-ico { width: 22px; height: 22px; }
 }
 .page-banner-img { display: block; width: 100%; height: auto; }
 /* Accroche calée à gauche (sur la zone sombre), centrée verticalement. */
@@ -3710,7 +3709,6 @@ textarea, [contenteditable="true"] { cursor: text; }
   .btn { background: var(--panel); border-color: var(--border); }
   .btn--primary, .btn--next, .btn--send { background: var(--cyan); border-color: var(--cyan); color: var(--bg); }
   .btn--rec { background: var(--red); border-color: var(--red); color: #fff; }
-  .banner-share { background: var(--panel); border-color: var(--cyan); }
   /* Cadres / cartes / popups */
   .card { background: var(--card-bg); border-color: var(--border); }
   .tr-guide-card, .incite-banner, .notif-popup, .share-panel-card, .profile-gate-card,

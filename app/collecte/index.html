@@ -168,6 +168,15 @@
         </div>
       </div>
       <div class="settings-drawer-foot">
+        <!-- Ordre demandé par Brice (2026-07-26) : pastilles de statut d'abord, puis liens
+             légaux, puis copyright en dernier. -->
+        <!-- Version : décorée comme les autres pastilles (dot + halo) ; VERTE si l'app est à
+             jour, ROUGE si une mise à jour est disponible. -->
+        <div class="settings-status">
+          <span id="app-ver" class="chip chip--on" data-i18n-title="app.ver.title" title="Version de l'application"></span>
+          <span id="net" class="chip">…</span>
+          <span id="srv" class="chip">…</span>
+        </div>
         <!-- Informations légales + copyright, relogées depuis le pied de page classique
              (Brice 2026-07-26k) : toujours accessibles ici, y compris sur les pages qui n'ont
              plus de footer (Transcrire/Traduire/Explorer/Demander). Même classe/attribut
@@ -180,13 +189,6 @@
           <a href="#/cgv" class="foot-legal-link" data-legal="cgv" data-i18n="legal.cgv">CGV</a>
         </nav>
         <p class="settings-copy">© 2026 Brice Kengni Zanguim · <span data-i18n="foot.thanks">Merci à chaque contributeur de la langue</span></p>
-        <!-- Version : décorée comme les autres pastilles (dot + halo) ; VERTE si l'app est à
-             jour, ROUGE si une mise à jour est disponible. -->
-        <div class="settings-status">
-          <span id="app-ver" class="chip chip--on" data-i18n-title="app.ver.title" title="Version de l'application"></span>
-          <span id="net" class="chip">…</span>
-          <span id="srv" class="chip">…</span>
-        </div>
       </div>
      </div>
     </div>

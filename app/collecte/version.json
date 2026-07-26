@@ -1,6 +1,13 @@
 {
-  "version": "v404",
+  "version": "v405",
   "changelog": {
+    "v405": [
+      "Réglages : fond légèrement plus transparent, boutons un peu moins transparents, pastilles de statut placées avant les liens légaux et le copyright",
+      "Réglages : le tiroir se referme maintenant systématiquement après un clic sur n'importe quel bouton ou lien (certains, dont les liens légaux, le laissaient ouvert)",
+      "Réglages : bascules Français/Anglais et clair/sombre moins hautes",
+      "Bouton « Partager cette page » : l'icône seule, sans son cadre rond, pour rester bien visible",
+      "Le pied de page classique (logo, nom, slogan, contact…) n'apparaît plus que sur À propos, Bugs et les pages légales"
+    ],
     "v404": [
       "Accueil : texte d'introduction raccourci",
       "Accueil (mobile) : les 4 cartes d'activité tiennent maintenant sans avoir à défiler sur la plupart des téléphones",

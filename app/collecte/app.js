@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v404";
+const APP_VERSION = "v405";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1250,14 +1250,16 @@ function initSettingsDrawer() {
     const d = $("#settings-drawer");
     if (e.key === "Escape" && d && !d.hidden) closeSettingsDrawer();
   });
-  // Un lien du tiroir cliqué (Langues/À propos/Bugs/Aide) referme le tiroir : la navigation
-  // qui suit doit se voir sur la page, pas rester masquée derrière le panneau ouvert.
+  // N'IMPORTE QUEL bouton/lien du tiroir cliqué referme le tiroir (Brice 2026-07-26 : « pour
+  // tous les boutons », certains comme les liens légaux du pied — CGU/CGV/Mentions/Confidentialité
+  // — le laissaient ouvert par-dessus la page qui venait de s'ouvrir). Posé sur `.settings-drawer-
+  // scroll` (englobe body ET foot en un seul écouteur) plutôt que sur `.settings-drawer-body` seul.
   // `_drawerLinkJustClicked` : distingue ce clic (navigation EN AVANT, à laisser filer) d'un
   // vrai bouton retour dans onHistoryNav — les deux déclenchent un `popstate` (une ancre
   // `#foo` cliquée en déclenche un EN PLUS du hashchange), donc le type d'événement seul ne
   // suffit pas à les différencier (cf. onHistoryNav, Brice 2026-07-25r).
-  const body = $(".settings-drawer-body");
-  if (body) body.addEventListener("click", (e) => {
+  const scroll = $(".settings-drawer-scroll");
+  if (scroll) scroll.addEventListener("click", (e) => {
     if (e.target.closest("a, button")) {
       _drawerLinkJustClicked = true;
       setTimeout(() => { _drawerLinkJustClicked = false; }, 0);
@@ -1404,11 +1406,13 @@ function showView(name) {
   // ou une page hors de ces 4 espaces (À propos, Bugs, Profil…), ce qui est normal.
   const active = { app: (activity === "transcribe" ? "tab-transcrire" : "tab-traduire"), explore: "tab-explorer", demander: "tab-demander" }[name];
   ["#tab-transcrire", "#tab-traduire", "#tab-explorer", "#tab-demander"].forEach((s) => { const el = $(s); if (el) el.classList.toggle("is-active", ("#" + active) === s); });
-  // Pied de page CLASSIQUE (liens, réseaux) masqué sur les 4 pages d'activité (Brice 2026-07-26j) :
-  // la barre de navigation basse y joue déjà ce rôle, le garder ferait doublon. Reste affiché
-  // partout ailleurs (accueil, à propos, bugs, notifications, profil, langues…).
+  // Pied de page CLASSIQUE (logo/nom/slogan/contact…) : réservé aux pages purement informatives
+  // (À propos, Bugs, pages légales) — Brice 2026-07-26 : partout ailleurs (accueil, langues,
+  // profil, notifications, les 4 pages d'activité) il fait doublon avec la barre basse et le
+  // tiroir Réglages, qui donnent déjà accès à tout. Liste blanche plutôt que liste noire : tout
+  // NOUVEL écran reste sans footer par défaut, sauf ajout explicite ici.
   const foot = $(".site-footer");
-  if (foot) foot.hidden = (name === "app" || name === "explore" || name === "demander");
+  if (foot) foot.hidden = !(name === "about" || name === "bugs" || name === "legal");
   // « Mon profil » : visibilité conditionnée UNIQUEMENT à l'existence d'un profil.
   // Il reste donc affiché sur TOUTES les pages, y compris la vue profil elle-même
   // (il y sert de repère et n'a jamais à disparaître). Sans profil : rien à ouvrir.
