@@ -1,6 +1,9 @@
 {
-  "version": "v416",
+  "version": "v417",
   "changelog": {
+    "v417": [
+      "Accueil : le motif décoratif entre le texte et les 4 cartes a disparu, il orne désormais la bordure basse du header, à la place du filet qui la balayait"
+    ],
     "v416": [
       "Correction mode clair : le violet de Transcrire (carte d'accueil, onglet, titre, mode présentation) utilisait la teinte du mode SOMBRE même en clair ; utilise désormais la bonne teinte selon le thème actif, comme les autres couleurs"
     ],

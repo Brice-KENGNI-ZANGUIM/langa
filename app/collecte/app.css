@@ -3019,14 +3019,8 @@ body::after {
   50%      { transform: translate(-7%, -6%) scale(1); }
 }
 
-/* En-tête : liseré cyan→vert qui balaie lentement */
-.topbar::after {
-  content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 2px;
-  background: linear-gradient(90deg, transparent, var(--cyan), var(--green), transparent);
-  background-size: 220% 100%; opacity: .75;
-  animation: ngHeaderLine 7s linear infinite;
-}
-@keyframes ngHeaderLine { to { background-position: 220% 0; } }
+/* En-tête : l'ornement Ndop (cf. .ndop-sep, .topbar-sep) est désormais incrusté sur la
+   bordure basse à la place de l'ancien filet cyan→vert qui balayait cette ligne. */
 
 /* Logo : halo qui respire */
 .brand-mark, .foot-mark { position: relative; }
@@ -3358,6 +3352,23 @@ body::after {
   0%,100% { box-shadow: 0 0 8px -2px var(--gold), inset 0 0 6px -2px var(--cyan); }
   50%     { box-shadow: 0 0 18px 1px var(--gold), inset 0 0 9px -1px var(--cyan); }
 }
+/* Variante incrustée dans la bordure basse du header (2026-07-26, Brice : retiré de l'accueil,
+   remplace le filet cyan→vert qui balayait cette ligne) : le même motif, mais positionné en
+   ABSOLU sur toute la largeur du header, filets réduits à un simple trait fin qui coïncide avec
+   la bordure, médaillon central à cheval dessus (déborde symétriquement au-dessus/en dessous). */
+.ndop-sep.topbar-sep {
+  position: absolute; left: 0; right: 0; bottom: -1px; margin: 0;
+  z-index: 5; pointer-events: none; gap: 8px;
+}
+.ndop-sep.topbar-sep::before, .ndop-sep.topbar-sep::after { height: 1px; }
+.ndop-sep.topbar-sep i { width: 24px; height: 24px; }
+.ndop-sep.topbar-sep i::before { left: -11px; }
+.ndop-sep.topbar-sep i::after { right: -11px; }
+@media (max-width: 560px) {
+  .ndop-sep.topbar-sep i { width: 19px; height: 19px; }
+  .ndop-sep.topbar-sep i::before { left: -9px; }
+  .ndop-sep.topbar-sep i::after { right: -9px; }
+}
 
 /* ── Carte stylisée des variantes (d'où viennent les contributions) ────────
    SVG inline (aucune dépendance, offline) : chaque village = un losange Ndop
@@ -3615,7 +3626,7 @@ body::after {
    vie dès que le clavier se ferme. Ainsi le décor ne disparaît pas, il se met
    juste en pause là où la réactivité prime. */
 body.kb-docked::before, body.kb-docked::after,
-body.kb-docked .brand::before, body.kb-docked .topbar::after,
+body.kb-docked .brand::before,
 body.kb-docked .brand-mark::before, body.kb-docked .brand-mark::after,
 body.kb-docked .foot-mark::before, body.kb-docked .foot-mark::after,
 body.kb-docked .view-title::before, body.kb-docked .view-title::after,
