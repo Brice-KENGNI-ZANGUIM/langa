@@ -196,7 +196,7 @@
   <main class="wrap">
     <!-- ============= VUE 0 : CHOIX DE LA LANGUE (1er accès + à tout moment) ====== -->
     <section id="view-lang" class="view" hidden>
-      <div class="page-banner"><img class="page-banner-img" src="icons/banner-langues.jpg" alt="" aria-hidden="true">
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-langues.jpg" alt="" aria-hidden="true" loading="lazy">
         <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.lang.eye">Les langues</span><span class="pb-title" data-i18n="pb.lang.title">Chaque langue compte</span></div></div>
       <div class="hub-head"><h2 class="view-title" id="lang-title" data-i18n="lang.title">Choisis ta langue 🌍</h2></div>
       <p class="hub-vision" data-i18n="lang.intro">LANGIAL est une plateforme communautaire où chaque langue s'enrichit
@@ -295,10 +295,10 @@
 
     <!-- ================= VUE 1 : PROFIL (accueil obligatoire / édition) ========= -->
     <section id="view-profile" class="view" hidden>
-      <div class="page-banner"><img class="page-banner-img" src="icons/banner-profile.jpg" alt="" aria-hidden="true">
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-profile.jpg" alt="" aria-hidden="true" loading="lazy">
         <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.profile.eye">Ton profil</span><span class="pb-title" data-i18n="pb.profile.title">Fais-toi connaître</span></div></div>
       <div class="card contrib">
-        <h2 class="view-title view-title--ico"><img class="title-ico title-ico--avatar" src="icons/avatar-default.webp" alt="" aria-hidden="true"><span id="profile-title">Bienvenue 👋🏾</span></h2>
+        <h2 class="view-title view-title--ico"><img class="title-ico title-ico--avatar" src="icons/avatar-default.webp" alt="" aria-hidden="true" loading="lazy"><span id="profile-title">Bienvenue 👋🏾</span></h2>
         <p class="contrib-why" data-i18n-html="p.intro">Avant de commencer, renseigne ton profil. Ces informations servent
           à <b>te créditer</b> comme contributeur et à <b>revenir vers toi</b> si une traduction
           demande une précision. Elles sont enregistrées sur ton appareil : tu ne les saisiras
@@ -879,7 +879,7 @@
 
     <!-- ============== VUE SUIVI DES BUGS ================================== -->
     <section id="view-bugs" class="view" hidden>
-      <div class="page-banner"><img class="page-banner-img" src="icons/banner-bugs.jpg" alt="" aria-hidden="true">
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-bugs.jpg" alt="" aria-hidden="true" loading="lazy">
         <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.bugs.eye">Amélioration continue</span><span class="pb-title" data-i18n="pb.bugs.title">Signale, on corrige ensemble</span></div></div>
       <div class="about-head">
         <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-bug.png" alt="" aria-hidden="true"><span data-i18n="bugs.title">Suivi des bugs</span></h2>
@@ -950,7 +950,7 @@
 
     <!-- ============== VUE NOTIFICATIONS =================================== -->
     <section id="view-notifs" class="view" hidden>
-      <div class="page-banner"><img class="page-banner-img" src="icons/banner-notifs.jpg" alt="" aria-hidden="true">
+      <div class="page-banner"><img class="page-banner-img" src="icons/banner-notifs.jpg" alt="" aria-hidden="true" loading="lazy">
         <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.notifs.eye">Notifications</span><span class="pb-title" data-i18n="pb.notifs.title">L'écho de ta communauté</span></div></div>
       <div class="about-head">
         <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span data-i18n="notif.title">Mes notifications</span></h2>
@@ -963,7 +963,7 @@
       </div>
       <ul id="notif-feed" class="notif-feed" aria-live="polite"></ul>
       <div id="notif-empty" class="empty-state" hidden>
-        <img class="empty-illus" src="icons/empty-notifs.webp" alt="" aria-hidden="true">
+        <img class="empty-illus" src="icons/empty-notifs.webp" alt="" aria-hidden="true" loading="lazy">
         <p class="notif-empty" data-i18n="notif.empty">Aucune notification pour l'instant. Contribue et
           échange avec la communauté qui transmet et apprend : tu seras prévenu ici dès qu'il se passe quelque chose autour de ce que tu as laissé.</p>
       </div>
@@ -1030,7 +1030,7 @@
       </div>
       <ul id="req-list" class="req-list" aria-live="polite"></ul>
       <div id="req-empty" class="empty-state" hidden>
-        <img class="empty-illus" src="icons/empty-explore.webp" alt="" aria-hidden="true">
+        <img class="empty-illus" src="icons/empty-explore.webp" alt="" aria-hidden="true" loading="lazy">
         <p class="notif-empty" data-i18n="req.empty">Aucune demande en attente pour l'instant. Sois le premier
           à demander de l'aide à la communauté.</p>
       </div>
@@ -1053,7 +1053,7 @@
     </section>
   </main>
 
-  <footer class="site-footer">
+  <footer class="site-footer" hidden>
     <div class="foot-inner">
       <a class="foot-brand foot-brand--home" id="foot-home" href="#/accueil"
            data-i18n-title="brand.home.title" title="Revenir à l'accueil" aria-label="Revenir à l'accueil : Traduire, Transcrire, Explorer">
@@ -1339,7 +1339,7 @@
        et pourquoi remplir un profil est indispensable, façon « consignes ». -->
   <div id="profile-gate" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="pg-title">
     <div class="tr-guide-card profile-gate-card">
-      <div class="pgate-hero-wrap"><img class="pgate-hero" src="icons/welcome-first.webp" alt="" aria-hidden="true" /></div>
+      <div class="pgate-hero-wrap"><img class="pgate-hero" src="icons/welcome-first.webp" alt="" aria-hidden="true" loading="lazy" /></div>
       <div class="tr-guide-head">
         <h2 id="pg-title" data-i18n="pgate.title">Un profil, puis c'est parti</h2>
         <p class="tr-guide-lead" id="pg-reason"></p>

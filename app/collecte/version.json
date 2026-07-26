@@ -1,6 +1,9 @@
 {
-  "version": "v429",
+  "version": "v430",
   "changelog": {
+    "v430": [
+      "Chargement du premier écran nettement allégé (mesuré : environ 10 Mo → 6,5 Mo) : les images des pages pas encore ouvertes (profil, bugs, notifications, langues, pied de page) ne se téléchargent plus qu'au moment où on les visite réellement"
+    ],
     "v429": [
       "Barre de navigation basse : la coloration de l'onglet où tu te trouves est plus intense et plus nette (halo, liseré, petit repère en bas), et un fin filet sépare désormais chaque bouton",
       "L'icône Accueil, qui n'avait jusqu'ici aucun signe visuel quand on est sur cette page, s'illumine elle aussi"

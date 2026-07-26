@@ -2245,7 +2245,6 @@ input:-webkit-autofill:focus {
 .kb-floating .tip-panel .tip-glyph { font-size: 1.15rem; }
 .kb-floating .tip-panel .tip-prononce { font-size: .82rem; font-weight: 600; }
 .kb-floating .tip-panel .tip-ipa   { font-size: .72rem; }
-.kb-floating .tip-panel .tip-desc,
 .kb-floating .tip-panel .tip-ex     { font-size: .72rem; }
 .kb-floating .tip-panel .tip-ex .arrow { margin: 0 4px; }
 .kb-block.is-open .kb-open-btn { display: none; }
@@ -2293,7 +2292,6 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 /* « Comment prononcer » = texte PRINCIPAL, bien lisible (peut passer à la ligne). */
 .tip-panel .tip-prononce { color: var(--text); font-size: .92rem; font-weight: 600; white-space: normal; }
 .tip-panel .tip-ipa { color: var(--cyan); font-size: .82rem; font-weight: 600; opacity: .85; }
-.tip-panel .tip-desc { color: var(--text); font-size: .86rem; }
 .tip-panel .tip-ex { color: var(--muted); font-size: .84rem; }
 .tip-panel .tip-ex b { color: var(--green); }
 .tip-panel .tip-ex .arrow { margin: 0 6px; color: var(--muted); }
