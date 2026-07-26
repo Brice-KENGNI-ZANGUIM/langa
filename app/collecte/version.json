@@ -1,6 +1,11 @@
 {
-  "version": "v406",
+  "version": "v407",
   "changelog": {
+    "v407": [
+      "Bouton Accueil de la barre basse : icône seule, sans cadre",
+      "Accueil : les descriptions des 4 activités s'affichent maintenant en entier, plus aucun texte coupé",
+      "Bouton « Partager cette page » agrandi, plus visible"
+    ],
     "v406": [
       "Le bouton Accueil quitte le header pour s'installer au centre de la barre de navigation basse, entre Traduire et Explorer"
     ],

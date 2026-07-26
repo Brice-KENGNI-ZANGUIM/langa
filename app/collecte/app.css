@@ -906,22 +906,17 @@ body {
   .bottom-nav-ico { width: auto; height: 21px; }
 }
 /* Accueil, INCRUSTÉ au centre de la barre basse (2026-07-26, Brice), entre Traduire et Explorer :
-   même matière que la barre (pas de fond/cadre propre, jamais un bouton flottant façon appareil
-   photo d'Instagram), même hauteur qu'elle (étirée par le flex du parent, align-items: stretch
-   hérité). Largeur FIXE (contrairement aux 4 onglets en flex:1) : juste assez pour l'icône,
-   entourée de 2 filets très fins qui suggèrent une coupure de la barre en deux sans l'ouvrir
-   réellement — une illusion, pas un vrai espace. */
+   ICÔNE SEULE, aucun cadre/fond associé (Brice : « juste l'icône ») — même matière que la barre,
+   jamais un bouton flottant façon appareil photo d'Instagram, même hauteur qu'elle (étirée par
+   le flex du parent, align-items: stretch hérité). Largeur FIXE (contrairement aux 4 onglets en
+   flex:1) : juste assez pour l'icône, qui suffit seule à suggérer une coupure de la barre en
+   deux (2 onglets de chaque côté) sans qu'aucun vrai espace ni cadre ne soit créé. */
 .bottom-nav-home { --acc: var(--cyan); flex: 0 0 auto; width: 54px; display: flex;
-  align-items: center; justify-content: center; text-decoration: none;
-  box-shadow: inset 1px 0 0 color-mix(in srgb, var(--border) 70%, transparent),
-              inset -1px 0 0 color-mix(in srgb, var(--border) 70%, transparent);
-  transition: background .16s ease; }
-.bottom-nav-home:hover { background: color-mix(in srgb, var(--acc) 8%, transparent); }
+  align-items: center; justify-content: center; text-decoration: none; background: none; }
 .bottom-nav-home-ico { width: auto; height: 27px; flex: none;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,.35)); transition: transform .12s ease, filter .16s ease; }
 .bottom-nav-home:hover .bottom-nav-home-ico { transform: translateY(-1px) scale(1.06);
   filter: drop-shadow(0 0 8px color-mix(in srgb, var(--acc) 60%, transparent)); }
-.bottom-nav-home.is-active { background: color-mix(in srgb, var(--acc) 12%, transparent); }
 @media (max-width: 560px) {
   .bottom-nav-home { width: 46px; }
   .bottom-nav-home-ico { height: 24px; }
@@ -1026,11 +1021,10 @@ body {
   .hub-card { min-height: 82px; }
   .hub-card--illus .hub-text { padding: 6px 4px 6px 12px; gap: 2px; justify-content: center; }
   .hub-card--illus .hub-name { font-size: 1.02rem; }
-  /* Description clampée à 1 ligne (2026-07-26, Brice : les 4 cartes doivent tenir sans scroll
-     à l'arrivée sur l'accueil) : une hauteur garantie quelle que soit la longueur du texte dans
-     la langue d'interface, plutôt que de raccourcir chaque texte à la main par langue. */
-  .hub-card--illus .hub-desc { font-size: .7rem; line-height: 1.25;
-    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
+  /* Description ENTIÈREMENT lisible, jamais coupée (Brice 2026-07-26 : le clamp à 1 ligne
+     tronquait le texte) : taille réduite pour rester compact, mais tout le texte s'affiche,
+     sur autant de lignes que nécessaire. */
+  .hub-card--illus .hub-desc { font-size: .68rem; line-height: 1.28; }
   .hub-card--illus .hub-go { font-size: .74rem; }
   .hub-card--illus .hub-ico { width: 32px; height: 32px; padding: 5px; }
   .hub-card-head { gap: 7px; }
@@ -3159,16 +3153,16 @@ body::after {
    juste une ombre portée pour rester lisible sur n'importe quel arrière-plan. */
 .bs-anchor { position: relative; }
 .banner-share { position: absolute; top: 8px; right: 8px; z-index: 5;
-  display: flex; align-items: center; justify-content: center; width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center; width: 42px; height: 42px;
   background: none; border: none; box-shadow: none; cursor: pointer; padding: 0;
   transition: transform .1s ease, filter .16s ease; }
 .banner-share:hover { transform: translateY(-1px) scale(1.08); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--cyan) 65%, transparent)); }
 .banner-share:active { transform: translateY(0) scale(.96); }
-.banner-share .bs-ico { width: 26px; height: 26px; flex: 0 0 auto;
+.banner-share .bs-ico { width: 38px; height: 38px; flex: 0 0 auto;
   filter: drop-shadow(0 2px 5px rgba(0,0,0,.5)) drop-shadow(0 0 4px rgba(0,0,0,.4)); }
 @media (max-width: 560px) {
-  .banner-share { width: 26px; height: 26px; top: 7px; right: 7px; }
-  .banner-share .bs-ico { width: 22px; height: 22px; }
+  .banner-share { width: 34px; height: 34px; top: 7px; right: 7px; }
+  .banner-share .bs-ico { width: 30px; height: 30px; }
 }
 .page-banner-img { display: block; width: 100%; height: auto; }
 /* Accroche calée à gauche (sur la zone sombre), centrée verticalement. */
