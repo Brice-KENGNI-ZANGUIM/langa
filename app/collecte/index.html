@@ -413,8 +413,6 @@
     <section id="view-hub" class="view" hidden>
       <div class="hub-head">
         <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-home.png" alt="" aria-hidden="true"><span id="hub-title">Bonjour 👋🏾</span></h2>
-        <p class="contrib-why" data-i18n="hub.choose">Choisis une activité pour commencer. Tu passeras de l'une à l'autre
-          quand tu veux, grâce au menu en haut.</p>
         <p class="hub-vision" data-i18n-html="hub.vision">LANGIAL numérise <b>nos langues d'Afrique</b>, texte et voix. Le <b>ngiemboon</b> est la plus avancée, avec son clavier dédié ; d'autres langues sont déjà ouvertes et tu peux déclarer la tienne. Tout le monde peut y contribuer.</p>
       </div>
       <!-- Repère d'accueil (Brice 2026-07-25) : 3 étapes pour un nouvel arrivant qui ne sait pas
@@ -432,14 +430,6 @@
         <span class="onboard-step" id="onboard-step-contrib" data-step="3">
           <span class="onboard-num">3</span><span data-i18n="onboard.contrib">Transcris ou traduis ton premier mot</span>
         </span>
-      </div>
-      <!-- MOT DU JOUR (R10) : un mot proposé chaque jour (le même pour tous), à dire dans sa langue. -->
-      <div id="word-of-day" class="wod" hidden>
-        <span class="wod-eye" data-i18n="wod.eye">◆ Mot du jour</span>
-        <div class="wod-body">
-          <span class="wod-word" id="wod-word"></span>
-          <button type="button" class="btn btn--primary wod-cta" id="wod-cta"><img class="wod-cta-ico" src="icons/ui/ic-say.png" alt="" aria-hidden="true"><span data-i18n="wod.cta">Dis-le dans ta langue →</span></button>
-        </div>
       </div>
       <div class="ndop-sep" aria-hidden="true"><i></i></div>
       <div class="hub-cards">
@@ -1114,10 +1104,10 @@
        header). -->
   <nav id="main-nav" class="bottom-nav">
     <div class="bottom-nav-tabs" role="tablist" aria-label="Espaces">
-      <a id="tab-transcrire" class="bottom-nav-tab" href="#/transcrire" role="tab"><img class="bottom-nav-ico" src="icons/mic-real.png" alt="" aria-hidden="true"><span data-i18n="nav.transcribe">Transcrire</span></a>
+      <a id="tab-transcrire" class="bottom-nav-tab" href="#/transcrire" role="tab"><img class="bottom-nav-ico" src="icons/ui/ic-record.png" alt="" aria-hidden="true"><span data-i18n="nav.transcribe">Transcrire</span></a>
       <a id="tab-traduire" class="bottom-nav-tab" href="#/traduire" role="tab"><img class="bottom-nav-ico" src="icons/ui/ic-write.png" alt="" aria-hidden="true"><span data-i18n="nav.translate">Traduire</span></a>
       <a id="tab-explorer" class="bottom-nav-tab" href="#/explorer" role="tab"><img class="bottom-nav-ico" src="icons/act-explore.svg" alt="" aria-hidden="true"><span data-i18n="nav.explore">Explorer</span></a>
-      <a id="tab-demander" class="bottom-nav-tab" href="#/demander" role="tab"><img class="bottom-nav-ico" src="icons/act-request.png" alt="" aria-hidden="true"><span data-i18n="nav.demander">Demander</span></a>
+      <a id="tab-demander" class="bottom-nav-tab" href="#/demander" role="tab"><img class="bottom-nav-ico" src="icons/ni-request.png" alt="" aria-hidden="true"><span data-i18n="nav.demander">Demander</span></a>
     </div>
   </nav>
 
@@ -1383,27 +1373,6 @@
       <div class="pg-actions">
         <button id="lc-ok" class="btn btn--primary" type="button">Oui</button>
         <button id="lc-change" class="btn btn--ghost" type="button" data-i18n="langconfirm.change">Non, changer de langue</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Langue de CONTRIBUTION obligatoire, redemandée à CHAQUE entrée dans Traduire/Transcrire
-       (Brice 2026-07-26) : DISTINCTE de langue_pere/langue_mere (origine familiale) — on peut avoir
-       grandi avec les langues de ses parents et vouloir contribuer/apprendre dans une toute autre
-       langue. Aucun bouton « Plus tard » : la confirmation est un passage obligé, pas une option. -->
-  <div id="contriblang-gate" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="clg-title">
-    <div class="tr-guide-card">
-      <div class="tr-guide-head">
-        <div class="tr-guide-ico tr-guide-ico--img" aria-hidden="true"><img src="icons/ui/ic-say.png" alt=""></div>
-        <h2 id="clg-title" data-i18n="clgate.title">Dans quelle langue veux-tu contribuer ?</h2>
-        <p class="tr-guide-lead" data-i18n="clgate.lead">Elle peut être différente de celle de tes parents. Choisis-la, à chaque fois, avant de commencer.</p>
-      </div>
-      <div class="field clg-field">
-        <span data-i18n="clgate.label">Langue de contribution</span>
-        <select id="clg-select"></select>
-      </div>
-      <div class="pg-actions">
-        <button id="clg-ok" class="btn btn--primary" type="button" data-i18n="clgate.ok">Continuer →</button>
       </div>
     </div>
   </div>

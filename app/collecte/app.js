@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v400";
+const APP_VERSION = "v401";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1158,6 +1158,11 @@ function profileComplete() {
             // applyOriginsDefaultOnce() (appelée au boot, avant tout appel à profileComplete())
             // — jamais bloqué rétroactivement.
             (c.village_pere || c.village) && c.village_mere && c.langue_pere && c.langue_mere);
+            // NOTE (2026-07-26) : « Mes langues d'appartenance » n'est PAS ajoutée ici bien
+            // qu'auto-peuplée à la création (cf. initContributeur) : reconstituteProfileLangues()
+            // la RÉALIGNE régulièrement sur les contributions RÉELLES (DB.all()), donc elle est
+            // légitimement vide pour un profil flambant neuf n'ayant encore rien envoyé — l'exiger
+            // ici créerait un blocage (retour au gate juste après avoir complété le profil).
 }
 // Seuil LÉGER pour l'AFFICHAGE des popups (informer/inviter) : le téléphone/indicatif ne sont
 // exigés que pour CONTRIBUER (le clic sur un popup revérifie profileComplete via requireProfile).
@@ -2130,8 +2135,8 @@ function enterHub() {
   // une fois l'accueil affiché : le premier rendu reste rapide, et le corpus est prêt quand
   // l'utilisateur ouvre Traduire/Transcrire ou quand l'incitation se déclenche.
   idleInit(() => { ensurePropositions().catch(() => {}); }, 1500);
-  // Mot du jour (R10) : peuplé en async une fois le corpus prêt (n'impacte pas le 1er rendu).
-  idleInit(() => { renderWordOfDay().catch(() => {}); }, 1500);
+  // Mot du jour (R10) : devenu un popup d'incitation (2026-07-26), enfilé une fois le corpus prêt.
+  idleInit(() => { maybeShowWod().catch(() => {}); }, 1500);
   // Notifications : rafraîchit la pastille, puis propose un popup si une activité
   // récente concerne l'utilisateur (prioritaire sur l'invitation générique).
   setTimeout(() => { refreshNotifs().then(() => { try { maybeShowNotifPopup(); } catch (e) { /* ok */ } }); }, 1000);
@@ -2455,6 +2460,10 @@ function chooseLang(id) {
   id = canonLangId(id);   // si la langue a été fusionnée, on choisit sa canonique
   setCurrentLangId(id);
   addProfileLangue(id);   // la langue de travail choisie rejoint les langues d'appartenance
+  // Remonte la langue active au backend (colonne langue_active) : SOURCE UNIQUE du changement de
+  // langue de travail (page Langues, rappel #work-lang), donc seul point qui a besoin de pousser
+  // cette colonne — best-effort, jamais bloquant (offline-safe, comme le thème/le profil).
+  try { setLangueActiveRemote(deviceId(), id).catch(() => {}); } catch (e) { /* best-effort */ }
 
   // On RECHARGE : le clavier (dédié à la langue), les libellés, le corpus et le scope
   // Explorer se reconstruisent proprement dans la langue choisie. On vise l'accueil au
@@ -2944,66 +2953,15 @@ function _revealOptional(zoneSel, btnSel, focusSel) {
   if (btn) btn.hidden = true;
   if (focusSel) { const f = $(focusSel); if (f) keepScroll(() => { try { f.focus({ preventScroll: true }); } catch (e) { /* ok */ } }); }
 }
-// --- Gate OBLIGATOIRE de la langue de CONTRIBUTION, à CHAQUE entrée dans Traduire/Transcrire
-// (Brice 2026-07-26) — DISTINCTE de langue_pere/langue_mere (origine familiale) : on peut très
-// bien avoir grandi avec les langues de ses parents et vouloir contribuer/apprendre dans une
-// tout autre langue. Le popup affiche la langue actuelle et un menu déroulant de toutes les
-// langues connues, « Ajouter ma langue » en 1re position pour lever toute ambiguïté. Résout à
-// `true` si l'on peut enchaîner directement vers l'espace de travail, `false` si l'utilisateur
-// est parti déclarer une langue ou si un changement de langue recharge la page (comme chooseLang()).
-function populateContribLangSelect(sel) {
-  sel.innerHTML = "";
-  const optAdd = document.createElement("option");
-  optAdd.value = "__add__";
-  optAdd.textContent = t("clgate.add");
-  sel.appendChild(optAdd);
-  for (const l of visibleLanguages(knownLanguages())) {
-    const o = document.createElement("option");
-    o.value = l.id;
-    o.textContent = l.nom;
-    sel.appendChild(o);
-  }
-}
-function requireContribLang() {
-  return new Promise((resolve) => {
-    const g = $("#contriblang-gate"), sel = $("#clg-select"), ok = $("#clg-ok");
-    if (!g || !sel || !ok) { resolve(true); return; }
-    populateContribLangSelect(sel);
-    sel.value = getCurrentLangId();
-    g.hidden = false;
-    const cleanup = () => { sel.removeEventListener("change", onChange); ok.removeEventListener("click", onOk); };
-    const onChange = () => {
-      if (sel.value !== "__add__") return;
-      g.hidden = true; cleanup();
-      openLangChoice(); openDeclareForm();   // écran « déclarer une langue », réutilisé tel quel
-      resolve(false);
-    };
-    const onOk = () => {
-      const id = sel.value;
-      if (!id || id === "__add__") return;   // rien de valide sélectionné : on n'avance pas
-      if (id !== getCurrentLangId()) {
-        g.hidden = true; cleanup();
-        chooseLang(id);   // langue réellement changée : reconstruction propre (clavier/corpus) par rechargement
-        resolve(false);
-        return;
-      }
-      g.hidden = true; cleanup();
-      setCurrentLangId(id);
-      try { setLangueActiveRemote(deviceId(), id).catch(() => {}); } catch (e) { /* best-effort */ }
-      _langAck = id;   // déjà confirmée à l'instant : pas de re-confirmation Couche 1 à l'enregistrement
-      updateWorkLang();
-      resolve(true);
-    };
-    sel.addEventListener("change", onChange);
-    ok.addEventListener("click", onOk);
-    try { ok.focus(); } catch (e) { /* ok */ }
-  });
-}
 async function enterWork(act, forceMode) {
   if (!requireProfile(act === "transcribe"
     ? "Crée ton profil pour enregistrer des prononciations."
     : "Crée ton profil pour proposer des traductions.")) return false;
-  if (!(await requireContribLang())) return false;
+  // Plus de reconfirmation obligatoire à CHAQUE entrée (retirée 2026-07-26, Brice) : la langue de
+  // contribution est déjà exigée à la création du profil, et il n'existe qu'un seul endroit clair
+  // pour la changer (page Langues, accessible aussi via le rappel permanent #work-lang). L'anti-
+  // mauvais-étiquetage reste assuré par la Couche 1 (confirmLang(), à l'ENREGISTREMENT — cf. plus
+  // haut) : plus léger, une seule fois par session (ou si le texte tapé contredit la langue).
   if (isKbOpen()) hideKeyboard();
   mode = forceMode || "proposer";   // PAR DÉFAUT « se faire proposer un mot » (Brice) ; « libre » seulement
                                     // pour les entrées spéciales (réponse à une demande, « dis-le dans ta langue »).
@@ -3411,7 +3369,11 @@ async function _incPlayAudio(url) {
 // « Plus tard »/fermer : retrait de la FILE pour cette session (il reviendra au prochain
 // chargement, après le délai de grâce). On ne marque PAS « vu » : seul un clic d'ACTION le retire
 // définitivement (comportement demandé : les popups persistent tant qu'on ne les a pas actionnés).
-function _incDismiss() { _incStopAudio(); const bn = $("#incite-banner"); if (bn) bn.hidden = true; dismissPopup("incite"); }
+// « Plus tard »/✕ du #incite-banner partagé : dismiss le popup RÉELLEMENT affiché (_pqCurrent),
+// pas toujours "incite" — depuis que "wod" (mot du jour) réutilise aussi ce même banner avec
+// son propre id de file, un hardcode sur "incite" laisserait "wod" bloqué dans la file (jamais
+// retiré, réaffiché à la prochaine rotation malgré le clic de fermeture).
+function _incDismiss() { _incStopAudio(); const bn = $("#incite-banner"); if (bn) bn.hidden = true; dismissPopup(_pqCurrent || "incite"); }
 /** À appeler quand on arrive sur l'accueil : ENFILE l'invitation si elle est due (la file l'affiche). */
 async function maybeShowIncitation() {
   if (!incitationDue()) return;
@@ -3426,21 +3388,40 @@ async function maybeShowIncitation() {
 // --- MOT DU JOUR (R10) -------------------------------------------------------
 // Un mot du corpus, choisi de façon DÉTERMINISTE par la date : le MÊME pour tout le
 // monde ce jour-là, et il change chaque jour (habitude/rétention). Invite à le dire
-// dans sa langue (réutilise startTranslateWord). Peuplé en ASYNC (le corpus est en
-// import dynamique) → n'impacte pas la vitesse d'affichage de l'accueil.
+// dans sa langue (réutilise startTranslateWord). Devenu un POPUP d'incitation parmi les
+// autres (2026-07-26, Brice : l'épingler en dur sur l'accueil alourdissait la page) — rejoint
+// la même file `_pq` (pause sur les 4 pages essentielles, rotation avec les autres popups),
+// montré au plus UNE fois par jour (calendaire, pas par slot comme l'incitation générique).
 function _dayIndex() { try { return Math.floor(Date.now() / 86400000); } catch (e) { return 0; } }
-async function renderWordOfDay() {
-  const host = $("#word-of-day"), wEl = $("#wod-word"), cta = $("#wod-cta");
-  if (!host || !wEl) return;
-  try { await ensurePropositions(); } catch (e) { host.hidden = true; return; }
+const WOD_SEEN_KEY = "langa-wod-seen-day";
+function wodDue() {
+  const c = loadContributeur();
+  if (!hasChosenLang() || !c.consentement) return false;
+  try { return parseInt(localStorage.getItem(WOD_SEEN_KEY) || "-1", 10) !== _dayIndex(); }
+  catch (e) { return true; }
+}
+function _wodMarkShown() { try { localStorage.setItem(WOD_SEEN_KEY, String(_dayIndex())); } catch (e) { /* ok */ } }
+/** À appeler à l'arrivée sur l'accueil : ENFILE le mot du jour s'il est dû (la file l'affiche). */
+async function maybeShowWod() {
+  if (!wodDue()) return;
+  try { await ensurePropositions(); } catch (e) { return; }
   const mots = groupItems("mots");
-  if (!mots.length) { host.hidden = true; return; }
+  if (!mots.length || !wodDue()) return;   // re-vérifie après l'await (course éventuelle)
   const fr = mots[_dayIndex() % mots.length].texte;
   let show = fr;
   try { show = wordInUiLang(fr) || fr; } catch (e) { /* repli FR */ }
-  wEl.textContent = show;
-  if (cta) cta.onclick = () => startTranslateWord(fr);
-  host.hidden = false;
+  enqueuePopup("wod", () => renderWodPopup(fr, show));
+}
+function renderWodPopup(fr, show) {
+  const bn = $("#incite-banner"); if (!bn) return;
+  bn.dataset.ptype = "wod";
+  const ico = bn.querySelector(".incite-ico");
+  if (ico) ico.innerHTML = '<img src="icons/ui/ic-say.png" alt="" aria-hidden="true">';
+  const msg = $("#incite-msg"); if (msg) msg.innerHTML = ti("wod.popup.msg", { w: kw("word", show, true) });
+  const go = $("#incite-go");
+  if (go) { go.textContent = t("wod.cta"); go.onclick = () => { _wodMarkShown(); bn.hidden = true; dismissPopup("wod"); startTranslateWord(fr); }; }
+  const lis = $("#incite-listen"); if (lis) { lis.hidden = true; lis.onclick = null; }
+  bn.hidden = false;
 }
 
 // --- Notifications : centre horodaté + pastille de non-lues + popup --------
@@ -6427,6 +6408,18 @@ function initContributeur() {
     const el = $(sel);
     el.addEventListener("change", collectContributeur);
     el.addEventListener("input", collectContributeur);
+  });
+  // Peuple EN DIRECT « Mes langues d'appartenance » dès le choix d'une langue paternelle/
+  // maternelle (pas seulement au clic « Continuer ») : sinon profileComplete() (qui exige
+  // désormais au moins une langue d'appartenance) ne pourrait jamais devenir vrai sur un
+  // profil neuf (bouton bloqué avant même de pouvoir peupler le champ). addProfileLangue est
+  // idempotent (sans doublon) et ne s'exécute qu'au CHANGEMENT de valeur du select, jamais sur
+  // une frappe d'un autre champ : l'utilisateur reste libre de retirer ensuite ce chip.
+  ["#c-langue-pere", "#c-langue-mere"].forEach((sel) => {
+    $(sel).addEventListener("change", () => {
+      const v = $(sel).value;
+      if (v) { addProfileLangue(v); renderProfileLangs(); }
+    });
   });
   mountFieldTips();                        // infobulles ⓘ sur le profil ET la déclaration de langue
   document.addEventListener("click", onFieldTipClick);   // popover (un seul ouvert à la fois)

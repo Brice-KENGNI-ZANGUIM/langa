@@ -1,6 +1,12 @@
 {
-  "version": "v400",
+  "version": "v401",
   "changelog": {
+    "v401": [
+      "Plus besoin de reconfirmer sa langue de contribution à chaque entrée dans Transcrire/Traduire (elle reste changeable à tout moment depuis la page Langues, rappelée en permanence sur ces pages)",
+      "Accueil : retiré le texte d'introduction devenu inutile",
+      "Le mot du jour apparaît maintenant comme une invitation ponctuelle plutôt qu'en encart fixe sur l'accueil",
+      "Icônes illustrées aux couleurs de l'Afrique pour Transcrire et Demander, dans la barre de navigation basse"
+    ],
     "v400": [
       "Nouvelles icônes illustrées aux couleurs de l'Afrique pour la langue de contribution (à la place du globe), les consignes de traduction et le témoignage, à chaque endroit où elles apparaissent"
     ],

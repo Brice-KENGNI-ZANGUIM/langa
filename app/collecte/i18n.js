@@ -130,8 +130,9 @@ export const STR = {
   "mc.err": { fr: "Correction impossible", en: "Could not fix" },
   "mc.err.lang": { fr: "Choisis d'abord une langue valide", en: "Pick a valid language first" },
   "mc.audio": { fr: "(contribution vocale)", en: "(voice contribution)" },
-  "wod.eye": { fr: "◆ Mot du jour", en: "◆ Word of the day" },
   "wod.cta": { fr: "Dis-le dans ta langue →", en: "Say it in your language →" },
+  "wod.popup.msg": { fr: "◆ Mot du jour : {w}\nDis-le dans ta langue, et laisse-le en héritage.",
+                     en: "◆ Word of the day: {w}\nSay it in your language, and leave it as a legacy." },
   "enrich.title": { fr: "Enrichir ce mot (facultatif) : nature, classe, exemple…", en: "Enrich this word (optional): part of speech, class, example…" },
   "enrich.nature": { fr: "Nature grammaticale", en: "Part of speech" },
   "enrich.nature.nom": { fr: "Nom", en: "Noun" },
@@ -271,8 +272,6 @@ export const STR = {
   "amorce.allwords": { fr: "Tu as parcouru tous les mots, merci ! 🎉", en: "You've gone through every word, thank you! 🎉" },
 
   // — Accueil (hub) —
-  "hub.choose": { fr: "Choisis une activité pour commencer. Tu passeras de l'une à l'autre quand tu veux, grâce au menu en haut.",
-                  en: "Pick an activity to start. You can switch anytime using the top menu." },
   "hub.card.translate": { fr: "Traduire", en: "Translate" },
   "hub.card.transcribe": { fr: "Transcrire", en: "Transcribe" },
   "hub.card.explore": { fr: "Explorer", en: "Explore" },
@@ -901,11 +900,6 @@ export const STR = {
   "langconfirm.doubt": { fr: "Attention : ce texte contient des lettres propres au ngiemboon, mais la langue choisie est {lang}.", en: "Careful: this text contains letters specific to ngiemboon, but the selected language is {lang}." },
   "langconfirm.ok": { fr: "Oui, c'est {lang}", en: "Yes, it's {lang}" },
   "langconfirm.change": { fr: "Non, changer de langue", en: "No, change language" },
-  "clgate.title": { fr: "Dans quelle langue veux-tu contribuer ?", en: "Which language do you want to contribute in?" },
-  "clgate.lead": { fr: "Elle peut être différente de celle de tes parents. Choisis-la, à chaque fois, avant de commencer.", en: "It can be different from your parents' language. Choose it every time before you start." },
-  "clgate.label": { fr: "Langue de contribution", en: "Contribution language" },
-  "clgate.add": { fr: "➕ Ajouter ma langue", en: "➕ Add my language" },
-  "clgate.ok": { fr: "Continuer →", en: "Continue →" },
 };
 
 // Messages éphémères (toasts) : table FR → EN. On garde le FR comme source dans les
