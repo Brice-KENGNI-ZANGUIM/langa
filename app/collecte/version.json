@@ -1,6 +1,10 @@
 {
-  "version": "v431",
+  "version": "v432",
   "changelog": {
+    "v432": [
+      "Correctif important : quitter une page (via la barre basse, le retour du téléphone…) sans fermer d'abord une fenêtre encore ouverte (consignes, création de profil, partage) la laissait affichée par-dessus la nouvelle page, avec un contenu qui n'avait plus de rapport ; ce n'est plus possible, tout se ferme proprement au changement de page",
+      "Liens du pied de page (réseaux, contact, mentions légales) : zone de clic plus confortable au doigt"
+    ],
     "v431": [
       "Les aperçus de partage sur les réseaux (WhatsApp, Facebook, X…) parlaient encore de « numériser les langues » : ils reprennent désormais le vrai discours de LANGIAL, l'héritage à transmettre"
     ],

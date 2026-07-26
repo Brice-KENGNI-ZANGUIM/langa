@@ -1940,7 +1940,10 @@ body {
 .foot-nav-title { color: var(--gold); font-size: .7rem; font-weight: 700;
   letter-spacing: .09em; text-transform: uppercase; margin-bottom: 3px; }
 .foot-nav a { color: var(--label); font-size: .87rem; text-decoration: none;
-  width: fit-content; transition: color .14s ease, transform .14s ease; }
+  width: fit-content; transition: color .14s ease, transform .14s ease;
+  /* Zone de clic confortable (≥24px) sans agrandir le texte : padding + marge négative
+     compense visuellement, l'empilement (.foot-nav-col gap) reste identique au pixel près. */
+  padding: 4px 0; margin: -4px 0; }
 .foot-nav a:hover { color: var(--cyan); transform: translateX(2px); }
 .foot-brand { display: flex; align-items: center; gap: 13px; }
 .foot-mark {
@@ -1965,7 +1968,8 @@ body {
   outline: 2px solid var(--cyan); outline-offset: 4px; border-radius: 12px; }
 .foot-info { text-align: right; }
 .foot-contact { margin: 0; color: var(--muted); font-size: .82rem; }
-.foot-contact a { color: var(--cyan); text-decoration: none; font-weight: 600; }
+.foot-contact a { color: var(--cyan); text-decoration: none; font-weight: 600;
+  display: inline-block; padding: 4px 0; margin: -4px 0; }
 .foot-contact a:hover { text-decoration: underline; }
 @media (max-width: 560px) {
   .foot-inner { flex-direction: column; align-items: flex-start; }
@@ -1973,7 +1977,8 @@ body {
 }
 /* Liens légaux du pied de page + page légale */
 .foot-legal-link { color: var(--muted); font-size: .74rem; text-decoration: none;
-  transition: color .14s ease; }
+  transition: color .14s ease;
+  padding: 4px 0; margin: -4px 0; display: inline-block; }
 .foot-legal-link:hover { color: var(--cyan); text-decoration: underline; }
 .legal-nav { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 18px; }
 .legal-navlink { text-decoration: none; font-size: .82rem; font-weight: 600; color: var(--cyan);

@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v431";
+const APP_VERSION = "v432";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1387,7 +1387,23 @@ function onHistoryNav(e) {
 }
 
 /** Affiche l'une des vues : profile · hub · app (Traduire/Transcrire) · explore. */
+/** Ferme tout overlay/dialogue plein écran encore ouvert (bug trouvé à l'audit 2026-07-27 :
+    naviguer via la barre basse/le tiroir/le retour navigateur pendant qu'un de ces dialogues
+    est ouvert le laissait affiché PAR-DESSUS la nouvelle page, avec un contenu qui n'a plus
+    rien à voir — ex. les consignes de Transcrire restées visibles sur Explorer). Chaque
+    fonction appelée est déjà idempotente (ne fait rien si son overlay est déjà fermé). */
+function closeAllOverlays() {
+  hideGuide();
+  hideProfileGate();
+  const sp = $("#share-panel"); if (sp) sp.hidden = true;
+  const tm = $("#thanks-modal"); if (tm) tm.hidden = true;
+  trimClose();
+  endTour();
+  closeSettingsDrawer();
+  closePresent();
+}
 function showView(name) {
+  closeAllOverlays();
   _currentView = name;
   _pqSetPaused(isEssentialWorkView(name));   // pas de popup d'incitation pendant un travail en cours
   syncHash(name);   // reflète la vue dans l'URL (une adresse par écran)
@@ -2987,8 +3003,6 @@ async function enterWork(act, forceMode) {
   initPropCategories();         // (re)peuple le sélecteur de groupes maintenant que le corpus est chargé
   applyMode();   // applique le mode (affiche la barre de proposition + propose un mot si « proposer »)
   refreshDoneTexts();   // liste des mots déjà faits par l'utilisateur (pour la détection de doublon en mode libre)
-  // Consignes de l'activité, affichées les 3 premières fois (Transcrire ET Traduire).
-  maybeShowGuide(act);
   // Rétablit la cible du clavier sur le champ de la langue courante (elle a pu être
   // reciblée vers un champ d'Explorer). Seulement si la langue a un clavier DÉDIÉ ;
   // sinon on rend la main au clavier système (pas d'inputmode=none).
@@ -3001,6 +3015,10 @@ async function enterWork(act, forceMode) {
     _kbField = null;
   }
   showView("app");
+  // Consignes de l'activité, affichées les 3 premières fois (Transcrire ET Traduire) : APRÈS
+  // showView() (qui ferme systématiquement tout overlay encore ouvert au changement de vue,
+  // cf. closeAllOverlays) — sinon le guide qu'on vient d'ouvrir se refermerait aussitôt.
+  maybeShowGuide(act);
   return true;
 }
 
