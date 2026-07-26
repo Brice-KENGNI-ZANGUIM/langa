@@ -104,24 +104,6 @@
         <span id="notif-badge" class="notif-badge" hidden aria-hidden="true">0</span>
       </button>
     </div>
-    <div class="chips-nav">
-      <div class="chip-group chip-group--perso">
-        <!-- CTA proactif (déplacé du hub vers le header, 2026-07-25s) : visible seulement sans
-             profil, ouvre exactement le même popup explicatif que requireProfile() (#profile-gate). -->
-        <button id="btn-create-profile" class="chip chip--btn" type="button" hidden data-i18n-title="hub.card.profile.title"
-                title="Créer mon profil" aria-label="Créer mon profil"><img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="hub.card.profile">Créer mon profil</span></button>
-      </div>
-    </div>
-    <!-- Barre des 4 ESPACES, intégrée au header (3e rangée). Masquée sur l'accueil, où les
-         grandes portes du hub jouent déjà ce rôle. -->
-    <nav id="main-nav" class="main-nav">
-      <div class="nav-tabs" role="tablist" aria-label="Espaces">
-        <a id="tab-transcrire" class="nav-tab" href="#/transcrire" role="tab"><img class="nav-ico" src="icons/mic-real.png" alt="" aria-hidden="true"><span data-i18n="nav.transcribe">Transcrire</span></a>
-        <a id="tab-traduire" class="nav-tab" href="#/traduire" role="tab"><img class="nav-ico" src="icons/act-translate.svg" alt="" aria-hidden="true"><span data-i18n="nav.translate">Traduire</span></a>
-        <a id="tab-explorer" class="nav-tab" href="#/explorer" role="tab"><img class="nav-ico" src="icons/act-explore.svg" alt="" aria-hidden="true"><span data-i18n="nav.explore">Explorer</span></a>
-        <a id="tab-demander" class="nav-tab" href="#/demander" role="tab"><img class="nav-ico" src="icons/act-request.png" alt="" aria-hidden="true"><span data-i18n="nav.demander">Demander</span></a>
-      </div>
-    </nav>
   </header>
 
   <!-- Tiroir de réglages (☰) : tout ce qui n'est pas quotidien (Brice 2026-07-25). Regroupe
@@ -138,6 +120,13 @@
       <div class="settings-drawer-body">
         <div class="settings-section">
           <h3 data-i18n="settings.sec.account">Mon compte</h3>
+          <!-- CTA proactif (relogé du header vers Réglages, 2026-07-26j : le header ne garde
+               plus que logo/nom/slogan/Accueil/Réglages) : visible seulement sans profil, ouvre
+               exactement le même popup explicatif que requireProfile() (#profile-gate). Miroir
+               inversé de Profil juste en dessous (avant complétion : CTA ; après : Profil). -->
+          <button id="btn-create-profile" class="chip chip--btn settings-link" type="button" hidden data-i18n-title="hub.card.profile.title"
+                  title="Créer mon profil" aria-label="Créer mon profil">
+            <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="hub.card.profile">Créer mon profil</span></button>
           <a id="btn-open-profile" class="chip chip--btn settings-link" href="#/profil" hidden>
             <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="chip.profile">Profil</span></a>
           <a id="btn-notifs" class="chip chip--btn settings-link" href="#/notifications" hidden data-i18n-title="chip.notifs.title"
@@ -179,11 +168,25 @@
         </div>
       </div>
       <div class="settings-drawer-foot">
+        <!-- Informations légales + copyright, relogées depuis le pied de page classique
+             (Brice 2026-07-26k) : toujours accessibles ici, y compris sur les pages qui n'ont
+             plus de footer (Transcrire/Traduire/Explorer/Demander). Même classe/attribut
+             (.foot-legal-link/data-legal) : le gestionnaire de clic générique fonctionne sans
+             changement. -->
+        <nav class="settings-legal" aria-label="Informations légales">
+          <a href="#/mentions-legales" class="foot-legal-link" data-legal="mentions" data-i18n="legal.mentions">Mentions légales</a>
+          <a href="#/confidentialite" class="foot-legal-link" data-legal="confidentialite" data-i18n="legal.confidentialite">Confidentialité</a>
+          <a href="#/cgu" class="foot-legal-link" data-legal="cgu" data-i18n="legal.cgu">CGU</a>
+          <a href="#/cgv" class="foot-legal-link" data-legal="cgv" data-i18n="legal.cgv">CGV</a>
+        </nav>
+        <p class="settings-copy">© 2026 Brice Kengni Zanguim · <span data-i18n="foot.thanks">Merci à chaque contributeur de la langue</span></p>
         <!-- Version : décorée comme les autres pastilles (dot + halo) ; VERTE si l'app est à
              jour, ROUGE si une mise à jour est disponible. -->
-        <span id="app-ver" class="chip chip--on" data-i18n-title="app.ver.title" title="Version de l'application"></span>
-        <span id="net" class="chip">…</span>
-        <span id="srv" class="chip">…</span>
+        <div class="settings-status">
+          <span id="app-ver" class="chip chip--on" data-i18n-title="app.ver.title" title="Version de l'application"></span>
+          <span id="net" class="chip">…</span>
+          <span id="srv" class="chip">…</span>
+        </div>
       </div>
      </div>
     </div>
@@ -1100,16 +1103,23 @@
       <span class="share-lead" data-i18n="share.foot">Partage LANGIAL autour de toi :</span>
       <div class="share-mount" id="share-foot"></div>
     </div>
-    <div class="foot-bottom">
-      <nav class="foot-legal" aria-label="Informations légales">
-        <a href="#/mentions-legales" class="foot-legal-link" data-legal="mentions" data-i18n="legal.mentions">Mentions légales</a>
-        <a href="#/confidentialite" class="foot-legal-link" data-legal="confidentialite" data-i18n="legal.confidentialite">Confidentialité</a>
-        <a href="#/cgu" class="foot-legal-link" data-legal="cgu" data-i18n="legal.cgu">CGU</a>
-        <a href="#/cgv" class="foot-legal-link" data-legal="cgv" data-i18n="legal.cgv">CGV</a>
-      </nav>
-      <div class="foot-copy">© 2026 Brice Kengni Zanguim · <span data-i18n="foot.thanks">Merci à chaque contributeur de la langue</span></div>
-    </div>
   </footer>
+
+  <!-- Barre de navigation BASSE, fixe, TOUJOURS visible (Brice 2026-07-26j — façon Telegram/
+       WhatsApp) : les 4 espaces (Transcrire/Traduire/Explorer/Demander) quittent le header (qui
+       ne garde plus que logo/nom/slogan/Accueil/Réglages) pour vivre ici, accessibles d'un geste
+       depuis N'IMPORTE QUELLE page. Mêmes id/comportement qu'avant (showView() gère déjà
+       l'état actif ET l'affichage systématique, aucun changement JS nécessaire) : seule
+       l'habillage visuel change (bandeau compact icône-sur-texte, pas les grandes pastilles du
+       header). -->
+  <nav id="main-nav" class="bottom-nav">
+    <div class="bottom-nav-tabs" role="tablist" aria-label="Espaces">
+      <a id="tab-transcrire" class="bottom-nav-tab" href="#/transcrire" role="tab"><img class="bottom-nav-ico" src="icons/mic-real.png" alt="" aria-hidden="true"><span data-i18n="nav.transcribe">Transcrire</span></a>
+      <a id="tab-traduire" class="bottom-nav-tab" href="#/traduire" role="tab"><img class="bottom-nav-ico" src="icons/act-translate.svg" alt="" aria-hidden="true"><span data-i18n="nav.translate">Traduire</span></a>
+      <a id="tab-explorer" class="bottom-nav-tab" href="#/explorer" role="tab"><img class="bottom-nav-ico" src="icons/act-explore.svg" alt="" aria-hidden="true"><span data-i18n="nav.explore">Explorer</span></a>
+      <a id="tab-demander" class="bottom-nav-tab" href="#/demander" role="tab"><img class="bottom-nav-ico" src="icons/act-request.png" alt="" aria-hidden="true"><span data-i18n="nav.demander">Demander</span></a>
+    </div>
+  </nav>
 
   <!-- Visite guidée : projecteur sur un élément + bulle explicative -->
   <div id="tour" class="tour" hidden>

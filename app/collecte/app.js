@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v398";
+const APP_VERSION = "v399";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1392,11 +1392,18 @@ function showView(name) {
   const nav = $("#main-nav");
   // Les 4 onglets d'activité sont désormais accessibles SYSTÉMATIQUEMENT, sur TOUTES les pages
   // sans exception, y compris l'accueil (choix Brice 2026-07-23 : avant masqués sur le hub).
+  // Depuis 2026-07-26j, cette barre vit fixée en bas d'écran (façon Telegram/WhatsApp) : même
+  // principe, elle ne se masque JAMAIS.
   if (nav) nav.hidden = false;
   // Onglet actif de la barre de navigation (les 4 espaces) ; aucun n'est actif sur l'accueil
   // ou une page hors de ces 4 espaces (À propos, Bugs, Profil…), ce qui est normal.
   const active = { app: (activity === "transcribe" ? "tab-transcrire" : "tab-traduire"), explore: "tab-explorer", demander: "tab-demander" }[name];
   ["#tab-transcrire", "#tab-traduire", "#tab-explorer", "#tab-demander"].forEach((s) => { const el = $(s); if (el) el.classList.toggle("is-active", ("#" + active) === s); });
+  // Pied de page CLASSIQUE (liens, réseaux) masqué sur les 4 pages d'activité (Brice 2026-07-26j) :
+  // la barre de navigation basse y joue déjà ce rôle, le garder ferait doublon. Reste affiché
+  // partout ailleurs (accueil, à propos, bugs, notifications, profil, langues…).
+  const foot = $(".site-footer");
+  if (foot) foot.hidden = (name === "app" || name === "explore" || name === "demander");
   // « Mon profil » : visibilité conditionnée UNIQUEMENT à l'existence d'un profil.
   // Il reste donc affiché sur TOUTES les pages, y compris la vue profil elle-même
   // (il y sert de repère et n'a jamais à disparaître). Sans profil : rien à ouvrir.

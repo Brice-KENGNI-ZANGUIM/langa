@@ -1,6 +1,13 @@
 {
-  "version": "v398",
+  "version": "v399",
   "changelog": {
+    "v399": [
+      "Nouvelle barre de navigation en bas de l'écran, toujours visible (Transcrire/Traduire/Explorer/Demander), comme sur Telegram ou WhatsApp",
+      "Le header ne garde plus que le logo, le nom, le slogan et les boutons Accueil/Réglages",
+      "Le pied de page classique n'apparaît plus sur Transcrire, Traduire, Explorer et Demander (la barre du bas y suffit)",
+      "Mentions légales, Confidentialité, CGU, CGV et le copyright sont désormais aussi accessibles en bas du menu Réglages, sur toutes les pages",
+      "Le bouton « Créer mon profil » a rejoint le menu Réglages"
+    ],
     "v398": [
       "La bannière de l'accueil a elle aussi disparu, pour un accueil encore plus épuré"
     ],

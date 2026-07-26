@@ -155,7 +155,12 @@ body {
   /* Ancre la couche de motif (.bg-motif) : elle couvre toute la hauteur du document
      et défile AVEC le contenu (solidaires, même vitesse). */
   position: relative;
+  /* Réserve la hauteur de la barre de navigation basse FIXE (.bottom-nav, Brice 2026-07-26j) :
+     sur TOUTES les pages (y compris celles qui gardent le footer classique), rien ne doit
+     jamais se retrouver caché dessous, footer inclus. */
+  padding-bottom: 62px;
 }
+@media (max-width: 560px) { body { padding-bottom: 56px; } }
 /* Mobile / tablette : trame Ndop ATTÉNUÉE (opacités ~÷2) pour qu'elle ne soit pas
    dominante sur petit écran. On ne redéfinit QUE --lattice-img, rien d'autre. */
 @media (max-width: 1024px) {
@@ -398,7 +403,6 @@ body {
    Les boutons de nav ne sont plus des « pilules » de verre : fond transparent au repos,
    léger fond + accent cyan au survol, page ACTIVE mise en évidence. Deux groupes
    (navigation | perso) séparés d'un fin trait quand ils sont côte à côte (grand écran). */
-.chip-group { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
 /* Léger fond par bouton (SANS bordure visible) → l'œil distingue des boutons, pas une simple
    suite d'icônes+texte. Repli rgba d'abord (vieux Safari), puis version thème. */
 .chips-nav .chip--btn {
@@ -622,8 +626,14 @@ body {
   .settings-toggle-big.theme-switch .theme-ico { height: 40px; }
 }
 .settings-drawer-foot { position: relative; z-index: 1; padding: 14px 18px; border-top: 1px solid var(--border);
-  display: flex; gap: 6px; flex-wrap: wrap; flex: 0 0 auto; }
-.settings-drawer-foot .chip { font-size: .66rem; }
+  display: flex; flex-direction: column; gap: 10px; flex: 0 0 auto; }
+/* Informations légales + copyright, relogées depuis le pied de page classique (Brice
+   2026-07-26k) : toujours accessibles ici, y compris sur les pages qui n'ont plus de footer. */
+.settings-legal { display: flex; flex-wrap: wrap; gap: 5px 14px; }
+.settings-legal .foot-legal-link { font-size: .72rem; }
+.settings-copy { margin: 0; color: var(--muted); font-size: .68rem; line-height: 1.4; }
+.settings-status { display: flex; gap: 6px; flex-wrap: wrap; }
+.settings-status .chip { font-size: .66rem; }
 
 /* --- Header MOBILE / TABLETTE (≤900px) : réorganisation lisible -----------------
    Nom LANGIAL agrandi (≈ hauteur du logo) ; boutons de nav AVEC leur texte (l'icône
@@ -631,7 +641,6 @@ body {
    repoussés EN DERNIER (2e ligne), les deux pastilles clignotantes réduites. */
 @media (max-width: 900px) {
   .topbar { padding: 8px 14px 5px; gap: 7px 8px; }         /* header compact : peu d'espace vertical */
-  .main-nav { margin-top: 1px; }   /* écart onglets équilibré (mobile) : dégage la 2e ligne du header sans trop l'écarter */
   .brand { gap: 11px; }
   .brand-mark { width: 48px; height: 48px; border-radius: 13px; }
   .brand-mark img { border-radius: 13px; }
@@ -872,113 +881,35 @@ body {
 }
 .mini-profile:hover { box-shadow: 0 0 16px rgba(34,211,238,.3); border-color: var(--cyan); }
 
-/* ---- Navigation entre espaces (Traduire / Transcrire / Explorer) ---- */
-/* Barre des 4 onglets REMONTÉE près du header (comble ~80% de l'espace vide). */
-/* Barre des 4 espaces : 3e rangée du header (intégrée au header, pleine largeur). */
-/* Onglets d'activité RAPPROCHÉS des boutons du header : la grille .topbar met 18px entre les
-   rangées ; on remonte de 12px → écart ~6px, identique à l'espace entre les deux lignes de
-   boutons du header (impression d'un seul bloc, séparations égales). */
-.main-nav { grid-column: 1 / -1; grid-row: 3; display: flex; align-items: center; gap: 12px; margin: -12px 0 0; }   /* écart ligne2↔onglets = écart entre les 2 lignes du header (DESKTOP) */
-/* MOBILE/TABLETTE : la marge négative desktop provoquait un CHEVAUCHEMENT des onglets sur les
-   boutons du header (layout empilé, pas la grille du desktop). Placée APRÈS la base pour gagner
-   la cascade : petit écart POSITIF, aucun recouvrement. */
-@media (max-width: 900px) { .main-nav { margin-top: -4.5px; } }   /* mobile : écart encore réduit de moitié (~2,5px), onglets très proches du header sans recouvrement */
-.main-nav[hidden] { display: none; }
-/* Onglets : chaque bouton porte SA couleur d'activité (contour + fond teinté + halo),
-   IDENTIQUE sur PC et téléphone. Sur PC ils s'étirent pour remplir la largeur dédiée
-   (fini le vide dans le header). */
-.nav-tabs { display: flex; flex: 1 1 auto; gap: 6px; padding: 0; background: transparent;
-  border: none; flex-wrap: nowrap; }
-/* Onglets = MÊMES effets que les cartes de l'accueil : lavis de couleur d'activité,
-   halo d'ambiance qui « respire », bordure comète blanche qui tourne, shimmer au survol
-   et glow d'icône pulsé. Bien mis en évidence. */
-.nav-tab { --acc: var(--cyan); flex: 1 1 0; min-width: 0; justify-content: center;
-  position: relative; overflow: hidden;
-  border: 1px solid color-mix(in srgb, var(--acc) 40%, var(--border));
-  background: radial-gradient(130% 80% at 50% -20%, color-mix(in srgb, var(--acc) 18%, transparent), transparent 62%),
-    color-mix(in srgb, var(--acc) 10%, var(--panel)); color: var(--text);
-  padding: 6.2px 18px; border-radius: 12px; cursor: pointer; font: inherit; font-size: 1.12rem;   /* hauteur -15% cumulé (padding vertical seul) */
-  font-weight: 700; display: inline-flex; align-items: center; justify-content: center; gap: 9px;
-  box-shadow: 0 0 26px -14px var(--acc), inset 0 1px 0 var(--card-sheen), 0 2px 8px -4px rgba(0,0,0,.28);
-  transition: color .15s ease, background .15s ease, box-shadow .2s ease, border-color .2s ease, transform .12s ease;
-  animation: ngCardBreath 6s ease-in-out infinite; }
-.nav-tab > * { position: relative; z-index: 3; }   /* icône + libellé au-dessus des effets */
-.nav-tab::before { content: ""; position: absolute; inset: 0; border-radius: inherit; padding: 1.6px;   /* bordure animée -20% */
-  pointer-events: none; z-index: 2;
-  background:
-    conic-gradient(from var(--ng-angle), transparent 0%,
-      color-mix(in srgb, #fff 88%, var(--acc)) 7%, color-mix(in srgb, var(--acc) 70%, transparent) 17%, transparent 30%),
-    linear-gradient(var(--acc), var(--acc));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask-composite: exclude;
-  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--acc) 70%, transparent));
-  animation: ngBorderSpin 4s linear infinite; }
-.nav-tab::after { content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: 1; pointer-events: none;
-  background: linear-gradient(115deg, transparent 26%, color-mix(in srgb, var(--acc) 55%, #fff) 50%, transparent 74%);
-  opacity: 0; transform: translateX(-120%); }
-.nav-tab:hover { transform: translateY(-2px); animation-play-state: paused;
-  box-shadow: 0 18px 40px -14px var(--acc), 0 0 0 2px color-mix(in srgb, var(--acc) 65%, transparent),
-    0 0 40px -8px var(--acc), inset 0 1px 0 var(--card-sheen); }
-.nav-tab:hover::after { animation: ngShimmer 760ms ease; }
-/* Chaque onglet porte SA couleur d'activité (comme l'accueil et le mode présentation). */
-#tab-traduire  { --acc: var(--green); }
+/* ---- Navigation entre espaces : barre BASSE fixe façon Telegram/WhatsApp (Brice 2026-07-26j) ---
+   Remplace l'ancienne 3e rangée du header : les 4 espaces vivent maintenant dans une barre
+   TOUJOURS visible en bas d'écran, sur TOUTES les pages sans exception (comme le header lui-même).
+   Habillage volontairement SOBRE (icône + libellé, pas de gros cadre/halo/comète) : un utilitaire
+   permanent ne doit pas concurrencer visuellement le contenu de la page — seule la couleur
+   d'activité, portée par l'icône et le texte de l'onglet ACTIF, signale où l'on se trouve. */
+.bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 500;
+  background: var(--header-bg); backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  border-top: 1px solid var(--border);
+  box-shadow: 0 -10px 26px -18px rgba(0,0,0,.5);
+  padding-bottom: env(safe-area-inset-bottom, 0px); }
+.bottom-nav-tabs { max-width: var(--wrap-max); margin: 0 auto; display: flex; }
+.bottom-nav-tab { --acc: var(--cyan); flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 3px; padding: 7px 4px 6px; text-decoration: none;
+  color: var(--muted); font: inherit; font-size: .68rem; font-weight: 600;
+  transition: color .16s ease, background .16s ease; }
+.bottom-nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--acc) 8%, transparent); }
+.bottom-nav-ico { width: 23px; height: 23px; flex: none; object-fit: contain;
+  filter: grayscale(35%) opacity(.85); transition: filter .16s ease, transform .12s ease; }
+.bottom-nav-tab:hover .bottom-nav-ico { transform: translateY(-1px); filter: grayscale(0%) opacity(1); }
 #tab-transcrire { --acc: #a78bfa; }
-#tab-explorer  { --acc: var(--gold); }
-#tab-demander  { --acc: var(--cyan); }
-#tab-explorer  { --acc: var(--gold); }
-.nav-tab:hover { color: var(--text);
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--acc) 42%, transparent),
-    0 0 14px -6px var(--acc); }
-/* Icône : boîte carrée + object-fit contain (jamais de débordement, jamais de distorsion) ;
-   glow pulsé de la couleur d'activité, comme les icônes des cartes de l'accueil. */
-.nav-tab .nav-ico { width: 30px; height: 30px; flex: none; object-fit: contain;
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--acc) 55%, transparent));
-  animation: ngIcoGlow 3.4s ease-in-out infinite;
-  transition: filter .15s ease; }
-/* Normalisation VISUELLE par icône (sources d'aspects différents) : chaque glyphe est
-   calibré pour occuper la même hauteur apparente dans son cadre, sans déborder. */
-#tab-transcrire .nav-ico { width: 26px; height: 30px; }   /* micro : haut et étroit */
-#tab-traduire  .nav-ico { width: 31px; height: 31px; }
-#tab-explorer  .nav-ico { width: 30px; height: 30px; }
-#tab-demander  .nav-ico { width: 31px; height: 31px; }
-.nav-tab:hover .nav-ico, .nav-tab.is-active .nav-ico {
-  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--acc) 78%, transparent)); }
-.nav-tab.is-active { color: var(--bg);
-  background: var(--acc); border-color: var(--acc);   /* couleur d'activité UNIE (sans dégradé) */
-  box-shadow: 0 0 20px -3px var(--acc); }
-.nav-right { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-/* Mobile : les 3 onglets Transcrire/Traduire/Explorer TOUJOURS sur une seule ligne
-   (chacun un tiers égal de la largeur), au lieu de déborder — optimise l'espace. */
-@media (max-width: 600px) {
-  .main-nav { gap: 8px; }
-  .nav-right { display: none; }             /* accueil « bonjour » non essentiel ici */
-  /* Onglets TÉLÉPHONE : les 4 boutons sur UNE SEULE LIGNE, icône + libellé côte à
-     côte. Chaque onglet est un vrai bouton visible (contour + fond teinté de sa
-     couleur d'activité). Icône et texte un peu agrandis pour remplir le bouton. */
-  .nav-tabs { width: 100%; flex-wrap: nowrap; gap: 2px; padding: 0; background: transparent; border: none; }   /* espace entre boutons resserré */
-  /* Ensemble icône + libellé CENTRÉ dans chaque cadre ; icône et texte LÉGÈREMENT agrandis.
-     Padding vertical réduit d'autant → la HAUTEUR du cadre reste inchangée (icône plus grande
-     compensée par moins de padding). Gap resserré pour laisser la place au libellé (pas de troncature). */
-  .nav-tab { flex: 1 1 0; min-width: 0; justify-content: center;
-    gap: 2px; padding: 6.5px 5px; font-size: .56rem; border-radius: 11px; }   /* padding H = marge intérieure ; padding V garde la hauteur à 40px */
-  .nav-tab span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
-  /* Icônes calibrées une à une pour une même hauteur apparente, sans débordement. */
-  .nav-tab .nav-ico { width: 24px; height: 24px; flex: none; }
-  #tab-transcrire .nav-ico { width: 23px; height: 25px; }
-  #tab-traduire  .nav-ico { width: 24px; height: 24px; }
-  #tab-explorer  .nav-ico { width: 24px; height: 24px; }
-  #tab-demander  .nav-ico { width: 22px; height: 24px; }
-  /* Onglet actif : couleur d'activité pleine (déjà géré par .is-active) — on garde. */
-}
-/* Écrans très étroits (≤ 374 px, type 360) : on réduit d'un cran police et icônes pour
-   que « Transcrire » et « Demander » restent ENTIÈREMENT visibles, sans troncature. */
-@media (max-width: 374px) {
-  .nav-tab { gap: 2px; font-size: .52rem; padding: 6.5px 4px; }
-  .nav-tab .nav-ico { width: 23px; height: 23px; }
-  #tab-transcrire .nav-ico { width: 23px; height: 25px; }
-  #tab-traduire  .nav-ico { width: 24px; height: 24px; }
-  #tab-explorer  .nav-ico { width: 24px; height: 24px; }
-  #tab-demander  .nav-ico { width: 22px; height: 24px; }
+#tab-traduire   { --acc: var(--green); }
+#tab-explorer   { --acc: var(--gold); }
+#tab-demander   { --acc: var(--cyan); }
+.bottom-nav-tab.is-active { color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); }
+.bottom-nav-tab.is-active .bottom-nav-ico { filter: none; }
+@media (max-width: 560px) {
+  .bottom-nav-tab { font-size: .6rem; padding: 6px 2px 5px; }
+  .bottom-nav-ico { width: 21px; height: 21px; }
 }
 
 /* ---- Accueil « Que veux-tu faire ? » ---- */
@@ -993,7 +924,7 @@ body {
    « color: inherit » ici, sinon (même spécificité, mais plus bas dans le fichier) ça écrase
    .chip--on/.chip--off (pastilles vertes/rouges de statut) qui comptent sur la cascade normale
    pour la surcharger. Incident 2026-07-23 : les 3 pastilles d'état passées au blanc par erreur. */
-.hub-card, .nav-tab, .brand--home, .foot-brand--home {
+.hub-card, .bottom-nav-tab, .brand--home, .foot-brand--home {
   text-decoration: none; color: inherit;
 }
 .chip { text-decoration: none; }
@@ -1125,9 +1056,6 @@ body {
   0%, 100% { filter: drop-shadow(0 0 14px color-mix(in srgb, var(--acc) 62%, transparent)); }
   50%      { filter: drop-shadow(0 0 34px color-mix(in srgb, var(--acc) 100%, transparent)) drop-shadow(0 0 12px color-mix(in srgb, var(--acc) 70%, transparent)); }
 }
-/* Onglets de nav : icône + libellé alignés */
-.nav-tab { display: inline-flex; align-items: center; gap: 7px; }
-.nav-ico { width: 26px; height: 26px; flex: 0 0 auto; }
 /* Boutons du header : icône premium + libellé */
 .chip--btn { display: inline-flex; align-items: center; gap: 6px; }
 .chip-ico { width: 19px; height: 19px; flex: 0 0 auto; }
@@ -3150,8 +3078,7 @@ body::after {
   .view-title::after, .view-title::before, .card, .card::after,
   .btn--primary, .btn--next, .btn--send, .lang-search-btn, .lang-declare-cta, .corr-submit, .tour-next,
   #btn-mic-test, .tr-guide-open,
-  .hub-card, .hub-card::before, .hub-card::after, .hub-ico, .brand::before, .ndop-sep i, .ndop-sep::before, .ndop-sep::after,
-  .nav-tab, .nav-tab::before, .nav-tab::after, .nav-tab .nav-ico { animation: none; }
+  .hub-card, .hub-card::before, .hub-card::after, .hub-ico, .brand::before, .ndop-sep i, .ndop-sep::before, .ndop-sep::after { animation: none; }
   .btn--primary, .btn--next, .btn--send, .lang-search-btn, .lang-declare-cta, .corr-submit, .tour-next,
   #btn-mic-test, .tr-guide-open { filter: none; }
   .card { transition: none; }
@@ -3175,7 +3102,6 @@ body::after {
      continues pour garder la frappe parfaitement fluide (le clavier couvre le bas de
      l'écran, le décor n'y est de toute façon plus visible). */
   body.kb-docked .hub-card, body.kb-docked .hub-card::before, body.kb-docked .hub-ico,
-  body.kb-docked .nav-tab, body.kb-docked .nav-tab::before, body.kb-docked .nav-tab::after, body.kb-docked .nav-tab .nav-ico,
   body.kb-docked .card::after, body.kb-docked .brand::before { animation: none; }
 }
 
@@ -3715,9 +3641,6 @@ textarea, [contenteditable="true"] { cursor: text; }
 .hub-card { animation-duration: 9s !important; }                              /* halo qui respire : plus doux */
 .hub-card::before { animation-duration: 9s !important; }                      /* comète : plus lente */
 .hub-ico { animation-duration: 6s !important; }                              /* glow d'icône : plus lent */
-.nav-tab { animation-duration: 9s !important; }                              /* onglets : halo plus doux */
-.nav-tab::before { animation-duration: 9s !important; }                      /* onglets : comète plus lente */
-.nav-tab .nav-ico { animation-duration: 6s !important; }                     /* onglets : glow d'icône plus lent */
 .brand::before { animation-duration: 16s !important; }                        /* aurore d'en-tête : plus lente */
 .btn--primary, .btn--next, .btn--send:not(:disabled),
 .lang-search-btn, .lang-declare-cta, .corr-submit, .tour-next,
@@ -3783,8 +3706,8 @@ textarea, [contenteditable="true"] { cursor: text; }
   .lang-switch, .theme-switch { border-color: var(--border); }
   .lang-switch .lang-seg { background: var(--panel); }
   .lang-switch[data-active="fr"] .lang-seg[data-seg="fr"], .lang-switch[data-active="en"] .lang-seg[data-seg="en"] { background: var(--green); color: var(--bg); }
-  /* Onglets d'activité : fond solide + bordure = couleur d'activité (var solide, OK) */
-  .nav-tab { background: var(--panel); border-color: var(--acc); }
+  /* Onglets de la barre basse : repli fond plein (color-mix indisponible) */
+  .bottom-nav-tab.is-active { background: var(--panel); }
   /* Boutons d'action */
   .btn { background: var(--panel); border-color: var(--border); }
   .btn--primary, .btn--next, .btn--send { background: var(--cyan); border-color: var(--cyan); color: var(--bg); }
