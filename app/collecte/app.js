@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v420";
+const APP_VERSION = "v421";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1353,7 +1353,11 @@ function routeTo(route) {
     WhatsApp) et on reste sur la vue courante (on ré-affirme son adresse) sans naviguer. */
 function onHistoryNav(e) {
   if (isKbOpen()) {
+    const field = _kbField;
     _kbDockClose();
+    // Même principe que le bouton ✕ du clavier : le retour ferme le clavier SANS quitter la
+    // page ni perdre le focus du champ en cours d'édition (Brice 2026-07-26).
+    if (field) { try { field.focus({ preventScroll: true }); } catch (e) { field.focus(); } }
     const route = viewToRoute(_currentView);
     if (route) { try { history.pushState({ v: _currentView }, "", "#/" + route); } catch (e) { /* ok */ } }
     return;
@@ -6199,7 +6203,13 @@ function initKeyboardReveal() {
     if (_kbField) { try { _kbField.focus({ preventScroll: true }); } catch (e) { _kbField.focus(); } }
   });
   const closeBtn = $("#kb-close-btn");
-  if (closeBtn) closeBtn.addEventListener("click", hideKeyboard);
+  // Fermer le clavier maison ne doit PAS faire perdre le focus du champ édité (Brice
+  // 2026-07-26 : « exactement comme c'est fait pour un clavier classique », le focus ne doit
+  // jamais se perdre sans nécessité) : on referme puis on rend la main au MÊME champ.
+  if (closeBtn) closeBtn.addEventListener("click", () => {
+    hideKeyboard();
+    if (_kbField) { try { _kbField.focus({ preventScroll: true }); } catch (e) { _kbField.focus(); } }
+  });
   // Fermer si on touche AILLEURS que le clavier ou le champ ngiemboon.
   document.addEventListener("pointerdown", (e) => {
     if (!isKbOpen()) return;

@@ -1382,7 +1382,7 @@ body {
   transition: border-color .2s, box-shadow .2s, background .2s;
 }
 .work-lang:hover { border-color: var(--cyan); box-shadow: inset 0 1px 0 var(--card-sheen), 0 0 24px -6px var(--cyan); }
-.work-lang-ico { font-size: 1.05rem; }
+.work-lang-ico { width: 20px; height: 20px; flex: none; object-fit: contain; }
 .work-lang-lead { color: var(--muted); }
 .work-lang-name { font-weight: 800; letter-spacing: .2px;
   color: color-mix(in srgb, var(--cyan) 72%, var(--text)); }

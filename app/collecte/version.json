@@ -1,6 +1,10 @@
 {
-  "version": "v420",
+  "version": "v421",
   "changelog": {
+    "v421": [
+      "Fermer le clavier ngiemboon (bouton ✕ ou retour) ne fait plus perdre le focus du champ en cours d'écriture, comme un clavier classique",
+      "Traduire/Transcrire : l'icône « Langue de ta contribution » n'est plus un micro générique, mais l'icône dédiée aux langues, déjà utilisée ailleurs dans l'app"
+    ],
     "v420": [
       "Traduire/Transcrire : le bandeau « La communauté attend une réponse dans ta langue » a disparu de la page (redondant) ; la même demande arrive désormais en popup, comme le mot du jour",
       "« Supprimer » sur un popup le fait taire jusqu'au jour d'après (minuit), pas seulement 24h glissantes"
