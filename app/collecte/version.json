@@ -1,6 +1,9 @@
 {
-  "version": "v401",
+  "version": "v402",
   "changelog": {
+    "v402": [
+      "Icône illustrée aux couleurs de l'Afrique pour Explorer, dans la barre de navigation basse (panier de cauris, à la place de la loupe)"
+    ],
     "v401": [
       "Plus besoin de reconfirmer sa langue de contribution à chaque entrée dans Transcrire/Traduire (elle reste changeable à tout moment depuis la page Langues, rappelée en permanence sur ces pages)",
       "Accueil : retiré le texte d'introduction devenu inutile",
