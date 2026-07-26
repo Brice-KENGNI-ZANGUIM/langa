@@ -1,6 +1,9 @@
 {
-  "version": "v413",
+  "version": "v414",
   "changelog": {
+    "v414": [
+      "Barre de navigation basse : fond quasi opaque (95%), le correctif précédent restait encore trop transparent sur certains téléphones"
+    ],
     "v413": [
       "Le bouton « Créer mon profil » revient dans le header, bien visible, tant qu'aucun profil n'a été créé (il restait auparavant caché dans le menu Réglages, un nouveau venu ne le voyait jamais)"
     ],
