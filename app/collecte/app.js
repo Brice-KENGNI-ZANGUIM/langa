@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v399";
+const APP_VERSION = "v400";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -4847,7 +4847,7 @@ function renderProposal(e) {
     ${voteBarHtml(e)}
     <div class="entry-actions">
       <button type="button" class="entry-improve" data-id="${escapeHtml(e.id)}" data-orig="${escapeHtml(e.target_text || "")}"><img class="act-ico" src="icons/ni-suggestion.png" alt="" aria-hidden="true">${t("exp.improve")}</button>
-      <button type="button" class="entry-saymine" data-fr="${escapeHtml(dirOrient(e.direction) === "l2fr" ? (e.target_text || e.source_text || "") : (e.source_text || ""))}" title="${t("exp.saymine.title")}">${t("exp.saymine")}</button>
+      <button type="button" class="entry-saymine" data-fr="${escapeHtml(dirOrient(e.direction) === "l2fr" ? (e.target_text || e.source_text || "") : (e.source_text || ""))}" title="${t("exp.saymine.title")}"><img class="act-ico" src="icons/ui/ic-say.png" alt="" aria-hidden="true">${t("exp.saymine")}</button>
       <button type="button" class="entry-share" data-src="${escapeHtml(e.source_text || "")}" data-tgt="${escapeHtml(e.target_text || "")}" data-dir="${escapeHtml(dirCanon(e))}" data-audio="${isPlayable(e.audio_url) ? "1" : "0"}" title="${t("exp.share.title")}" aria-label="${t("exp.share.aria")}"><img class="act-ico" src="icons/ni-share.png" alt="" aria-hidden="true">${t("exp.share")}</button>
     </div>
     <div class="entry-corr" hidden></div>

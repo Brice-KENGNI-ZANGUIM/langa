@@ -196,7 +196,8 @@ body {
 .wod-body{ display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
 .wod-word{ font-size:1.6rem; font-weight:800; color:var(--text); letter-spacing:-.01em; min-width:0;
   word-break:break-word; }
-.wod-cta{ flex:0 0 auto; padding:9px 16px; font-size:.9rem; }
+.wod-cta{ flex:0 0 auto; padding:9px 16px; font-size:.9rem; display: inline-flex; align-items: center; gap: 7px; }
+.wod-cta-ico { width: 18px; height: 18px; flex: 0 0 auto; }
 @media (max-width:560px){ .wod-word{ font-size:1.3rem; } .wod-body{ gap:10px; } .wod-cta{ font-size:.84rem; padding:8px 13px; } }
 
 /* Repère d'accueil « 1·2·3 » (Brice 2026-07-25) : disparaît entièrement une fois complété. */
@@ -2356,6 +2357,9 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   box-shadow: 0 0 16px -5px var(--cyan); }
 .btn:active { transform: translateY(1px); }
 .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; }
+/* « Laisser un mot » (témoignage) : icône dédiée (Brice 2026-07-26l), remplace l'emoji 💬. */
+#testi-open { display: inline-flex; align-items: center; gap: 8px; }
+.testi-open-ico { width: 20px; height: 20px; flex: 0 0 auto; }
 /* « Enregistrer » VERROUILLÉ pendant un enregistrement en cours : franchement grisé et inerte
    (plus de dégradé cyan ni de halo), pour qu'on ne le confonde plus avec « Arrêter » (rouge, actif). */
 #btn-save.is-rec-locked, #btn-save:disabled {

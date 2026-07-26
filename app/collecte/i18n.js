@@ -350,7 +350,7 @@ export const STR = {
   "about.say.h": { fr: "Ils parlent de nous", en: "What people say" },
   "say.anon": { fr: "Un membre de la communauté", en: "A community member" },
   // Témoignages « Laisser un mot » (publication auto avec garde-fous)
-  "testi.open": { fr: "💬 Laisser un mot sur LANGIAL", en: "💬 Leave a word about LANGIAL" },
+  "testi.open": { fr: "Laisser un mot sur LANGIAL", en: "Leave a word about LANGIAL" },
   "testi.title": { fr: "Ton mot sur LANGIAL", en: "Your word about LANGIAL" },
   "testi.lead": { fr: "En une ou deux phrases, dis ce que LANGIAL t'apporte ou ce que tu en penses. Ton mot pourra apparaître publiquement dans « Ils parlent de nous ».",
                   en: "In a sentence or two, say what LANGIAL brings you or what you think of it. Your word may appear publicly in “What people say”." },
@@ -655,7 +655,7 @@ export const STR = {
   "exp.share": { fr: "Partager", en: "Share" },
   "exp.share.title": { fr: "Partager cette traduction avec un lien direct", en: "Share this translation with a direct link" },
   "exp.share.aria": { fr: "Partager", en: "Share" },
-  "exp.saymine": { fr: "🌍 Dis-le dans ta langue", en: "🌍 Say it in your language" },
+  "exp.saymine": { fr: "Dis-le dans ta langue", en: "Say it in your language" },
   "exp.saymine.title": { fr: "Propose ce mot dans ta propre langue", en: "Offer this word in your own language" },
   "saymine.toast": { fr: "À toi ! Écris « {w} » dans ta langue.", en: "Your turn! Write “{w}” in your language." },
   "tip.aria": { fr: "Aide sur ce champ", en: "Help for this field" },

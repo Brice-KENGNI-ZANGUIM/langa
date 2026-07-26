@@ -1,6 +1,9 @@
 {
-  "version": "v399",
+  "version": "v400",
   "changelog": {
+    "v400": [
+      "Nouvelles icônes illustrées aux couleurs de l'Afrique pour la langue de contribution (à la place du globe), les consignes de traduction et le témoignage, à chaque endroit où elles apparaissent"
+    ],
     "v399": [
       "Nouvelle barre de navigation en bas de l'écran, toujours visible (Transcrire/Traduire/Explorer/Demander), comme sur Telegram ou WhatsApp",
       "Le header ne garde plus que le logo, le nom, le slogan et les boutons Accueil/Réglages",
