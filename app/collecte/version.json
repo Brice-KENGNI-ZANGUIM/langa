@@ -1,6 +1,9 @@
 {
-  "version": "v392",
+  "version": "v393",
   "changelog": {
+    "v393": [
+      "Le bouton Réglages n'affiche plus que l'icône ☰ (sans texte, symbole universellement reconnu) ; le bouton Accueil le rejoint au même endroit, en icône seule également"
+    ],
     "v392": [
       "La langue de contribution est désormais confirmée à chaque entrée dans Traduire ou Transcrire (fenêtre dédiée, distincte du village/langue de tes parents) : tu vois ta langue actuelle, tu peux la changer via un menu déroulant, ou en déclarer une nouvelle en premier choix"
     ],
