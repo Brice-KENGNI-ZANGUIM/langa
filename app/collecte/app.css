@@ -2793,10 +2793,12 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
    (violet = activité sur tes contributions, cyan = demandes). Défaut violet si non typé. */
 .notif-popup { --pop-acc: var(--violet); }
 
-/* Cloche du header : pastille de non-lues qui déborde en haut à droite. */
-.chip--notif { position: relative; }
-.notif-badge { position: absolute; top: -5px; right: -4px; min-width: 17px; height: 17px; padding: 0 4px;
-  border-radius: 999px; background: var(--red); color: #fff; font-size: .62rem; font-weight: 800; line-height: 17px;
+/* Pastille de non-lues sur l'icône Réglages (Brice 2026-07-26f, Notifications transférée dans
+   le tiroir) : déborde en haut à droite de l'icône, taille suivie sur celle-ci (×1.5 puis ×1.15,
+   cf. .chip-bare-ico), jamais tronquée par un cadre puisque Réglages n'en a plus. */
+#settings-toggle { position: relative; }
+.notif-badge { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px;
+  border-radius: 999px; background: var(--red); color: #fff; font-size: .72rem; font-weight: 800; line-height: 20px;
   text-align: center; box-shadow: 0 0 0 2px var(--bg), 0 0 10px -2px var(--red); pointer-events: none; }
 .notif-badge[hidden] { display: none; }
 

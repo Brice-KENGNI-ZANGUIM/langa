@@ -1,6 +1,9 @@
 {
-  "version": "v395",
+  "version": "v396",
   "changelog": {
+    "v396": [
+      "Notifications déplacée dans le menu Réglages (section Mon compte, avec Profil) ; le nombre de notifications non lues s'affiche désormais directement sur l'icône Réglages"
+    ],
     "v395": [
       "Les icônes Accueil et Réglages sont agrandies (×1.5 puis ×1.15) pour être bien plus visibles, avec un espacement entre elles ajusté à l'identique",
       "Accueil et Réglages se rapprochent du bord et l'un de l'autre, pour un rendu plus compact dans le coin du header"

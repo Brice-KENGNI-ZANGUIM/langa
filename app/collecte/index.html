@@ -98,6 +98,10 @@
       <button id="settings-toggle" class="chip-bare" type="button" data-i18n-title="chip.settings.title"
               title="Réglages" aria-label="Réglages" aria-haspopup="dialog" aria-controls="settings-drawer" aria-expanded="false">
         <img class="chip-bare-ico" src="icons/ui/hi-menu.png" alt="" aria-hidden="true">
+        <!-- Notifications transférées dans le tiroir de Réglages (Brice 2026-07-26f) : le nombre
+             de non-lues s'affiche désormais directement sur l'icône Réglages, plus visible qu'un
+             bouton séparé dans le header. -->
+        <span id="notif-badge" class="notif-badge" hidden aria-hidden="true">0</span>
       </button>
     </div>
     <div class="chips-nav">
@@ -106,8 +110,6 @@
              profil, ouvre exactement le même popup explicatif que requireProfile() (#profile-gate). -->
         <button id="btn-create-profile" class="chip chip--btn" type="button" hidden data-i18n-title="hub.card.profile.title"
                 title="Créer mon profil" aria-label="Créer mon profil"><img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="hub.card.profile">Créer mon profil</span></button>
-        <a id="btn-notifs" class="chip chip--btn chip--notif" href="#/notifications" hidden data-i18n-title="chip.notifs.title"
-                title="Mes notifications" aria-label="Mes notifications"><img class="chip-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span data-i18n="chip.notifs">Notifications</span><span id="notif-badge" class="notif-badge" hidden aria-hidden="true">0</span></a>
       </div>
     </div>
     <!-- Barre des 4 ESPACES, intégrée au header (3e rangée). Masquée sur l'accueil, où les
@@ -138,6 +140,9 @@
           <h3 data-i18n="settings.sec.account">Mon compte</h3>
           <a id="btn-open-profile" class="chip chip--btn settings-link" href="#/profil" hidden>
             <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="chip.profile">Profil</span></a>
+          <a id="btn-notifs" class="chip chip--btn settings-link" href="#/notifications" hidden data-i18n-title="chip.notifs.title"
+                  title="Mes notifications" aria-label="Mes notifications">
+            <img class="chip-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span data-i18n="chip.notifs">Notifications</span></a>
         </div>
         <div class="settings-section">
           <h3 data-i18n="settings.sec.interface">Interface</h3>

@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v395";
+const APP_VERSION = "v396";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -3959,10 +3959,8 @@ const TOUR_TOOLS = [
     en: { title: "Your version", text: "The number of the version you're using. The app updates itself: when a newer version exists, a banner warns you and a single button installs it, with no technical step on your part" } },
   { sel: "#home-link", title: "Revenir à l'accueil", text: "Te ramène à l'écran d'accueil, celui qui présente les activités. Pratique pour changer d'activité d'un seul geste, depuis n'importe quelle page. Le logo et le nom, en haut comme en bas, font la même chose",
     en: { title: "Back to home", text: "Takes you back to the home screen, the one that presents the activities. Handy to switch activity in one move, from any page. The logo and the name, at the top as at the bottom, do the same thing" } },
-  { sel: "#btn-notifs", title: "Tes notifications", text: "La cloche te tient au courant de tout ce qui te concerne : une réponse à ta demande, quelqu'un qui cherche un mot dans ta langue, un vote sur ce que tu as proposé. Une pastille compte les nouveautés ; touche une notification pour agir directement dessus, par exemple aller aider la personne d'un seul geste",
-    en: { title: "Your notifications", text: "The bell keeps you posted on everything that concerns you: a reply to your request, someone looking for a word in your language, a vote on what you suggested. A badge counts the new ones; tap a notification to act on it directly, for example go and help the person in one move" } },
-  { sel: "#settings-toggle", title: "Le menu Réglages", text: "Regroupe tout ce que tu ne changes pas tous les jours : ton profil, ta langue de contribution, à propos du projet, cette visite guidée, le signalement de bugs, la langue de l'interface et le mode clair/sombre. Un seul geste pour y accéder, et le reste de l'écran reste dégagé",
-    en: { title: "The Settings menu", text: "Groups everything you don't change every day: your profile, your contribution language, about the project, this guided tour, bug reporting, the interface language and light/dark mode. One tap to reach it, and the rest of the screen stays clear" } },
+  { sel: "#settings-toggle", title: "Le menu Réglages", text: "Regroupe tout ce que tu ne changes pas à chaque instant : tes notifications (une pastille compte les nouveautés), ton profil, ta langue de contribution, à propos du projet, cette visite guidée, le signalement de bugs, la langue de l'interface et le mode clair/sombre. Un seul geste pour y accéder, et le reste de l'écran reste dégagé",
+    en: { title: "The Settings menu", text: "Groups everything you don't change all the time: your notifications (a badge counts the new ones), your profile, your contribution language, about the project, this guided tour, bug reporting, the interface language and light/dark mode. One tap to reach it, and the rest of the screen stays clear" } },
 ];
 // Navigation entre espaces (visible seulement sur Traduire/Transcrire/Explorer).
 const TOUR_NAV = [
