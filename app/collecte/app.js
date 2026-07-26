@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v396";
+const APP_VERSION = "v397";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1433,17 +1433,24 @@ function bannerShareSlug(name) {
 function injectBannerShare(name) {
   const slug = bannerShareSlug(name);
   const view = document.getElementById("view-" + name);
+  if (!view) return;
   // La page À propos utilise .about-hero (bannière pleine largeur) au lieu de .page-banner :
   // on accepte les deux → le bouton de partage est présent sur TOUTES les pages à bannière.
-  const banner = view && view.querySelector(".page-banner, .about-hero");
-  if (!banner) return;                         // pas de bannière = page transitoire, on n'ajoute rien
-  // Bouton SOUS la bannière (barre à l'extérieur) → il ne cache jamais la bannière. Présent sur
-  // TOUTES les pages à bannière.
-  let bar = banner.nextElementSibling;
+  const banner = view.querySelector(".page-banner, .about-hero");
+  // Transcrire/Traduire/Explorer/Demander n'ont plus de bannière (épurées 2026-07-26g, les
+  // images ont rejoint À propos en illustration) : le bouton de partage s'ancre alors après le
+  // bloc de titre (work-head/card/about-head), pour rester présent partout sans dépendre d'une
+  // image. `.closest("div")` depuis le titre remonte à son bloc englobant direct.
+  const anchor = banner || view.querySelector(".view-title")?.closest("div");
+  if (!anchor) return;                         // ni bannière ni titre = page transitoire, on n'ajoute rien
+  // Bouton SOUS l'ancre (barre à l'extérieur) → il ne cache jamais le contenu. Présent sur
+  // TOUTES les pages.
+  let bar = anchor.nextElementSibling;
   if (!bar || !bar.classList || !bar.classList.contains("banner-share-bar")) {
     bar = document.createElement("div"); bar.className = "banner-share-bar";
-    banner.insertAdjacentElement("afterend", bar);
+    anchor.insertAdjacentElement("afterend", bar);
   }
+  bar.classList.toggle("banner-share-bar--plain", !banner);
   let btn = bar.querySelector(".banner-share");
   if (!btn) {
     btn = document.createElement("button"); btn.className = "banner-share"; btn.type = "button";
@@ -2899,9 +2906,6 @@ function setActivity(act) {
   const t2 = $("#work-title"); if (t2) t2.textContent = isT ? t("work.title.transcribe") : t("work.title.translate");
   const wico = $("#work-ico"); if (wico) wico.src = isT ? "icons/mic-real.png" : "icons/act-translate.svg";
   updateWorkLang();   // rappel FORT de la langue de contribution (anti-mauvais étiquetage)
-  const bimg = $("#work-banner-img"); if (bimg) bimg.src = isT ? "icons/banner-transcribe.jpg" : "icons/banner-translate.jpg";
-  const beye = $("#work-banner-eye"); if (beye) beye.textContent = isT ? t("pb.transcribe.eye") : t("pb.translate.eye");
-  const btit = $("#work-banner-title"); if (btit) btit.textContent = isT ? t("pb.transcribe.title") : t("pb.translate.title");
   const h = $("#work-help");
   if (h) h.innerHTML = isT ? t("work.help.transcribe") : t("work.help.translate");
   const la = $("#lbl-audio"); if (la) la.textContent = isT ? t("work.audio.transcribe") : t("work.audio.translate");
@@ -3482,9 +3486,14 @@ async function refreshNotifs() {
   updateNotifBadge(notifUnreadCount());   // non lues = celles jamais lues (état par notification)
 }
 function updateNotifBadge(n) {
-  const b = $("#notif-badge"); if (!b) return;
-  if (n > 0) { b.textContent = n > 99 ? "99+" : String(n); b.hidden = false; }
-  else b.hidden = true;
+  // Même compteur affiché aux DEUX endroits (icône Réglages + ligne Notifications du tiroir,
+  // Brice 2026-07-26i) : ouvrir le tiroir révèle d'où vient le nombre vu sur Réglages.
+  const text = n > 99 ? "99+" : String(n);
+  [$("#notif-badge"), $("#notif-badge-drawer")].forEach((b) => {
+    if (!b) return;
+    if (n > 0) { b.textContent = text; b.hidden = false; }
+    else b.hidden = true;
+  });
 }
 /** Message lisible d'une notification (construit en TEXTE → anti-injection). */
 /** Enveloppe un mot clé de popup (nom du demandeur, mot demandé, langue cible) : en gras
@@ -4059,8 +4068,8 @@ const TOURS = {
       en: { title: "The underlying ambition", text: "Far more than a mere dictionary: gathering words and voices to give our languages keyboards, translators and AIs that understand them. Ngiemboon leads the way, the horizon aims at all our languages" } },
     { sel: "#about-grid-why", title: "Ce que ça change vraiment", text: "Trois enjeux réunis : préserver ce qui pourrait se perdre, outiller la langue pour qu'elle vive dans les téléphones et les ordinateurs, et le faire ensemble, car une langue appartient à ceux qui la parlent",
       en: { title: "What it really changes", text: "Three stakes brought together: preserving what could be lost, equipping the language so it lives in phones and computers, and doing it together, because a language belongs to those who speak it" } },
-    { sel: "#about-grid-how", title: "Par où mettre la main", text: "Trois portes d'entrée complémentaires : traduire pour le sens, transcrire pour le son, explorer pour affiner. Tu n'es tenu à aucune : même un seul mot par jour fait grossir le trésor commun",
-      en: { title: "Where to lend a hand", text: "Three complementary entry doors: translate for meaning, transcribe for sound, explore to refine. You're bound to none: even a single word a day grows the shared treasure" } },
+    { sel: "#about-grid-how", title: "Par où mettre la main", text: "Quatre portes d'entrée complémentaires : transcrire pour le son, traduire pour le sens, explorer pour affiner, demander pour l'entraide. Tu n'es tenu à aucune : même un seul mot par jour fait grossir le trésor commun",
+      en: { title: "Where to lend a hand", text: "Four complementary entry doors: transcribe for sound, translate for meaning, explore to refine, ask for mutual help. You're bound to none: even a single word a day grows the shared treasure" } },
     { sel: ".about-share", title: "Faire passer le mot", text: "Le projet grandit avec le nombre de contributeurs. Montre le QR code autour de toi ou récupère le flyer en image ou en PDF pour le diffuser : plus on est nombreux, plus la langue est richement documentée",
       en: { title: "Spread the word", text: "The project grows with the number of contributors. Show the QR code around you or grab the flyer as an image or PDF to spread it: the more we are, the more richly the language is documented" } },
     { sel: ".about-cta", title: "Se lancer", text: "« Commencer à contribuer » t'emmène droit aux activités de collecte, « Retour » te ramène à l'écran d'où tu venais. Rien ne presse : tu peux explorer d'abord et contribuer quand tu te sens prêt",

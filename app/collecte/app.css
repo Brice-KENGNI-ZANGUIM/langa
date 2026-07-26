@@ -2801,6 +2801,10 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   border-radius: 999px; background: var(--red); color: #fff; font-size: .72rem; font-weight: 800; line-height: 20px;
   text-align: center; box-shadow: 0 0 0 2px var(--bg), 0 0 10px -2px var(--red); pointer-events: none; }
 .notif-badge[hidden] { display: none; }
+/* Même pastille, DANS le tiroir (Brice 2026-07-26i) : affichée aux deux endroits à la fois (icône
+   Réglages ET ligne Notifications) pour qu'ouvrir le tiroir révèle d'où vient le nombre vu sur
+   Réglages. En ligne (pas de survol/débordement), poussée à droite de la ligne. */
+.notif-badge--inline { position: static; margin-left: auto; flex: 0 0 auto; box-shadow: none; }
 
 /* Centre de notifications : flux horodaté, non-lues mises en avant. */
 .notif-toolbar { display: flex; justify-content: flex-end; margin: 4px 0 10px; }
@@ -3206,6 +3210,10 @@ body::after {
    sous le header), légère marge droite pour le coin. z-index au-dessus de la bannière. */
 .banner-share-bar { display: flex; justify-content: flex-end; position: relative; z-index: 5;
   margin-top: -46px; margin-right: 10px; margin-bottom: 10px; }
+/* Pages SANS bannière (Transcrire/Traduire/Explorer/Demander, épurées 2026-07-26g) : le bouton
+   de partage s'ancre après le bloc de titre plutôt qu'après une image → pas d'encastrement en
+   coin (rien à encastrer dans), simple espacement normal. */
+.banner-share-bar--plain { margin-top: 14px; margin-right: 0; margin-bottom: 4px; }
 .banner-share { display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px; border-radius: 999px;
   cursor: pointer; font: inherit; font-size: .82rem; font-weight: 700; color: #06121a;
   background: var(--cyan);   /* repli Safari ancien (color-mix non supporté avant 16.2) : sinon fond vide */
@@ -3481,6 +3489,30 @@ body::after {
 }
 .about-cell h4 { margin: 0 0 7px; font-size: 19px; color: var(--text); }
 .about-cell p { margin: 0; line-height: 1.55; color: var(--muted); }
+
+/* Les 4 façons de contribuer (Brice 2026-07-26h) : les bannières des 4 pages d'activité
+   (Transcrire/Traduire/Explorer/Demander), retirées de leurs pages pour épurer l'app, vivent
+   désormais ICI en illustration, chacune suivie d'un texte étoffé. Réutilise le même habillage
+   accroche que .page-banner (.page-banner-cap/.pb-eye/.pb-title : « le même texte dessus »),
+   mais CONTENUE dans la colonne de contenu (pas de bleed plein viewport, coins arrondis comme
+   .about-mid-illus) puisqu'il ne s'agit plus d'un en-tête de page soudé au header. */
+.about-activities { display: flex; flex-direction: column; gap: 36px; margin: 4px 0 8px; }
+.about-activity-banner {
+  position: relative; display: block; overflow: hidden; border-radius: 18px;
+  border: 1.5px solid color-mix(in srgb, var(--cyan) 30%, var(--border));
+  box-shadow: 0 16px 36px -22px rgba(0,0,0,.55), 0 0 30px -20px var(--cyan);
+}
+/* Tailles d'accroche recalibrées : .pb-eye/.pb-title sont dimensionnés en `vw` pour une
+   bannière PLEIN VIEWPORT (.page-banner) ; ici la bannière est contenue dans la colonne de
+   contenu (souvent bien plus étroite que le viewport sur grand écran) → sans ce recalibrage,
+   le texte déborderait ou paraîtrait disproportionné. */
+.about-activity-banner .pb-eye { font-size: clamp(1.1rem, 3.4vw, 2rem); }
+.about-activity-banner .pb-title { font-size: clamp(.74rem, 1.9vw, 1.05rem); }
+.about-activity-p { margin: 14px 2px 0; line-height: 1.62; color: var(--text); font-size: .98rem; }
+@media (max-width: 640px) {
+  .about-activities { gap: 26px; }
+  .about-activity-p { font-size: .86rem; }
+}
 
 .about-share {
   display: flex; gap: 20px; align-items: center; justify-content: space-between;

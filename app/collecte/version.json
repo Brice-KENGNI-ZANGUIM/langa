@@ -1,6 +1,10 @@
 {
-  "version": "v396",
+  "version": "v397",
   "changelog": {
+    "v397": [
+      "Les bannières de Transcrire, Traduire, Explorer et Demander ont disparu de ces pages pour les épurer ; elles vivent désormais en illustration dans À propos, dans une nouvelle section « Quatre façons de contribuer » bien plus riche",
+      "Le nombre de notifications non lues s'affiche maintenant aussi bien sur l'icône Réglages que sur la ligne Notifications à l'intérieur du tiroir"
+    ],
     "v396": [
       "Notifications déplacée dans le menu Réglages (section Mon compte, avec Profil) ; le nombre de notifications non lues s'affiche désormais directement sur l'icône Réglages"
     ],

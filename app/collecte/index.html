@@ -142,7 +142,11 @@
             <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="chip.profile">Profil</span></a>
           <a id="btn-notifs" class="chip chip--btn settings-link" href="#/notifications" hidden data-i18n-title="chip.notifs.title"
                   title="Mes notifications" aria-label="Mes notifications">
-            <img class="chip-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span data-i18n="chip.notifs">Notifications</span></a>
+            <img class="chip-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span data-i18n="chip.notifs">Notifications</span>
+            <!-- Même compteur que la pastille de l'icône Réglages (Brice 2026-07-26i) : affiché
+                 aux DEUX endroits à la fois, pour qu'en ouvrant le tiroir on comprenne d'où vient
+                 le nombre vu sur Réglages. -->
+            <span id="notif-badge-drawer" class="notif-badge notif-badge--inline" hidden aria-hidden="true">0</span></a>
         </div>
         <div class="settings-section">
           <h3 data-i18n="settings.sec.interface">Interface</h3>
@@ -487,8 +491,6 @@
 
     <!-- ============== VUE OUTILS : Traduire / Transcrire =================== -->
     <section id="view-app" class="view" hidden data-act="translate">
-      <div class="page-banner"><img id="work-banner-img" class="page-banner-img" src="icons/banner-translate.jpg" alt="" aria-hidden="true">
-        <div class="page-banner-cap"><span class="pb-eye" id="work-banner-eye" data-i18n="pb.translate.eye">Traduire</span><span class="pb-title" id="work-banner-title" data-i18n="pb.translate.title">Transmets ta langue, mot à mot</span></div></div>
       <div class="work-head">
         <h2 class="view-title view-title--ico"><img id="work-ico" class="title-ico" src="icons/act-translate.svg" alt="" aria-hidden="true"><span id="work-title">Traduire</span></h2>
         <p class="work-help" id="work-help"></p>
@@ -754,8 +756,6 @@
 
     <!-- ============== VUE EXPLORER (bibliothèque communautaire) =========== -->
     <section id="view-explore" class="view" hidden>
-      <div class="page-banner"><img class="page-banner-img" src="icons/banner-explore.jpg" alt="" aria-hidden="true">
-        <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.explore.eye">La bibliothèque</span><span class="pb-title" data-i18n="pb.explore.title">Explore, écoute, apprends</span></div></div>
       <div class="card">
         <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/act-explore.svg" alt="" aria-hidden="true"><span data-i18n="exp.title">Explorer la bibliothèque</span></h2>
         <p class="contrib-why" data-i18n="exp.intro">Apprends de la communauté : écoute les prononciations, découvre les traductions et les voix déjà transmises, et repère ce qui pourrait être amélioré. Chaque entrée montre son contexte, comme le domaine, la variante du village et le rôle du contributeur.</p>
@@ -837,22 +837,27 @@
         </div>
       </div>
 
-      <h3 class="about-sec" id="about-sec-how" data-i18n="about.how.h">Trois façons de contribuer</h3>
-      <div class="about-grid" id="about-grid-how">
-        <div class="card about-cell" style="--a:#e2b56f">
-          <div class="about-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20l4-1L20 7a2.1 2.1 0 0 0-3-3L5 16l-1 4z"/><path d="M14.5 6.5l3 3"/></svg></div>
-          <h4 data-i18n="about.how.1.h">Traduire</h4>
-          <p data-i18n="about.how.1.p">Donne la traduction de mots et de phrases entières (français ↔ ngiemboon)</p>
+      <h3 class="about-sec" id="about-sec-how" data-i18n="about.how.h">Quatre façons de contribuer</h3>
+      <div class="about-activities" id="about-grid-how">
+        <div class="about-activity">
+          <div class="about-activity-banner"><img class="page-banner-img" src="icons/banner-transcribe.jpg" alt="Une personne enregistre sa voix au microphone pour transcrire la prononciation d'un mot" loading="lazy">
+            <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.transcribe.eye">Transcrire</span><span class="pb-title" data-i18n="pb.transcribe.title">Laisse ta voix en héritage</span></div></div>
+          <p class="about-activity-p" data-i18n="about.how.transcribe.p">Ta voix porte un accent, un rythme, une musique qu'aucun texte ne peut capturer entièrement. Transcrire, c'est prêter ta voix à un mot ou une phrase pour que sa prononciation exacte traverse le temps intacte. Chaque enregistrement rejoint la bibliothèque commune, où il peut être écouté et appris par quiconque cherche à bien prononcer ta langue.</p>
         </div>
-        <div class="card about-cell" style="--a:#a78bfa">
-          <div class="about-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M6 11a6 6 0 0 0 12 0M12 17v4M9 21h6"/></svg></div>
-          <h4 data-i18n="about.how.2.h">Transcrire</h4>
-          <p data-i18n="about.how.2.p">Enregistre ta voix quand tu prononces les mots : un trésor à préserver</p>
+        <div class="about-activity">
+          <div class="about-activity-banner"><img class="page-banner-img" src="icons/banner-translate.jpg" alt="Deux personnes échangent autour d'une traduction, un téléphone à la main" loading="lazy">
+            <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.translate.eye">Traduire</span><span class="pb-title" data-i18n="pb.translate.title">Transmets ta langue, mot à mot</span></div></div>
+          <p class="about-activity-p" data-i18n="about.how.translate.p">Traduire, c'est bâtir le pont entre le français et ta langue, mot après mot, phrase après phrase. Chaque traduction que tu proposes enrichit un dictionnaire vivant, consulté par d'autres locuteurs, par des apprenants, et bientôt par les intelligences artificielles qui apprendront à comprendre et à parler ta langue.</p>
         </div>
-        <div class="card about-cell" style="--a:#2dd4bf">
-          <div class="about-ic"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6c3-1.5 6-1.5 9 0v13c-3-1.5-6-1.5-9 0zM21 6c-3-1.5-6-1.5-9 0v13c3-1.5 6-1.5 9 0z"/></svg></div>
-          <h4 data-i18n="about.how.3.h">Explorer</h4>
-          <p data-i18n="about.how.3.p">Écoute, apprends et vote pour les meilleures améliorations</p>
+        <div class="about-activity">
+          <div class="about-activity-banner"><img class="page-banner-img" src="icons/banner-explore.jpg" alt="Une personne consulte la bibliothèque communautaire de traductions et de prononciations" loading="lazy">
+            <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.explore.eye">La bibliothèque</span><span class="pb-title" data-i18n="pb.explore.title">Explore, écoute, apprends</span></div></div>
+          <p class="about-activity-p" data-i18n="about.how.explore.p">Explorer, c'est parcourir tout ce que la communauté a déjà partagé : écouter une prononciation, lire une traduction, comparer les variantes d'un même mot selon les villages. Ton avis compte : voter juste, doute ou faux aide à faire émerger les meilleures réponses et à corriger celles qui se sont glissées par erreur.</p>
+        </div>
+        <div class="about-activity">
+          <div class="about-activity-banner"><img class="page-banner-img" src="icons/banner-demander.jpg" alt="Une personne sollicite la communauté pour obtenir la traduction d'un mot qui lui manque" loading="lazy">
+            <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.demander.eye">Entraide</span><span class="pb-title" data-i18n="pb.demander.title">Demande à la communauté</span></div></div>
+          <p class="about-activity-p" data-i18n="about.how.demander.p">Un mot te manque, dans ta langue ou dans une autre ? Demander, c'est solliciter la communauté : ta requête est transmise à celles et ceux qui parlent la langue visée, qui peuvent y répondre d'un geste. Et si personne ne la parle encore sur la plateforme, tu peux même déclarer une nouvelle langue pour lancer ta demande.</p>
         </div>
       </div>
 
@@ -983,8 +988,6 @@
 
     <!-- ============== VUE DEMANDER (axe social : entraide traduction) ======= -->
     <section id="view-demander" class="view" hidden>
-      <div class="page-banner"><img class="page-banner-img" src="icons/banner-demander.jpg" alt="" aria-hidden="true">
-        <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.demander.eye">Entraide</span><span class="pb-title" data-i18n="pb.demander.title">Demande à la communauté</span></div></div>
       <div class="about-head">
         <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/act-request.png" alt="" aria-hidden="true"><span data-i18n="req.title">Demander une traduction</span></h2>
         <p class="contrib-why" data-i18n-html="req.intro">Demande à ceux qui savent de te <b>transmettre</b> la <b>traduction</b> ou la <b>prononciation</b>
