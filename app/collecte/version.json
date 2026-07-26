@@ -1,6 +1,11 @@
 {
-  "version": "v403",
+  "version": "v404",
   "changelog": {
+    "v404": [
+      "Accueil : texte d'introduction raccourci",
+      "Accueil (mobile) : les 4 cartes d'activité tiennent maintenant sans avoir à défiler sur la plupart des téléphones",
+      "Bouton « Partager cette page » : devient une icône seule, discrète, dans le coin de chaque page (au lieu d'un bouton avec texte qui prenait toute une ligne)"
+    ],
     "v403": [
       "Barre de navigation basse : les 4 icônes d'activité ont maintenant toutes la même hauteur (auparavant contraintes dans une case carrée, ce qui rétrécissait les sujets larges comme le panier ou le style large)"
     ],

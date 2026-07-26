@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v403";
+const APP_VERSION = "v404";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1442,6 +1442,10 @@ function bannerShareSlug(name) {
   if (name === "app") return activity === "transcribe" ? "transcrire" : "traduire";
   return Object.prototype.hasOwnProperty.call(PAGE_SLUG, name) ? PAGE_SLUG[name] : "";
 }
+/** Bouton « Partager cette page » : (2026-07-26) icône SEULE (plus de texte), posée en overlay
+    dans le coin haut-droit de l'ancre (bannière ou bloc de titre) — ne consomme plus de hauteur
+    dans le flux normal de la page (Brice : épurer au maximum, ce bouton n'est pas un élément
+    central de travail, il ne doit plus prendre de place sur l'accueil / les pages d'activité). */
 function injectBannerShare(name) {
   const slug = bannerShareSlug(name);
   const view = document.getElementById("view-" + name);
@@ -1450,29 +1454,28 @@ function injectBannerShare(name) {
   // on accepte les deux → le bouton de partage est présent sur TOUTES les pages à bannière.
   const banner = view.querySelector(".page-banner, .about-hero");
   // Transcrire/Traduire/Explorer/Demander n'ont plus de bannière (épurées 2026-07-26g, les
-  // images ont rejoint À propos en illustration) : le bouton de partage s'ancre alors après le
+  // images ont rejoint À propos en illustration) : le bouton de partage s'ancre alors sur le
   // bloc de titre (work-head/card/about-head), pour rester présent partout sans dépendre d'une
   // image. `.closest("div")` depuis le titre remonte à son bloc englobant direct.
-  const anchor = banner || view.querySelector(".view-title")?.closest("div");
+  let anchor = banner || view.querySelector(".view-title")?.closest("div");
   if (!anchor) return;                         // ni bannière ni titre = page transitoire, on n'ajoute rien
-  // Bouton SOUS l'ancre (barre à l'extérieur) → il ne cache jamais le contenu. Présent sur
-  // TOUTES les pages.
-  let bar = anchor.nextElementSibling;
-  if (!bar || !bar.classList || !bar.classList.contains("banner-share-bar")) {
-    bar = document.createElement("div"); bar.className = "banner-share-bar";
-    anchor.insertAdjacentElement("afterend", bar);
-  }
-  bar.classList.toggle("banner-share-bar--plain", !banner);
-  let btn = bar.querySelector(".banner-share");
+  // Une bannière peut être une simple balise <img> (ex. .about-hero) : un élément remplacé ne
+  // peut pas afficher d'enfants (le bouton serait présent dans le DOM mais jamais rendu). On
+  // ancre alors sur son PARENT direct à la place (l'image est son 1er enfant en pleine largeur,
+  // donc le coin haut-droit du parent coïncide visuellement avec celui de l'image).
+  if (anchor.tagName === "IMG") anchor = anchor.parentElement;
+  if (!anchor) return;
+  anchor.classList.add("bs-anchor");            // position:relative scopé, sans toucher au reste
+  let btn = anchor.querySelector(".banner-share");
   if (!btn) {
     btn = document.createElement("button"); btn.className = "banner-share"; btn.type = "button";
     // Cauris (icône africanisée déjà utilisée pour le partage dans les notifications,
     // icons/ni-share.png) plutôt qu'une flèche générique (Brice 2026-07-25x).
-    btn.innerHTML = '<img class="bs-ico" src="icons/ni-share.png" alt="" aria-hidden="true"> <span class="bs-txt"></span>';
-    bar.appendChild(btn);
+    btn.innerHTML = '<img class="bs-ico" src="icons/ni-share.png" alt="" aria-hidden="true">';
+    anchor.appendChild(btn);
   }
-  btn.querySelector(".bs-txt").textContent = t("banner.share");
   btn.setAttribute("aria-label", t("banner.share"));
+  btn.title = t("banner.share");
   btn.onclick = () => sharePageBanner(slug);
 }
 // slug d'URL de page → clé de cas de partage (textes marketing de sharecopy.js).

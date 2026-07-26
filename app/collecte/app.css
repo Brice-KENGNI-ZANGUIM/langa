@@ -1001,13 +1001,18 @@ body {
    hauteur réduite ; l'image reste pleine hauteur (plus courte donc plus étroite → laisse
    d'autant plus de place au texte). */
 @media (max-width: 560px) {
-  .hub-card { min-height: 113px; }
-  .hub-card--illus .hub-text { padding: 10px 4px 10px 14px; gap: 4px; justify-content: center; }
-  .hub-card--illus .hub-name { font-size: 1.28rem; }
-  .hub-card--illus .hub-desc { font-size: .8rem; line-height: 1.35; }
-  .hub-card--illus .hub-go { font-size: .86rem; }
-  .hub-card--illus .hub-ico { width: 48px; height: 48px; padding: 7px; }
-  .hub-card-head { gap: 10px; }
+  .hub-card { min-height: 82px; }
+  .hub-card--illus .hub-text { padding: 6px 4px 6px 12px; gap: 2px; justify-content: center; }
+  .hub-card--illus .hub-name { font-size: 1.02rem; }
+  /* Description clampée à 1 ligne (2026-07-26, Brice : les 4 cartes doivent tenir sans scroll
+     à l'arrivée sur l'accueil) : une hauteur garantie quelle que soit la longueur du texte dans
+     la langue d'interface, plutôt que de raccourcir chaque texte à la main par langue. */
+  .hub-card--illus .hub-desc { font-size: .7rem; line-height: 1.25;
+    display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 1; overflow: hidden; }
+  .hub-card--illus .hub-go { font-size: .74rem; }
+  .hub-card--illus .hub-ico { width: 32px; height: 32px; padding: 5px; }
+  .hub-card-head { gap: 7px; }
+  .hub-cards { gap: 8px; }
 }
 /* Bordure vive et PLEINE de la couleur d'activité (bien lisible à l'arrêt) SURMONTÉE d'une
    comète blanche large qui fait le tour, rapide. Anneau réalisé au masque → reste dans la boîte. */
@@ -3124,28 +3129,25 @@ body::after {
   border: 0; border-radius: 0;
   border-bottom: 2px solid color-mix(in srgb, var(--cyan) 52%, var(--gold));
   box-shadow: 0 14px 28px -22px rgba(0,0,0,.6); }
-/* Bouton PARTAGER cette page : dans une barre SOUS la bannière (à l'extérieur, à droite) → il ne
-   cache jamais la bannière. Présent sur toutes les pages. Partage l'URL propre à la page. */
-/* Barre de partage ENCASTRÉE dans le coin inférieur droit de la bannière, à l'extérieur : marge
-   négative marquée qui la remonte contre le bord bas de la bannière (comme la bannière est soudée
-   sous le header), légère marge droite pour le coin. z-index au-dessus de la bannière. */
-.banner-share-bar { display: flex; justify-content: flex-end; position: relative; z-index: 5;
-  margin-top: -46px; margin-right: 10px; margin-bottom: 10px; }
-/* Pages SANS bannière (Transcrire/Traduire/Explorer/Demander, épurées 2026-07-26g) : le bouton
-   de partage s'ancre après le bloc de titre plutôt qu'après une image → pas d'encastrement en
-   coin (rien à encastrer dans), simple espacement normal. */
-.banner-share-bar--plain { margin-top: 14px; margin-right: 0; margin-bottom: 4px; }
-.banner-share { display: inline-flex; align-items: center; gap: 6px; padding: 8px 15px; border-radius: 999px;
-  cursor: pointer; font: inherit; font-size: .82rem; font-weight: 700; color: #06121a;
-  background: var(--cyan);   /* repli Safari ancien (color-mix non supporté avant 16.2) : sinon fond vide */
-  background: color-mix(in srgb, var(--cyan) 88%, #fff); border: 1.5px solid var(--cyan);
-  box-shadow: 0 4px 16px -8px var(--cyan), inset 0 1px 0 rgba(255,255,255,.3);
+/* Bouton PARTAGER cette page (2026-07-26, refonte) : ICÔNE SEULE, en overlay discret dans le
+   coin haut-droit de l'ancre (bannière ou bloc de titre) — ne consomme plus une ligne entière du
+   flux de la page (Brice : épurer, ce n'est pas un élément central de travail). `.bs-anchor`
+   (posé en JS sur l'ancre) fournit le repère de positionnement sans toucher au reste de son
+   style. Présent sur toutes les pages, discret mais toujours accessible au même endroit. */
+.bs-anchor { position: relative; }
+.banner-share { position: absolute; top: 10px; right: 10px; z-index: 5;
+  display: flex; align-items: center; justify-content: center; width: 34px; height: 34px;
+  border-radius: 50%; cursor: pointer; padding: 0;
+  background: color-mix(in srgb, var(--panel) 78%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--cyan) 55%, var(--border));
+  box-shadow: 0 4px 14px -6px rgba(0,0,0,.5), inset 0 1px 0 var(--card-sheen);
+  backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px);
   transition: transform .1s, box-shadow .16s, filter .16s; }
-.banner-share:hover { transform: translateY(-1px); filter: brightness(1.06); box-shadow: 0 6px 20px -8px var(--cyan); }
+.banner-share:hover { transform: translateY(-1px); filter: brightness(1.15); box-shadow: 0 6px 18px -6px var(--cyan); }
 .banner-share:active { transform: translateY(1px); }
-.banner-share .bs-ico { width: 18px; height: 18px; flex: 0 0 auto; }
+.banner-share .bs-ico { width: 17px; height: 17px; flex: 0 0 auto; }
 @media (max-width: 560px) {
-  .banner-share { padding: 6px 12px; font-size: .74rem; } .banner-share-bar { margin-top: -38px; margin-right: 8px; }
+  .banner-share { width: 30px; height: 30px; top: 8px; right: 8px; }
   .banner-share .bs-ico { width: 15px; height: 15px; }
 }
 .page-banner-img { display: block; width: 100%; height: auto; }
@@ -3172,8 +3174,8 @@ body::after {
    bannières). On les réduit LÉGÈREMENT pour une meilleure harmonie, sans toucher au design
    (cadres, dégradés, halos conservés). */
 @media (max-width: 640px) {
-  .view-title { font-size: 1.02rem; padding: 7px 13px; gap: 7px; }
-  .hub-vision { font-size: .82rem; padding: 12px 14px; line-height: 1.5; }
+  .view-title { font-size: 1.02rem; padding: 7px 13px; gap: 7px; margin-bottom: 8px; }
+  .hub-vision { font-size: .8rem; padding: 7px 12px; line-height: 1.35; margin: 5px 0 0; }
   .about-vision p { font-size: .82rem; line-height: 1.5; }   /* même rôle que .hub-vision : même taille */
   .hub-desc { font-size: .8rem; }
   .pb-eye { font-size: clamp(.95rem, 4.3vw, 1.6rem); }
@@ -3243,6 +3245,7 @@ body::after {
    même vocabulaire visuel que la trame de fond et le cadre du QR. Statique →
    aucun coût de rendu. Usage : <div class="ndop-sep"><i></i></div> */
 .ndop-sep { display: flex; align-items: center; justify-content: center; gap: 12px; margin: 22px 0; }
+@media (max-width: 560px) { .ndop-sep { margin: 6px 0; } }
 .ndop-sep::before, .ndop-sep::after {
   content: ""; flex: 1; height: 2px;
   background: linear-gradient(90deg, transparent, var(--gold) 55%, var(--cyan), transparent 85%);
@@ -3707,7 +3710,7 @@ textarea, [contenteditable="true"] { cursor: text; }
   .btn { background: var(--panel); border-color: var(--border); }
   .btn--primary, .btn--next, .btn--send { background: var(--cyan); border-color: var(--cyan); color: var(--bg); }
   .btn--rec { background: var(--red); border-color: var(--red); color: #fff; }
-  .banner-share { background: var(--cyan); border-color: var(--cyan); }
+  .banner-share { background: var(--panel); border-color: var(--cyan); }
   /* Cadres / cartes / popups */
   .card { background: var(--card-bg); border-color: var(--border); }
   .tr-guide-card, .incite-banner, .notif-popup, .share-panel-card, .profile-gate-card,

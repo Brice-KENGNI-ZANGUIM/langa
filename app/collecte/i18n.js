@@ -291,8 +291,8 @@ export const STR = {
   "hub.open": { fr: "Ouvrir →", en: "Open →" },
 
   // — Accueil (contenu) —
-  "hub.vision": { fr: "LANGIAL, c'est un <b>héritage</b> qu'on laisse à ceux qui viendront : les mots et les voix de <b>nos langues d'Afrique</b>, pour qu'elles ne s'oublient jamais. Ici, ceux qui savent les <b>transmettent</b>, et chacun <b>apprend</b> des autres. Le <b>ngiemboon</b> est la langue la plus avancée, mais tu peux ajouter la tienne et la faire vivre.",
-                  en: "LANGIAL is a <b>legacy</b> for those who come after us: the words and voices of <b>our African languages</b>, so they are never forgotten. Here, those who know <b>pass them on</b>, and everyone <b>learns</b> from others. <b>Ngiemboon</b> is the most advanced language, but you can add your own and bring it to life." },
+  "hub.vision": { fr: "LANGIAL, c'est l'<b>héritage</b> de nos langues d'Afrique : ceux qui savent <b>transmettent</b>, chacun <b>apprend</b>, pour qu'elles ne s'oublient jamais.",
+                  en: "LANGIAL is the <b>legacy</b> of our African languages: those who know <b>pass them on</b>, everyone <b>learns</b>, so they are never forgotten." },
   "hub.greeting": { fr: "que veux-tu faire ?", en: "what would you like to do?" },
   "hub.greeting.hello": { fr: "Bonjour", en: "Hello" },
   "hub.greeting.solo": { fr: "Que veux-tu faire ? 👋🏾", en: "What would you like to do? 👋🏾" },
