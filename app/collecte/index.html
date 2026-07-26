@@ -89,6 +89,15 @@
          dans un conteneur `.chips-nav` (même classe, pas le même élément) pour hériter
          SANS dupliquer le style plat des boutons de nav (.chips-nav .chip--btn). -->
     <div class="chips-nav chips-nav--top">
+      <!-- CTA proactif « Créer mon profil », de retour dans le header (Brice 2026-07-26, après
+           avoir constaté qu'un nouvel arrivant sans profil ne le voyait plus nulle part) : visible
+           UNIQUEMENT tant qu'aucun profil n'existe, ouvre exactement le même popup explicatif que
+           requireProfile() (#profile-gate). Le double du tiroir de Réglages (#btn-create-profile)
+           reste en place, pour qui l'aurait ignoré une première fois. -->
+      <button id="header-create-profile" class="chip chip--btn" type="button" hidden data-i18n-title="hub.card.profile.title"
+              title="Créer mon profil" aria-label="Créer mon profil">
+        <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="hub.card.profile">Créer mon profil</span>
+      </button>
       <!-- Réglages, icône SEULE (sans texte NI cadre/fond de bouton) : symbole illustré
            directement posé sur le décor, universellement reconnu (icône dédiée = menu/réglages).
            Accueil déplacé au centre de la barre basse (2026-07-26, Brice), cf. plus bas. -->

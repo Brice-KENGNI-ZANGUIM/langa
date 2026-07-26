@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v412";
+const APP_VERSION = "v413";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1244,6 +1244,8 @@ function closeSettingsDrawer() {
 }
 function initSettingsDrawer() {
   const toggle = $("#settings-toggle"); if (toggle) toggle.addEventListener("click", openSettingsDrawer);
+  const headerCta = $("#header-create-profile");
+  if (headerCta) headerCta.addEventListener("click", () => { openProfile(false); showProfileGate(); });
   const close = $("#settings-close"); if (close) close.addEventListener("click", closeSettingsDrawer);
   const backdrop = $("#settings-drawer-backdrop"); if (backdrop) backdrop.addEventListener("click", closeSettingsDrawer);
   document.addEventListener("keydown", (e) => {
@@ -1418,6 +1420,10 @@ function showView(name) {
   // (il y sert de repère et n'a jamais à disparaître). Sans profil : rien à ouvrir.
   const prof = $("#btn-open-profile");
   if (prof) prof.hidden = !profileComplete();
+  // CTA « Créer mon profil » du header : miroir inversé de « Mon profil » ci-dessus (visible
+  // uniquement AVANT que le profil existe, sur toutes les pages).
+  const hcp = $("#header-create-profile");
+  if (hcp) hcp.hidden = profileComplete();
   // Cloche de notifications : visible dès qu'un profil existe (comme « Mon profil »).
   const bn = $("#btn-notifs");
   if (bn) bn.hidden = !profileComplete();

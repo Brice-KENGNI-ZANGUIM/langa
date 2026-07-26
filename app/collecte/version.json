@@ -1,6 +1,9 @@
 {
-  "version": "v412",
+  "version": "v413",
   "changelog": {
+    "v413": [
+      "Le bouton « Créer mon profil » revient dans le header, bien visible, tant qu'aucun profil n'a été créé (il restait auparavant caché dans le menu Réglages, un nouveau venu ne le voyait jamais)"
+    ],
     "v412": [
       "Correction de cohérence : Transcrire et Traduire avaient leurs couleurs inversées entre les cartes d'accueil et la barre de navigation basse ; chaque page a maintenant sa propre couleur, la même partout (titre de page inclus, Demander avait aussi la mauvaise couleur)",
       "Accueil : les textes des 4 cartes principales utilisent mieux la largeur disponible, avec moins de retours à la ligne prématurés"
