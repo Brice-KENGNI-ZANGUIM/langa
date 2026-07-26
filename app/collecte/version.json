@@ -1,6 +1,10 @@
 {
-  "version": "v409",
+  "version": "v410",
   "changelog": {
+    "v410": [
+      "Textes d'introduction de chaque page raccourcis à l'essentiel, et affichés plus petits",
+      "Icône « Partager cette page » encore agrandie et plus visible"
+    ],
     "v409": [
       "Barre de navigation basse : correction du flou d'arrière-plan qui n'apparaissait pas sur téléphone/tablette (restait transparente, sans flou, alors que ça fonctionnait sur ordinateur)"
     ],

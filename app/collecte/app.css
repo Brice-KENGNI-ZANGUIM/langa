@@ -1337,7 +1337,7 @@ body {
 
 /* ---- En-tête d'espace + mise en avant de l'enregistrement en transcription ---- */
 .work-head { margin-bottom: 2px; }
-.work-help { color: var(--muted); font-size: .86rem; line-height: 1.55; margin: 8px 0 0; }
+.work-help { color: var(--muted); font-size: .78rem; line-height: 1.45; margin: 8px 0 0; }
 
 /* Indicateur FORT de la langue de la contribution (anti-mauvais étiquetage) : pastille
    proéminente, cliquable, toujours visible sur la vue de travail. */
@@ -1884,7 +1884,7 @@ body {
 /* #3 (texte d'intro posé DIRECTEMENT sur la trame Ndop, hors cadre) : cadre discret + FLOU (verre
    dépoli) derrière le texte → masque le motif et rend la lecture nette, dans les DEUX modes, sans
    toucher au décor voulu (idée Brice). Repli propre si backdrop-filter indisponible (fond translucide). */
-.contrib-why { color: var(--text); font-size: .8rem; line-height: 1.5; margin: 12px 0 4px;
+.contrib-why { color: var(--text); font-size: .74rem; line-height: 1.42; margin: 12px 0 4px;
   background: rgba(10, 16, 24, .38); border: 1px solid var(--border); border-radius: 12px;
   padding: 10px 14px; backdrop-filter: blur(7px) saturate(1.12); -webkit-backdrop-filter: blur(7px) saturate(1.12); }
 :root[data-theme="light"] .contrib-why { color: color-mix(in srgb, var(--text) 84%, var(--muted));
@@ -3186,16 +3186,19 @@ body::after {
    juste une ombre portée pour rester lisible sur n'importe quel arrière-plan. */
 .bs-anchor { position: relative; }
 .banner-share { position: absolute; top: 8px; right: 8px; z-index: 5;
-  display: flex; align-items: center; justify-content: center; width: 42px; height: 42px;
+  display: flex; align-items: center; justify-content: center; width: 58px; height: 58px;
   background: none; border: none; box-shadow: none; cursor: pointer; padding: 0;
   transition: transform .1s ease, filter .16s ease; }
-.banner-share:hover { transform: translateY(-1px) scale(1.08); filter: drop-shadow(0 0 8px color-mix(in srgb, var(--cyan) 65%, transparent)); }
+.banner-share:hover { transform: translateY(-1px) scale(1.08); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cyan) 70%, transparent)); }
 .banner-share:active { transform: translateY(0) scale(.96); }
-.banner-share .bs-ico { width: 38px; height: 38px; flex: 0 0 auto;
-  filter: drop-shadow(0 2px 5px rgba(0,0,0,.5)) drop-shadow(0 0 4px rgba(0,0,0,.4)); }
+/* Mise en évidence permanente (Brice 2026-07-26 : « plus visible ») : lueur cyan discrète en
+   plus de l'ombre de contact, pas juste au survol — reste repérable sur n'importe quel fond. */
+.banner-share .bs-ico { width: 52px; height: 52px; flex: 0 0 auto;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.55)) drop-shadow(0 0 5px rgba(0,0,0,.45))
+          drop-shadow(0 0 9px color-mix(in srgb, var(--cyan) 55%, transparent)); }
 @media (max-width: 560px) {
-  .banner-share { width: 34px; height: 34px; top: 7px; right: 7px; }
-  .banner-share .bs-ico { width: 30px; height: 30px; }
+  .banner-share { width: 46px; height: 46px; top: 7px; right: 7px; }
+  .banner-share .bs-ico { width: 40px; height: 40px; }
 }
 .page-banner-img { display: block; width: 100%; height: auto; }
 /* Accroche calée à gauche (sur la zone sombre), centrée verticalement. */
