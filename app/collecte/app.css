@@ -1452,76 +1452,6 @@ body {
 .entry-audio { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
 .entry-audio audio { height: 38px; max-width: 300px; flex: 1 1 220px; }
 
-/* ===== Lecteur audio SUR-MESURE (premium) ===== */
-.aplayer-native { display: none !important; }   /* <audio> natif masqué : piloté par l'UI */
-.aplayer { flex: 1 1 100%; width: 100%; box-sizing: border-box;
-  display: flex; align-items: center; gap: clamp(8px, 2.5vw, 14px);
-  padding: 10px clamp(10px, 3vw, 14px); border-radius: 14px;
-  /* Cadre FUTURISTE (aucune photo) : verre foncé + halos diffus cyan (haut-gauche) et or
-     (bas-droite), assortis à l'onde ; fin liseré lumineux + lueur d'ambiance. */
-  background:
-    radial-gradient(130% 180% at 0% 0%, color-mix(in srgb, var(--cyan) 16%, transparent), transparent 55%),
-    radial-gradient(130% 180% at 100% 100%, color-mix(in srgb, var(--gold) 12%, transparent), transparent 55%),
-    linear-gradient(180deg, color-mix(in srgb, var(--cyan) 6%, var(--panel)), var(--panel2));
-  border: 1px solid color-mix(in srgb, var(--cyan) 32%, var(--border));
-  box-shadow: 0 0 26px -14px var(--cyan), inset 0 1px 0 var(--card-sheen), var(--shadow-card); }
-/* Bouton play/pause rond (aplat cyan, icône = couleur du fond → contraste 2 thèmes) */
-.aplayer-play { position: relative; flex: 0 0 auto; width: clamp(42px, 12vw, 52px); height: clamp(42px, 12vw, 52px);
-  border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
-  background: var(--cyan); box-shadow: 0 4px 14px -6px var(--cyan), 0 0 0 0 var(--cyan);
-  transition: transform .12s ease, box-shadow .2s ease; }
-.aplayer-play:hover { transform: translateY(-1px); box-shadow: 0 6px 18px -6px var(--cyan); }
-.aplayer-play:active { transform: translateY(1px); }
-.aplayer-play svg { width: 54%; height: 54%; fill: var(--bg); position: relative; z-index: 1; }
-.aplayer-play .aplayer-ring { position: absolute; inset: -4px; border-radius: 50%;
-  border: 2px solid color-mix(in srgb, var(--cyan) 45%, transparent); opacity: 0; }
-.aplayer.is-playing .aplayer-play .aplayer-ring { opacity: 1; animation: aplayerPulse 1.8s ease-out infinite; }
-@keyframes aplayerPulse { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.35); opacity: 0; } }
-.aplayer-play:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
-/* Zone centrale : onde + minuteur */
-.aplayer-mid { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
-.aplayer-wave { width: 100%; height: clamp(34px, 9vw, 46px); display: block; cursor: pointer; touch-action: none; border-radius: 6px; }
-.aplayer-wave:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
-
-/* --- État de CHARGEMENT de l'audio (fetch réseau avant d'être jouable) --- */
-/* Spinner sur le bouton play */
-.aplayer-spin { animation: aplayer-rot .8s linear infinite; transform-origin: 12px 12px; }
-@keyframes aplayer-rot { to { transform: rotate(360deg); } }
-.aplayer.is-loading .aplayer-play { cursor: progress; }
-/* Onde grisée + curseur d'attente pendant le chargement */
-.aplayer.is-loading .aplayer-wave { opacity: .32; cursor: progress; pointer-events: none; }
-/* Étiquette « Chargement… » centrée sur l'onde */
-.aplayer-loading { display: none; }
-.aplayer.is-loading .aplayer-loading {
-  display: inline-flex; align-items: center; gap: 7px; position: absolute; z-index: 2;
-  left: 50%; top: clamp(17px, 4.5vw, 23px); transform: translate(-50%, -50%);
-  padding: 4px 11px; border-radius: 999px; font-size: .74rem; font-weight: 600; letter-spacing: .01em;
-  color: var(--text); background: color-mix(in srgb, var(--cyan) 14%, var(--card));
-  border: 1px solid color-mix(in srgb, var(--cyan) 45%, var(--border));
-  box-shadow: 0 4px 16px -8px var(--cyan); white-space: nowrap; pointer-events: none;
-}
-.aplayer.is-loading .aplayer-loading::before {
-  content: ""; width: 11px; height: 11px; border-radius: 50%;
-  border: 2px solid color-mix(in srgb, var(--cyan) 40%, transparent); border-top-color: var(--cyan);
-  animation: aplayer-rot .7s linear infinite;
-}
-@media (prefers-reduced-motion: reduce) {
-  .aplayer-spin, .aplayer.is-loading .aplayer-loading::before { animation-duration: 1.6s; }
-}
-.aplayer-time { display: flex; gap: 5px; font-size: .74rem; color: var(--muted);
-  font-variant-numeric: tabular-nums; letter-spacing: .01em; }
-.aplayer-cur { color: var(--cyan); font-weight: 700; }
-.aplayer-sep { opacity: .6; }
-/* Volume : bouton + curseur (le curseur se replie sur petit écran) */
-.aplayer-vol { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; }
-.aplayer-mute { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border);
-  background: var(--panel2); color: var(--text); cursor: pointer; display: grid; place-items: center;
-  transition: border-color .15s ease, color .15s ease; }
-.aplayer-mute svg { width: 20px; height: 20px; fill: currentColor; }
-.aplayer-mute:hover { border-color: var(--cyan); color: var(--cyan); }
-.aplayer-volslider { width: 74px; accent-color: var(--cyan); cursor: pointer; }
-@media (max-width: 480px) { .aplayer-volslider { display: none; } }
-
 /* ===== Consignes de transcription (boîte obligatoire) ===== */
 .tr-guide { position: fixed; inset: 0; z-index: 10050; display: flex; align-items: center;
   justify-content: center; padding: 4vmin; overflow-y: auto;
@@ -2009,7 +1939,6 @@ body {
   .foot-info { text-align: left; }
 }
 /* Liens légaux du pied de page + page légale */
-.foot-legal { display: flex; flex-wrap: wrap; gap: 6px 18px; }
 .foot-legal-link { color: var(--muted); font-size: .74rem; text-decoration: none;
   transition: color .14s ease; }
 .foot-legal-link:hover { color: var(--cyan); text-decoration: underline; }
@@ -3723,7 +3652,6 @@ body.kb-docked .field--consent, body.kb-docked .notif-fab {
   .rec-timer::before { animation: ngRecPulse 1s ease-in-out infinite !important; }
   .btn--rec.is-recording { animation: ngRecBtn 1.4s ease-in-out infinite !important; }
   .field--consent:not(.is-checked) { animation: ngConsentPulse 2.4s ease-in-out infinite !important; }
-  .aplayer.is-playing .aplayer-play .aplayer-ring { animation: aplayerPulse 1.8s ease-out infinite !important; }
   .update-banner { animation: updGlow 1.8s ease-in-out infinite !important; }
   .update-dot { animation: updBlink 1s steps(1,end) infinite !important; }
   .update-btn { animation: updPulse 1.6s ease-in-out infinite !important; }

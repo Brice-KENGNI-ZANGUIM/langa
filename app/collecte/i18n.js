@@ -772,6 +772,8 @@ export const STR = {
   "req.filter.all": { fr: "Toutes les langues", en: "All languages" },
   "req.empty": { fr: "Aucune demande en attente pour l'instant. Sois le premier à demander de l'aide à la communauté.", en: "No pending requests yet. Be the first to ask the community for help." },
   "req.needprofile": { fr: "Crée ton profil pour demander ou aider la communauté.", en: "Create your profile to ask or help the community." },
+  "req.profile.translate": { fr: "Crée ton profil pour dire ce mot dans ta langue.", en: "Create your profile to say this word in your language." },
+  "req.profile.explore": { fr: "Crée ton profil pour donner ton avis sur cette contribution.", en: "Create your profile to give your opinion on this contribution." },
   "req.err.fields": { fr: "Remplis les champs obligatoires : le mot ou la phrase, la langue et ce que tu demandes.", en: "Fill the required fields: the word or phrase, the language and what you ask for." },
   "req.sent": { fr: "Demande publiée : les locuteurs de cette langue sont prévenus.", en: "Request posted: speakers of that language are notified." },
   "req.fail": { fr: "Action non enregistrée (connexion ?).", en: "Action not saved (connection?)." },
