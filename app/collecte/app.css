@@ -253,7 +253,6 @@ body {
   0%, 100% { transform: translateX(-6px) scale(1);     opacity: .55; }
   50%      { transform: translateX(16px) scale(1.12);  opacity: 1; }
 }
-.chips-meta { grid-column: 3; grid-row: 1; justify-self: end; }
 .chips-nav  { grid-column: 1 / -1; grid-row: 2; }
 .brand-mark {
   width: 60px; height: 60px; display: block; border-radius: 16px;
@@ -267,8 +266,6 @@ body {
   -webkit-background-clip: text; background-clip: text;
   -webkit-text-fill-color: transparent; color: var(--cyan);
 }
-/* « · Collecte » : nettement plus petit que « LANGIAL » (qui domine). */
-.brand-sub { -webkit-text-fill-color: var(--green); color: var(--green); font-weight: 700; font-size: .5em; }
 /* En clair, l'amorce near-white du dégradé du titre serait invisible : on part
    directement du cyan pour garder un titre lisible et coloré. */
 :root[data-theme="light"] .brand-txt h1 {
@@ -279,25 +276,12 @@ body {
    après l'avoir brièvement réaffiché sur mobile) : le nom LANGIAL + le logo suffisent,
    header plus épuré. Toujours présent ailleurs (À propos, hub.vision). */
 .tagline { display: none; }
-.chips-nav, .chips-meta { display: flex; align-items: center; }
+.chips-nav { display: flex; align-items: center; }
 /* Nav resserrée (H et V) pour densifier et remplir la place libre en bout de ligne.
    Sur grand écran : groupée à gauche, gaps uniformes, la cloche (dernier bouton
    de la 1re ligne) juste après « Aide ». Sur téléphone (≤560px, plus bas) : la
    1re ligne est répartie UNIFORMÉMENT (space-between) pour remplir la largeur. */
 .chips-nav  { gap: 6px 6px; flex-wrap: wrap; }
-/* Saut de ligne dur APRÈS la cloche : actif UNIQUEMENT sur téléphone (réactivé
-   dans le bloc ≤560px). Sur PC/tablette il est neutralisé (display:none) → tous
-   les boutons tiennent sur une seule ligne et ne basculent à la ligne suivante
-   que s'ils débordent réellement (wrap naturel), sans mise en page mobile. */
-.chips-break { display: none; margin: 0; padding: 0; border: 0; }
-/* Méta (état) : les deux pastilles « en ligne » / « Drive : prêt » restent TOUJOURS
-   sur une seule ligne (jamais empilées) ; leur taille est réduite si besoin. */
-.chips-meta { gap: 6px 7px; flex-wrap: nowrap; }
-.chips-meta .chip { white-space: nowrap; }
-/* Outils (version, EN, thème) : sous-groupe poussé à DROITE de la ligne de nav.
-   margin-left:auto le décolle des boutons de nav ; avec le wrap, s'il n'y a plus
-   la place il bascule sur la ligne suivante en restant collé à droite. */
-.chips-tools { display: flex; gap: 6px; align-items: center; margin-left: auto; }
 .chip {
   font-size: .72rem; padding: 5px 10px; border-radius: 999px;
   border: 1px solid var(--border); color: var(--muted);
@@ -333,10 +317,6 @@ body {
   margin-right: 7px; vertical-align: middle; background: currentColor;
   box-shadow: 0 0 8px 1px currentColor; animation: ngLiveDot 1.5s ease-in-out infinite;
 }
-/* Les 3 pastilles d'état (version, en ligne, DB) : taille réduite ET hauteur IDENTIQUE
-   (line-height fixe → la police mono de la version ne la rend plus plus haute). */
-.chips-meta .chip { font-size: .66rem; line-height: 1.25; }
-.chip--ghost { border-style: dashed; }
 /* Bascule de langue en CAPSULE FR|EN (PC + mobile) : la moitié de la langue ACTIVE
    est VERTE, l'autre grisée ; l'attribut data-active (posé au chargement) inverse les
    couleurs à chaque changement de langue. Largeur suffisante pour lire FR et EN. */
@@ -369,10 +349,6 @@ body {
   padding: 5px 10px; background-color: var(--panel); color: var(--text); text-decoration: none;
   display: inline-flex; align-items: center;
   transition: color .16s ease, border-color .16s ease, box-shadow .16s ease, transform .1s ease; }
-/* Chip ICÔNE SEULE (ex. la cloche des notifications) : pas de texte. Épaisseur
-   (hauteur) ~1.2× celle des autres chips pour mieux la repérer sans dominer. */
-.chip--icon { padding: 7px 11px; }
-.chip--icon .chip-ico { width: 21px; height: 21px; }
 .chip--btn:hover { color: var(--cyan); border-color: var(--cyan);
   box-shadow: inset 0 1px 0 var(--card-sheen), 0 0 16px -2px rgba(34,211,238,.45); transform: translateY(-1px); }
 .chip--btn:active { transform: translateY(0); box-shadow: inset 0 2px 5px -2px rgba(0,0,0,.45); }
@@ -409,11 +385,6 @@ body {
   background: rgba(34, 211, 238, .22);
   background: color-mix(in srgb, var(--cyan) 22%, var(--panel));
   color: var(--cyan); font-weight: 700; }
-@media (min-width: 901px) {
-  .chips-nav .chip-group--perso { margin-left: 8px; padding-left: 14px;
-    border-left: 1px solid color-mix(in srgb, var(--border) 80%, transparent); }
-}
-
 /* ===== Tiroir de réglages (☰) — Brice 2026-07-25, design premium 2026-07-25b =========
    Regroupe tout ce qui n'est pas quotidien (langue de contribution, à propos, aide, bugs,
    profil, langue d'interface, thème, pastilles de diagnostic) pour que le header reste
@@ -638,19 +609,15 @@ body {
   .brand-mark { width: 48px; height: 48px; border-radius: 13px; }
   .brand-mark img { border-radius: 13px; }
   .brand-txt h1 { font-size: 1.95rem; line-height: 1; }    /* LANGIAL agrandi, proche du logo */
-  .brand-sub { display: none; }                            /* « · Collecte » retiré sur mobile (place au nom) */
   .chip { font-size: .72rem; padding: 4px 6px; }
   .chip--btn { padding: 4px 6px; gap: 4px; }
   .chip--btn .chip-ico { width: 14px; height: 14px; }
   /* Cloche (icône seule) : épaisseur ~1.2× les autres chips, compacte pour tenir
      sur la 1re ligne juste après « Aide » (boutons resserrés ci-dessus). Placée
      APRÈS .chip--btn pour l'emporter sur son padding réduit. */
-  .chip--icon { padding: 6px 7px; }
-  .chip--icon .chip-ico { width: 17px; height: 17px; }
   /* Méta (ligne 1, droite) : les deux pastilles d'état gardent leur texte (« en ligne »,
      « Drive : prêt ») avec le point clignotant devant, et restent sur UNE SEULE ligne
      (jamais empilées), quitte à être un peu plus compactes. */
-  .chips-meta { gap: 4px; flex-wrap: nowrap; justify-content: flex-end; }
   #srv-stats { display: none; }
   #net, #srv, #app-ver { font-size: .5rem; padding: 2px 5px; }
   #net.chip--on::before, #srv.chip--on::before { width: 4px; height: 4px; margin-right: 3px; }
@@ -682,8 +649,6 @@ body {
      rester collés à la suite des boutons. */
   /* Groupes « transparents » (wrap bouton par bouton = 2 lignes efficaces) ET outils (FR/EN, thème)
      plaqués À DROITE de leur ligne (Profil/Notifications restent à gauche → gauche/droite). */
-  .chip-group { display: contents; }
-  .chips-tools { margin-left: auto; gap: 4px; }
 }
 /* Téléphone étroit : la marque et les deux pastilles d'état doivent tenir sur UNE ligne,
    avec leur libellé (« en ligne », « Drive : prêt ») et le point clignotant. */
@@ -697,19 +662,13 @@ body {
   .chip { font-size: .7rem; padding: 4px 8px; }   /* hauteur ~x1.1 */
   .chip--btn { padding: 4px 8px; gap: 5px; }
   .chip--btn .chip-ico { width: 15px; height: 15px; }
-  /* Cloche : MÊME hauteur que les autres boutons de la ligne (padding vertical = 4px,
-     icône 15px qui s'insère sans déborder) ; seule son ÉPAISSEUR (horizontal) est
-     augmentée de ~x1.08 (8→9px). */
-  .chip--icon { padding: 4px 10px; }   /* cloche : épaisseur (horizontal) x1.1, hauteur inchangée */
-  .chip--icon .chip-ico { width: 15px; height: 15px; }
   /* Nom de langue tronqué seulement s'il est vraiment très long. */
   #lang-chip-name { display: inline-block; max-width: 140px; overflow: hidden;
     text-overflow: ellipsis; white-space: nowrap; vertical-align: middle; }
-  .chips-meta { gap: 4px; }
   #net, #srv, #app-ver { font-size: .52rem; padding: 2px 5px; line-height: 1.15; }
   #net.chip--on::before, #srv.chip--on::before { margin-right: 3px; width: 4px; height: 4px; }
   #ui-lang-toggle, #theme-toggle { padding: 0; }   /* capsules : le padding est sur les segments */
-  .lang-switch .lang-seg, .theme-switch .theme-seg { padding: 4px 8px; font-size: .66rem; }
+  .lang-switch .lang-seg { padding: 4px 8px; font-size: .66rem; }
   .theme-switch .theme-ico { height: 21px; }   /* bouton thème = hauteur FR|EN sur téléphone (spécificité corrigée) */
 }
 /* Petits téléphones (≤ 389px) : le nom se réduit d'un cran pour que « LANGIAL · Collecte »
@@ -876,15 +835,7 @@ body {
 .mc-lang { display: flex; align-items: center; gap: 6px; font-size: .85rem; color: var(--muted); }
 .mc-save { padding: 6px 14px; font-size: .85rem; }
 @media (prefers-reduced-motion: reduce) { .mc-voice-rec.is-rec { animation: none; } }
-.app-bar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
 .welcome { color: var(--cyan); font-weight: 600; font-size: .95rem; }
-.mini-profile {
-  border: 1px solid rgba(34,211,238,.4); background: rgba(34,211,238,.08);
-  color: var(--cyan); border-radius: 10px; padding: 8px 14px; cursor: pointer;
-  font: inherit; font-size: .86rem; font-weight: 600;
-  transition: box-shadow .16s ease, border-color .16s ease;
-}
-.mini-profile:hover { box-shadow: 0 0 16px rgba(34,211,238,.3); border-color: var(--cyan); }
 
 /* ---- Navigation entre espaces : barre BASSE flottante, verre dépoli (Brice 2026-07-26) ---
    Remplace l'ancienne 3e rangée du header : les 4 espaces vivent maintenant dans une barre
@@ -1143,13 +1094,6 @@ body {
    intégré → le cercle masque les coins carrés), mais avec une LIGNE DE CERCLE FINE (demande Brice). */
 .title-ico--avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; object-position: 50% 18%;
   border: 1px solid color-mix(in srgb, var(--cyan) 40%, var(--border)); }
-/* Icône « info » du titre « À propos » (remplace l'ancien symbole étoilé) : teinte
-   cyan d'accent, ne rétrécit pas. */
-/* Emblème premium du titre « À propos » : badge en verre dégradé, soleil levant (LANGIAL =
-   « la lumière ») ; halo doux, léger relief. */
-.about-emblem { flex: 0 0 auto; display: inline-flex; line-height: 0;
-  filter: drop-shadow(0 4px 10px rgba(0,0,0,.28)) drop-shadow(0 0 14px color-mix(in srgb, var(--green) 40%, transparent)); }
-.about-emblem svg { display: block; border-radius: 14px; }
 .hub-name { font-size: 1.55rem; font-family: var(--font-display); font-weight: 700;
   letter-spacing: -.01em; color: var(--text); }
 .hub-desc { color: var(--muted); font-size: .86rem; line-height: 1.5; }
@@ -1441,8 +1385,6 @@ body {
 .entry { position: relative; background: var(--card-bg); border: 1px solid var(--border);
   border-radius: 14px; padding: 14px 16px; box-shadow: var(--shadow-card); }
 .entry-pair { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
-.entry-src { font-size: 1.12rem; color: var(--text); font-weight: 600; }
-.entry-arrow { color: var(--muted); }
 .entry-tgt { font-size: 1.12rem; color: var(--cyan); font-weight: 700; }
 .badge-dir { margin-left: auto; font-size: .64rem; font-weight: 700; letter-spacing: .02em;
   padding: 3px 9px; border-radius: 7px; color: #06121a; white-space: nowrap;
@@ -1453,6 +1395,76 @@ body {
 .entry-note { color: var(--muted); font-size: .8rem; font-style: italic; }
 .entry-audio { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
 .entry-audio audio { height: 38px; max-width: 300px; flex: 1 1 220px; }
+
+/* ===== Lecteur audio SUR-MESURE (premium) ===== */
+.aplayer-native { display: none !important; }   /* <audio> natif masqué : piloté par l'UI */
+.aplayer { flex: 1 1 100%; width: 100%; box-sizing: border-box;
+  display: flex; align-items: center; gap: clamp(8px, 2.5vw, 14px);
+  padding: 10px clamp(10px, 3vw, 14px); border-radius: 14px;
+  /* Cadre FUTURISTE (aucune photo) : verre foncé + halos diffus cyan (haut-gauche) et or
+     (bas-droite), assortis à l'onde ; fin liseré lumineux + lueur d'ambiance. */
+  background:
+    radial-gradient(130% 180% at 0% 0%, color-mix(in srgb, var(--cyan) 16%, transparent), transparent 55%),
+    radial-gradient(130% 180% at 100% 100%, color-mix(in srgb, var(--gold) 12%, transparent), transparent 55%),
+    linear-gradient(180deg, color-mix(in srgb, var(--cyan) 6%, var(--panel)), var(--panel2));
+  border: 1px solid color-mix(in srgb, var(--cyan) 32%, var(--border));
+  box-shadow: 0 0 26px -14px var(--cyan), inset 0 1px 0 var(--card-sheen), var(--shadow-card); }
+/* Bouton play/pause rond (aplat cyan, icône = couleur du fond → contraste 2 thèmes) */
+.aplayer-play { position: relative; flex: 0 0 auto; width: clamp(42px, 12vw, 52px); height: clamp(42px, 12vw, 52px);
+  border-radius: 50%; border: 0; cursor: pointer; display: grid; place-items: center;
+  background: var(--cyan); box-shadow: 0 4px 14px -6px var(--cyan), 0 0 0 0 var(--cyan);
+  transition: transform .12s ease, box-shadow .2s ease; }
+.aplayer-play:hover { transform: translateY(-1px); box-shadow: 0 6px 18px -6px var(--cyan); }
+.aplayer-play:active { transform: translateY(1px); }
+.aplayer-play svg { width: 54%; height: 54%; fill: var(--bg); position: relative; z-index: 1; }
+.aplayer-play .aplayer-ring { position: absolute; inset: -4px; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--cyan) 45%, transparent); opacity: 0; }
+.aplayer.is-playing .aplayer-play .aplayer-ring { opacity: 1; animation: aplayerPulse 1.8s ease-out infinite; }
+@keyframes aplayerPulse { 0% { transform: scale(1); opacity: .7; } 100% { transform: scale(1.35); opacity: 0; } }
+.aplayer-play:focus-visible { outline: 2px solid var(--cyan); outline-offset: 3px; }
+/* Zone centrale : onde + minuteur */
+.aplayer-mid { position: relative; flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.aplayer-wave { width: 100%; height: clamp(34px, 9vw, 46px); display: block; cursor: pointer; touch-action: none; border-radius: 6px; }
+.aplayer-wave:focus-visible { outline: 2px solid var(--cyan); outline-offset: 2px; }
+
+/* --- État de CHARGEMENT de l'audio (fetch réseau avant d'être jouable) --- */
+/* Spinner sur le bouton play */
+.aplayer-spin { animation: aplayer-rot .8s linear infinite; transform-origin: 12px 12px; }
+@keyframes aplayer-rot { to { transform: rotate(360deg); } }
+.aplayer.is-loading .aplayer-play { cursor: progress; }
+/* Onde grisée + curseur d'attente pendant le chargement */
+.aplayer.is-loading .aplayer-wave { opacity: .32; cursor: progress; pointer-events: none; }
+/* Étiquette « Chargement… » centrée sur l'onde */
+.aplayer-loading { display: none; }
+.aplayer.is-loading .aplayer-loading {
+  display: inline-flex; align-items: center; gap: 7px; position: absolute; z-index: 2;
+  left: 50%; top: clamp(17px, 4.5vw, 23px); transform: translate(-50%, -50%);
+  padding: 4px 11px; border-radius: 999px; font-size: .74rem; font-weight: 600; letter-spacing: .01em;
+  color: var(--text); background: color-mix(in srgb, var(--cyan) 14%, var(--card));
+  border: 1px solid color-mix(in srgb, var(--cyan) 45%, var(--border));
+  box-shadow: 0 4px 16px -8px var(--cyan); white-space: nowrap; pointer-events: none;
+}
+.aplayer.is-loading .aplayer-loading::before {
+  content: ""; width: 11px; height: 11px; border-radius: 50%;
+  border: 2px solid color-mix(in srgb, var(--cyan) 40%, transparent); border-top-color: var(--cyan);
+  animation: aplayer-rot .7s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .aplayer-spin, .aplayer.is-loading .aplayer-loading::before { animation-duration: 1.6s; }
+}
+.aplayer-time { display: flex; gap: 5px; font-size: .74rem; color: var(--muted);
+  font-variant-numeric: tabular-nums; letter-spacing: .01em; }
+.aplayer-cur { color: var(--cyan); font-weight: 700; }
+.aplayer-sep { opacity: .6; }
+/* Volume : bouton + curseur (le curseur se replie sur petit écran) */
+.aplayer-vol { flex: 0 0 auto; display: flex; align-items: center; gap: 6px; }
+.aplayer-mute { width: 34px; height: 34px; border-radius: 9px; border: 1px solid var(--border);
+  background: var(--panel2); color: var(--text); cursor: pointer; display: grid; place-items: center;
+  transition: border-color .15s ease, color .15s ease; }
+.aplayer-mute svg { width: 20px; height: 20px; fill: currentColor; }
+.aplayer-mute:hover { border-color: var(--cyan); color: var(--cyan); }
+.aplayer-volslider { width: 74px; accent-color: var(--cyan); cursor: pointer; }
+@media (max-width: 480px) { .aplayer-volslider { display: none; } }
 
 /* ===== Consignes de transcription (boîte obligatoire) ===== */
 .tr-guide { position: fixed; inset: 0; z-index: 10050; display: flex; align-items: center;
@@ -1682,8 +1694,6 @@ body {
 /* « Revoir les consignes » : TOUJOURS sur sa PROPRE ligne (sous le label), pleine
    largeur, texte sur une seule ligne, MÊME rendu en Traduire et en Transcrire. */
 .tr-guide-open { flex: 0 0 100%; margin-left: 0; justify-content: center; margin-top: 8px; }
-.entry-audio-alt { color: var(--cyan); font-size: .78rem; font-weight: 600; text-decoration: none; white-space: nowrap; }
-.entry-audio-alt:hover { text-decoration: underline; }
 .entry-foot { display: flex; align-items: center; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
 .entry-credit { color: var(--green); font-size: .8rem; font-weight: 600; }
 .entry-date { color: var(--muted); font-size: .72rem; margin-left: auto; }
@@ -1829,8 +1839,6 @@ body {
 .corr-rec { padding: 8px 14px; font-size: .85rem; }
 .corr-rec-timer { font-size: .92rem; }
 .corr-rec-preview audio { height: 34px; max-width: 200px; }
-/* Lecteur audio intégré Google Drive (dernier recours) + statut de chargement. */
-.entry-audio-frame { width: 100%; max-width: 340px; height: 62px; border: 0; border-radius: 10px; background: var(--panel2); }
 .entry-audio-status { color: var(--muted); font-size: .76rem; }
 .corr-submit { border: 1px solid var(--cyan); color: var(--bg); font-weight: 700;
   background: var(--cyan); border-radius: 10px;
@@ -1925,17 +1933,9 @@ body {
 .brand--home:focus-visible, .foot-brand--home:focus-visible {
   outline: 2px solid var(--cyan); outline-offset: 4px; border-radius: 12px; }
 .foot-info { text-align: right; }
-.foot-by { margin: 0 0 4px; color: var(--text); font-size: .92rem; }
 .foot-contact { margin: 0; color: var(--muted); font-size: .82rem; }
 .foot-contact a { color: var(--cyan); text-decoration: none; font-weight: 600; }
 .foot-contact a:hover { text-decoration: underline; }
-/* Barre du bas : liens légaux à gauche, copyright à droite, sur une seule ligne. */
-.foot-bottom {
-  max-width: var(--wrap-max); margin: 16px auto 0; padding-top: 12px;
-  border-top: 1px solid var(--hairline);
-  display: flex; align-items: center; justify-content: space-between; gap: 8px 22px; flex-wrap: wrap;
-}
-.foot-copy { color: var(--muted); font-size: .72rem; }
 @media (max-width: 560px) {
   .foot-inner { flex-direction: column; align-items: flex-start; }
   .foot-info { text-align: left; }
@@ -2311,7 +2311,6 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .audio-act--del:hover { background: var(--red); color: var(--bg);
   transform: translateY(-1px); box-shadow: 0 0 18px -5px var(--red); }
 .audio-act:active { transform: translateY(1px); }
-.audio-info { color: var(--muted); font-size: .78rem; }
 /* Timer d'enregistrement : pastille rouge qui pulse + temps écoulé (chiffres alignés) */
 .rec-timer { display: inline-flex; align-items: center; gap: 9px; color: var(--red);
   font-weight: 700; font-variant-numeric: tabular-nums; font-size: 1.02rem; letter-spacing: .02em; }
@@ -3087,7 +3086,7 @@ body::after {
   background: url("icons/pattern-accent.jpg") left center / auto 100% repeat-x;
   box-shadow: 0 1px 6px -2px rgba(0,0,0,.5);
 }
-.foot-inner, .foot-bottom { position: relative; z-index: 1; }
+.foot-inner { position: relative; z-index: 1; }
 
 @media (prefers-reduced-motion: reduce) {
   body::before, body::after, .topbar::after, .brand-mark::after, .brand-mark::before,
@@ -3654,6 +3653,7 @@ body.kb-docked .field--consent, body.kb-docked .notif-fab {
   .rec-timer::before { animation: ngRecPulse 1s ease-in-out infinite !important; }
   .btn--rec.is-recording { animation: ngRecBtn 1.4s ease-in-out infinite !important; }
   .field--consent:not(.is-checked) { animation: ngConsentPulse 2.4s ease-in-out infinite !important; }
+  .aplayer.is-playing .aplayer-play .aplayer-ring { animation: aplayerPulse 1.8s ease-out infinite !important; }
   .update-banner { animation: updGlow 1.8s ease-in-out infinite !important; }
   .update-dot { animation: updBlink 1s steps(1,end) infinite !important; }
   .update-btn { animation: updPulse 1.6s ease-in-out infinite !important; }
@@ -3755,13 +3755,13 @@ textarea, [contenteditable="true"] { cursor: text; }
   .card { background: var(--card-bg); border-color: var(--border); }
   .tr-guide-card, .incite-banner, .notif-popup, .share-panel-card, .profile-gate-card,
   .lang-declare, .sendgrp, .dup-warn, .req-item, .about-vision, .about-cell, .hub-card,
-  .aplayer, .grp-card, .entry-card { background: var(--panel); border-color: var(--border); }
+  .aplayer, .grp-card { background: var(--panel); border-color: var(--border); }
   /* Réseaux de partage (icônes rondes à fond clair) */
   .share-ico { background: var(--share-ico-bg, #ffffff); border-color: var(--border); }
   /* Actions d'une entrée (partager, améliorer, voter) */
   .entry-share, .corr-vote, .mini-btn, .grp-back, .entry-improve { background: var(--panel); border-color: var(--border); }
   /* Champs de saisie / sélecteurs */
-  input, select, textarea, .field input, .combo, .enhanced-select { background: var(--panel); border-color: var(--border); }
+  input, select, textarea, .field input, .combo { background: var(--panel); border-color: var(--border); }
   /* Vote 3 états : bordures solides selon l'état */
   .ev-btn { background: var(--panel); border-color: var(--border); }
   .ev-ok.is-mine { border-color: var(--green); color: var(--green); }
