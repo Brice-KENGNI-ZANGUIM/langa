@@ -1,6 +1,10 @@
 {
-  "version": "v428",
+  "version": "v429",
   "changelog": {
+    "v429": [
+      "Barre de navigation basse : la coloration de l'onglet où tu te trouves est plus intense et plus nette (halo, liseré, petit repère en bas), et un fin filet sépare désormais chaque bouton",
+      "L'icône Accueil, qui n'avait jusqu'ici aucun signe visuel quand on est sur cette page, s'illumine elle aussi"
+    ],
     "v428": [
       "Correctif important : le lecteur audio personnalisé (lecture des enregistrements) avait perdu tout son habillage visuel depuis la v426, à la suite d'une erreur d'audit qui l'avait cru abandonné à tort ; son style est restauré",
       "Nettoyage complémentaire de règles de style devenues inutiles ailleurs dans l'application (aucun changement visible)"

@@ -877,11 +877,21 @@ body {
 .bottom-nav-tabs { max-width: var(--wrap-max); margin: 0 auto; display: flex; position: relative; z-index: 2; }
 /* Cadre + icônes ×1.2 (2026-07-26, Brice : « je trouve cette barre beaucoup trop petite ») :
    hauteur uniquement (padding vertical du bouton + hauteur des icônes), largeurs inchangées. */
-.bottom-nav-tab { --acc: var(--cyan); flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
+.bottom-nav-tab { --acc: var(--cyan); position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 3px; padding: 9.6px 4px 8.4px; text-decoration: none;
   color: var(--muted); font: inherit; font-size: .68rem; font-weight: 600;
   transition: color .16s ease, background .16s ease; }
 .bottom-nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--acc) 8%, transparent); }
+/* Limites NETTES entre chaque bouton (Brice 2026-07-27 : « améliore les limitations entre les
+   différents boutons ») : fin filet vertical, adouci aux extrémités (jamais un cadre plein),
+   posé sur le bord droit de chaque bouton sauf le dernier de la barre — couvre naturellement
+   les 5 éléments (4 onglets + Accueil incrusté) puisque :last-child ne dépend pas du tag. */
+.bottom-nav-tab:not(:last-child)::after, .bottom-nav-home::after {
+  content: ""; position: absolute; right: 0; top: 22%; bottom: 22%; width: 1px; z-index: 1;
+  background: linear-gradient(180deg, transparent,
+    color-mix(in srgb, var(--border) 85%, transparent) 25%,
+    color-mix(in srgb, var(--border) 85%, transparent) 75%, transparent);
+}
 /* Hauteur FIXE, largeur libre (2026-07-26, Brice) : les icônes ont des sujets d'aspect ratio
    différents (micro étroit, panier large…) ; une case carrée avec object-fit:contain les
    contraignait à la largeur, les rendant visuellement PLUS PETITES à hauteur inégale. Chaque
@@ -895,13 +905,24 @@ body {
 #tab-explorer   { --acc: var(--gold); }
 #tab-demander   { --acc: var(--cyan); }
 /* Repère de l'onglet actif en PASTILLE arrondie (pas un simple aplat collé aux bords de la
-   barre, cohérent avec le nouveau panneau flottant à coins ronds) + léger halo de couleur. */
-.bottom-nav-tab.is-active { color: var(--acc);
-  background: color-mix(in srgb, var(--acc) 14%, transparent);
+   barre, cohérent avec le nouveau panneau flottant à coins ronds) + halo de couleur. Intensité
+   et netteté renforcées (Brice 2026-07-27 : « encore plus loin la coloration, l'intensité et
+   la netteté ») : fond en dégradé plus soutenu, double liseré (bordure nette + reflet interne),
+   halo plus large, icône éclairée à l'accent (plus seulement « sans filtre »), petit repère
+   plein en bas (barre-témoin) qui tranche net avec le reste, jamais présent hors état actif. */
+.bottom-nav-tab.is-active { color: var(--acc); font-weight: 800;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--acc) 24%, transparent),
+    color-mix(in srgb, var(--acc) 11%, transparent));
   border-radius: 16px;
-  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--acc) 30%, transparent),
-              0 0 14px -4px var(--acc); }
-.bottom-nav-tab.is-active .bottom-nav-ico { filter: none; }
+  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--acc) 55%, transparent),
+              inset 0 1px 0 color-mix(in srgb, var(--acc) 40%, transparent),
+              0 2px 12px -4px var(--acc),
+              0 0 22px -6px var(--acc); }
+.bottom-nav-tab.is-active::before {
+  content: ""; position: absolute; left: 30%; right: 30%; bottom: 3px; height: 2.5px;
+  border-radius: 3px; background: var(--acc); box-shadow: 0 0 9px -1px var(--acc); z-index: 2; }
+.bottom-nav-tab.is-active .bottom-nav-ico { filter: drop-shadow(0 0 7px color-mix(in srgb, var(--acc) 75%, transparent)); }
 @media (max-width: 560px) {
   .bottom-nav-tab { font-size: .6rem; padding: 8.4px 2px 7.2px; }
   .bottom-nav-ico { width: auto; height: 25.2px; }
@@ -913,9 +934,19 @@ body {
    flex:1) : juste assez pour l'icône, qui suffit seule à suggérer une coupure de la barre en
    deux (2 onglets de chaque côté) sans qu'aucun vrai espace ni cadre ne soit créé. Icône
    dimensionnée pour occuper TOUTE la hauteur intérieure de la barre (Brice 2026-07-26n). */
-.bottom-nav-home { --acc: var(--cyan); flex: 0 0 auto; width: 56px; box-sizing: border-box;
+.bottom-nav-home { --acc: var(--cyan); position: relative; flex: 0 0 auto; width: 56px; box-sizing: border-box;
   display: flex; align-items: center; justify-content: center;
   text-decoration: none; background: none; }
+/* État actif de l'Accueil (Brice 2026-07-27 : la coloration « on est dans la page » doit valoir
+   pour CE bouton aussi, qui n'en avait aucune jusqu'ici) : pas de cadre/fond (icône SEULE,
+   décision assumée plus haut), seulement un halo net autour de l'icône + le même petit repère
+   plein en bas que les 4 onglets, pour rester cohérent visuellement dans toute la barre. */
+.bottom-nav-home.is-active .bottom-nav-home-ico {
+  filter: drop-shadow(0 0 12px color-mix(in srgb, var(--acc) 80%, transparent))
+          drop-shadow(0 1px 3px rgba(0,0,0,.35)); }
+.bottom-nav-home.is-active::before {
+  content: ""; position: absolute; left: 27%; right: 27%; bottom: 3px; height: 2.5px;
+  border-radius: 3px; background: var(--acc); box-shadow: 0 0 9px -1px var(--acc); z-index: 2; }
 /* Hauteur FIXE en px (PAS de %) : un height:100% sur un enfant d'un flex-item lui-même étiré par
    align-items:stretch d'un PARENT à hauteur elle-même auto (déterminée par ses enfants) crée une
    dépendance circulaire — Chromium retombe alors sur la taille NATURELLE du fichier source
