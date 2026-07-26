@@ -636,7 +636,11 @@ body {
   .brand-mark img { border-radius: 13px; }
   .brand-txt h1 { font-size: 1.95rem; line-height: 1; }    /* LANGIAL agrandi, proche du logo */
   .brand-sub { display: none; }                            /* « · Collecte » retiré sur mobile (place au nom) */
-  .tagline { display: none; }                              /* déjà répété dans le footer */
+  /* Slogan réaffiché sur mobile (Brice 2026-07-26 : « il n'apparaît que sur PC ») : le footer
+     classique ne s'affiche plus que sur 3 pages informatives depuis v399/v405, l'argument
+     « déjà répété dans le footer » qui justifiait ce masquage ne tient plus. Taille réduite
+     pour rester compact dans l'en-tête resserré du mobile. */
+  .tagline { display: block; font-size: .68rem; margin-top: 1px; }
   .chip { font-size: .72rem; padding: 4px 6px; }
   .chip--btn { padding: 4px 6px; gap: 4px; }
   .chip--btn .chip-ico { width: 14px; height: 14px; }
@@ -3357,7 +3361,12 @@ body::after {
    ABSOLU sur toute la largeur du header, filets réduits à un simple trait fin qui coïncide avec
    la bordure, médaillon central à cheval dessus (déborde symétriquement au-dessus/en dessous). */
 .ndop-sep.topbar-sep {
-  position: absolute; left: 0; right: 0; bottom: -1px; margin: 0;
+  /* `top:100%` ancre le HAUT de la boîte pile sur la bordure basse du header, puis on la
+     remonte de la moitié de sa propre hauteur : le CENTRE de l'ornement (donc son filet fin)
+     coïncide exactement avec la ligne, quelle que soit la hauteur du médaillon (desktop/mobile).
+     `bottom:-1px` (v417) ne centrait rien : ça calait le BAS de la boîte sur la ligne, donc tout
+     le motif restait au-dessus d'elle au lieu d'être à cheval dessus (Brice 2026-07-26). */
+  position: absolute; left: 0; right: 0; top: 100%; transform: translateY(-50%); margin: 0;
   z-index: 5; pointer-events: none; gap: 8px;
 }
 .ndop-sep.topbar-sep::before, .ndop-sep.topbar-sep::after { height: 1px; }

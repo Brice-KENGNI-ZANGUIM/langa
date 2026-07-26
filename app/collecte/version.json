@@ -1,6 +1,10 @@
 {
-  "version": "v417",
+  "version": "v418",
   "changelog": {
+    "v418": [
+      "Correction : le motif décoratif du header n'était pas centré sur la bordure basse, il est maintenant bien à cheval sur la ligne",
+      "Le slogan « Nos langues, un héritage à transmettre » réapparaît sous le nom LANGIAL sur téléphone (n'était visible que sur ordinateur)"
+    ],
     "v417": [
       "Accueil : le motif décoratif entre le texte et les 4 cartes a disparu, il orne désormais la bordure basse du header, à la place du filet qui la balayait"
     ],
