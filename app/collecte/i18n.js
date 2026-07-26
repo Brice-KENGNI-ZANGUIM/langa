@@ -902,6 +902,11 @@ export const STR = {
   "langconfirm.doubt": { fr: "Attention : ce texte contient des lettres propres au ngiemboon, mais la langue choisie est {lang}.", en: "Careful: this text contains letters specific to ngiemboon, but the selected language is {lang}." },
   "langconfirm.ok": { fr: "Oui, c'est {lang}", en: "Yes, it's {lang}" },
   "langconfirm.change": { fr: "Non, changer de langue", en: "No, change language" },
+  "clgate.title": { fr: "Dans quelle langue veux-tu contribuer ?", en: "Which language do you want to contribute in?" },
+  "clgate.lead": { fr: "Elle peut être différente de celle de tes parents. Choisis-la, à chaque fois, avant de commencer.", en: "It can be different from your parents' language. Choose it every time before you start." },
+  "clgate.label": { fr: "Langue de contribution", en: "Contribution language" },
+  "clgate.add": { fr: "➕ Ajouter ma langue", en: "➕ Add my language" },
+  "clgate.ok": { fr: "Continuer →", en: "Continue →" },
 };
 
 // Messages éphémères (toasts) : table FR → EN. On garde le FR comme source dans les

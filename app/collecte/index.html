@@ -1368,6 +1368,27 @@
     </div>
   </div>
 
+  <!-- Langue de CONTRIBUTION obligatoire, redemandée à CHAQUE entrée dans Traduire/Transcrire
+       (Brice 2026-07-26) : DISTINCTE de langue_pere/langue_mere (origine familiale) — on peut avoir
+       grandi avec les langues de ses parents et vouloir contribuer/apprendre dans une toute autre
+       langue. Aucun bouton « Plus tard » : la confirmation est un passage obligé, pas une option. -->
+  <div id="contriblang-gate" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="clg-title">
+    <div class="tr-guide-card">
+      <div class="tr-guide-head">
+        <div class="tr-guide-ico" aria-hidden="true">🌍</div>
+        <h2 id="clg-title" data-i18n="clgate.title">Dans quelle langue veux-tu contribuer ?</h2>
+        <p class="tr-guide-lead" data-i18n="clgate.lead">Elle peut être différente de celle de tes parents. Choisis-la, à chaque fois, avant de commencer.</p>
+      </div>
+      <div class="field clg-field">
+        <span data-i18n="clgate.label">Langue de contribution</span>
+        <select id="clg-select"></select>
+      </div>
+      <div class="pg-actions">
+        <button id="clg-ok" class="btn btn--primary" type="button" data-i18n="clgate.ok">Continuer →</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Formulaire « Laisser un mot » (témoignage). Publication auto (garde-fous côté serveur). -->
   <div id="testi-form" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="testi-title">
     <div class="tr-guide-card testi-card">

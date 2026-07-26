@@ -241,6 +241,12 @@ export function setThemeRemote(deviceId, theme) {
   return postOp({ op: "set_theme", device_id: deviceId, theme });
 }
 
+/** Miroir en base de la langue de CONTRIBUTION choisie (distincte de langue_pere/langue_mere),
+    reconfirmée à chaque entrée dans Traduire/Transcrire. Fire-and-forget, jamais bloquant. */
+export function setLangueActiveRemote(deviceId, langId) {
+  return postOp({ op: "set_langue_active", device_id: deviceId, langue: langId });
+}
+
 /** Envoie un témoignage (« Ils parlent de nous »). Publication AUTO côté serveur avec
     garde-fous (longueur, gros mots, 1 par appareil). Renvoie {ok, ...} ou {ok:false}. */
 export function submitTestimonial(rec) {

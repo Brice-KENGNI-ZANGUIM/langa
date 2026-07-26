@@ -1376,6 +1376,9 @@ body {
   50% { box-shadow: inset 0 1px 0 var(--card-sheen), 0 0 22px -4px var(--gold); }
 }
 @media (prefers-reduced-motion: reduce) { .work-lang.is-unconfirmed { animation: none; } }
+/* Gate obligatoire de la langue de CONTRIBUTION (à chaque entrée Traduire/Transcrire). */
+#contriblang-gate .clg-field { padding: 6px 20px 0; text-align: left; }
+#contriblang-gate .pg-actions { padding: 0 20px 20px; }
 /* Ligne de doute (écriture qui contredit la langue) dans le modal de confirmation. */
 .lc-doubt {
   margin: 0 0 6px; padding: 9px 12px; border-radius: 10px; font-size: .88rem; line-height: 1.5;

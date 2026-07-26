@@ -25,7 +25,7 @@ import { reconcile, checkServer, serverStats, modeGoogle, browseLibrary,
   proposeMerge, respondMerge, mergesForDevice, fetchNotifications,
   fetchRequests, fetchRequestsToTranslate, postRequest, postAnswer, translateWord,
   submitTestimonial, fetchTestimonials, updateContribution, markNotifRead,
-  fetchTheme, setThemeRemote } from "./sync.js";
+  fetchTheme, setThemeRemote, setLangueActiveRemote } from "./sync.js";
 // PROPOSITIONS (1,37 Mo, dont ~68k mots de dictionnaire) n'est utilisé QUE dans le flux
 // Traduire/Transcrire (et l'incitation), jamais pour le rendu de l'accueil. On l'importe
 // DYNAMIQUEMENT → son parse ne bloque plus le premier rendu (démarrage nettement plus rapide,
@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v391";
+const APP_VERSION = "v392";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -2933,10 +2933,66 @@ function _revealOptional(zoneSel, btnSel, focusSel) {
   if (btn) btn.hidden = true;
   if (focusSel) { const f = $(focusSel); if (f) keepScroll(() => { try { f.focus({ preventScroll: true }); } catch (e) { /* ok */ } }); }
 }
+// --- Gate OBLIGATOIRE de la langue de CONTRIBUTION, à CHAQUE entrée dans Traduire/Transcrire
+// (Brice 2026-07-26) — DISTINCTE de langue_pere/langue_mere (origine familiale) : on peut très
+// bien avoir grandi avec les langues de ses parents et vouloir contribuer/apprendre dans une
+// tout autre langue. Le popup affiche la langue actuelle et un menu déroulant de toutes les
+// langues connues, « Ajouter ma langue » en 1re position pour lever toute ambiguïté. Résout à
+// `true` si l'on peut enchaîner directement vers l'espace de travail, `false` si l'utilisateur
+// est parti déclarer une langue ou si un changement de langue recharge la page (comme chooseLang()).
+function populateContribLangSelect(sel) {
+  sel.innerHTML = "";
+  const optAdd = document.createElement("option");
+  optAdd.value = "__add__";
+  optAdd.textContent = t("clgate.add");
+  sel.appendChild(optAdd);
+  for (const l of visibleLanguages(knownLanguages())) {
+    const o = document.createElement("option");
+    o.value = l.id;
+    o.textContent = l.nom;
+    sel.appendChild(o);
+  }
+}
+function requireContribLang() {
+  return new Promise((resolve) => {
+    const g = $("#contriblang-gate"), sel = $("#clg-select"), ok = $("#clg-ok");
+    if (!g || !sel || !ok) { resolve(true); return; }
+    populateContribLangSelect(sel);
+    sel.value = getCurrentLangId();
+    g.hidden = false;
+    const cleanup = () => { sel.removeEventListener("change", onChange); ok.removeEventListener("click", onOk); };
+    const onChange = () => {
+      if (sel.value !== "__add__") return;
+      g.hidden = true; cleanup();
+      openLangChoice(); openDeclareForm();   // écran « déclarer une langue », réutilisé tel quel
+      resolve(false);
+    };
+    const onOk = () => {
+      const id = sel.value;
+      if (!id || id === "__add__") return;   // rien de valide sélectionné : on n'avance pas
+      if (id !== getCurrentLangId()) {
+        g.hidden = true; cleanup();
+        chooseLang(id);   // langue réellement changée : reconstruction propre (clavier/corpus) par rechargement
+        resolve(false);
+        return;
+      }
+      g.hidden = true; cleanup();
+      setCurrentLangId(id);
+      try { setLangueActiveRemote(deviceId(), id).catch(() => {}); } catch (e) { /* best-effort */ }
+      _langAck = id;   // déjà confirmée à l'instant : pas de re-confirmation Couche 1 à l'enregistrement
+      updateWorkLang();
+      resolve(true);
+    };
+    sel.addEventListener("change", onChange);
+    ok.addEventListener("click", onOk);
+    try { ok.focus(); } catch (e) { /* ok */ }
+  });
+}
 async function enterWork(act, forceMode) {
   if (!requireProfile(act === "transcribe"
     ? "Crée ton profil pour enregistrer des prononciations."
-    : "Crée ton profil pour proposer des traductions.")) return;
+    : "Crée ton profil pour proposer des traductions.")) return false;
+  if (!(await requireContribLang())) return false;
   if (isKbOpen()) hideKeyboard();
   mode = forceMode || "proposer";   // PAR DÉFAUT « se faire proposer un mot » (Brice) ; « libre » seulement
                                     // pour les entrées spéciales (réponse à une demande, « dis-le dans ta langue »).
@@ -2960,6 +3016,7 @@ async function enterWork(act, forceMode) {
   }
   showView("app");
   refreshReqStrip(act);   // lot 5 : demandes de la communauté dans SA langue à traiter ici
+  return true;
 }
 
 // --- LOT 5 « Demander » : bandeau des demandes de la communauté à traiter -----
@@ -3027,8 +3084,10 @@ async function startTranslateWord(frWord) {
   const w = shareClean(frWord, 200);
   if (!w) return;
   if (!requireProfile(t("req.profile.translate"))) return;   // pas de profil → l'ouvre d'abord
-  if (!hasChosenLang()) { openLangChoice(); return; }         // pas de langue → écran des langues
-  await enterWork("translate", "libre");                      // « libre » : on va imposer le mot nous-mêmes.
+  // « libre » : on va imposer le mot nous-mêmes. enterWork gère désormais SEUL la confirmation de
+  // langue (gate obligatoire à chaque entrée) ; s'il n'aboutit pas (langue changée, déclaration
+  // en cours), on n'a rien à pré-remplir.
+  if (!(await enterWork("translate", "libre"))) return;
   // IMPORTANT : on ATTEND enterWork (async : await ensurePropositions puis applyMode qui VIDE la source
   // en mode libre). Sans await, on posait le mot puis applyMode l'effaçait → case vide (bug popup).
   if (direction !== "fr2nge") { direction = "fr2nge"; applyDirection(); }
@@ -3580,7 +3639,15 @@ function startRequestAnswer(d) {
 const PENDING_REQ_KEY = "langa-pending-req";
 async function _openWorkForRequest(item) {
   const act = (item.kind === "transcription" || item.kind === "les_deux") ? "transcribe" : "translate";
-  await enterWork(act, "libre");   // ATTENDRE enterWork (async) : sa fin appelle applyMode qui VIDE la source ;
+  // Le gate de langue obligatoire (à CHAQUE entrée) peut désormais déclencher un changement de
+  // langue → rechargement AVANT même d'atteindre l'espace de travail : on mémorise la demande en
+  // attente par précaution (comme au 3634 ci-dessus), reprise automatiquement au redémarrage si
+  // la langue courante correspond alors à celle de la demande ; sinon la clé reste simplement
+  // inutilisée (aucune réponse n'est chargée dans la mauvaise langue).
+  try { sessionStorage.setItem(PENDING_REQ_KEY, JSON.stringify(item)); } catch (e) { /* ok */ }
+  const entered = await enterWork(act, "libre");   // ATTENDRE enterWork (async) : sa fin appelle applyMode qui VIDE la source ;
+  if (!entered) return;                            // gate en cours (langue changée / déclaration) : rien de plus ici
+  try { sessionStorage.removeItem(PENDING_REQ_KEY); } catch (e) { /* ok */ }
   loadRequestIntoSource(item);     // on charge le mot APRÈS, sinon il est effacé (bug popup notif « demande »).
 }
 /** Au démarrage : si une réponse à une demande était en attente d'un changement de langue,

@@ -1,6 +1,9 @@
 {
-  "version": "v391",
+  "version": "v392",
   "changelog": {
+    "v392": [
+      "La langue de contribution est désormais confirmée à chaque entrée dans Traduire ou Transcrire (fenêtre dédiée, distincte du village/langue de tes parents) : tu vois ta langue actuelle, tu peux la changer via un menu déroulant, ou en déclarer une nouvelle en premier choix"
+    ],
     "v391": [
       "L'icône du bouton « Partager cette page » est désormais des cauris (motif africain), plus une flèche générique",
       "La bannière de mise à jour n'affiche plus le détail des changements : juste qu'une nouvelle version est disponible, avec la date et l'heure où elle a été repérée"
