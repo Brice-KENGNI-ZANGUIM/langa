@@ -1,6 +1,9 @@
 {
-  "version": "v402",
+  "version": "v403",
   "changelog": {
+    "v403": [
+      "Barre de navigation basse : les 4 icônes d'activité ont maintenant toutes la même hauteur (auparavant contraintes dans une case carrée, ce qui rétrécissait les sujets larges comme le panier ou le style large)"
+    ],
     "v402": [
       "Icône illustrée aux couleurs de l'Afrique pour Explorer, dans la barre de navigation basse (panier de cauris, à la place de la loupe)"
     ],

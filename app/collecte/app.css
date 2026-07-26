@@ -886,7 +886,12 @@ body {
   color: var(--muted); font: inherit; font-size: .68rem; font-weight: 600;
   transition: color .16s ease, background .16s ease; }
 .bottom-nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--acc) 8%, transparent); }
-.bottom-nav-ico { width: 23px; height: 23px; flex: none; object-fit: contain;
+/* Hauteur FIXE, largeur libre (2026-07-26, Brice) : les icônes ont des sujets d'aspect ratio
+   différents (micro étroit, panier large…) ; une case carrée avec object-fit:contain les
+   contraignait à la largeur, les rendant visuellement PLUS PETITES à hauteur inégale. Chaque
+   fichier icons/ui/*.png est déjà exporté à une hauteur de contenu identique (220px) : ne pas
+   forcer une largeur ici préserve cette cohérence. */
+.bottom-nav-ico { width: auto; height: 23px; flex: none;
   filter: grayscale(35%) opacity(.85); transition: filter .16s ease, transform .12s ease; }
 .bottom-nav-tab:hover .bottom-nav-ico { transform: translateY(-1px); filter: grayscale(0%) opacity(1); }
 #tab-transcrire { --acc: #a78bfa; }
@@ -897,7 +902,7 @@ body {
 .bottom-nav-tab.is-active .bottom-nav-ico { filter: none; }
 @media (max-width: 560px) {
   .bottom-nav-tab { font-size: .6rem; padding: 6px 2px 5px; }
-  .bottom-nav-ico { width: 21px; height: 21px; }
+  .bottom-nav-ico { width: auto; height: 21px; }
 }
 
 /* ---- Accueil « Que veux-tu faire ? » ---- */
