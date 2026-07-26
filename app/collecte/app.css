@@ -798,7 +798,7 @@ body {
    titre (les propriétés personnalisées ne remontent jamais vers un ANCÊTRE). Ciblé correctement
    ici sur le vrai h2 (.work-head .view-title), aligné sur la même couleur que la barre basse et
    les cartes d'accueil (violet Transcrire / vert Traduire). */
-#view-app[data-act="transcribe"] .work-head .view-title { --acc: #a78bfa; }
+#view-app[data-act="transcribe"] .work-head .view-title { --acc: var(--violet); }
 #view-app[data-act="translate"] .work-head .view-title { --acc: var(--green); }
 /* Explorer (déjà gold par défaut, coïncidence avec sa couleur canonique) et Demander (tombait
    sur le gold par défaut au lieu du cyan attendu) : rendu explicite pour les 2 pour éviter que
@@ -935,7 +935,7 @@ body {
 .bottom-nav-ico { width: auto; height: 23px; flex: none;
   filter: grayscale(35%) opacity(.85); transition: filter .16s ease, transform .12s ease; }
 .bottom-nav-tab:hover .bottom-nav-ico { transform: translateY(-1px); filter: grayscale(0%) opacity(1); }
-#tab-transcrire { --acc: #a78bfa; }
+#tab-transcrire { --acc: var(--violet); }
 #tab-traduire   { --acc: var(--green); }
 #tab-explorer   { --acc: var(--gold); }
 #tab-demander   { --acc: var(--cyan); }
@@ -1018,7 +1018,7 @@ body {
 /* Couleur d'activité alignée sur la barre basse (#tab-transcrire/#tab-traduire) — Brice
    2026-07-26 : Transcrire et Traduire étaient inversées entre les cartes d'accueil et la barre,
    chaque page doit avoir SA couleur, la même partout. */
-.hub-card[data-go="transcribe"] { --acc: #a78bfa; }
+.hub-card[data-go="transcribe"] { --acc: var(--violet); }
 .hub-card[data-go="translate"] { --acc: var(--green); }
 .hub-card[data-go="explore"] { --acc: var(--gold); }
 .hub-card[data-go="demander"] { --acc: var(--cyan); }
@@ -3420,9 +3420,9 @@ body::after {
 .present-act:nth-child(1) { border-color: var(--green);
   background: color-mix(in srgb, var(--green) 9%, var(--panel));
   box-shadow: 0 0 52px -14px var(--green), var(--shadow-card); }
-.present-act:nth-child(2) { border-color: #a78bfa;
-  background: color-mix(in srgb, #a78bfa 10%, var(--panel));
-  box-shadow: 0 0 52px -14px #a78bfa, var(--shadow-card); }
+.present-act:nth-child(2) { border-color: var(--violet);
+  background: color-mix(in srgb, var(--violet) 10%, var(--panel));
+  box-shadow: 0 0 52px -14px var(--violet), var(--shadow-card); }
 .present-act:nth-child(3) { border-color: var(--gold);
   background: color-mix(in srgb, var(--gold) 10%, var(--panel));
   box-shadow: 0 0 52px -14px var(--gold), var(--shadow-card); }
