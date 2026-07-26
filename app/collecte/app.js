@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v423";
+const APP_VERSION = "v424";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1428,9 +1428,6 @@ function showView(name) {
   // uniquement AVANT que le profil existe, sur toutes les pages).
   const hcp = $("#header-create-profile");
   if (hcp) hcp.hidden = profileComplete();
-  // Cloche de notifications : visible dès qu'un profil existe (comme « Mon profil »).
-  const bn = $("#btn-notifs");
-  if (bn) bn.hidden = !profileComplete();
   // Bouton des langues : TOUJOURS visible (accès à la page des langues même sans langue choisie).
   // Sans langue → libellé générique « Langues » ; avec une langue → son nom.
   const lc = $("#lang-chip");
@@ -1441,7 +1438,7 @@ function showView(name) {
   }
   // Page ACTIVE mise en évidence dans le header (style plat, deux groupes) : on marque le
   // bouton de nav correspondant à la vue courante.
-  const NAV_ACTIVE = { hub: "home-link", lang: "lang-chip", about: "about-link", bugs: "bugs-link", profile: "btn-open-profile", notifs: "btn-notifs" };
+  const NAV_ACTIVE = { hub: "home-link", lang: "lang-chip", about: "about-link", bugs: "bugs-link", profile: "btn-open-profile" };
   document.querySelectorAll(".chips-nav .chip--btn.is-active").forEach((b) => b.classList.remove("is-active"));
   const actId = NAV_ACTIVE[name]; if (actId) { const ab = document.getElementById(actId); if (ab) ab.classList.add("is-active"); }
   try { injectBannerShare(name); } catch (e) { /* jamais bloquant */ }
@@ -3548,15 +3545,10 @@ async function refreshNotifs() {
   updateNotifBadge(notifUnreadCount());   // non lues = celles jamais lues (état par notification)
 }
 function updateNotifBadge(n) {
-  // Même compteur affiché aux TROIS endroits (icône Réglages + ligne Notifications du tiroir +
-  // bulle flottante façon Messenger, 2026-07-26) : ouvrir le tiroir révèle d'où vient le nombre
-  // vu sur Réglages ; la bulle flottante donne un accès direct sans passer par le tiroir.
+  // Bulle flottante SEULE (Brice 2026-07-26 : retire le compteur de l'icône Réglages ET le
+  // bouton Notifications du tiroir, devenus redondants avec la bulle) : c'est désormais l'UNIQUE
+  // accès aux notifications, en dehors du bouton retour Retour/marquer-tout-lu de la page elle-même.
   const text = n > 99 ? "99+" : String(n);
-  [$("#notif-badge"), $("#notif-badge-drawer")].forEach((b) => {
-    if (!b) return;
-    if (n > 0) { b.textContent = text; b.hidden = false; }
-    else b.hidden = true;
-  });
   const fab = $("#notif-fab"), fabBadge = $("#notif-fab-badge");
   if (fab) fab.hidden = n <= 0;
   if (fabBadge) fabBadge.textContent = text;

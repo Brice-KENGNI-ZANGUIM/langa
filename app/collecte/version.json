@@ -1,6 +1,10 @@
 {
-  "version": "v423",
+  "version": "v424",
   "changelog": {
+    "v424": [
+      "Icône de la bulle de notification agrandie ×2 sur téléphone, plus visible",
+      "Le compteur de notifications a disparu de l'icône Réglages et le bouton Notifications a disparu du menu Réglages : la bulle flottante est désormais l'unique accès"
+    ],
     "v423": [
       "Correctif important : le popup « demande de la communauté » s'affichait mal sur téléphone (icône hors format) ; il utilise maintenant le même habillage soigné que tous les autres popups"
     ],

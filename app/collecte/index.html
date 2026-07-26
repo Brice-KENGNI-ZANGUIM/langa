@@ -104,10 +104,6 @@
       <button id="settings-toggle" class="chip-bare" type="button" data-i18n-title="chip.settings.title"
               title="Réglages" aria-label="Réglages" aria-haspopup="dialog" aria-controls="settings-drawer" aria-expanded="false">
         <img class="chip-bare-ico" src="icons/ui/hi-menu.png" alt="" aria-hidden="true">
-        <!-- Notifications transférées dans le tiroir de Réglages (Brice 2026-07-26f) : le nombre
-             de non-lues s'affiche désormais directement sur l'icône Réglages, plus visible qu'un
-             bouton séparé dans le header. -->
-        <span id="notif-badge" class="notif-badge" hidden aria-hidden="true">0</span>
       </button>
     </div>
     <!-- Ornement Ndop incrusté dans la bordure basse du header (Brice 2026-07-26 : retiré de
@@ -139,13 +135,6 @@
             <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="hub.card.profile">Créer mon profil</span></button>
           <a id="btn-open-profile" class="chip chip--btn settings-link" href="#/profil" hidden>
             <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="chip.profile">Profil</span></a>
-          <a id="btn-notifs" class="chip chip--btn settings-link" href="#/notifications" hidden data-i18n-title="chip.notifs.title"
-                  title="Mes notifications" aria-label="Mes notifications">
-            <img class="chip-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true"><span data-i18n="chip.notifs">Notifications</span>
-            <!-- Même compteur que la pastille de l'icône Réglages (Brice 2026-07-26i) : affiché
-                 aux DEUX endroits à la fois, pour qu'en ouvrant le tiroir on comprenne d'où vient
-                 le nombre vu sur Réglages. -->
-            <span id="notif-badge-drawer" class="notif-badge notif-badge--inline" hidden aria-hidden="true">0</span></a>
         </div>
         <div class="settings-section">
           <h3 data-i18n="settings.sec.interface">Interface</h3>

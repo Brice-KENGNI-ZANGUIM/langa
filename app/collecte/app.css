@@ -2804,18 +2804,10 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
    (violet = activité sur tes contributions, cyan = demandes). Défaut violet si non typé. */
 .notif-popup { --pop-acc: var(--violet); }
 
-/* Pastille de non-lues sur l'icône Réglages (Brice 2026-07-26f, Notifications transférée dans
-   le tiroir) : déborde en haut à droite de l'icône, taille suivie sur celle-ci (×1.5 puis ×1.15,
-   cf. .chip-bare-ico), jamais tronquée par un cadre puisque Réglages n'en a plus. */
+/* Le compteur de non-lues sur l'icône Réglages ET le bouton Notifications du tiroir ont été
+   retirés (Brice 2026-07-26) : redondants depuis la bulle flottante ci-dessous, devenue l'UNIQUE
+   accès aux notifications. #settings-toggle garde `position:relative` (hérité, inoffensif). */
 #settings-toggle { position: relative; }
-.notif-badge { position: absolute; top: -6px; right: -6px; min-width: 20px; height: 20px; padding: 0 5px;
-  border-radius: 999px; background: var(--red); color: #fff; font-size: .72rem; font-weight: 800; line-height: 20px;
-  text-align: center; box-shadow: 0 0 0 2px var(--bg), 0 0 10px -2px var(--red); pointer-events: none; }
-.notif-badge[hidden] { display: none; }
-/* Même pastille, DANS le tiroir (Brice 2026-07-26i) : affichée aux deux endroits à la fois (icône
-   Réglages ET ligne Notifications) pour qu'ouvrir le tiroir révèle d'où vient le nombre vu sur
-   Réglages. En ligne (pas de survol/débordement), poussée à droite de la ligne. */
-.notif-badge--inline { position: static; margin-left: auto; flex: 0 0 auto; box-shadow: none; }
 
 /* Bulle de notification FLOTTANTE (Brice 2026-07-26 : « façon Messenger, un cadre rond avec
    l'icône et le nombre ») : accès direct sans passer par le tiroir de Réglages. Flotte au-dessus
@@ -2850,7 +2842,10 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   text-align: center; box-shadow: 0 0 0 2px var(--bg), 0 0 10px -2px var(--red); pointer-events: none; }
 @media (max-width: 560px) {
   .notif-fab { width: 46px; height: 46px; right: 12px; bottom: calc(66px + 12px); }
-  .notif-fab-ico { width: 23px; height: 23px; }
+  /* Icône ×2 sur mobile (Brice 2026-07-26) : déborde volontairement du cercle (pas de
+     overflow:hidden sur .notif-fab), effet « badge premium » assumé plutôt qu'une icône
+     trop discrète dans son cadre. */
+  .notif-fab-ico { width: 46px; height: 46px; }
 }
 @media (prefers-reduced-motion: reduce) { .notif-fab { animation: none; } }
 
