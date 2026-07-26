@@ -447,7 +447,7 @@
         <a class="hub-card hub-card--illus" href="#/transcrire" data-go="transcribe">
           <span class="hub-text">
             <span class="hub-card-head">
-              <img class="hub-ico" src="icons/mic-real.png" alt="" aria-hidden="true">
+              <img class="hub-ico" src="icons/ui/ic-record.png" alt="" aria-hidden="true">
               <span class="hub-name" data-i18n="hub.card.transcribe">Transcrire</span>
             </span>
             <span class="hub-desc" data-i18n="hub.card.transcribe.desc">Laisse ta voix en héritage : enregistre la prononciation d'un mot ou d'une phrase. La voix est l'essentiel.</span>
@@ -458,7 +458,7 @@
         <a class="hub-card hub-card--illus" href="#/traduire" data-go="translate">
           <span class="hub-text">
             <span class="hub-card-head">
-              <img class="hub-ico" src="icons/act-translate.svg" alt="" aria-hidden="true">
+              <img class="hub-ico" src="icons/ui/ic-write.png" alt="" aria-hidden="true">
               <span class="hub-name" data-i18n="hub.card.translate">Traduire</span>
             </span>
             <span class="hub-desc" data-i18n="hub.card.translate.desc">Transmets ta langue : donne la traduction d'un mot ou d'une phrase (français ↔ ta langue). Tu peux ajouter ta voix.</span>
@@ -469,7 +469,7 @@
         <a class="hub-card hub-card--illus" href="#/explorer" data-go="explore">
           <span class="hub-text">
             <span class="hub-card-head">
-              <img class="hub-ico" src="icons/act-explore.svg" alt="" aria-hidden="true">
+              <img class="hub-ico" src="icons/ui/ic-browse.png" alt="" aria-hidden="true">
               <span class="hub-name" data-i18n="hub.card.explore">Explorer</span>
             </span>
             <span class="hub-desc" data-i18n="hub.card.explore.desc">Apprends des autres : écoute les prononciations, découvre les traductions et propose des améliorations.</span>
@@ -480,7 +480,7 @@
         <a class="hub-card hub-card--illus" href="#/demander" data-go="demander">
           <span class="hub-text">
             <span class="hub-card-head">
-              <img class="hub-ico" src="icons/act-request.png" alt="" aria-hidden="true">
+              <img class="hub-ico" src="icons/ui/ni-request.png" alt="" aria-hidden="true">
               <span class="hub-name" data-i18n="hub.card.demander">Demander</span>
             </span>
             <span class="hub-desc" data-i18n="hub.card.demander.desc">Reçois l'aide de ceux qui savent : demande la traduction ou la prononciation d'un mot dans la langue de ton choix.</span>
@@ -494,7 +494,7 @@
     <!-- ============== VUE OUTILS : Traduire / Transcrire =================== -->
     <section id="view-app" class="view" hidden data-act="translate">
       <div class="work-head">
-        <h2 class="view-title view-title--ico"><img id="work-ico" class="title-ico" src="icons/act-translate.svg" alt="" aria-hidden="true"><span id="work-title">Traduire</span></h2>
+        <h2 class="view-title view-title--ico"><img id="work-ico" class="title-ico" src="icons/ui/ic-write.png" alt="" aria-hidden="true"><span id="work-title">Traduire</span></h2>
         <p class="work-help" id="work-help"></p>
         <!-- Indicateur FORT de la langue de la contribution (anti-mauvais étiquetage) :
              toujours visible, cliquable pour changer de langue. -->
@@ -511,7 +511,7 @@
          source ; la réponse devient une contribution reliée à la demande). -->
     <div class="req-strip" id="req-strip" hidden>
       <div class="req-strip-head">
-        <img class="req-strip-ico" src="icons/act-request.png" alt="" aria-hidden="true">
+        <img class="req-strip-ico" src="icons/ui/ni-request.png" alt="" aria-hidden="true">
         <span data-i18n="reqx.strip.h">La communauté attend une réponse dans ta langue</span>
       </div>
       <div class="req-strip-list" id="req-strip-list" role="list"></div>
@@ -759,7 +759,7 @@
     <!-- ============== VUE EXPLORER (bibliothèque communautaire) =========== -->
     <section id="view-explore" class="view" hidden>
       <div class="card">
-        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/act-explore.svg" alt="" aria-hidden="true"><span data-i18n="exp.title">Explorer la bibliothèque</span></h2>
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/ic-browse.png" alt="" aria-hidden="true"><span data-i18n="exp.title">Explorer la bibliothèque</span></h2>
         <p class="contrib-why" data-i18n="exp.intro">Apprends de la communauté : écoute les prononciations, découvre les traductions et les voix déjà transmises, et repère ce qui pourrait être amélioré. Chaque entrée montre son contexte, comme le domaine, la variante du village et le rôle du contributeur.</p>
         <div class="explore-controls">
           <input id="explore-search" type="text" class="explore-search" data-i18n-ph="exp.search.ph"
@@ -991,7 +991,7 @@
     <!-- ============== VUE DEMANDER (axe social : entraide traduction) ======= -->
     <section id="view-demander" class="view" hidden>
       <div class="about-head">
-        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/act-request.png" alt="" aria-hidden="true"><span data-i18n="req.title">Demander une traduction</span></h2>
+        <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/ni-request.png" alt="" aria-hidden="true"><span data-i18n="req.title">Demander une traduction</span></h2>
         <p class="contrib-why" data-i18n-html="req.intro">Demande à ceux qui savent de te <b>transmettre</b> la <b>traduction</b> ou la <b>prononciation</b>
           d'un mot ou d'une phrase dans une langue précise. Les personnes qui parlent cette langue sont prévenues et peuvent
           t'aider ; les autres peuvent <b>relayer ta demande</b> autour d'eux. N'importe qui peut aider n'importe qui.</p>
@@ -1235,9 +1235,9 @@
         <p class="present-tag" data-i18n="present.tag">Nos langues, un héritage à transmettre</p>
       </div>
       <div class="present-acts">
-        <div class="present-act"><img class="present-ico" src="./icons/act-translate.svg" alt="" aria-hidden="true"><b data-i18n="hub.card.translate">Traduire</b><span data-i18n="present.act.translate">transmets ta langue</span></div>
-        <div class="present-act"><img class="present-ico" src="./icons/mic-real.png" alt="" aria-hidden="true"><b data-i18n="hub.card.transcribe">Transcrire</b><span data-i18n="present.act.transcribe">laisse ta voix en héritage</span></div>
-        <div class="present-act"><img class="present-ico" src="./icons/act-explore.svg" alt="" aria-hidden="true"><b data-i18n="hub.card.explore">Explorer</b><span data-i18n="present.act.explore">apprends des autres</span></div>
+        <div class="present-act"><img class="present-ico" src="./icons/ui/ic-write.png" alt="" aria-hidden="true"><b data-i18n="hub.card.translate">Traduire</b><span data-i18n="present.act.translate">transmets ta langue</span></div>
+        <div class="present-act"><img class="present-ico" src="./icons/ui/ic-record.png" alt="" aria-hidden="true"><b data-i18n="hub.card.transcribe">Transcrire</b><span data-i18n="present.act.transcribe">laisse ta voix en héritage</span></div>
+        <div class="present-act"><img class="present-ico" src="./icons/ui/ic-browse.png" alt="" aria-hidden="true"><b data-i18n="hub.card.explore">Explorer</b><span data-i18n="present.act.explore">apprends des autres</span></div>
       </div>
       <div class="present-cta">
         <div class="present-scan" data-i18n="present.scan">Scanne pour participer</div>
@@ -1264,7 +1264,7 @@
       <!-- Variante TRANSCRIRE -->
       <div class="tr-guide-variant" data-guide="transcribe">
         <div class="tr-guide-head">
-          <div class="tr-guide-ico tr-guide-ico--img" aria-hidden="true"><img src="icons/act-transcribe.svg" alt=""></div>
+          <div class="tr-guide-ico tr-guide-ico--img" aria-hidden="true"><img src="icons/ui/ic-record.png" alt=""></div>
           <h2 id="tr-guide-title" data-i18n="tr.guide.title">Avant d'enregistrer ta voix</h2>
           <p class="tr-guide-lead" data-i18n="tr.guide.lead">Deux règles simples pour un bon enregistrement :</p>
         </div>

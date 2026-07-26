@@ -1,6 +1,11 @@
 {
-  "version": "v418",
+  "version": "v419",
   "changelog": {
+    "v419": [
+      "Icônes des 4 activités désormais IDENTIQUES partout (titre de page, cartes d'accueil, barre de navigation basse, mode présentation) : plus aucune icône générique, seulement les illustrations aux couleurs de l'Afrique",
+      "Le slogan quitte finalement le header (clair et sombre, PC et mobile) pour un en-tête plus épuré",
+      "Accueil : le texte de présentation (« LANGIAL, c'est l'héritage... ») est plus compact"
+    ],
     "v418": [
       "Correction : le motif décoratif du header n'était pas centré sur la bordure basse, il est maintenant bien à cheval sur la ligne",
       "Le slogan « Nos langues, un héritage à transmettre » réapparaît sous le nom LANGIAL sur téléphone (n'était visible que sur ordinateur)"

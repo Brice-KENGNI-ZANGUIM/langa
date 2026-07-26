@@ -175,7 +175,7 @@ body {
 
 /* Texte d'intro des langues : CALLOUT bien en évidence (bordure dorée, fond teinté,
    halo lumineux) et texte plus grand/contrasté, pour être remarqué et lu. */
-.hub-vision{ margin-top:10px; font-size:1rem; line-height:1.55;
+.hub-vision{ margin-top:10px; font-size:.88rem; line-height:1.5;
   color: color-mix(in srgb, var(--text) 82%, var(--muted));
   padding:16px 18px; border-radius:16px;
   border:1.5px solid color-mix(in srgb, var(--gold) 55%, var(--border));
@@ -275,7 +275,10 @@ body {
   background: linear-gradient(100deg, var(--cyan) 0%, var(--green) 100%);
   -webkit-background-clip: text; background-clip: text;
 }
-.tagline { margin: 2px 0 0; color: var(--muted); font-size: .78rem; }
+/* Retiré du header (Brice 2026-07-26 : « je préfère finalement retirer le slogan »,
+   après l'avoir brièvement réaffiché sur mobile) : le nom LANGIAL + le logo suffisent,
+   header plus épuré. Toujours présent ailleurs (À propos, hub.vision). */
+.tagline { display: none; }
 .chips-nav, .chips-meta { display: flex; align-items: center; }
 /* Nav resserrée (H et V) pour densifier et remplir la place libre en bout de ligne.
    Sur grand écran : groupée à gauche, gaps uniformes, la cloche (dernier bouton
@@ -636,11 +639,6 @@ body {
   .brand-mark img { border-radius: 13px; }
   .brand-txt h1 { font-size: 1.95rem; line-height: 1; }    /* LANGIAL agrandi, proche du logo */
   .brand-sub { display: none; }                            /* « · Collecte » retiré sur mobile (place au nom) */
-  /* Slogan réaffiché sur mobile (Brice 2026-07-26 : « il n'apparaît que sur PC ») : le footer
-     classique ne s'affiche plus que sur 3 pages informatives depuis v399/v405, l'argument
-     « déjà répété dans le footer » qui justifiait ce masquage ne tient plus. Taille réduite
-     pour rester compact dans l'en-tête resserré du mobile. */
-  .tagline { display: block; font-size: .68rem; margin-top: 1px; }
   .chip { font-size: .72rem; padding: 4px 6px; }
   .chip--btn { padding: 4px 6px; gap: 4px; }
   .chip--btn .chip-ico { width: 14px; height: 14px; }
@@ -1125,6 +1123,7 @@ body {
    (gain de hauteur ; on occupe l'espace horizontal libre, surtout sur mobile). */
 .hub-card-head { display: flex; align-items: center; gap: 15px; width: 100%; }
 .hub-ico { width: 60px; height: 60px; line-height: 1; display: block; flex: 0 0 auto;
+  object-fit: contain;
   filter: drop-shadow(0 0 15px color-mix(in srgb, var(--acc) 62%, transparent));
   animation: ngIcoGlow 3.4s ease-in-out infinite; }
 /* Glow pulsé de l'icône d'activité (gelé sur mobile + prefers-reduced-motion). */
@@ -1137,7 +1136,7 @@ body {
 .chip-ico { width: 19px; height: 19px; flex: 0 0 auto; }
 /* Icône devant un titre de page (Traduire/Transcrire/Explorer) */
 .view-title--ico { display: inline-flex; align-items: center; gap: 10px; }
-.title-ico { width: 34px; height: 34px; flex: 0 0 auto; }
+.title-ico { width: 34px; height: 34px; flex: 0 0 auto; object-fit: contain; }
 /* Avatar RÉEL (illustration africaine) en icône de titre : dans un cercle (l'asset a un fond clair
    intégré → le cercle masque les coins carrés), mais avec une LIGNE DE CERCLE FINE (demande Brice). */
 .title-ico--avatar { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; object-position: 50% 18%;
@@ -1545,7 +1544,7 @@ body {
 /* Variante avec icône SVG (ex-icône Transcrire déplacée ici) : pas de pastille,
    l'icône premium s'affiche seule. */
 .tr-guide-ico--img { width: auto; height: auto; background: none; box-shadow: none; }
-.tr-guide-ico--img img { width: 66px; height: 66px; display: block;
+.tr-guide-ico--img img { width: 66px; height: 66px; display: block; object-fit: contain;
   filter: drop-shadow(0 4px 10px rgba(0,0,0,.4)); }
 /* Bandeau d'accueil (illustration fournie welcome-first) en tête du popup « profil requis ».
    L'illustration est un détourage à fond TRANSPARENT (silhouettes en damier) : sans arrière-plan
@@ -2873,7 +2872,7 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   box-shadow: inset 0 1px 0 var(--card-sheen), 0 0 22px -10px var(--cyan); }
 .req-strip-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
   font-family: var(--font-display); font-size: .96rem; font-weight: 700; color: var(--text); }
-.req-strip-ico { width: 20px; height: 20px; flex: none; }
+.req-strip-ico { width: 20px; height: 20px; flex: none; object-fit: contain; }
 .req-strip-list { display: flex; flex-wrap: wrap; gap: 8px; }
 .req-chip { display: inline-flex; flex-direction: column; align-items: flex-start; gap: 2px;
   max-width: 100%; padding: 8px 13px; border-radius: 12px; cursor: pointer;
@@ -3253,8 +3252,8 @@ body::after {
    (cadres, dégradés, halos conservés). */
 @media (max-width: 640px) {
   .view-title { font-size: 1.02rem; padding: 7px 13px; gap: 7px; margin-bottom: 8px; }
-  .hub-vision { font-size: .8rem; padding: 7px 12px; line-height: 1.35; margin: 5px 0 0; }
-  .about-vision p { font-size: .82rem; line-height: 1.5; }   /* même rôle que .hub-vision : même taille */
+  .hub-vision { font-size: .72rem; padding: 7px 12px; line-height: 1.35; margin: 5px 0 0; }
+  .about-vision p { font-size: .72rem; line-height: 1.5; }   /* même rôle que .hub-vision : même taille */
   .hub-desc { font-size: .8rem; }
   .pb-eye { font-size: clamp(.95rem, 4.3vw, 1.6rem); }
   .pb-title { font-size: clamp(.72rem, 2.6vw, 1.2rem); }

@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v418";
+const APP_VERSION = "v419";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -2933,7 +2933,7 @@ function setActivity(act) {
   const va = $("#view-app"); if (va) va.dataset.act = activity;
   const isT = activity === "transcribe";
   const t2 = $("#work-title"); if (t2) t2.textContent = isT ? t("work.title.transcribe") : t("work.title.translate");
-  const wico = $("#work-ico"); if (wico) wico.src = isT ? "icons/mic-real.png" : "icons/act-translate.svg";
+  const wico = $("#work-ico"); if (wico) wico.src = isT ? "icons/ui/ic-record.png" : "icons/ui/ic-write.png";
   updateWorkLang();   // rappel FORT de la langue de contribution (anti-mauvais étiquetage)
   const h = $("#work-help");
   if (h) h.innerHTML = isT ? t("work.help.transcribe") : t("work.help.translate");
@@ -5684,7 +5684,7 @@ async function presentPosterCanvas() {
   g.fillText("Numériser les langues d'Afrique, texte et voix", W / 2, 810);
 
   // Trois cartes ESPACÉES sur toute la largeur, PLUS GRANDES pour de plus grandes icônes.
-  const acts = [["act-translate.svg", "Traduire", "mots et phrases"], ["mic-real.png", "Transcrire", "ta voix, ta langue"], ["act-explore.svg", "Explorer", "la bibliothèque commune"]];
+  const acts = [["ui/ic-write.png", "Traduire", "mots et phrases"], ["ui/ic-record.png", "Transcrire", "ta voix, ta langue"], ["ui/ic-browse.png", "Explorer", "la bibliothèque commune"]];
   const actImgs = await Promise.all(acts.map((a) => loadImage("./icons/" + a[0]).catch(() => null)));
   const marginX = 100, cw = 440, ch = 330, y0 = 940;
   const gap = (W - 2 * marginX - acts.length * cw) / (acts.length - 1);
