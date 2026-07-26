@@ -2816,6 +2816,43 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
    Réglages. En ligne (pas de survol/débordement), poussée à droite de la ligne. */
 .notif-badge--inline { position: static; margin-left: auto; flex: 0 0 auto; box-shadow: none; }
 
+/* Bulle de notification FLOTTANTE (Brice 2026-07-26 : « façon Messenger, un cadre rond avec
+   l'icône et le nombre ») : accès direct sans passer par le tiroir de Réglages. Flotte au-dessus
+   de la barre basse (jamais dessus, ni cachée par elle), visible sur toutes les pages, mais
+   UNIQUEMENT s'il y a du nouveau (masquée à 0, cf. updateNotifBadge). Verre dépoli premium,
+   halo doux, jamais agressif. z-index entre la barre basse (500) et les vrais overlays modaux
+   (tr-guide 10050, tiroir 2147483600) : ne gêne jamais un dialogue, mais flotte au-dessus du
+   contenu normal et des popups d'incitation. */
+.notif-fab { position: fixed; right: 14px; bottom: calc(74px + 14px); z-index: 550;
+  width: 52px; height: 52px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+  text-decoration: none; -webkit-tap-highlight-color: transparent;
+  background: rgba(14, 19, 26, .78);
+  background: color-mix(in srgb, var(--panel) 78%, transparent);
+  border: 1px solid color-mix(in srgb, var(--cyan) 42%, var(--border));
+  backdrop-filter: blur(16px) saturate(1.4); -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow: 0 10px 26px -12px rgba(0,0,0,.55), 0 0 20px -9px color-mix(in srgb, var(--cyan) 55%, transparent);
+  animation: ngFabBreathe 3.4s ease-in-out infinite;
+  transition: transform .16s ease, box-shadow .2s ease; }
+:root[data-theme="light"] .notif-fab { background: color-mix(in srgb, var(--panel) 82%, transparent); }
+.notif-fab[hidden] { display: none; }
+.notif-fab:hover { transform: translateY(-2px) scale(1.06);
+  box-shadow: 0 12px 30px -12px rgba(0,0,0,.55), 0 0 26px -6px color-mix(in srgb, var(--cyan) 70%, transparent); }
+.notif-fab:active { transform: translateY(0) scale(.96); }
+@keyframes ngFabBreathe {
+  0%, 100% { box-shadow: 0 10px 26px -12px rgba(0,0,0,.55), 0 0 20px -9px color-mix(in srgb, var(--cyan) 55%, transparent); }
+  50%      { box-shadow: 0 10px 26px -12px rgba(0,0,0,.55), 0 0 26px -6px color-mix(in srgb, var(--cyan) 78%, transparent); }
+}
+.notif-fab-ico { width: 26px; height: 26px; object-fit: contain; flex: none;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,.4)); }
+.notif-fab-badge { position: absolute; top: -3px; right: -3px; min-width: 20px; height: 20px; padding: 0 5px;
+  border-radius: 999px; background: var(--red); color: #fff; font-size: .7rem; font-weight: 800; line-height: 20px;
+  text-align: center; box-shadow: 0 0 0 2px var(--bg), 0 0 10px -2px var(--red); pointer-events: none; }
+@media (max-width: 560px) {
+  .notif-fab { width: 46px; height: 46px; right: 12px; bottom: calc(66px + 12px); }
+  .notif-fab-ico { width: 23px; height: 23px; }
+}
+@media (prefers-reduced-motion: reduce) { .notif-fab { animation: none; } }
+
 /* Centre de notifications : flux horodaté, non-lues mises en avant. */
 .notif-toolbar { display: flex; justify-content: flex-end; margin: 4px 0 10px; }
 .notif-feed { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
@@ -3625,7 +3662,7 @@ body.kb-docked .lang-search-btn, body.kb-docked .lang-declare-cta, body.kb-docke
 body.kb-docked .lang-search-btn::after, body.kb-docked .lang-declare-cta::after, body.kb-docked .corr-submit::after, body.kb-docked .tour-next::after,
 body.kb-docked .card::after, body.kb-docked .chip--on,
 body.kb-docked .ndop-sep, body.kb-docked .ndop-sep i, body.kb-docked .ndop-sep::before, body.kb-docked .ndop-sep::after,
-body.kb-docked .field--consent {
+body.kb-docked .field--consent, body.kb-docked .notif-fab {
   animation: none !important;
 }
 

@@ -1116,6 +1116,16 @@
     </div>
   </nav>
 
+  <!-- Bulle de notification flottante (Brice 2026-07-26 : « façon Messenger, un cadre rond avec
+       l'icône et le nombre de notifications ») : accès direct aux notifications SANS passer par
+       le tiroir de Réglages, visible sur toutes les pages, mais UNIQUEMENT s'il y a du nouveau
+       (masquée à 0, comme les autres compteurs). Vrai lien <a href>, cohérent avec le reste du
+       site (clic droit → ouvrir dans un nouvel onglet fonctionne). -->
+  <a id="notif-fab" class="notif-fab" href="#/notifications" hidden aria-label="Notifications">
+    <img class="notif-fab-ico" src="icons/ui/hi-notif.png" alt="" aria-hidden="true">
+    <span id="notif-fab-badge" class="notif-fab-badge" aria-hidden="true">0</span>
+  </a>
+
   <!-- Visite guidée : projecteur sur un élément + bulle explicative -->
   <div id="tour" class="tour" hidden>
     <div class="tour-spot" id="tour-spot"></div>

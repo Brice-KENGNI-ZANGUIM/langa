@@ -1,6 +1,9 @@
 {
-  "version": "v421",
+  "version": "v422",
   "changelog": {
+    "v422": [
+      "Nouvelle bulle de notification flottante (façon Messenger) : accès direct aux notifications depuis n'importe quelle page, sans passer par Réglages ; ne s'affiche que s'il y a du nouveau"
+    ],
     "v421": [
       "Fermer le clavier ngiemboon (bouton ✕ ou retour) ne fait plus perdre le focus du champ en cours d'écriture, comme un clavier classique",
       "Traduire/Transcrire : l'icône « Langue de ta contribution » n'est plus un micro générique, mais l'icône dédiée aux langues, déjà utilisée ailleurs dans l'app"

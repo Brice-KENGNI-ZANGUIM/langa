@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v421";
+const APP_VERSION = "v422";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -3541,14 +3541,18 @@ async function refreshNotifs() {
   updateNotifBadge(notifUnreadCount());   // non lues = celles jamais lues (état par notification)
 }
 function updateNotifBadge(n) {
-  // Même compteur affiché aux DEUX endroits (icône Réglages + ligne Notifications du tiroir,
-  // Brice 2026-07-26i) : ouvrir le tiroir révèle d'où vient le nombre vu sur Réglages.
+  // Même compteur affiché aux TROIS endroits (icône Réglages + ligne Notifications du tiroir +
+  // bulle flottante façon Messenger, 2026-07-26) : ouvrir le tiroir révèle d'où vient le nombre
+  // vu sur Réglages ; la bulle flottante donne un accès direct sans passer par le tiroir.
   const text = n > 99 ? "99+" : String(n);
   [$("#notif-badge"), $("#notif-badge-drawer")].forEach((b) => {
     if (!b) return;
     if (n > 0) { b.textContent = text; b.hidden = false; }
     else b.hidden = true;
   });
+  const fab = $("#notif-fab"), fabBadge = $("#notif-fab-badge");
+  if (fab) fab.hidden = n <= 0;
+  if (fabBadge) fabBadge.textContent = text;
 }
 /** Message lisible d'une notification (construit en TEXTE → anti-injection). */
 /** Enveloppe un mot clé de popup (nom du demandeur, mot demandé, langue cible) : en gras
