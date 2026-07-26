@@ -1,6 +1,9 @@
 {
-  "version": "v408",
+  "version": "v409",
   "changelog": {
+    "v409": [
+      "Barre de navigation basse : correction du flou d'arrière-plan qui n'apparaissait pas sur téléphone/tablette (restait transparente, sans flou, alors que ça fonctionnait sur ordinateur)"
+    ],
     "v408": [
       "Barre de navigation basse entièrement redessinée : panneau flottant aux coins arrondis, vrai effet de verre dépoli, filet coloré en bordure, onglet actif en pastille lumineuse",
       "Icône Accueil de la barre basse agrandie pour occuper presque toute la hauteur de la barre"

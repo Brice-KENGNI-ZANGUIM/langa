@@ -880,23 +880,29 @@ body {
    backdrop-filter renforcé, même principe que `.settings-drawer-backdrop` qui floute la page
    derrière le tiroir) plutôt qu'une simple transparence de surface. Filet-arc-en-ciel Ndop
    (cyan→vert→or) en bordure, écho du fleuron `.ndop-sep`, pour une signature propre à l'app. */
+/* Piège mobile (Brice 2026-07-26o, « transparent au lieu de flou sur téléphone/tablette,
+   c'est bon sur PC ») : backdrop-filter posé sur le MÊME élément que border-radius+
+   overflow:hidden échoue silencieusement sur Chrome/Safari mobiles (repli sur un simple fond
+   semi-transparent, sans le flou) alors que ça fonctionne sur PC — bug connu du compositing
+   mobile. Fix : le flou vit sur un pseudo-élément ENFANT (::after) qui remplit le panneau ;
+   .bottom-nav lui-même ne porte QUE la forme (coins ronds + overflow:hidden qui le découpe). */
 .bottom-nav { position: fixed; left: clamp(10px, 3vw, 22px); right: clamp(10px, 3vw, 22px);
   bottom: max(10px, env(safe-area-inset-bottom)); z-index: 500;
   border-radius: 24px; overflow: hidden;
-  background: color-mix(in srgb, var(--panel) 56%, transparent);
-  background: rgba(18, 24, 32, .56);   /* repli Safari ancien (color-mix indisponible avant 16.2) */
-  background: color-mix(in srgb, var(--panel) 56%, transparent);
-  backdrop-filter: blur(26px) saturate(1.7); -webkit-backdrop-filter: blur(26px) saturate(1.7);
   border: 1px solid color-mix(in srgb, var(--cyan) 30%, var(--border));
   box-shadow: inset 0 1px 0 var(--card-sheen),
               0 16px 38px -16px rgba(0,0,0,.55),
               0 0 30px -14px color-mix(in srgb, var(--cyan) 45%, transparent); }
-:root[data-theme="light"] .bottom-nav { background: color-mix(in srgb, var(--panel) 62%, transparent); }
+.bottom-nav::after { content: ""; position: absolute; inset: 0; z-index: 0;
+  background: rgba(18, 24, 32, .56);   /* repli Safari ancien (color-mix indisponible avant 16.2) */
+  background: color-mix(in srgb, var(--panel) 56%, transparent);
+  backdrop-filter: blur(26px) saturate(1.7); -webkit-backdrop-filter: blur(26px) saturate(1.7); }
+:root[data-theme="light"] .bottom-nav::after { background: color-mix(in srgb, var(--panel) 62%, transparent); }
 /* Filet arc-en-ciel Ndop tout en haut du panneau (signature de l'app, cf. .ndop-sep). */
 .bottom-nav::before { content: ""; position: absolute; top: 0; left: 10%; right: 10%; height: 1.5px;
-  background: linear-gradient(90deg, transparent, var(--cyan), var(--green), var(--gold), transparent);
+  z-index: 1; background: linear-gradient(90deg, transparent, var(--cyan), var(--green), var(--gold), transparent);
   opacity: .8; pointer-events: none; }
-.bottom-nav-tabs { max-width: var(--wrap-max); margin: 0 auto; display: flex; position: relative; }
+.bottom-nav-tabs { max-width: var(--wrap-max); margin: 0 auto; display: flex; position: relative; z-index: 2; }
 .bottom-nav-tab { --acc: var(--cyan); flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 3px; padding: 8px 4px 7px; text-decoration: none;
   color: var(--muted); font: inherit; font-size: .68rem; font-weight: 600;
