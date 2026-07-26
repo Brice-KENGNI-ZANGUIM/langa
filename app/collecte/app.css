@@ -157,10 +157,11 @@ body {
   position: relative;
   /* Réserve la hauteur de la barre de navigation basse FIXE (.bottom-nav, Brice 2026-07-26j) :
      sur TOUTES les pages (y compris celles qui gardent le footer classique), rien ne doit
-     jamais se retrouver caché dessous, footer inclus. */
-  padding-bottom: 62px;
+     jamais se retrouver caché dessous, footer inclus. Barre devenue FLOTTANTE (2026-07-26m,
+     détachée du bord bas) : marge un peu plus généreuse pour dégager aussi son espace flottant. */
+  padding-bottom: 74px;
 }
-@media (max-width: 560px) { body { padding-bottom: 56px; } }
+@media (max-width: 560px) { body { padding-bottom: 66px; } }
 /* Mobile / tablette : trame Ndop ATTÉNUÉE (opacités ~÷2) pour qu'elle ne soit pas
    dominante sur petit écran. On ne redéfinit QUE --lattice-img, rien d'autre. */
 @media (max-width: 1024px) {
@@ -870,20 +871,34 @@ body {
 }
 .mini-profile:hover { box-shadow: 0 0 16px rgba(34,211,238,.3); border-color: var(--cyan); }
 
-/* ---- Navigation entre espaces : barre BASSE fixe façon Telegram/WhatsApp (Brice 2026-07-26j) ---
+/* ---- Navigation entre espaces : barre BASSE flottante, verre dépoli (Brice 2026-07-26) ---
    Remplace l'ancienne 3e rangée du header : les 4 espaces vivent maintenant dans une barre
    TOUJOURS visible en bas d'écran, sur TOUTES les pages sans exception (comme le header lui-même).
-   Habillage volontairement SOBRE (icône + libellé, pas de gros cadre/halo/comète) : un utilitaire
-   permanent ne doit pas concurrencer visuellement le contenu de la page — seule la couleur
-   d'activité, portée par l'icône et le texte de l'onglet ACTIF, signale où l'on se trouve. */
-.bottom-nav { position: fixed; left: 0; right: 0; bottom: 0; z-index: 500;
-  background: var(--header-bg); backdrop-filter: blur(18px) saturate(1.3); -webkit-backdrop-filter: blur(18px) saturate(1.3);
-  border-top: 1px solid var(--border);
-  box-shadow: 0 -10px 26px -18px rgba(0,0,0,.5);
-  padding-bottom: env(safe-area-inset-bottom, 0px); }
-.bottom-nav-tabs { max-width: var(--wrap-max); margin: 0 auto; display: flex; }
+   Refonte (2026-07-26m) : Brice trouvait la barre « trop carrée, classique, pas assez originale » —
+   devient un vrai panneau FLOTTANT (détachée des bords, coins arrondis, jamais collée en bande
+   plate) avec un VRAI effet de verre dépilé (fond nettement plus transparent que l'ancien +
+   backdrop-filter renforcé, même principe que `.settings-drawer-backdrop` qui floute la page
+   derrière le tiroir) plutôt qu'une simple transparence de surface. Filet-arc-en-ciel Ndop
+   (cyan→vert→or) en bordure, écho du fleuron `.ndop-sep`, pour une signature propre à l'app. */
+.bottom-nav { position: fixed; left: clamp(10px, 3vw, 22px); right: clamp(10px, 3vw, 22px);
+  bottom: max(10px, env(safe-area-inset-bottom)); z-index: 500;
+  border-radius: 24px; overflow: hidden;
+  background: color-mix(in srgb, var(--panel) 56%, transparent);
+  background: rgba(18, 24, 32, .56);   /* repli Safari ancien (color-mix indisponible avant 16.2) */
+  background: color-mix(in srgb, var(--panel) 56%, transparent);
+  backdrop-filter: blur(26px) saturate(1.7); -webkit-backdrop-filter: blur(26px) saturate(1.7);
+  border: 1px solid color-mix(in srgb, var(--cyan) 30%, var(--border));
+  box-shadow: inset 0 1px 0 var(--card-sheen),
+              0 16px 38px -16px rgba(0,0,0,.55),
+              0 0 30px -14px color-mix(in srgb, var(--cyan) 45%, transparent); }
+:root[data-theme="light"] .bottom-nav { background: color-mix(in srgb, var(--panel) 62%, transparent); }
+/* Filet arc-en-ciel Ndop tout en haut du panneau (signature de l'app, cf. .ndop-sep). */
+.bottom-nav::before { content: ""; position: absolute; top: 0; left: 10%; right: 10%; height: 1.5px;
+  background: linear-gradient(90deg, transparent, var(--cyan), var(--green), var(--gold), transparent);
+  opacity: .8; pointer-events: none; }
+.bottom-nav-tabs { max-width: var(--wrap-max); margin: 0 auto; display: flex; position: relative; }
 .bottom-nav-tab { --acc: var(--cyan); flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 3px; padding: 7px 4px 6px; text-decoration: none;
+  align-items: center; justify-content: center; gap: 3px; padding: 8px 4px 7px; text-decoration: none;
   color: var(--muted); font: inherit; font-size: .68rem; font-weight: 600;
   transition: color .16s ease, background .16s ease; }
 .bottom-nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--acc) 8%, transparent); }
@@ -899,10 +914,16 @@ body {
 #tab-traduire   { --acc: var(--green); }
 #tab-explorer   { --acc: var(--gold); }
 #tab-demander   { --acc: var(--cyan); }
-.bottom-nav-tab.is-active { color: var(--acc); background: color-mix(in srgb, var(--acc) 12%, transparent); }
+/* Repère de l'onglet actif en PASTILLE arrondie (pas un simple aplat collé aux bords de la
+   barre, cohérent avec le nouveau panneau flottant à coins ronds) + léger halo de couleur. */
+.bottom-nav-tab.is-active { color: var(--acc);
+  background: color-mix(in srgb, var(--acc) 14%, transparent);
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--acc) 30%, transparent),
+              0 0 14px -4px var(--acc); }
 .bottom-nav-tab.is-active .bottom-nav-ico { filter: none; }
 @media (max-width: 560px) {
-  .bottom-nav-tab { font-size: .6rem; padding: 6px 2px 5px; }
+  .bottom-nav-tab { font-size: .6rem; padding: 7px 2px 6px; }
   .bottom-nav-ico { width: auto; height: 21px; }
 }
 /* Accueil, INCRUSTÉ au centre de la barre basse (2026-07-26, Brice), entre Traduire et Explorer :
@@ -910,16 +931,22 @@ body {
    jamais un bouton flottant façon appareil photo d'Instagram, même hauteur qu'elle (étirée par
    le flex du parent, align-items: stretch hérité). Largeur FIXE (contrairement aux 4 onglets en
    flex:1) : juste assez pour l'icône, qui suffit seule à suggérer une coupure de la barre en
-   deux (2 onglets de chaque côté) sans qu'aucun vrai espace ni cadre ne soit créé. */
-.bottom-nav-home { --acc: var(--cyan); flex: 0 0 auto; width: 54px; display: flex;
-  align-items: center; justify-content: center; text-decoration: none; background: none; }
-.bottom-nav-home-ico { width: auto; height: 27px; flex: none;
+   deux (2 onglets de chaque côté) sans qu'aucun vrai espace ni cadre ne soit créé. Icône
+   dimensionnée pour occuper TOUTE la hauteur intérieure de la barre (Brice 2026-07-26n). */
+.bottom-nav-home { --acc: var(--cyan); flex: 0 0 auto; width: 56px; box-sizing: border-box;
+  display: flex; align-items: center; justify-content: center;
+  text-decoration: none; background: none; }
+/* Hauteur FIXE en px (PAS de %) : un height:100% sur un enfant d'un flex-item lui-même étiré par
+   align-items:stretch d'un PARENT à hauteur elle-même auto (déterminée par ses enfants) crée une
+   dépendance circulaire — Chromium retombe alors sur la taille NATURELLE du fichier source
+   (220px), qui fait exploser la hauteur de toute la barre. Piège vérifié en pratique. */
+.bottom-nav-home-ico { width: auto; height: 46px; flex: none;
   filter: drop-shadow(0 1px 3px rgba(0,0,0,.35)); transition: transform .12s ease, filter .16s ease; }
-.bottom-nav-home:hover .bottom-nav-home-ico { transform: translateY(-1px) scale(1.06);
-  filter: drop-shadow(0 0 8px color-mix(in srgb, var(--acc) 60%, transparent)); }
+.bottom-nav-home:hover .bottom-nav-home-ico { transform: scale(1.06);
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--acc) 65%, transparent)); }
 @media (max-width: 560px) {
-  .bottom-nav-home { width: 46px; }
-  .bottom-nav-home-ico { height: 24px; }
+  .bottom-nav-home { width: 48px; }
+  .bottom-nav-home-ico { height: 47px; }
 }
 
 /* ---- Accueil « Que veux-tu faire ? » ---- */

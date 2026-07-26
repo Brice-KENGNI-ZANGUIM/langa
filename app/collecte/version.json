@@ -1,6 +1,10 @@
 {
-  "version": "v407",
+  "version": "v408",
   "changelog": {
+    "v408": [
+      "Barre de navigation basse entièrement redessinée : panneau flottant aux coins arrondis, vrai effet de verre dépoli, filet coloré en bordure, onglet actif en pastille lumineuse",
+      "Icône Accueil de la barre basse agrandie pour occuper presque toute la hauteur de la barre"
+    ],
     "v407": [
       "Bouton Accueil de la barre basse : icône seule, sans cadre",
       "Accueil : les descriptions des 4 activités s'affichent maintenant en entier, plus aucun texte coupé",
