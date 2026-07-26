@@ -1,6 +1,9 @@
 {
-  "version": "v433",
+  "version": "v434",
   "changelog": {
+    "v434": [
+      "Correctif technique : toucher le rappel de langue (« Langue de ta contribution ») déclenchait la page Langues et son calcul de statistiques en double à chaque fois (invisible à l'usage, mais deux fois plus de travail réseau que nécessaire)"
+    ],
     "v433": [
       "Notifications : le bouton « Tout marquer comme lu » ne s'affiche plus quand il n'y a aucune notification",
       "Page Langues : le texte d'exemple du champ de recherche était coupé au milieu d'un mot sur téléphone, raccourci pour bien tenir"

@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v433";
+const APP_VERSION = "v434";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -326,10 +326,10 @@ function confirmLang(lid, doubt) {
     if (ch) ch.onclick = () => done(false);
   });
 }
-// Clic sur l'indicateur → écran de choix de langue (changer de langue de contribution).
-document.addEventListener("DOMContentLoaded", () => {
-  const wl = $("#work-lang"); if (wl) wl.addEventListener("click", () => openLangChoice());
-});
+// Clic sur l'indicateur → écran de choix de langue (changer de langue de contribution) :
+// déjà câblé par updateWorkLang() (dataset.bound, plus haut) — un 2e écouteur ici (trouvé à
+// l'audit du 2026-07-27) faisait ouvrir la page Langues et relancer computeLangStats() EN
+// DOUBLE à chaque clic. Retiré.
 // --- Mode « proposer un mot » -------------------------------------------
 // --- Anti-répétition PAR UTILISATEUR (device) : un item déjà traité (traduit OU
 //     transcrit) par CET utilisateur ne lui est plus proposé. Dédup par TEXTE
