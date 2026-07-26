@@ -89,14 +89,15 @@
          dans un conteneur `.chips-nav` (même classe, pas le même élément) pour hériter
          SANS dupliquer le style plat des boutons de nav (.chips-nav .chip--btn). -->
     <div class="chips-nav chips-nav--top">
-      <!-- Accueil et Réglages, icône SEULE (sans texte) : symboles universellement reconnus
-           (maison = accueil, ☰ = menu/réglages, convention Android), regroupés au même endroit
-           pour un header encore plus épuré (Brice 2026-07-26). -->
-      <a id="home-link" class="chip chip--btn chip--icon" href="#/accueil" data-i18n-title="chip.home.title"
-              title="Retour à l'accueil" aria-label="Retour à l'accueil"><img class="chip-ico" src="icons/ui/hi-home.png" alt="" aria-hidden="true"></a>
-      <button id="settings-toggle" class="chip chip--btn chip--icon settings-toggle" type="button" data-i18n-title="chip.settings.title"
+      <!-- Accueil et Réglages, icône SEULE (sans texte NI cadre/fond de bouton) : symboles
+           illustrés directement posés sur le décor, universellement reconnus (maison = accueil,
+           icône dédiée = menu/réglages), regroupés au même endroit pour un header encore plus
+           épuré (Brice 2026-07-26/26b). -->
+      <a id="home-link" class="chip-bare" href="#/accueil" data-i18n-title="chip.home.title"
+              title="Retour à l'accueil" aria-label="Retour à l'accueil"><img class="chip-bare-ico" src="icons/ui/hi-home.png" alt="" aria-hidden="true"></a>
+      <button id="settings-toggle" class="chip-bare" type="button" data-i18n-title="chip.settings.title"
               title="Réglages" aria-label="Réglages" aria-haspopup="dialog" aria-controls="settings-drawer" aria-expanded="false">
-        <span class="settings-bars" aria-hidden="true"><span></span><span></span><span></span></span>
+        <img class="chip-bare-ico" src="icons/ui/hi-menu.png" alt="" aria-hidden="true">
       </button>
     </div>
     <div class="chips-nav">

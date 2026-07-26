@@ -1,6 +1,9 @@
 {
-  "version": "v393",
+  "version": "v394",
   "changelog": {
+    "v394": [
+      "Accueil et Réglages : le cadre/fond de bouton a disparu, seule l'illustration reste, posée directement sur le décor ; nouvelle icône dédiée pour Réglages (au lieu du ☰ générique)"
+    ],
     "v393": [
       "Le bouton Réglages n'affiche plus que l'icône ☰ (sans texte, symbole universellement reconnu) ; le bouton Accueil le rejoint au même endroit, en icône seule également"
     ],

@@ -429,10 +429,25 @@ body {
    (Brice 2026-07-25q). Reste dans un `.chips-nav` pour hériter du style plat des boutons de
    nav sans dupliquer les sélecteurs. */
 .chips-nav--top { grid-column: 3; grid-row: 1; justify-self: end; align-self: center; }
-.settings-toggle { display: inline-flex; align-items: center; gap: 8px; }
-.settings-bars { display: inline-flex; flex-direction: column; justify-content: center; gap: 3px;
-  width: 17px; height: 13px; flex: 0 0 auto; }
-.settings-bars span { display: block; height: 2px; border-radius: 1px; background: currentColor; }
+/* Accueil + Réglages en icône NUE (sans cadre/fond de bouton, Brice 2026-07-26b) : l'illustration
+   se pose directement sur le décor, comme un vrai symbole plutôt qu'un bouton habillé. Alignées
+   entre elles (même taille, même ligne de base) via .chips-nav--top { display:flex, align-items:
+   center } hérité. */
+.chip-bare { display: inline-flex; align-items: center; justify-content: center; line-height: 0;
+  background: none; border: none; padding: 0; margin: 0; cursor: pointer; text-decoration: none;
+  -webkit-tap-highlight-color: transparent; }
+.chip-bare-ico { display: block; width: 34px; height: 34px;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.35));
+  transition: transform .16s ease, filter .16s ease; }
+.chip-bare:hover .chip-bare-ico { transform: translateY(-2px) scale(1.06);
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cyan) 60%, transparent)); }
+.chip-bare:active .chip-bare-ico { transform: translateY(0) scale(.96); }
+@media (max-width: 900px) {
+  .chip-bare-ico { width: 30px; height: 30px; }
+}
+@media (max-width: 560px) {
+  .chip-bare-ico { width: 26px; height: 26px; }
+}
 /* z-index AU-DESSUS des popups flottants (incitation/notif, 2147483500) : ouvrir le tiroir ne
    doit jamais laisser un popup déjà affiché flotter par-dessus lui — le popup reste VISIBLE,
    simplement derrière le tiroir (fond translucide + flou, jamais totalement masqué). */
@@ -651,8 +666,6 @@ body {
   .chips-nav .chip--btn { border-radius: 8px; padding: 7px 8px; gap: 6px; font-size: .8rem;
     min-height: 40px; box-sizing: border-box; }
   .chips-nav .chip--btn .chip-ico { width: 21px; height: 21px; }
-  .chips-nav .settings-bars { width: 19px; height: 15px; gap: 3px; }
-  .chips-nav .settings-bars span { height: 3px; border-radius: 1.5px; }
   /* Groupes « transparents » sur mobile : leurs boutons deviennent enfants directs de .chips-nav
      → l'enroulement se fait bouton par bouton (efficace) et tout tient sur 2 lignes. Le séparateur
      n'apparaît de toute façon que sur grand écran. Outils (FR/EN, thème) sans margin-left:auto pour
