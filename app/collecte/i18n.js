@@ -284,7 +284,6 @@ export const STR = {
   "onboard.contrib": { fr: "Transcris ou traduis ton premier mot", en: "Transcribe or translate your first word" },
   "hub.card.transcribe.desc": { fr: "Laisse ta voix en héritage : enregistre la prononciation d'un mot ou d'une phrase. La voix est l'essentiel.", en: "Leave your voice as a legacy: record how a word or phrase is spoken. The voice is what matters most." },
   "hub.card.translate.desc": { fr: "Transmets ta langue : donne la traduction d'un mot ou d'une phrase (français ↔ ta langue). Tu peux ajouter ta voix.", en: "Pass on your language: give the translation of a word or phrase (French ↔ your language). You can add your voice." },
-  "hub.card.explore.desc": { fr: "Apprends des autres : écoute les prononciations, découvre les traductions et propose des améliorations.", en: "Learn from others: listen to pronunciations, discover translations and suggest improvements." },
   "hub.card.explore.desc": { fr: "Parcours les contributions déjà faites : apprends, écoute les prononciations, propose des améliorations.",
                              en: "Browse what's already been shared: learn, listen to pronunciations, suggest improvements." },
   "hub.start": { fr: "Commencer →", en: "Start →" },
@@ -971,6 +970,16 @@ export function applyI18n(root) {
   scope.querySelectorAll("[data-i18n-title]").forEach((el) => {
     const s = STR[el.getAttribute("data-i18n-title")];
     if (s) { const v = t(el.getAttribute("data-i18n-title")); el.setAttribute("title", v); el.setAttribute("aria-label", v); }
+  });
+  // aria-label DÉDIÉ (distinct du title), quand l'un doit être plus court/concis (tooltip)
+  // et l'autre plus descriptif (lecteur d'écran) : appliqué APRÈS data-i18n-title pour ne
+  // jamais se faire écraser par lui sur un même élément. Trouvé à la revue ligne-par-ligne
+  // (2026-07-27) : #brand-home/#foot-home avaient un aria-label statique plus riche que leur
+  // title, mais data-i18n-title l'écrasait silencieusement au 1er applyI18n() (et à chaque
+  // bascule FR/EN) — la clé `brand.home.aria`, déjà traduite, n'était jamais lue nulle part.
+  scope.querySelectorAll("[data-i18n-aria]").forEach((el) => {
+    const s = STR[el.getAttribute("data-i18n-aria")];
+    if (s) el.setAttribute("aria-label", t(el.getAttribute("data-i18n-aria")));
   });
   document.documentElement.lang = getUiLang();
 }

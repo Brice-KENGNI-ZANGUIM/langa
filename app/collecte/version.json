@@ -1,6 +1,10 @@
 {
-  "version": "v437",
+  "version": "v438",
   "changelog": {
+    "v438": [
+      "Accessibilité : le logo (en-tête et pied de page) donnait aux lecteurs d'écran un simple « Retour à l'accueil » au lieu de la description complète des 3 espaces accessibles depuis cette page ; corrigé",
+      "La description de la carte Explorer sur l'accueil était en réalité une ancienne version jamais retirée (deux textes différents étaient déclarés pour la même clé) ; harmonisée sur le texte réellement affiché"
+    ],
     "v437": [
       "Correctif : le popup d'incitation (et celui de mise à jour) pouvait recouvrir entièrement la barre de navigation basse tant qu'il restait affiché ; il flotte désormais toujours au-dessus, comme la bulle de notifications"
     ],
