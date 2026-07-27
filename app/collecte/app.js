@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v444";
+const APP_VERSION = "v445";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -175,12 +175,17 @@ function profileLangues() {
 /** Ajoute / promeut / retire une langue d'appartenance (clic sur une puce du profil) :
     - langue absente  → ajoutée (en fin) ;
     - déjà présente et NON principale → promue principale (passe en tête) ;
-    - déjà présente et PRINCIPALE → retirée (la suivante devient principale). */
+    - déjà présente et PRINCIPALE → retirée (la suivante devient principale).
+    Champ désormais OBLIGATOIRE (2026-07-27) : ne jamais laisser la liste passer à zéro, sinon
+    profileComplete() redevient faux et l'utilisateur se retrouve bloqué par le gate de profil. */
 function toggleProfileLang(id) {
   const c = loadContributeur();
   let mine = Array.isArray(c.langues) ? c.langues.slice() : [];
   if (!mine.includes(id)) mine.push(id);
-  else if (mine[0] === id) mine = mine.filter((x) => x !== id);
+  else if (mine[0] === id) {
+    if (mine.length === 1) { toast(t("toast.lang.last"), "warn"); return; }
+    mine = mine.filter((x) => x !== id);
+  }
   else mine = [id, ...mine.filter((x) => x !== id)];
   c.langues = mine;
   saveContributeur(c);
@@ -1150,12 +1155,12 @@ function profileComplete() {
             // existant qui n'a que l'ancien "village" est complété UNE fois par
             // applyOriginsDefaultOnce() (appelée au boot, avant tout appel à profileComplete())
             // — jamais bloqué rétroactivement.
-            (c.village_pere || c.village) && c.village_mere && c.langue_pere && c.langue_mere);
-            // NOTE (2026-07-26) : « Mes langues d'appartenance » n'est PAS ajoutée ici bien
-            // qu'auto-peuplée à la création (cf. initContributeur) : reconstituteProfileLangues()
-            // la RÉALIGNE régulièrement sur les contributions RÉELLES (DB.all()), donc elle est
-            // légitimement vide pour un profil flambant neuf n'ayant encore rien envoyé — l'exiger
-            // ici créerait un blocage (retour au gate juste après avoir complété le profil).
+            (c.village_pere || c.village) && c.village_mere && c.langue_pere && c.langue_mere &&
+            // « Mes langues d'appartenance » (2026-07-27, redemandé par Brice après correction du
+            // conflit 2026-07-26) : reconstituteProfileLangues() garde désormais TOUJOURS au
+            // moins langue_pere/langue_mere en plancher (jamais vidée en dessous), donc ce champ
+            // ne peut plus jamais retomber à zéro après une création de profil complète.
+            profileLangues().length > 0);
 }
 // Seuil LÉGER pour l'AFFICHAGE des popups (informer/inviter) : le téléphone/indicatif ne sont
 // exigés que pour CONTRIBUER (le clic sur un popup revérifie profileComplete via requireProfile).
@@ -2627,6 +2632,14 @@ async function reconstituteProfileLangues() {
     let all = [];
     try { all = await DB.all(); } catch (e) { all = []; }
     const langs = [];
+    // PLANCHER (2026-07-27, Brice : champ rendu obligatoire) : les langues d'origine (père/mère,
+    // déjà obligatoires dans profileComplete()) restent TOUJOURS présentes, même sans aucune
+    // contribution encore envoyée — sinon ce champ se vide quelques secondes après la création
+    // du profil (incident reproduit le 2026-07-26) et le gate de profil redevient bloquant à tort.
+    for (const seed of [c.langue_pere, c.langue_mere]) {
+      const l = canonLangId(seed);
+      if (l && l !== "fr" && !langs.includes(l)) langs.push(l);
+    }
     for (const r of all) {
       const l = canonLangId(r && r.langue);
       if (l && l !== "fr" && !langs.includes(l)) langs.push(l);

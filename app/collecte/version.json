@@ -1,6 +1,9 @@
 {
-  "version": "v444",
+  "version": "v445",
   "changelog": {
+    "v445": [
+      "« Mes langues d'appartenance » est désormais obligatoire à la création du profil (marquée d'une étoile, comme les autres champs requis), avec une vérification correspondante côté serveur"
+    ],
     "v444": [
       "Lisibilité : quelques textes discrets en teinte or (badges, libellés de pied de page) et les cases « Choisir… » non encore remplies étaient un peu trop pâles pour un contraste confortable ; assombris/éclaircis légèrement dans les deux thèmes"
     ],
