@@ -152,6 +152,8 @@ export function cacheRemoteLanguages(list) {
   _cache = null;
 }
 
-// À BRANCHER EN PHASE B :
-//   fetchLanguages()  → GET backend (action=languages) puis cacheRemoteLanguages()
-//   declareLanguage() → POST backend (op=declare_lang) → visible par tous
+// `fetchLanguages()`/`declareLanguage()` (Phase B, LIVRÉE) vivent dans sync.js (le module
+// réseau) : `fetchLanguages()` alimente `cacheRemoteLanguages()` ci-dessus, `declareLanguage()`
+// publie une nouvelle langue. Trouvé périmé à la revue ligne-par-ligne (2026-07-27) : ce
+// commentaire disait encore « à brancher », alors que les deux fonctions sont utilisées
+// depuis longtemps dans app.js.
