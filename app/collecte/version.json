@@ -1,6 +1,10 @@
 {
-  "version": "v445",
+  "version": "v446",
   "changelog": {
+    "v446": [
+      "Créer une nouvelle langue exige désormais réellement au moins 5 mots de base prononcés (papa, maman, manger, marcher…) : en dessous de ce seuil, la langue n'est plus créée du tout (avant, elle restait « à compléter » même en l'abandonnant tout de suite)",
+      "Ajout de mots de base manquants à la liste proposée (frère, sœur, cuisiner, nourriture, école)"
+    ],
     "v445": [
       "« Mes langues d'appartenance » est désormais obligatoire à la création du profil (marquée d'une étoile, comme les autres champs requis), avec une vérification correspondante côté serveur"
     ],

@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v445";
+const APP_VERSION = "v446";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -2883,30 +2883,46 @@ function amorceSkip() {
   _amResetRec();
   renderAmorce();
 }
+/** RÈGLE STRICTE (Brice, 2026-07-27, « à tout prix ») : une langue n'est JAMAIS créée en dessous
+    de AMORCE_MIN voix — ni déclarée au backend (invisible pour tout le monde), ni gardée
+    localement au-delà de la session. Le bouton "Créer ma langue" n'est donc disponible qu'une
+    fois le seuil atteint (cf. renderAmorce()) ; en dessous, seul l'abandon est possible. */
 function amorceFinish() {
   if (_amRec && _amRec.state === "recording") amorceStopRec();
-  const complete = _amorceDone >= AMORCE_MIN;
-  if (!complete) {
-    // Sous le seuil : on ne jette RIEN. La langue est gardée en « provisoire » (à compléter
-    // plus tard) et ce qui a été enregistré est conservé. On confirme simplement l'arrêt.
+  if (_amorceDone < AMORCE_MIN) {
     const msg = ti("amorce.stop.confirm", { n: _amorceDone, min: AMORCE_MIN, lang: (_amorceLang && _amorceLang.nom) || "" });
     if (!window.confirm(msg)) return;
+    _amorceAbort();
+    return;
   }
-  _amorceEnd(complete);
+  _amorceEnd();
 }
-/** Fin de l'amorce : on VERSE toujours dans la base ce qui a été enregistré (jamais jeté) et on
-    garde la langue. Complète (≥ AMORCE_MIN) → statut « active » ; sinon → « provisoire » (la langue
-    existe et pourra être complétée plus tard, par son auteur ou par d'autres locuteurs). */
-async function _amorceEnd(complete) {
-  const desc = _amorceLang; if (!desc) return;
+/** Abandon AVANT le seuil : rien n'est créé. Les enregistrements tamponnés (jamais persistés,
+    cf. saveAmorceContribution) sont jetés, et la langue provisoire retirée du cache local (elle
+    ne doit réapparaître dans AUCUN sélecteur une fois l'abandon confirmé). */
+function _amorceAbort() {
+  const desc = _amorceLang;
+  if (desc) {
+    const others = knownLanguages().filter((l) => !l.graine && l.id !== desc.id);
+    cacheRemoteLanguages(others);
+  }
+  _amorceBuffer = []; _amorcePendingNote = ""; _amorceLang = null;
+  toast(t("amorce.cancelled"), "warn");
+  showView(_declareCtx === "profile" ? "profile" : "hub");
+  _declareCtx = null;
+}
+/** Fin de l'amorce UNE FOIS LE SEUIL ATTEINT (seul chemin qui crée réellement la langue) : verse
+    le tampon en base, déclare au backend (statut "active"), et l'ajoute aux langues du profil. */
+async function _amorceEnd() {
+  const desc = _amorceLang; if (!desc || _amorceDone < AMORCE_MIN) return;
   for (const rec of _amorceBuffer) { try { await DB.put(rec); _sessionClientIds.add(rec.client_id); markDoneText(rec.source_text); } catch (e) { /* ignore */ } }
-  const statut = complete ? "active" : "provisoire";
+  const statut = "active";
   const others = knownLanguages().filter((l) => !l.graine).map((l) => l.id === desc.id ? Object.assign({}, l, { statut }) : l);
   cacheRemoteLanguages(others);
   // Déclaration FIABLE : on ATTEND sa confirmation AVANT le reload plus bas (sinon le reload
   // avorterait la requête et la langue resterait orpheline). En cas d'échec, file de réessai.
   await declareLanguageReliable(Object.assign({ note: _amorcePendingNote || "" }, desc, { statut }));
-  addProfileLangue(desc.id);            // la langue (même provisoire) devient une langue d'appartenance
+  addProfileLangue(desc.id);            // la langue devient une langue d'appartenance
   _amorceBuffer = []; _amorcePendingNote = "";
   try { kickReconcile(); } catch (e) { /* le boot renverra de toute façon */ }
   // La langue devient la langue courante ; on recharge pour tout reconstruire (corpus, clavier,

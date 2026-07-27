@@ -17,6 +17,8 @@ export const AMORCE = [
   { id: "papa", fr: "Papa", cat: "Famille & personnes" },
   { id: "maman", fr: "Maman", cat: "Famille & personnes" },
   { id: "enfant", fr: "Enfant", cat: "Famille & personnes" },
+  { id: "frere", fr: "Frère", cat: "Famille & personnes" },
+  { id: "soeur", fr: "Sœur", cat: "Famille & personnes" },
   { id: "famille", fr: "Famille", cat: "Famille & personnes" },
   { id: "ami", fr: "Ami", cat: "Famille & personnes" },
   { id: "femme", fr: "Femme", cat: "Famille & personnes" },
@@ -43,6 +45,7 @@ export const AMORCE = [
   { id: "manger", fr: "Manger", cat: "Actions" },
   { id: "boire", fr: "Boire", cat: "Actions" },
   { id: "dormir", fr: "Dormir", cat: "Actions" },
+  { id: "cuisiner", fr: "Cuisiner", cat: "Actions" },
   { id: "travailler", fr: "Travailler", cat: "Actions" },
 
   // — Valeurs & émotions —
@@ -63,9 +66,13 @@ export const AMORCE = [
   { id: "soleil", fr: "Soleil", cat: "Nature & besoins" },
   { id: "nuit", fr: "Nuit", cat: "Nature & besoins" },
   { id: "maison", fr: "Maison", cat: "Nature & besoins" },
+  { id: "nourriture", fr: "Nourriture", cat: "Nature & besoins" },
+  { id: "ecole", fr: "École", cat: "Nature & besoins" },
 ];
 
-// Nombre MINIMUM d'enregistrements requis pour accompagner la création d'une langue
-// (l'utilisateur est fortement invité à l'atteindre ; l'abandon reste possible et la
-// langue est créée quand même avec le peu déjà enregistré).
+// Nombre MINIMUM d'enregistrements requis pour accompagner la création d'une langue.
+// RÈGLE STRICTE (Brice, 2026-07-27, « à tout prix ») : en dessous de ce seuil, la langue
+// N'EST JAMAIS créée — ni déclarée au backend (invisible pour les autres), ni conservée
+// localement au-delà de la session en cours. Personne ne doit pouvoir déclarer une langue
+// « juste pour le plaisir » sans en connaître et prononcer au moins quelques mots de base.
 export const AMORCE_MIN = 5;
