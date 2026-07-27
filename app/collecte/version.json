@@ -1,6 +1,10 @@
 {
-  "version": "v446",
+  "version": "v447",
   "changelog": {
+    "v447": [
+      "Popups (invitation à contribuer, mot du jour…) sur ordinateur : élargis (×1.4) pour mieux occuper l'espace disponible",
+      "Popups : le bouton « Supprimer » a disparu, la croix de fermeture joue désormais elle-même ce rôle (n'affiche plus ce type de popup avant le lendemain) ; nouveau style en cercle rouge plein bien visible"
+    ],
     "v446": [
       "Créer une nouvelle langue exige désormais réellement au moins 5 mots de base prononcés (papa, maman, manger, marcher…) : en dessous de ce seuil, la langue n'est plus créée du tout (avant, elle restait « à compléter » même en l'abandonnant tout de suite)",
       "Ajout de mots de base manquants à la liste proposée (frère, sœur, cuisiner, nourriture, école)"

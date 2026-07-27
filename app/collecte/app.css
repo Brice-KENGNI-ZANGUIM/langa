@@ -2620,7 +2620,8 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
      même convention que .notif-fab (2026-07-27, bug trouvé à la revue ligne-par-ligne — ce popup
      recouvrait entièrement la barre de navigation tant qu'il restait affiché). */
   position: fixed; z-index: 2147483600; right: 18px; bottom: calc(74px + 14px);
-  width: min(370px, calc(100vw - 32px));
+  /* Épaisseur PC ×1.4 (2026-07-27, Brice) : 370px -> 518px, même principe que .incite-banner. */
+  width: min(518px, calc(100vw - 32px));
   display: flex; gap: 12px; align-items: flex-start;
   padding: 16px 18px; border-radius: 18px;
   /* Mise à jour = BLEU système (couleur réservée à ce type, distincte des autres popups). */
@@ -2664,7 +2665,9 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   /* bottom en clair de la barre basse flottante, même convention que .notif-fab et
      .update-banner ci-dessus (2026-07-27, bug trouvé à la revue ligne-par-ligne). */
   position: fixed; z-index: 2147483500; right: 18px; bottom: calc(74px + 14px);
-  width: min(380px, calc(100vw - 32px));
+  /* Épaisseur PC ×1.4 (2026-07-27, Brice) : 380px -> 532px. Le repli mobile (@media 560px plus
+     bas dans le fichier, qui gagne à la cascade) reste inchangé, en vw comme avant. */
+  width: min(532px, calc(100vw - 32px));
   display: flex; gap: 12px; align-items: flex-start;
   padding: 16px 40px 16px 18px; border-radius: 18px;
   background: radial-gradient(120% 100% at 0% 0%, color-mix(in srgb, var(--pop-acc) 13%, transparent), transparent 60%), var(--card-bg);
@@ -2725,8 +2728,6 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 /* « Supprimer » (mute 24h) : même sobriété que « Plus tard », teinte légèrement plus discrète
    au repos (option plus radicale, pas mise en avant), accent rouge au survol pour signaler
    une action plus définitive que « Plus tard ». */
-.incite-mute { opacity: .75; }
-.incite-mute:hover { color: var(--danger, #f87171); opacity: 1; }
 .incite-listen[hidden] { display: none; }
 .incite-listen { font: inherit; font-weight: 700; font-size: .85rem; cursor: pointer; white-space: nowrap;
   color: var(--pop-acc); border: 1.5px solid color-mix(in srgb, var(--pop-acc) 55%, var(--border)); border-radius: 999px; padding: 8px 14px;
@@ -2741,10 +2742,15 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .incite-listen:disabled { cursor: progress; }
 @keyframes incListenPulse { 0%,100% { opacity: .55; } 50% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .incite-listen.is-loading { animation: none; } }
-.incite-close { position: absolute; top: 8px; right: 10px; width: 26px; height: 26px; border-radius: 8px;
-  border: 1px solid var(--border); background: var(--panel); color: var(--muted); cursor: pointer;
-  font-size: .8rem; line-height: 1; display: grid; place-items: center; transition: color .14s, border-color .14s; }
-.incite-close:hover { color: var(--text); border-color: var(--pop-acc); }
+/* Cercle plein ROUGE + croix BLANCHE (2026-07-27, Brice) : joue désormais aussi le rôle de
+   l'ancien bouton "Supprimer" (mute 24h), donc doit se voir comme une action plus marquée qu'un
+   simple "fermer" discret. Rouge FIXE (pas var(--red), qui est plus clair en sombre et tombe
+   sous le seuil de contraste AA avec du blanc dessus) : identique dans les deux thèmes. */
+.incite-close { position: absolute; top: 8px; right: 10px; width: 26px; height: 26px; border-radius: 50%;
+  border: none; background: #dc2626; color: #fff; cursor: pointer;
+  font-size: .8rem; line-height: 1; display: grid; place-items: center;
+  box-shadow: 0 2px 8px -2px rgba(220,38,38,.6); transition: background .14s, transform .1s; }
+.incite-close:hover { background: #b91c1c; transform: scale(1.06); }
 /* Sur mobile, seul le popup de MISE À JOUR occupe toute la largeur (Brice 2026-07-25) : les
    popups d'incitation/notification restent une carte flottante à 60% de largeur, ancrée à
    DROITE (jamais toute l'épaisseur de l'écran). */

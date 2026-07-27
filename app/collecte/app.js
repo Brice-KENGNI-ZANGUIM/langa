@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v446";
+const APP_VERSION = "v447";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -6701,14 +6701,14 @@ function initEvents() {
   const legalBack = $("#legal-back");
   if (legalBack) legalBack.addEventListener("click", () => routeTo(viewToRoute(_legalReturn) || "accueil"));
   const bugSend = $("#bug-send"); if (bugSend) bugSend.addEventListener("click", submitBug);
-  // Invitation à contribuer : « Plus tard » et « Fermer » l'écartent (le slot du jour est de
-  // toute façon déjà marqué montré dès l'enfilage, cf. maybeShowIncitation/maybeShowWod).
+  // Invitation à contribuer : « Plus tard » écarte juste pour cette fois (le slot du jour est de
+  // toute façon déjà marqué montré dès l'enfilage, cf. maybeShowIncitation/maybeShowWod). La
+  // croix « Fermer » (2026-07-27, Brice : plus de bouton "Supprimer" séparé) joue désormais le
+  // MÊME rôle que l'ancien "Supprimer" : mute 24h le TYPE réellement affiché (_pqCurrent vaut
+  // "incite" ou "wod", selon lequel des deux partage ce même bandeau).
   const inLater = $("#incite-later"); if (inLater) inLater.addEventListener("click", _incDismiss);
-  const inClose = $("#incite-close"); if (inClose) inClose.addEventListener("click", _incDismiss);
-  // « Supprimer » : mute 24h le TYPE réellement affiché (_pqCurrent vaut "incite" ou "wod",
-  // selon lequel des deux partage ce même bandeau), quel que soit le slot restant du jour.
-  const inMute = $("#incite-mute");
-  if (inMute) inMute.addEventListener("click", () => { _muteType(_pqCurrent || "incite"); _incDismiss(); });
+  const inClose = $("#incite-close");
+  if (inClose) inClose.addEventListener("click", () => { _muteType(_pqCurrent || "incite"); _incDismiss(); });
   // Notifications : cloche = vraie ancre <a href="#/notifications">, navigation via hashchange.
   // (retour, tout marquer comme lu, popup restent des actions, pas de la navigation.)
   const nBack = $("#notif-back"); if (nBack) nBack.addEventListener("click", () => showView(_notifsReturn || "hub"));
