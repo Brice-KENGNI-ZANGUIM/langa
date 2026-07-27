@@ -252,6 +252,15 @@ export class NgiemboonKeyboard {
       window.removeEventListener("pointercancel", stop);
     });
     this._repeatStops = [];
+    // Écouteur DOCUMENT posé au constructeur (distinction tap/scroll) : à retirer ici aussi,
+    // sinon reconstruire le clavier (destroy() + new) accumulerait un listener par instance
+    // (aucun impact aujourd'hui : initKeyboard() ne construit qu'UNE seule instance par
+    // session et n'appelle jamais destroy(), mais la méthode doit rester correcte par
+    // elle-même — trouvé à la revue ligne-par-ligne, 2026-07-27).
+    if (this._onDocPointerMove) {
+      document.removeEventListener("pointermove", this._onDocPointerMove);
+      this._onDocPointerMove = null;
+    }
   }
 
   _legend() {
@@ -542,25 +551,6 @@ export class NgiemboonKeyboard {
       ex_fr: t.ex_fr,
     });
     return b;
-  }
-
-  _actionRow() {
-    const shift = this._key(
-      "⇧ Maj",
-      "ngk__key--action ngk__key--shift ngk__key--wide",
-      () => this._toggleShift()
-    );
-    this._shiftBtn = shift;
-    const space = this._key("espace", "ngk__key--action ngk__key--space", () =>
-      this._insert(" ")
-    );
-    const back = this._key(
-      "⌫",
-      "ngk__key--action ngk__key--wide",
-      () => this._backspace(),
-      "Effacer"
-    );
-    return this._row([shift, space, back]);
   }
 
   // --- Info-bulle ---------------------------------------------------------
