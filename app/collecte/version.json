@@ -1,6 +1,9 @@
 {
-  "version": "v440",
+  "version": "v441",
   "changelog": {
+    "v441": [
+      "Popup de remerciement : la liste de phrases de gratitude passe de 140 à 215 par langue, toujours écrites une à une pour rester sincères et jamais répétitives"
+    ],
     "v440": [
       "Popup de remerciement après une contribution : la liste des phrases de gratitude affichées au hasard passe de 10 à 140, écrites une à une pour rester variées et sincères (héritage, transmission, apprentissage), afin qu'elles se répètent beaucoup moins souvent"
     ],
