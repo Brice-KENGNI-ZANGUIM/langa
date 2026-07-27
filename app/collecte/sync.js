@@ -106,13 +106,19 @@ export async function fetchDriveAudio(fileId) {
 
 /**
  * VÉRITÉ DE RÉFÉRENCE pour la synchro : demande à la base distante la liste des
- * `client_id` DÉJÀ ENREGISTRÉS pour CE device. Permet de cocher ✅ ce qui est
- * réellement arrivé (au lieu de se fier à la réponse d'un POST, peu fiable avec
- * Apps Script à cause des redirections). Retourne un Set de client_id, ou
- * `null` si l'endpoint n'existe pas encore (ancien backend non redéployé).
+ * `client_id` DÉJÀ ENREGISTRÉS pour CE device, ainsi que leur vrai `server_id`
+ * (id_contribution). Permet de cocher ✅ ce qui est réellement arrivé (au lieu
+ * de se fier à la réponse d'un POST, peu fiable avec Apps Script à cause des
+ * redirections) ET d'apprendre le server_id même quand on n'a jamais reçu de
+ * réponse de POST fiable (correction 2026-07-27 : sans ça, DB.markSent()
+ * n'avait jamais l'occasion de renseigner server_id, d'où l'écart mesuré entre
+ * le compteur du Profil qui l'exige et les autres qui s'en passent). Retourne
+ * `{ ids: Set<client_id>, map: {client_id: server_id} }`, ou `null` si
+ * l'endpoint n'existe pas encore (ancien backend non redéployé) ou pas de
+ * deviceId.
  */
 export async function confirmedIds(deviceId) {
-  if (!deviceId) return new Set();
+  if (!deviceId) return { ids: new Set(), map: {} };
   const base = endpoint();
   const url = isGoogle()
     ? `${base}?action=confirm&device_id=${encodeURIComponent(deviceId)}`
@@ -122,7 +128,7 @@ export async function confirmedIds(deviceId) {
     if (!r.ok) return null;
     const data = await r.json();
     if (!data || data.ok === false || !Array.isArray(data.ids)) return null;
-    return new Set(data.ids.map(String));
+    return { ids: new Set(data.ids.map(String)), map: (data.map && typeof data.map === "object") ? data.map : {} };
   } catch (e) { return null; }
 }
 
@@ -450,8 +456,8 @@ export async function reconcile(onProgress = () => {}) {
   const hasConfirm = remote !== null;
   if (hasConfirm) {
     for (const rec of all) {
-      if (rec.status !== "sent" && remote.has(String(rec.client_id))) {
-        await DB.markSent(rec.client_id, null); confirmes++;
+      if (rec.status !== "sent" && remote.ids.has(String(rec.client_id))) {
+        await DB.markSent(rec.client_id, remote.map[rec.client_id] || null); confirmes++;
       }
     }
   }
@@ -462,6 +468,18 @@ export async function reconcile(onProgress = () => {}) {
   // rehydratation d'historique sans statut), pas seulement les futurs.
   for (const rec of await DB.all()) {
     if (rec.status !== "sent" && rec.server_id) { await DB.markSent(rec.client_id, rec.server_id); confirmes++; }
+  }
+
+  // Rétro-comblement (2026-07-27) : un enregistrement déjà marqué "sent" mais SANS server_id
+  // (le cas normal jusqu'ici, puisque les deux points ci-dessus passaient `null`) apprend
+  // maintenant son vrai server_id dès que la base distante le fournit — sans quoi le compteur
+  // du Profil (qui exige server_id) restait durablement sous-compté par rapport aux autres.
+  if (hasConfirm) {
+    for (const rec of await DB.all()) {
+      if (rec.status === "sent" && !rec.server_id && remote.map[rec.client_id]) {
+        await DB.markSent(rec.client_id, remote.map[rec.client_id]); confirmes++;
+      }
+    }
   }
 
   // 3) (Re)poster uniquement ce qui manque encore — UNE seule fois par item
@@ -491,8 +509,8 @@ export async function reconcile(onProgress = () => {}) {
     remote = await confirmedIds(deviceId);
     if (remote) {
       for (const rec of (await DB.all())) {
-        if (rec.status !== "sent" && remote.has(String(rec.client_id))) {
-          await DB.markSent(rec.client_id, null); confirmes++;
+        if (rec.status !== "sent" && remote.ids.has(String(rec.client_id))) {
+          await DB.markSent(rec.client_id, remote.map[rec.client_id] || null); confirmes++;
         }
       }
     }

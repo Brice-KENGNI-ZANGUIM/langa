@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v441";
+const APP_VERSION = "v442";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1821,7 +1821,12 @@ async function renderMyContributions() {
   const host = $("#my-contribs"), list = $("#mc-list");
   if (!host || !list) return;
   let items = [];
-  try { items = (await DB.all()).filter((r) => r && r.server_id && ((r.source_text || "").trim() || (r.target_text || "").trim())); }
+  // Filtre aligné sur Explorer/bas de page (2026-07-27, correctif écart 27/47/27) : compte tout
+  // envoi réellement CONFIRMÉ (status "sent") avec un vrai contenu, plutôt que d'exiger en plus
+  // un server_id déjà connu localement (souvent absent tant que reconcile() n'a pas eu l'occasion
+  // de l'apprendre depuis confirmSentIds() — cf. sync.js). Les lignes vides (fantômes) restent
+  // exclues par le filtre de contenu.
+  try { items = (await DB.all()).filter((r) => r && r.status === "sent" && ((r.source_text || "").trim() || (r.target_text || "").trim())); }
   catch (e) { items = []; }
   const cnt = $("#mc-count");
   if (!items.length) { host.hidden = true; list.innerHTML = ""; _mcItems = []; if (cnt) cnt.textContent = ""; return; }
@@ -1856,14 +1861,20 @@ function _mcPaint(q) {
     const w = (r.source_text || "").trim(), tr = (r.target_text || "").trim();
     const label = escapeHtml(w) + (tr ? ' <span class="mc-arrow">→</span> <span class="mc-target">' + escapeHtml(tr) + '</span>' : "");
     const hasAudio = isPlayable(r.audio_url), hasTrad = !!tr;
+    // server_id pas encore appris localement (contribution confirmée mais pas encore
+    // rapprochée par reconcile()/confirmSentIds() : cf. sync.js, correctif 2026-07-27) : toute
+    // édition (traduction/voix/langue) exige un vrai id serveur pour la requête PATCH, donc
+    // masquée le temps que le prochain cycle de réconciliation l'apprenne. La contribution reste
+    // listée et comptée : seule l'édition est temporairement indisponible.
+    const hasSid = !!(r.server_id && String(r.server_id).trim());
     // Type : une contribution peut porter une prononciation (voix) ET/OU une traduction écrite.
     const badges = (hasAudio ? `<span class="mc-type mc-type--voice">${escapeHtml(t("mc.type.voice"))}</span>` : "")
                  + (hasTrad ? `<span class="mc-type mc-type--trad">${escapeHtml(t("mc.type.trad"))}</span>` : "");
     const playBtn = hasAudio ? `<button type="button" class="mc-play" data-audio="${escapeHtml(r.audio_url)}">▶ ${escapeHtml(t("mc.listen"))}</button>` : "";
     // CONTENU modifiable directement : la traduction écrite (texte) et/ou la voix (ré-enregistrement).
-    const editTradBtn = hasTrad ? `<button type="button" class="mc-edit-trad">✎ ${escapeHtml(t("mc.edit.trad"))}</button>` : "";
-    const editVoiceBtn = hasAudio ? `<button type="button" class="mc-edit-voice">🎙 ${escapeHtml(t("mc.edit.voice"))}</button>` : "";
-    return `<div class="mc-item" data-sid="${escapeHtml(String(r.server_id))}">
+    const editTradBtn = (hasTrad && hasSid) ? `<button type="button" class="mc-edit-trad">✎ ${escapeHtml(t("mc.edit.trad"))}</button>` : "";
+    const editVoiceBtn = (hasAudio && hasSid) ? `<button type="button" class="mc-edit-voice">🎙 ${escapeHtml(t("mc.edit.voice"))}</button>` : "";
+    return `<div class="mc-item" data-sid="${escapeHtml(String(r.server_id || ""))}">
       <div class="mc-main">
         <div class="mc-types">${badges}</div>
         <div class="mc-word">${label || t("mc.audio")}</div>
@@ -1885,14 +1896,14 @@ function _mcPaint(q) {
           <button type="button" class="mc-edit-cancel">${escapeHtml(t("mc.edit.cancel"))}</button>
         </div>
       </div>
-      <details class="mc-lang-more">
+      ${hasSid ? `<details class="mc-lang-more">
         <summary>${escapeHtml(t("mc.lang.more"))}</summary>
         <div class="mc-edit">
           <label class="mc-lang"><span data-i18n="mc.lang">Langue</span>
             <select class="mc-lang-sel">${opts}</select></label>
           <button type="button" class="btn mc-save" data-i18n="mc.save">Corriger</button>
         </div>
-      </details>
+      </details>` : ""}
     </div>`;
   }).join("")
     + (query && !matches.length ? `<div class="mc-empty">${escapeHtml(t("mc.noresult"))}</div>` : "")
@@ -5325,7 +5336,13 @@ async function refresh() {
   const items = (await DB.all()).sort((a, b) =>
     (b.created_at || "").localeCompare(a.created_at || "")
   );
+  // Contenu réel (texte source/cible OU audio) : exclut les lignes fantômes (locales vides,
+  // rehydratées sans contenu) du COMPTEUR, alignant ce chiffre sur Explorer et le Profil
+  // (correctif 2026-07-27, écart mesuré 47 vs 27). La liste « À renvoyer » reste NON filtrée par
+  // contenu (cf. commentaire ci-dessous) : un envoi bloqué doit rester visible même vide.
+  const hasContent = (x) => !!((x.source_text || "").trim() || (x.target_text || "").trim() || isPlayable(x.audio_url));
   const sent = items.filter((x) => x.status === "sent");
+  const sentCounted = sent.filter(hasContent);
   const pending = items.filter((x) => x.status !== "sent");
   // Liste DÉTAILLÉE « Envoyés » sur Transcrire/Traduire = seulement CETTE session, CET appareil
   // (Brice 2026-07-25) : l'historique complet vit dans le Profil (#my-contribs), qui lit lui tout
@@ -5333,9 +5350,9 @@ async function refresh() {
   // réellement bloqué doit rester visible/actionnable même après un rechargement du navigateur.
   const sentRecent = sent.filter((x) => _sessionClientIds.has(x.client_id));
 
-  $("#count-sent").textContent = sent.length;
+  $("#count-sent").textContent = sentCounted.length;
   $("#count-pending").textContent = pending.length;
-  $("#count-total").textContent = items.length;
+  $("#count-total").textContent = sentCounted.length + pending.length;
   $("#grp-sent-n").textContent = sentRecent.length;
   $("#grp-pending-n").textContent = pending.length;
   $("#btn-send").disabled = pending.length === 0 || !profileComplete() || _reconcileRunning;

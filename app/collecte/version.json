@@ -1,6 +1,9 @@
 {
-  "version": "v441",
+  "version": "v442",
   "changelog": {
+    "v442": [
+      "Correctif important : le nombre de contributions affiché différait selon la page (Profil, bas de Traduire/Transcrire, Explorer), qui ne comptaient pas exactement les mêmes envois ; les 3 affichages sont désormais rigoureusement cohérents"
+    ],
     "v441": [
       "Popup de remerciement : la liste de phrases de gratitude passe de 140 à 215 par langue, toujours écrites une à une pour rester sincères et jamais répétitives"
     ],
