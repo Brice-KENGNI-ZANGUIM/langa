@@ -2620,8 +2620,8 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
      même convention que .notif-fab (2026-07-27, bug trouvé à la revue ligne-par-ligne — ce popup
      recouvrait entièrement la barre de navigation tant qu'il restait affiché). */
   position: fixed; z-index: 2147483600; right: 18px; bottom: calc(74px + 14px);
-  /* Épaisseur PC ×1.4 (2026-07-27, Brice) : 370px -> 518px, même principe que .incite-banner. */
-  width: min(518px, calc(100vw - 32px));
+  /* Épaisseur PC ×1.4 puis ×0.8 (2026-07-27/28, Brice) : 370px -> 518px -> 414px. */
+  width: min(414px, calc(100vw - 32px));
   display: flex; gap: 12px; align-items: flex-start;
   padding: 16px 18px; border-radius: 18px;
   /* Mise à jour = BLEU système (couleur réservée à ce type, distincte des autres popups). */
@@ -2665,9 +2665,9 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   /* bottom en clair de la barre basse flottante, même convention que .notif-fab et
      .update-banner ci-dessus (2026-07-27, bug trouvé à la revue ligne-par-ligne). */
   position: fixed; z-index: 2147483500; right: 18px; bottom: calc(74px + 14px);
-  /* Épaisseur PC ×1.4 (2026-07-27, Brice) : 380px -> 532px. Le repli mobile (@media 560px plus
-     bas dans le fichier, qui gagne à la cascade) reste inchangé, en vw comme avant. */
-  width: min(532px, calc(100vw - 32px));
+  /* Épaisseur PC ×1.4 puis ×0.8 (2026-07-27/28, Brice) : 380px -> 532px -> 426px. Le repli mobile
+     (@media 560px plus bas dans le fichier, qui gagne à la cascade) reste inchangé, en vw comme avant. */
+  width: min(426px, calc(100vw - 32px));
   display: flex; gap: 12px; align-items: flex-start;
   padding: 16px 40px 16px 18px; border-radius: 18px;
   background: radial-gradient(120% 100% at 0% 0%, color-mix(in srgb, var(--pop-acc) 13%, transparent), transparent 60%), var(--card-bg);

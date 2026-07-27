@@ -1,6 +1,9 @@
 {
-  "version": "v448",
+  "version": "v449",
   "changelog": {
+    "v449": [
+      "Popups (invitation à contribuer, mot du jour…) sur ordinateur : réduits (×0.8) après le dernier élargissement, pour une taille plus équilibrée"
+    ],
     "v448": [
       "Correctif important : un mot pouvait apparaître deux fois dans « Mes contributions » et dans le compteur d'envois (une carte complète avec voix/traduction, une seconde carte vide avec juste le mot) à cause d'un ancien bug de synchronisation ; ces doublons fantômes sont désormais fusionnés automatiquement, sans jamais toucher à deux vraies contributions distinctes du même mot"
     ],
