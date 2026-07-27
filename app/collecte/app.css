@@ -2607,7 +2607,10 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
    [hidden] (piège de spécificité) → on rétablit explicitement le masquage. */
 .update-banner[hidden] { display: none !important; }
 .update-banner {
-  position: fixed; z-index: 2147483600; right: 18px; bottom: 18px;
+  /* bottom en clair de la barre basse flottante (.bottom-nav), jamais dessus ni cachée par elle :
+     même convention que .notif-fab (2026-07-27, bug trouvé à la revue ligne-par-ligne — ce popup
+     recouvrait entièrement la barre de navigation tant qu'il restait affiché). */
+  position: fixed; z-index: 2147483600; right: 18px; bottom: calc(74px + 14px);
   width: min(370px, calc(100vw - 32px));
   display: flex; gap: 12px; align-items: flex-start;
   padding: 16px 18px; border-radius: 18px;
@@ -2635,7 +2638,7 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 @keyframes updPulse { 0%,100% { box-shadow: 0 8px 20px rgba(79,140,255,.35); } 50% { box-shadow: 0 8px 30px rgba(79,140,255,.65); } }
 .update-later { background: none; border: none; color: var(--muted); font: inherit; cursor: pointer; text-decoration: underline; }
 .update-later:hover { color: var(--text); }
-@media (max-width: 560px) { .update-banner { right: 12px; left: 12px; bottom: 12px; width: auto; } }
+@media (max-width: 560px) { .update-banner { right: 12px; left: 12px; bottom: calc(66px + 12px); width: auto; } }
 @media (prefers-reduced-motion: reduce) {
   .update-banner { animation: updIn .3s ease both; }
   .update-dot, .update-btn { animation: none; }
@@ -2649,7 +2652,9 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
      (voir plus bas). Toute la coloration du popup (fond, bordure, halo, icône, bouton)
      en découle → l'utilisateur reconnaît le TYPE de message à sa couleur, avant de lire. */
   --pop-acc: var(--cyan);
-  position: fixed; z-index: 2147483500; right: 18px; bottom: 18px;
+  /* bottom en clair de la barre basse flottante, même convention que .notif-fab et
+     .update-banner ci-dessus (2026-07-27, bug trouvé à la revue ligne-par-ligne). */
+  position: fixed; z-index: 2147483500; right: 18px; bottom: calc(74px + 14px);
   width: min(380px, calc(100vw - 32px));
   display: flex; gap: 12px; align-items: flex-start;
   padding: 16px 40px 16px 18px; border-radius: 18px;
@@ -2734,7 +2739,7 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 /* Sur mobile, seul le popup de MISE À JOUR occupe toute la largeur (Brice 2026-07-25) : les
    popups d'incitation/notification restent une carte flottante à 60% de largeur, ancrée à
    DROITE (jamais toute l'épaisseur de l'écran). */
-@media (max-width: 560px) { .incite-banner { right: 12px; left: auto; bottom: 12px; width: 75vw; } }
+@media (max-width: 560px) { .incite-banner { right: 12px; left: auto; bottom: calc(66px + 12px); width: 75vw; } }
 @media (prefers-reduced-motion: reduce) { .incite-banner { animation: updIn .3s ease both; } }
 /* MOBILE, popups d'info/incitation/mise à jour (Brice 2026-07-24) : sur téléphone, ces popups
    prenaient jusqu'à ~40-50% de la hauteur d'écran. Cadre, cercle d'illustration et police

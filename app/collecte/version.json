@@ -1,6 +1,9 @@
 {
-  "version": "v436",
+  "version": "v437",
   "changelog": {
+    "v437": [
+      "Correctif : le popup d'incitation (et celui de mise à jour) pouvait recouvrir entièrement la barre de navigation basse tant qu'il restait affiché ; il flotte désormais toujours au-dessus, comme la bulle de notifications"
+    ],
     "v436": [
       "Correctif : le trait sous l'icône Accueil de la barre basse restait affiché en permanence, même en étant sur une autre page ; il ne s'affiche plus que quand on est vraiment sur l'accueil"
     ],
