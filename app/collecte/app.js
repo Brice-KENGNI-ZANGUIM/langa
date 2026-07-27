@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v447";
+const APP_VERSION = "v448";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1813,6 +1813,37 @@ async function rehydrateMyContributions() {
 /** COUCHE 3 — contributions ENVOYÉES par cet appareil (base locale ; server_id présent = confirmée),
     avec correction de la langue mal étiquetée. Source = DB local (le browse local ne sert que des
     exemples). La correction passe par le jeton de propriété (fail-closed côté backend). */
+/** Fusionne les DOUBLONS FANTÔMES (2026-07-27, trouvé par Brice en comparant téléphone/PC) :
+    un bug de réconciliation antérieur au 2026-07-25 pouvait reposter une contribution déjà
+    confirmée avec un NOUVEAU client_id synthétique, créant une 2e ligne en base pour le MÊME
+    mot — mais SANS l'audio ni la traduction d'origine (« texte seul »), donc comptée deux fois
+    partout où on affiche/compte par ligne brute (Profil, bas de page), contrairement à Explorer
+    qui regroupe déjà par mot. On ne fusionne QUE quand une ligne est totalement NUE (ni
+    traduction ni audio) et qu'une autre ligne du MÊME mot/langue/sens a, elle, du vrai contenu —
+    jamais deux lignes qui ont CHACUNE un vrai contenu propre (ça, ce sont deux vraies
+    contributions distinctes, ex. l'utilisateur a choisi de refaire le mot volontairement). */
+function _dedupKey(r) {
+  return normTxt(r.source_text) + "|" + canonLangId(r.langue || entryLang(r)) + "|" + dirOrient(r.direction);
+}
+function dedupeContributions(items) {
+  const best = new Map();   // key -> { rec, richness, idx }
+  const out = [];
+  for (const r of items) {
+    const key = _dedupKey(r);
+    const richness = (isPlayable(r.audio_url) ? 2 : 0) + ((r.target_text || "").trim() ? 1 : 0);
+    const prev = best.get(key);
+    if (!prev) { best.set(key, { richness, idx: out.length }); out.push(r); continue; }
+    if (richness === 0 || prev.richness === 0) {
+      // L'une des deux lignes est nue : on ne garde que la plus riche (fusion du fantôme).
+      if (richness > prev.richness) { out[prev.idx] = r; best.set(key, { richness, idx: prev.idx }); }
+      // sinon : la nouvelle ligne EST le fantôme, on l'ignore (ne l'ajoute pas à `out`).
+    } else {
+      // Les deux ont du contenu propre : deux vraies contributions distinctes, on garde les deux.
+      out.push(r);
+    }
+  }
+  return out;
+}
 let _mcItems = [];
 let _mcSearchWired = false;
 async function renderMyContributions() {
@@ -1824,8 +1855,10 @@ async function renderMyContributions() {
   // un server_id déjà connu localement (souvent absent tant que reconcile() n'a pas eu l'occasion
   // de l'apprendre depuis confirmSentIds() — cf. sync.js). Les lignes vides (fantômes) restent
   // exclues par le filtre de contenu.
-  try { items = (await DB.all()).filter((r) => r && r.status === "sent" && ((r.source_text || "").trim() || (r.target_text || "").trim())); }
-  catch (e) { items = []; }
+  try {
+    const raw = (await DB.all()).filter((r) => r && r.status === "sent" && ((r.source_text || "").trim() || (r.target_text || "").trim()));
+    items = dedupeContributions(raw);
+  } catch (e) { items = []; }
   const cnt = $("#mc-count");
   if (!items.length) { host.hidden = true; list.innerHTML = ""; _mcItems = []; if (cnt) cnt.textContent = ""; return; }
   items.sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
@@ -5364,7 +5397,9 @@ async function refresh() {
   // contenu (cf. commentaire ci-dessous) : un envoi bloqué doit rester visible même vide.
   const hasContent = (x) => !!((x.source_text || "").trim() || (x.target_text || "").trim() || isPlayable(x.audio_url));
   const sent = items.filter((x) => x.status === "sent");
-  const sentCounted = sent.filter(hasContent);
+  // Fusion des doublons fantômes (2026-07-27, cf. dedupeContributions) : même correctif que le
+  // Profil, indispensable pour que les deux comptages restent rigoureusement identiques.
+  const sentCounted = dedupeContributions(sent.filter(hasContent));
   const pending = items.filter((x) => x.status !== "sent");
   // Liste DÉTAILLÉE « Envoyés » sur Transcrire/Traduire = seulement CETTE session, CET appareil
   // (Brice 2026-07-25) : l'historique complet vit dans le Profil (#my-contribs), qui lit lui tout
