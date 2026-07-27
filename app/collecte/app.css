@@ -3152,7 +3152,17 @@ body::after {
      gèle QUE l'aurore PLEIN ÉCRAN (body::before/after) : c'est le seul calque assez grand
      pour peser vraiment. Tout le reste (bordures tournantes des cartes du hub, halos qui
      respirent, glow d'icônes, aurore d'en-tête, anneau des cartes, brillance des boutons,
-     ornements) RESTE animé sur téléphone. */
+     ornements) RESTE animé sur téléphone, TEL QUE CE BLOC-CI LE FIXE.
+     ⚠️ Décision ensuite ÉLARGIE par la passe perf plus bas (« PERF TÉLÉPHONE », ~ligne 3673,
+     `@media (max-width: 900px) { *,*::before,*::after { animation:none !important } }`) :
+     sur tout écran ≤900px (donc mobile ET la plupart des tablettes), TOUT le décor listé
+     ci-dessus est en réalité figé aussi, `!important` l'emportant sur les déclarations
+     `animation` sans garde de ce fichier. Vérifié en pratique (Playwright,
+     `.hub-card.getAnimations()` : 0 animation active à 700px/390px, 1 active à 950px/1280px).
+     Ce commentaire-ci décrit donc l'intention D'ORIGINE de CE bloc à 640px, plus l'état RÉEL
+     depuis l'ajout du bloc à 900px (2026-07-27, trouvé à la revue ligne-par-ligne) — à mettre
+     à jour si Brice tranche dans un sens ou dans l'autre plutôt que de laisser les deux passes
+     coexister silencieusement. */
   body::before { animation: none; top: -28vmax; left: -20vmax; opacity: .8; }
   body::after  { animation: none; bottom: -30vmax; right: -22vmax; opacity: .8; }
   /* Exception ciblée : quand le CLAVIER ngiemboon est ouvert, on gèle les animations
