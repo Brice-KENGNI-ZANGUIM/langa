@@ -10,7 +10,7 @@ const e="kenzabri2@yahoo.com",o=[{id:"mentions",t:{fr:"Mentions l\xE9gales",en:"
         <p><b>Hosting.</b> The site is hosted by GitHub Pages (GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, USA).</p>
         <p><b>Purpose.</b> LANGIAL is a community, free platform to collect and promote Africa's languages, in text and voice.</p>`}},{id:"confidentialite",t:{fr:"Politique de confidentialit\xE9",en:"Privacy policy"},html:{fr:`
         <p>LANGIAL respecte ta vie priv\xE9e et ne collecte que le strict n\xE9cessaire \xE0 sa mission.</p>
-        <p><b>Donn\xE9es recueillies.</b> \xC0 la cr\xE9ation de ton profil : nom, pr\xE9nom, village ou variante, r\xF4le (locuteur natif, apprenant, linguiste), e-mail et t\xE9l\xE9phone. Avec tes contributions : les mots, phrases, traductions et enregistrements vocaux que tu ajoutes.</p>
+        <p><b>Donn\xE9es recueillies.</b> \xC0 la cr\xE9ation de ton profil : nom, pr\xE9nom, village et langue du c\xF4t\xE9 paternel, village et langue du c\xF4t\xE9 maternel, les langues que tu parles, r\xF4le (locuteur natif, apprenant, linguiste), e-mail et t\xE9l\xE9phone. Avec tes contributions : les mots, phrases, traductions et enregistrements vocaux que tu ajoutes.</p>
         <p><b>Pourquoi.</b> Pour te cr\xE9diter comme contributeur, te recontacter en cas de doute sur une contribution, et documenter et outiller la langue.</p>
         <p><b>Base l\xE9gale.</b> Ton consentement explicite, donn\xE9 en cochant la case pr\xE9vue avant de contribuer.</p>
         <p><b>Conservation et acc\xE8s.</b> Ton profil est enregistr\xE9 sur ton appareil. Tes contributions sont conserv\xE9es en lieu s\xFBr pour construire le corpus commun de la langue. Ton e-mail et ton t\xE9l\xE9phone ne sont <b>jamais</b> affich\xE9s publiquement.</p>
@@ -19,7 +19,7 @@ const e="kenzabri2@yahoo.com",o=[{id:"mentions",t:{fr:"Mentions l\xE9gales",en:"
         <p><b>Tes droits.</b> Tu peux \xE0 tout moment demander l'acc\xE8s, la correction ou la suppression de tes donn\xE9es en \xE9crivant \xE0 <a href="mailto:${e}">${e}</a>.</p>
         <p><b>Mineurs.</b> Si tu as moins de 18 ans, demande l'accord d'un parent ou tuteur avant de contribuer.</p>`,en:`
         <p>LANGIAL respects your privacy and collects only what its mission strictly requires.</p>
-        <p><b>Data collected.</b> When you create your profile: last name, first name, village or variant, role (native speaker, learner, linguist), email and phone. With your contributions: the words, phrases, translations and voice recordings you add.</p>
+        <p><b>Data collected.</b> When you create your profile: last name, first name, village and language on your father's side, village and language on your mother's side, the languages you speak, role (native speaker, learner, linguist), email and phone. With your contributions: the words, phrases, translations and voice recordings you add.</p>
         <p><b>Why.</b> To credit you as a contributor, to get back to you if a contribution needs clarifying, and to document and equip the language.</p>
         <p><b>Legal basis.</b> Your explicit consent, given by ticking the box shown before you contribute.</p>
         <p><b>Storage and access.</b> Your profile is stored on your device. Your contributions are kept in a safe place to build the shared corpus of the language. Your email and phone are <b>never</b> shown publicly.</p>
@@ -44,7 +44,7 @@ const e="kenzabri2@yahoo.com",o=[{id:"mentions",t:{fr:"Mentions l\xE9gales",en:"
         <p>LANGIAL est un service <b>enti\xE8rement gratuit</b>. Aucune vente, aucun paiement ni abonnement n'est propos\xE9, et aucune donn\xE9e n'est mon\xE9tis\xE9e.</p>
         <p>Il n'existe donc pas, \xE0 ce jour, de conditions de vente \xE0 proprement parler. Si une offre payante venait un jour \xE0 \xEAtre propos\xE9e, des conditions d\xE9di\xE9es seraient publi\xE9es ici <b>au pr\xE9alable</b>, et n'auraient aucun effet r\xE9troactif sur les contributions d\xE9j\xE0 faites.</p>`,en:`
         <p>LANGIAL is an <b>entirely free</b> service. No sale, payment or subscription is offered, and no data is monetised.</p>
-        <p>There are therefore, to date, no terms of sale as such. Should a paid offer ever be introduced, dedicated terms would be published here <b>beforehand</b>, with no retroactive effect on contributions already made.</p>`}}];function r(i){const n=i==="en"?"en":"fr";return o.map(t=>`<section class="legal-sec" id="legal-${t.id}">
+        <p>There are therefore, to date, no terms of sale as such. Should a paid offer ever be introduced, dedicated terms would be published here <b>beforehand</b>, with no retroactive effect on contributions already made.</p>`}}];function a(i){const n=i==="en"?"en":"fr";return o.map(t=>`<section class="legal-sec" id="legal-${t.id}">
        <h3 class="legal-h">${t.t[n]}</h3>
        <div class="legal-body">${t.html[n]}</div>
-     </section>`).join("")}export{o as LEGAL_SECTIONS,r as legalHtml};
+     </section>`).join("")}export{o as LEGAL_SECTIONS,a as legalHtml};

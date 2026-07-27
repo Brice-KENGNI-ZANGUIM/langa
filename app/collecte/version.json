@@ -1,6 +1,9 @@
 {
-  "version": "v438",
+  "version": "v439",
   "changelog": {
+    "v439": [
+      "La politique de confidentialité décrivait encore l'ancien profil à un seul village et ne mentionnait pas les langues déclarées : elle liste désormais précisément toutes les données recueillies (villages et langues paternels/maternels, langues parlées)"
+    ],
     "v438": [
       "Accessibilité : le logo (en-tête et pied de page) donnait aux lecteurs d'écran un simple « Retour à l'accueil » au lieu de la description complète des 3 espaces accessibles depuis cette page ; corrigé",
       "La description de la carte Explorer sur l'accueil était en réalité une ancienne version jamais retirée (deux textes différents étaient déclarés pour la même clé) ; harmonisée sur le texte réellement affiché"

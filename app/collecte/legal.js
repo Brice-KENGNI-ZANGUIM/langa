@@ -32,7 +32,7 @@ export const LEGAL_SECTIONS = [
     html: {
       fr: `
         <p>LANGIAL respecte ta vie privée et ne collecte que le strict nécessaire à sa mission.</p>
-        <p><b>Données recueillies.</b> À la création de ton profil : nom, prénom, village ou variante, rôle (locuteur natif, apprenant, linguiste), e-mail et téléphone. Avec tes contributions : les mots, phrases, traductions et enregistrements vocaux que tu ajoutes.</p>
+        <p><b>Données recueillies.</b> À la création de ton profil : nom, prénom, village et langue du côté paternel, village et langue du côté maternel, les langues que tu parles, rôle (locuteur natif, apprenant, linguiste), e-mail et téléphone. Avec tes contributions : les mots, phrases, traductions et enregistrements vocaux que tu ajoutes.</p>
         <p><b>Pourquoi.</b> Pour te créditer comme contributeur, te recontacter en cas de doute sur une contribution, et documenter et outiller la langue.</p>
         <p><b>Base légale.</b> Ton consentement explicite, donné en cochant la case prévue avant de contribuer.</p>
         <p><b>Conservation et accès.</b> Ton profil est enregistré sur ton appareil. Tes contributions sont conservées en lieu sûr pour construire le corpus commun de la langue. Ton e-mail et ton téléphone ne sont <b>jamais</b> affichés publiquement.</p>
@@ -42,7 +42,7 @@ export const LEGAL_SECTIONS = [
         <p><b>Mineurs.</b> Si tu as moins de 18 ans, demande l'accord d'un parent ou tuteur avant de contribuer.</p>`,
       en: `
         <p>LANGIAL respects your privacy and collects only what its mission strictly requires.</p>
-        <p><b>Data collected.</b> When you create your profile: last name, first name, village or variant, role (native speaker, learner, linguist), email and phone. With your contributions: the words, phrases, translations and voice recordings you add.</p>
+        <p><b>Data collected.</b> When you create your profile: last name, first name, village and language on your father's side, village and language on your mother's side, the languages you speak, role (native speaker, learner, linguist), email and phone. With your contributions: the words, phrases, translations and voice recordings you add.</p>
         <p><b>Why.</b> To credit you as a contributor, to get back to you if a contribution needs clarifying, and to document and equip the language.</p>
         <p><b>Legal basis.</b> Your explicit consent, given by ticking the box shown before you contribute.</p>
         <p><b>Storage and access.</b> Your profile is stored on your device. Your contributions are kept in a safe place to build the shared corpus of the language. Your email and phone are <b>never</b> shown publicly.</p>

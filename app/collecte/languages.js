@@ -36,8 +36,14 @@ export const SEED_LANGUAGES = [
   // Langues africaines PRÉ-REMPLIES : disponibles d'emblée pour que leurs locuteurs
   // puissent contribuer tout de suite, sans avoir à les déclarer. Inventaires
   // d'après les orthographes standard établies (lettres spéciales / tons indiqués) ;
-  // `provisoire: true` = alphabet À VALIDER par un locuteur. Clavier dédié à venir
-  // (le Swahili s'écrit en latin standard → clavier système suffisant).
+  // `provisoire: true` = alphabet À VALIDER par un locuteur.
+  // ⚠️ Le champ `clavier` ci-dessous (hérité du tout premier schéma, seul "nge" y donnait un
+  // sens) est INERTE pour ces langues GRAINE : le vrai signal « a-t-elle un clavier dédié ? »
+  // vient de `usesDedicatedKeyboard()`/`packAlphabet()` (langpacks.js), qui lit la présence
+  // réelle d'un alphabet dans LANG_PACKS, pas ce champ. Bassa/Douala/Fulfuldé/Haoussa ONT déjà
+  // leur clavier dédié complet (keyboard/alphabets_afrique.js) malgré `clavier:"defaut"` ici —
+  // seul le Swahili n'en a genuinement pas (latin standard → clavier système suffisant). Trouvé
+  // à la revue ligne-par-ligne (2026-07-27) : le commentaire disait encore « à venir ».
   { id: "swa", nom: "Swahili", autonyme: "Kiswahili",
     region: "Afrique de l'Est (Tanzanie, Kenya, RDC, Ouganda…)", region_en: "East Africa (Tanzania, Kenya, DRC, Uganda…)", clavier: "defaut",
     statut: "active", graine: true, villages: [],
