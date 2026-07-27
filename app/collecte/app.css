@@ -25,7 +25,11 @@
   --cyan: #0e7490;
   --green: #047857;
   --blue: #2560d8;
-  --gold: #a06e12;
+  /* #a06e12 mesuré à 4.16:1 contre --bg et 4.44:1 contre --panel (WCAG AA texte normal exige
+     4.5:1) : de nombreux textes en petite taille (badges, libellés de pied, boutons discrets)
+     l'utilisent comme couleur de texte, pas seulement en grand titre. Assombri légèrement (même
+     teinte) pour passer 4.5:1 partout (mesuré : 4.59:1 contre --bg, 4.90:1 contre --panel). */
+  --gold: #976811;
   --violet: #6d4fd0;
   --red: #dc2626;
   /* Boutons de NAVIGATION (ouvrent une vue/page) : or DOUX identique dans les deux
@@ -45,7 +49,9 @@
   --toast-bg: #ffffff;
   --tip-bg: linear-gradient(180deg, rgba(6,182,212,.12), rgba(255,255,255,.94));
   --slider-off: #cdd9e6;
-  --placeholder: #7a89a0;
+  /* #7a89a0 mesuré à 3.33:1 (WCAG AA texte normal exige 4.5:1), ex. « Choisir une langue… »
+     dans les combos personnalisés. Assombri (même teinte) pour passer 4.5:1. */
+  --placeholder: #63738b;
   --hairline: rgba(18,34,47,.08);
   --shadow-card: 0 16px 40px rgba(31,54,77,.13);
   --shadow-drop: 0 18px 44px rgba(31,54,77,.22);
@@ -83,7 +89,10 @@
   --toast-bg: #0d1420;
   --tip-bg: linear-gradient(180deg, rgba(34,211,238,.08), rgba(18,24,31,.6));
   --slider-off: #1f2733;
-  --placeholder: #61708280;
+  /* #61708280 (50% transparent) mesuré sous le seuil WCAG AA une fois composé avec le fond
+     sombre. Couleur OPAQUE éclaircie (même teinte) pour passer 4.5:1 de façon fiable, quel que
+     soit le fond réel derrière (panneau ou arrière-plan). */
+  --placeholder: #718295;
   --hairline: rgba(255,255,255,.05);
   --shadow-card: 0 16px 40px rgba(0,0,0,0.4);
   --shadow-drop: 0 16px 40px rgba(0,0,0,.6);

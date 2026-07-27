@@ -1,6 +1,9 @@
 {
-  "version": "v443",
+  "version": "v444",
   "changelog": {
+    "v444": [
+      "Lisibilité : quelques textes discrets en teinte or (badges, libellés de pied de page) et les cases « Choisir… » non encore remplies étaient un peu trop pâles pour un contraste confortable ; assombris/éclaircis légèrement dans les deux thèmes"
+    ],
     "v443": [
       "Correctif de fond : un envoi confirmé sans que l'appareil l'ait appris (dérive possible entre téléphone et ordinateur) est désormais réexaminé à chaque ouverture de l'application, pas seulement après un nouvel envoi",
       "Correction de 6 messages restés en français dans l'app en anglais (état d'un envoi en attente de confirmation)"
