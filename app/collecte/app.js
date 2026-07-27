@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v449";
+const APP_VERSION = "v450";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1784,11 +1784,39 @@ async function rehydrateMyContributions() {
   // Le serveur fait autorité ; on synchronise juste le drapeau local pour un accès instantané.
   if (res && res.testimonial_done) { try { localStorage.setItem(TESTI_DONE_KEY, "1"); } catch (e) { /* ok */ } }
   if (res && Array.isArray(res.contributions) && res.contributions.length) {
-    let known = new Set();
-    try { known = new Set((await DB.all()).map((r) => String(r.server_id || ""))); } catch (e) { /* ok */ }
+    let knownBySid = new Map();
+    try { for (const r of await DB.all()) if (r.server_id) knownBySid.set(String(r.server_id), r); } catch (e) { /* ok */ }
     for (const s of res.contributions) {
       const sid = String(s.id_contribution || s.server_id || "").trim();
-      if (!sid || known.has(sid)) continue;   // déjà en local → on ne duplique pas
+      if (!sid) continue;
+      const existing = knownBySid.get(sid);
+      if (existing) {
+        // RAFRAÎCHIT un enregistrement local APPAUVRI (2026-07-28, Brice : sur téléphone, les
+        // transcriptions anciennes n'affichaient plus que le mot + « langue incorrecte », sans
+        // bouton d'écoute, alors que le PC affichait tout normalement). Cause : cet enregistrement
+        // a été rapatrié un jour où le serveur ne renvoyait pas encore (ou plus) son audio_url
+        // (ex. pendant l'incident de permutation de colonnes), et restait ENSUITE bloqué pour
+        // toujours ici — `known.has(sid)) continue` ignorait systématiquement tout server_id déjà
+        // vu, même si le serveur a depuis retrouvé le vrai contenu. On ne DÉGRADE jamais un
+        // enregistrement local déjà riche (ex. réenregistré/édité localement) : on ne comble que du
+        // vide, jamais un remplacement.
+        const localRicher = isPlayable(existing.audio_url) || (existing.target_text || "").trim();
+        const serverRicher = isPlayable(s.audio_url) || (s.target_text || "").trim();
+        if (!localRicher && serverRicher) {
+          try {
+            await DB.put(Object.assign({}, existing, {
+              source_text: s.source_text || existing.source_text,
+              target_text: s.target_text || existing.target_text,
+              langue: s.langue || existing.langue,
+              direction: s.direction || existing.direction,
+              audio_url: s.audio_url || existing.audio_url,
+              domaine: s.domaine || existing.domaine,
+              note: s.note || existing.note,
+            }));
+          } catch (e) { /* quota/erreur : sans gravité */ }
+        }
+        continue;
+      }
       try {
         // BUG corrigé (2026-07-25, signalé par Brice) : un enregistrement rapatrié depuis le
         // serveur a déjà un server_id, donc il est PAR DÉFINITION confirmé. Sans `status:"sent"`
