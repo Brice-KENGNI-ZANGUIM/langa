@@ -1,6 +1,9 @@
 {
-  "version": "v439",
+  "version": "v440",
   "changelog": {
+    "v440": [
+      "Popup de remerciement après une contribution : la liste des phrases de gratitude affichées au hasard passe de 10 à 140, écrites une à une pour rester variées et sincères (héritage, transmission, apprentissage), afin qu'elles se répètent beaucoup moins souvent"
+    ],
     "v439": [
       "La politique de confidentialité décrivait encore l'ancien profil à un seul village et ne mentionnait pas les langues déclarées : elle liste désormais précisément toutes les données recueillies (villages et langues paternels/maternels, langues parlées)"
     ],
