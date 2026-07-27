@@ -91,6 +91,11 @@ export const DB = {
       total: items.length,
       pending: items.filter((x) => x.status !== "sent").length,
       sent: items.filter((x) => x.status === "sent").length,
+      // Harmonisation entre appareils (2026-07-27) : un item déjà "sent" mais SANS server_id
+      // connu localement (dérive historique, rehydratation partielle…) n'est plus jamais
+      // "pending" — sans ce signal, reconcileTick() n'aurait aucune raison de relancer un tour
+      // de réconciliation pour aller le rétro-combler (cf. app.js reconcileTick()).
+      needsBackfill: items.some((x) => x.status === "sent" && !x.server_id),
     };
   },
 };

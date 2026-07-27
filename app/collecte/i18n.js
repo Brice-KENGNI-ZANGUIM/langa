@@ -712,6 +712,13 @@ export const STR = {
   "toast.propose.ok": { fr: "Proposition envoyée. Merci !", en: "Suggestion sent. Thank you!" },
   "toast.send.fail": { fr: "Envoi impossible (vérifie ta connexion).", en: "Couldn't send (check your connection)." },
   "toast.resend": { fr: "Renvoi en cours…", en: "Resending…" },
+  "toast.pending.confirm": { fr: "{n} envoi(s) à confirmer : {list}{more}. Renvoi auto en cours.", en: "{n} submission(s) to confirm: {list}{more}. Auto-retry in progress." },
+  "toast.all.confirmed.db": { fr: "Tout est confirmé dans la base ✅", en: "Everything is confirmed in the database ✅" },
+  "toast.all.confirmed.local": { fr: "Tout est confirmé sur la machine ✅", en: "Everything is confirmed on this machine ✅" },
+  "send.status.pending": { fr: "↻ {n} en attente de confirmation, renvoi automatique…", en: "↻ {n} awaiting confirmation, retrying automatically…" },
+  "sync.status.checking.sent": { fr: "Vérification de ce qui est déjà envoyé…", en: "Checking what's already been sent…" },
+  "sync.status.sending": { fr: "Envoi {i}/{n}…", en: "Sending {i}/{n}…" },
+  "sync.status.checking.final": { fr: "Vérification finale…", en: "Final check…" },
   "toast.dl.na": { fr: "Le téléchargement n'est pas possible sur cet appareil.", en: "Download isn't possible on this device." },
   "toast.present.dl": { fr: "Présentation téléchargée ✓", en: "Presentation downloaded ✓" },
   "toast.upd.uptodate": { fr: "Application à jour ({v}) ✓", en: "App up to date ({v}) ✓" },
@@ -948,6 +955,13 @@ export function t(key) {
   if (!e) return key;
   const l = getUiLang();
   return (l === "en" ? e.en : e.fr) || e.fr || key;
+}
+
+/** Interpolation d'une chaîne i18n : ti("dir.src.lang", {lang}) → remplace {lang} etc. */
+export function ti(key, subs) {
+  let s = t(key);
+  if (subs) for (const k in subs) s = s.split("{" + k + "}").join(subs[k]);
+  return s;
 }
 
 /** Applique la langue d'interface à tout le DOM statique marqué `data-i18n*`. */

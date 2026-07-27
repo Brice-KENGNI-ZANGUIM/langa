@@ -1,6 +1,10 @@
 {
-  "version": "v442",
+  "version": "v443",
   "changelog": {
+    "v443": [
+      "Correctif de fond : un envoi confirmé sans que l'appareil l'ait appris (dérive possible entre téléphone et ordinateur) est désormais réexaminé à chaque ouverture de l'application, pas seulement après un nouvel envoi",
+      "Correction de 6 messages restés en français dans l'app en anglais (état d'un envoi en attente de confirmation)"
+    ],
     "v442": [
       "Correctif important : le nombre de contributions affiché différait selon la page (Profil, bas de Traduire/Transcrire, Explorer), qui ne comptaient pas exactement les mêmes envois ; les 3 affichages sont désormais rigoureusement cohérents"
     ],

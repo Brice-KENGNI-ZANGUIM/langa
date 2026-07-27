@@ -7,7 +7,7 @@
 // qui PRÉCACHE la coquille FRAÎCHE (`cache: "reload"`, contourne le cache HTTP de
 // GitHub Pages), et le bouton « Mettre à jour » purge les caches avant de
 // recharger. Aucun fichier périmé ne peut donc survivre à une mise à jour.
-const CACHE = "collecte-nge-v442";
+const CACHE = "collecte-nge-v443";
 // Cache des MÉDIAS (icons/), SÉPARÉ du cache de code (économie de données mobiles, 2026-07-25) :
 // bumpé UNIQUEMENT si ce mécanisme lui-même change, JAMAIS à chaque APP_VERSION. Un déploiement
 // de code pur (CACHE qui change) ne re-télécharge donc plus AUCUNE image déjà en cache — seul

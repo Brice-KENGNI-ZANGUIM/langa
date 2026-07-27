@@ -4,6 +4,7 @@
 //   ENDPOINT = Google → Google Apps Script (POST text/plain → Sheet + Drive).
 import { DB } from "./db.js";
 import { CONFIG } from "./config.js";
+import { t, ti } from "./i18n.js";
 
 export function endpoint() {
   const url = (CONFIG.ENDPOINT || localStorage.getItem("serveurUrl") || "").trim();
@@ -451,7 +452,7 @@ export async function reconcile(onProgress = () => {}) {
   const echecsListe = [];
 
   // 1+2) Confirmer d'abord ce qui est DÉJÀ dans la base distante.
-  onProgress("Vérification de ce qui est déjà envoyé…");
+  onProgress(t("sync.status.checking.sent"));
   let remote = await confirmedIds(deviceId);
   const hasConfirm = remote !== null;
   if (hasConfirm) {
@@ -488,7 +489,7 @@ export async function reconcile(onProgress = () => {}) {
   const toSend = (await DB.all()).filter((x) => x.status !== "sent");
   for (let i = 0; i < toSend.length; i++) {
     const rec = toSend[i];
-    onProgress(`Envoi ${i + 1}/${toSend.length}…`);
+    onProgress(ti("sync.status.sending", { i: i + 1, n: toSend.length }));
     await DB.bumpAttempt(rec.client_id);
     let report = null;
     try { report = await postOne(await toPayload(rec)); }
@@ -505,7 +506,7 @@ export async function reconcile(onProgress = () => {}) {
 
   // 4) Re-confirmer (si dispo) pour cocher ce qui vient d'arriver.
   if (hasConfirm) {
-    onProgress("Vérification finale…");
+    onProgress(t("sync.status.checking.final"));
     remote = await confirmedIds(deviceId);
     if (remote) {
       for (const rec of (await DB.all())) {

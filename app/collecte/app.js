@@ -50,7 +50,7 @@ function ensurePropositions() {
 import { CONFIG } from "./config.js";
 import { currentLang, getCurrentLangId, setCurrentLangId, usesDedicatedKeyboard,
   hasChosenLang, knownLanguages, cacheRemoteLanguages, langAlphabet, langLexicon, addKnownLanguage } from "./languages.js";
-import { applyI18n, getUiLang, setUiLang, t, tToast } from "./i18n.js";
+import { applyI18n, getUiLang, setUiLang, t, ti, tToast } from "./i18n.js";
 // legal.js (textes légaux) et export.js (formats d'export) : chargés à la demande, uniquement
 // à l'ouverture de la vue légale / au clic d'export (voir openLegal / downloadDict).
 import { shareCardText, shareTitle, mountShareBar } from "./share.js";
@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v442";
+const APP_VERSION = "v443";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -225,13 +225,6 @@ let audioBlob = null;
 let audioStartTs = 0;
 let audioDurationMs = 0;
 let _recDiscard = false;   // true → l'enregistrement en cours doit être JETÉ (pas gardé)
-
-// Interpolation d'une chaîne i18n : ti("dir.src.lang", {lang}) → remplace {lang} etc.
-function ti(key, subs) {
-  let s = t(key);
-  if (subs) for (const k in subs) s = s.split("{" + k + "}").join(subs[k]);
-  return s;
-}
 
 // --- Sens de traduction : quel champ est en ngiemboon --------------------
 function ngeField() {
@@ -5415,7 +5408,10 @@ const _sessionClientIds = new Set();
 async function reconcileTick() {
   if (_reconcileRunning) return;
   const c0 = await DB.counts();
-  if (c0.pending === 0) { _lastToastAllOk = false; return; }
+  // Un item déjà "sent" mais sans server_id local (dérive historique entre appareils, cf.
+  // DB.counts()) doit AUSSI déclencher un tour, sinon il ne sera jamais rétro-comblé (il n'est
+  // plus jamais "pending" par définition — cf. correctif harmonisation 2026-07-27).
+  if (c0.pending === 0 && !c0.needsBackfill) { _lastToastAllOk = false; return; }
   if (!profileComplete()) return;                    // rien à faire sans profil
   if (!navigator.onLine) {
     setStatus(t("send.offline.auto"));
@@ -5436,19 +5432,18 @@ async function reconcileTick() {
   if (c1.pending === 0) {
     setStatus("");
     if (!_lastToastAllOk) {
-      toast(modeGoogle() ? "Tout est confirmé dans la base ✅"
-                         : "Tout est confirmé sur la machine ✅", "ok");
+      toast(modeGoogle() ? t("toast.all.confirmed.db") : t("toast.all.confirmed.local"), "ok");
       _lastToastAllOk = true;
     }
   } else {
     _lastToastAllOk = false;
     const progressed = c1.pending < c0.pending;
     _reconcileDelay = progressed ? 8000 : Math.min(Math.round(_reconcileDelay * 1.6), 60000);
-    setStatus(`↻ ${c1.pending} en attente de confirmation, renvoi automatique…`);
+    setStatus(ti("send.status.pending", { n: c1.pending }));
     if (res && res.sansConfirm && res.echecsListe && res.echecsListe.length) {
       // Ancien backend (sans endpoint confirm) : on informe, la boucle continue.
       const ap = res.echecsListe.slice(0, 5).map((s) => `« ${s} »`).join(", ");
-      toast(`${c1.pending} envoi(s) à confirmer : ${ap}${res.echecsListe.length > 5 ? "…" : ""}. Renvoi auto en cours.`, "warn");
+      toast(ti("toast.pending.confirm", { n: c1.pending, list: ap, more: res.echecsListe.length > 5 ? "…" : "" }), "warn");
     }
   }
   await updateServerBadge();
@@ -6913,7 +6908,16 @@ async function main() {
   await refreshDoneTexts();   // reconstruit « déjà traité par cet utilisateur » depuis ses contributions
   await refresh();
   await updateServerBadge();
-  scheduleReconcile();   // au chargement : s'il reste des items non confirmés, la boucle de renvoi reprend d'elle-même
+  // HARMONISATION ENTRE APPAREILS (2026-07-27, Brice : compteurs différents sur téléphone et PC) :
+  // un enregistrement local marqué "sent" (même à tort, ex. ancien bug ou doublon) n'est JAMAIS
+  // reconsidéré par `scheduleReconcile()` seul, qui ne programme un tour que si `pending > 0` —
+  // or un item déjà "sent" n'est justement plus jamais "pending". Sans ce correctif, le
+  // rétro-comblement de server_id (cf. sync.js/confirmSentIds) ne s'exécute qu'après une NOUVELLE
+  // action (sauvegarde, renvoi manuel), jamais à la simple ouverture de l'app : deux appareils au
+  // passé différent (bugs historiques, doublons) peuvent donc diverger indéfiniment. `kickReconcile()`
+  // force UN passage de réconciliation à chaque démarrage, quel que soit l'état local, puis
+  // reprogramme normalement s'il reste vraiment quelque chose en attente.
+  kickReconcile();
   verifyUpdateApplied();   // filet ultime : si une mise à jour venait d'être lancée, on confirme qu'elle a bien pris (sinon relance bornée)
   // enregistre le service worker (hors-ligne) + détecte une nouvelle version
   if ("serviceWorker" in navigator) {
