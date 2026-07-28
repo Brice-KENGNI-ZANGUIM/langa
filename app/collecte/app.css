@@ -883,7 +883,12 @@ body {
 .bottom-nav::before { content: ""; position: absolute; top: 0; left: 10%; right: 10%; height: 1.5px;
   z-index: 1; background: linear-gradient(90deg, transparent, var(--cyan), var(--green), var(--gold), transparent);
   opacity: .8; pointer-events: none; }
-.bottom-nav-tabs { max-width: var(--wrap-max); margin: 0 auto; display: flex; position: relative; z-index: 2; }
+/* Répartition UNIFORME sur toute la largeur de la barre (2026-07-28, Brice) : plafonner à
+   --wrap-max centrait les 5 boutons dans un bloc plus étroit que le panneau sur grand écran,
+   laissant un vide visible de chaque côté à l'intérieur de la barre — ici, la barre elle-même
+   EST déjà le conteneur borné (.bottom-nav a ses propres marges latérales clamp()), les onglets
+   doivent occuper toute sa largeur, pas une largeur de lecture supplémentaire par-dessus. */
+.bottom-nav-tabs { width: 100%; display: flex; position: relative; z-index: 2; }
 /* Cadre + icônes ×1.2 (2026-07-26, Brice : « je trouve cette barre beaucoup trop petite ») :
    hauteur uniquement (padding vertical du bouton + hauteur des icônes), largeurs inchangées. */
 .bottom-nav-tab { --acc: var(--cyan); position: relative; flex: 1 1 0; min-width: 0; display: flex; flex-direction: column;
@@ -932,6 +937,13 @@ body {
   content: ""; position: absolute; left: 30%; right: 30%; bottom: 3px; height: 2.5px;
   border-radius: 3px; background: var(--acc); box-shadow: 0 0 9px -1px var(--acc); z-index: 2; }
 .bottom-nav-tab.is-active .bottom-nav-ico { filter: drop-shadow(0 0 7px color-mix(in srgb, var(--acc) 75%, transparent)); }
+/* Écarte le cadre lumineux de Traduire/Explorer du bouton Accueil (2026-07-28, Brice : « la
+   bordure est un peu trop proche du bouton d'accueil ») : ces deux onglets sont les seuls
+   directement collés à l'Accueil (largeur fixe, sans onglet intermédiaire) — une petite marge sur
+   leur côté qui le touche écarte le cadre sans toucher aux 2 autres onglets ni à l'uniformité
+   globale de la barre. */
+#tab-traduire.is-active { margin-right: 6px; }
+#tab-explorer.is-active { margin-left: 6px; }
 @media (max-width: 560px) {
   .bottom-nav-tab { font-size: .6rem; padding: 8.4px 2px 7.2px; }
   .bottom-nav-ico { width: auto; height: 25.2px; }

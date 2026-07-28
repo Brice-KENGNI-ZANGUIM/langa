@@ -1,6 +1,9 @@
 {
-  "version": "v451",
+  "version": "v452",
   "changelog": {
+    "v452": [
+      "Barre de navigation basse : les 5 boutons se répartissent désormais uniformément sur toute la largeur de la barre (au lieu d'être centrés dans un bloc plus étroit sur grand écran) ; le cadre lumineux de Traduire et Explorer, lorsqu'ils sont sélectionnés, est légèrement écarté du bouton Accueil"
+    ],
     "v451": [
       "Popups (invitation à contribuer, mot du jour, mise à jour…) : texte légèrement agrandi pour une lecture plus confortable, sur ordinateur comme sur mobile"
     ],
