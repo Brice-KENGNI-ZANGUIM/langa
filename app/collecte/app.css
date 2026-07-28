@@ -2638,10 +2638,10 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   background: #4f8cff; box-shadow: 0 0 10px #4f8cff; animation: updBlink 1s steps(1,end) infinite; }
 @keyframes updBlink { 0%,50% { opacity:1; } 51%,100% { opacity:.2; } }
 .update-body { min-width:0; }
-.update-title { font-weight: 800; font-size: .98rem; color: var(--text); }
+.update-title { font-weight: 800; font-size: 1.05rem; color: var(--text); }
 .update-title b { color: #4f8cff; }
-.update-sub { margin: 4px 0 2px; font-size: .8rem; color: var(--muted); }
-.update-when { margin: 0 0 12px; font-size: .74rem; color: var(--muted); opacity: .8; }
+.update-sub { margin: 4px 0 2px; font-size: .88rem; color: var(--muted); }
+.update-when { margin: 0 0 12px; font-size: .8rem; color: var(--muted); opacity: .8; }
 .update-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
 .update-banner .btn--primary { background: #4f8cff; border-color: #4f8cff; color: #06122b; }
 .update-btn { animation: updPulse 1.6s ease-in-out infinite; }
@@ -2713,7 +2713,7 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   box-shadow: 0 8px 22px -8px var(--pop-acc); }
 .incite-banner .btn--primary:hover { box-shadow: 0 8px 28px -6px var(--pop-acc); filter: brightness(1.06); }
 .incite-body { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
-.incite-msg { margin: 0; font-size: .92rem; line-height: 1.5; color: var(--text); white-space: pre-line; }
+.incite-msg { margin: 0; font-size: 1rem; line-height: 1.5; color: var(--text); white-space: pre-line; }
 /* Mots clés mis en évidence dans TOUS les popups et notifications (nom du demandeur, mot
    demandé « … », langue cible) : gras + couleur dédiée → lecture d'un coup d'œil. */
 .kw { font-weight: 800; }
@@ -2722,14 +2722,14 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .kw-lang { color: var(--green); }
 .kw-kind, .kw-num { color: var(--text); }
 .incite-actions { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-.incite-actions .btn--primary { padding: 9px 16px; font-size: .9rem; }
+.incite-actions .btn--primary { padding: 9px 16px; font-size: .98rem; }
 .incite-later { background: none; border: none; color: var(--muted); font: inherit; cursor: pointer; text-decoration: underline; }
 .incite-later:hover { color: var(--text); }
 /* « Supprimer » (mute 24h) : même sobriété que « Plus tard », teinte légèrement plus discrète
    au repos (option plus radicale, pas mise en avant), accent rouge au survol pour signaler
    une action plus définitive que « Plus tard ». */
 .incite-listen[hidden] { display: none; }
-.incite-listen { font: inherit; font-weight: 700; font-size: .85rem; cursor: pointer; white-space: nowrap;
+.incite-listen { font: inherit; font-weight: 700; font-size: .92rem; cursor: pointer; white-space: nowrap;
   color: var(--pop-acc); border: 1.5px solid color-mix(in srgb, var(--pop-acc) 55%, var(--border)); border-radius: 999px; padding: 8px 14px;
   background-color: color-mix(in srgb, var(--pop-acc) 8%, var(--panel));
   background-image: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,0));
@@ -2770,19 +2770,19 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   .incite-banner { padding: 11px 34px 11px 13px; gap: 8px; border-radius: 15px; }
   .update-banner { padding: 11px 14px; gap: 8px; border-radius: 15px; }
   .incite-body { gap: 6px; }
-  .incite-msg { font-size: .82rem; line-height: 1.38; }
+  .incite-msg { font-size: .9rem; line-height: 1.4; }
   .incite-actions, .update-actions { gap: 8px; }
-  .incite-actions .btn--primary, .update-banner .btn--primary { font-size: .8rem; padding: 7px 12px; }
-  .incite-later, .update-later { font-size: .78rem; }
-  .incite-listen { font-size: .78rem; padding: 6px 11px; }
+  .incite-actions .btn--primary, .update-banner .btn--primary { font-size: .88rem; padding: 7px 12px; }
+  .incite-later, .update-later { font-size: .84rem; }
+  .incite-listen { font-size: .85rem; padding: 6px 11px; }
   .incite-close { top: 6px; right: 8px; width: 22px; height: 22px; font-size: .72rem; }
   .incite-ico { font-size: 1.4rem; }
   /* Cercle d'illustration (haut-gauche) : rayon × 0.9 (124px → 112px), débord réduit à l'avenant. */
   .incite-ico .pop-ill { width: 112px; height: 112px; margin: -31px 2px -7px -40px; }
   .update-dot { width: 10px; height: 10px; margin-top: 4px; }
-  .update-title { font-size: .88rem; }
-  .update-sub { font-size: .74rem; margin: 3px 0 2px; }
-  .update-when { font-size: .68rem; margin: 0 0 10px; }
+  .update-title { font-size: .95rem; }
+  .update-sub { font-size: .8rem; margin: 3px 0 2px; }
+  .update-when { font-size: .74rem; margin: 0 0 10px; }
 }
 /* Popup de notification : sa couleur suit le TYPE de notification via data-ptype
    (violet = activité sur tes contributions, cyan = demandes). Défaut violet si non typé. */

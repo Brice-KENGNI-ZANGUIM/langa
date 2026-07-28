@@ -1,6 +1,9 @@
 {
-  "version": "v450",
+  "version": "v451",
   "changelog": {
+    "v451": [
+      "Popups (invitation à contribuer, mot du jour, mise à jour…) : texte légèrement agrandi pour une lecture plus confortable, sur ordinateur comme sur mobile"
+    ],
     "v450": [
       "Correctif important : sur téléphone, certaines anciennes transcriptions n'affichaient plus que le mot (sans possibilité de les écouter) alors que le PC les affichait normalement ; un enregistrement local rapatrié un jour où le serveur n'avait pas encore le bon contenu restait bloqué pour toujours. Il se rafraîchit désormais automatiquement dès que le serveur a le vrai contenu, sans jamais dégrader un enregistrement déjà complet"
     ],
