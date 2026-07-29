@@ -3743,6 +3743,51 @@ body.kb-docked .field--consent, body.kb-docked .notif-fab {
   .update-banner { animation: updGlow 1.8s ease-in-out infinite !important; }
   .update-dot { animation: updBlink 1s steps(1,end) infinite !important; }
   .update-btn { animation: updPulse 1.6s ease-in-out infinite !important; }
+  /* RÉACTIVÉ (2026-07-29, Brice : « statique sur téléphone ») après re-mesure : ces deux-là
+     n'ont JAMAIS eu le coût visé par ce bloc (repeint continu de box-shadow/filter/gradient) —
+     l'aurore n'anime que transform+opacity (compositeur GPU, gratuit), et l'onde tactile est un
+     coup unique de ~620ms déclenché PAR le tap lui-même (jamais en continu/au repos). Les
+     vraies coûteuses (halo « respire » en box-shadow, glow d'icône en filter, comète en
+     gradient) restent gelées ci-dessus : ce sont elles, mesurées, qui justifient ce bloc. */
+  .brand::before { animation: ngBrandAurora 16s ease-in-out infinite !important; }
+  .hub-card.is-rippling .hub-ripple { animation: ngRipple 620ms ease-out forwards !important; }
+}
+/* ============================================================================
+   PARITÉ TACTILE (2026-07-29, Brice : « bien rendu sur PC mais statique sur téléphone »).
+   :hover ne se déclenche JAMAIS au toucher (pas de souris) : tous les effets d'interaction
+   ci-dessous (bordure/halo/couleur/décalage AU SURVOL) restaient donc invisibles sur mobile,
+   indépendamment du bloc PERF au-dessus. Ce ne sont QUE des changements d'état PONCTUELS
+   (jamais une boucle continue) : le coût est celui d'un survol normal, négligeable, et
+   explicitement épargné par le bloc PERF ci-dessus (« les effets ponctuels (survol) restent »).
+   Portée : `:active` (appui en cours), jamais touché sur `:hover`/souris — zéro changement pour
+   le rendu PC existant. */
+@media (hover: none) {
+  .hub-card:active { transform: translateY(-4px); border-color: var(--acc);
+    box-shadow: 0 22px 48px -12px var(--acc), 0 0 0 2.5px color-mix(in srgb, var(--acc) 70%, transparent),
+      0 0 40px -8px var(--acc), var(--shadow-card), inset 0 1px 0 var(--card-sheen); }
+  .lang-card:active { transform: translateY(-3px);
+    box-shadow: 0 18px 36px -14px var(--acc), 0 0 26px -10px var(--acc), var(--shadow-card); }
+  .bottom-nav-tab:active .bottom-nav-ico { transform: translateY(-1px); filter: grayscale(0%) opacity(1); }
+  .bottom-nav-home:active .bottom-nav-home-ico { transform: scale(1.06);
+    filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cyan) 65%, transparent)); }
+  .theme-switch:active .theme-ico { transform: translateY(-1px); filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cyan) 60%, transparent)); }
+  .lang-switch:active { border-color: var(--cyan); box-shadow: 0 0 14px -6px var(--cyan); }
+  .settings-close:active { border-color: var(--cyan); color: var(--cyan); box-shadow: 0 0 14px -6px var(--cyan); }
+  .settings-link:active .chip-ico { filter: drop-shadow(0 0 6px rgba(34,211,238,.7)); }
+  .lang-search-btn:active { filter: brightness(1.06); box-shadow: 0 0 16px -6px var(--cyan); }
+  .lang-declare-cta:active { filter: brightness(1.04); box-shadow: 0 0 16px -6px var(--nav-gold); }
+  .work-lang:active { border-color: var(--cyan); box-shadow: inset 0 1px 0 var(--card-sheen), 0 0 24px -6px var(--cyan); }
+  .aplayer-play:active { transform: translateY(-1px); box-shadow: 0 6px 18px -6px var(--cyan); }
+  .grp-back:active { border-color: var(--cyan); box-shadow: 0 0 14px -6px var(--cyan); }
+  .entry-improve:active { border-color: var(--cyan); box-shadow: 0 0 14px -6px var(--cyan); }
+  .ev-btn:active { border-color: var(--evc); box-shadow: 0 0 13px -5px var(--evc), inset 0 1px 0 var(--card-sheen); }
+  .entry-share:active { border-color: var(--gold); color: var(--gold); box-shadow: 0 0 14px -6px var(--gold); }
+  .entry-saymine:active { background: var(--green); color: var(--bg); box-shadow: 0 0 16px -5px var(--green); }
+  .corr-vote:active { border-color: var(--cyan); box-shadow: 0 0 12px -5px var(--cyan); }
+  .corr-kb-btn:active { border-color: var(--cyan); box-shadow: 0 0 14px -6px var(--cyan); }
+  .corr-submit:active { box-shadow: 0 0 18px -6px var(--cyan); }
+  .mini:active { color: var(--cyan); border-color: var(--cyan); background: var(--panel); transform: translateY(-1px); box-shadow: 0 0 14px -6px var(--cyan); }
+  #btn-mic-test:active, .tr-guide-open:active { background: var(--cyan); color: var(--bg); transform: translateY(-1px); box-shadow: 0 0 18px -5px var(--cyan); }
 }
 /* Curseur « occupé » pendant une attente pilotée (rechargement, fetch long). */
 body.is-busy, body.is-busy * { cursor: progress !important; }
