@@ -1,6 +1,9 @@
 {
-  "version": "v452",
+  "version": "v453",
   "changelog": {
+    "v453": [
+      "Gamification : série de jours consécutifs et badges de paliers personnels dans le Profil (Premier pas, Régulier, Passionné, Pilier, Légende) ; classement des villages les plus actifs ajouté dans Explorer, à côté des principaux contributeurs (médailles 🥇🥈🥉)"
+    ],
     "v452": [
       "Barre de navigation basse : les 5 boutons se répartissent désormais uniformément sur toute la largeur de la barre (au lieu d'être centrés dans un bloc plus étroit sur grand écran) ; le cadre lumineux de Traduire et Explorer, lorsqu'ils sont sélectionnés, est légèrement écarté du bouton Accueil"
     ],

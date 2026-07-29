@@ -130,6 +130,15 @@ export const STR = {
   "mc.err": { fr: "Correction impossible", en: "Could not fix" },
   "mc.err.lang": { fr: "Choisis d'abord une langue valide", en: "Pick a valid language first" },
   "mc.audio": { fr: "(contribution vocale)", en: "(voice contribution)" },
+  "mc.streak.one": { fr: "jour d'affilée", en: "day in a row" },
+  "mc.streak.many": { fr: "jours d'affilée", en: "days in a row" },
+  "mc.badge.t1": { fr: "Premier pas", en: "First step" },
+  "mc.badge.t2": { fr: "Régulier", en: "Regular" },
+  "mc.badge.t3": { fr: "Passionné", en: "Enthusiast" },
+  "mc.badge.t4": { fr: "Pilier", en: "Pillar" },
+  "mc.badge.t5": { fr: "Légende", en: "Legend" },
+  "mc.badge.next": { fr: "encore {n} pour « {label} »", en: "{n} more for “{label}”" },
+  "mc.badge.max": { fr: "niveau maximum atteint 🎉", en: "maximum level reached 🎉" },
   "wod.cta": { fr: "Dis-le dans ta langue →", en: "Say it in your language →" },
   "wod.popup.msg": { fr: "◆ Mot du jour : {w}\nDis-le dans ta langue, et laisse-le en héritage.",
                      en: "◆ Word of the day: {w}\nSay it in your language, and leave it as a legacy." },
@@ -844,6 +853,7 @@ export const STR = {
   "exp.vmap.sub.mine": { fr: " · le tien ressort en doré", en: " · yours stands out in gold" },
   "exp.vmap.others": { fr: "Autres", en: "Others" },
   "exp.topcontrib": { fr: "Principaux contributeurs", en: "Top contributors" },
+  "exp.topvillages": { fr: "Villages les plus actifs", en: "Most active villages" },
 
   // — Corrections communautaires —
   "corr.community": { fr: "✅ <b>Version retenue par la communauté</b> :", en: "✅ <b>Version chosen by the community</b>:" },

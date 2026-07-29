@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v452";
+const APP_VERSION = "v453";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1872,6 +1872,56 @@ function dedupeContributions(items) {
   }
   return out;
 }
+// ===== Gamification (2026-07-29) : série de jours + badges de paliers personnels =====
+// 100% dérivé des contributions déjà chargées localement (aucun nouvel appel réseau, aucun champ
+// backend), même liste dédupliquée que le compteur du Profil pour rester cohérent avec lui.
+/** Clé de date LOCALE (fuseau du contributeur), stable pour un Set — jamais la date UTC brute. */
+function _localDateKey(d) {
+  if (!(d instanceof Date) || isNaN(d.getTime())) return "";
+  return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+}
+/** Nombre de jours CONSÉCUTIFS avec au moins une contribution, en remontant depuis aujourd'hui
+ *  (ou hier si rien n'a encore été fait aujourd'hui : la série n'est pas encore "cassée"). */
+function computeStreak(items) {
+  const days = new Set();
+  for (const r of items) { const k = _localDateKey(new Date(r.created_at)); if (k) days.add(k); }
+  if (!days.size) return 0;
+  const cur = new Date(); cur.setHours(0, 0, 0, 0);
+  if (!days.has(_localDateKey(cur))) cur.setDate(cur.getDate() - 1);
+  let n = 0;
+  while (days.has(_localDateKey(cur))) { n++; cur.setDate(cur.getDate() - 1); }
+  return n;
+}
+const BADGE_TIERS = [
+  { n: 1, key: "mc.badge.t1" },
+  { n: 5, key: "mc.badge.t2" },
+  { n: 25, key: "mc.badge.t3" },
+  { n: 100, key: "mc.badge.t4" },
+  { n: 500, key: "mc.badge.t5" },
+];
+/** Palier ATTEINT (le plus haut dont le seuil est franchi) + palier SUIVANT (ou null au maximum). */
+function currentBadgeTier(count) {
+  let cur = null, next = null;
+  for (const tier of BADGE_TIERS) { if (count >= tier.n) cur = tier; else { next = tier; break; } }
+  return { cur, next };
+}
+function renderGamification(items) {
+  const host = $("#mc-gamify"); if (!host) return;
+  if (!items.length) { host.hidden = true; host.innerHTML = ""; return; }
+  const streak = computeStreak(items);
+  const { cur, next } = currentBadgeTier(items.length);
+  const streakHtml = streak > 0
+    ? `<div class="mc-streak">🔥 <b>${streak}</b> ${escapeHtml(ti(streak > 1 ? "mc.streak.many" : "mc.streak.one", { n: String(streak) }))}</div>`
+    : "";
+  const nextHtml = next
+    ? escapeHtml(ti("mc.badge.next", { n: String(next.n - items.length), label: t(next.key) }))
+    : escapeHtml(t("mc.badge.max"));
+  const badgeHtml = `<div class="mc-badge"><span class="mc-badge-ico">🏅</span> <span class="mc-badge-lbl">${escapeHtml(t(cur.key))}</span>
+    <span class="mc-badge-next">${nextHtml}</span></div>`;
+  host.hidden = false;
+  host.innerHTML = streakHtml + badgeHtml;
+}
+
 let _mcItems = [];
 let _mcSearchWired = false;
 async function renderMyContributions() {
@@ -1888,10 +1938,11 @@ async function renderMyContributions() {
     items = dedupeContributions(raw);
   } catch (e) { items = []; }
   const cnt = $("#mc-count");
-  if (!items.length) { host.hidden = true; list.innerHTML = ""; _mcItems = []; if (cnt) cnt.textContent = ""; return; }
+  if (!items.length) { host.hidden = true; list.innerHTML = ""; _mcItems = []; if (cnt) cnt.textContent = ""; renderGamification([]); return; }
   items.sort((a, b) => String(b.created_at || "").localeCompare(String(a.created_at || "")));
   _mcItems = items;
   host.hidden = false;
+  renderGamification(items);
   // La recherche est câblée UNE fois. Le champ vit hors de #mc-list, donc son focus survit au repaint ;
   // keepScroll garde la position de défilement (règle : une action « même page » ne bouge pas le focus).
   if (!_mcSearchWired) {
@@ -2349,11 +2400,28 @@ function topContributorsHtml() {
   }
   const top = Object.values(freq).sort((a, b) => b.k - a.k).slice(0, 6);
   if (!top.length) return "";
-  const list = top.map(({ name, k }) => {
+  const list = top.map(({ name, k }, i) => {
     const label = name ? escapeHtml(name) : `<i>${t("exp.anon")}</i>`;
-    return `<span class="exp-contrib-item">${label} <b>${k}</b></span>`;
+    return `<span class="exp-contrib-item">${RANK_MEDALS[i] || ""}${label} <b>${k}</b></span>`;
   }).join("");
   return `<div class="exp-contrib"><span class="exp-contrib-lbl">✍️ ${t("exp.topcontrib")}</span>${list}</div>`;
+}
+// Médailles (2026-07-29, gamification) : réutilisées par tout petit classement (contributeurs,
+// villages…) — un simple préfixe visuel sur les 3 premiers, sans toucher au calcul lui-même.
+const RANK_MEDALS = ["🥇 ", "🥈 ", "🥉 "];
+/** Classement des villages les plus actifs (mêmes données déjà chargées que la carte des
+ *  variantes juste au-dessus — aucun nouvel appel réseau). Purement informatif/ludique, aucune
+ *  donnée personnelle (le village n'est pas un identifiant de personne). */
+function topVillagesHtml() {
+  const counts = {};
+  for (const e of (_exploreEntries || [])) {
+    const v = (e.variante || "").trim();
+    if (v) counts[v] = (counts[v] || 0) + 1;
+  }
+  const top = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  if (!top.length) return "";
+  const list = top.map(([v, k], i) => `<span class="exp-contrib-item">${RANK_MEDALS[i] || ""}${escapeHtml(v)} <b>${k}</b></span>`).join("");
+  return `<div class="exp-contrib"><span class="exp-contrib-lbl">🏘️ ${t("exp.topvillages")}</span>${list}</div>`;
 }
 /** Peint la grille des langues connues (graine + déclarées) + la carte « déclarer ». */
 /** Libellé de provenance d'une langue = « Région (Pays) ». Règle d'affichage (demande Brice) :
@@ -4743,7 +4811,7 @@ function renderVariantMap() {
     <div class="vmap-sub">${t("exp.vmap.sub")}${mine ? t("exp.vmap.sub.mine") : ""}.</div>
     <svg viewBox="0 0 100 96" class="vmap-svg" role="img" aria-label="${t("exp.vmap.aria")}">
       ${links}${diamonds}
-    </svg>${topContributorsHtml()}`;
+    </svg>${topContributorsHtml()}${topVillagesHtml()}`;
 }
 function renderExplore() {
   _openGroupKey = null;

@@ -790,6 +790,16 @@ body {
 .mc-title { margin: 0 0 4px; font-size: 1.02rem; }
 .mc-hint { margin: 0 0 12px; color: var(--muted); font-size: .88rem; }
 .mc-count { color: var(--muted); font-weight: 600; font-size: .92rem; }
+/* Gamification (2026-07-29) : série de jours + palier de badge, purement informatifs (dérivés du
+   compteur déjà affiché, jamais une nouvelle source de vérité). */
+.mc-gamify[hidden] { display: none; }
+.mc-gamify { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+.mc-streak, .mc-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; border-radius: 999px;
+  border: 1px solid var(--border); background: var(--panel); font-size: .84rem; font-weight: 600; color: var(--text); }
+.mc-streak { border-color: color-mix(in srgb, var(--gold) 45%, var(--border)); background: color-mix(in srgb, var(--gold) 10%, var(--panel)); }
+.mc-streak b { color: var(--gold); font-weight: 800; }
+.mc-badge-lbl { font-weight: 800; color: var(--cyan); }
+.mc-badge-next { color: var(--muted); font-weight: 500; font-size: .8rem; }
 .mc-search { width: 100%; box-sizing: border-box; margin: 0 0 12px; padding: 9px 12px; border-radius: 10px;
   border: 1px solid var(--border); background: var(--panel); color: var(--text); font-size: .9rem; }
 .mc-search:focus { outline: none; border-color: var(--cyan); box-shadow: 0 0 0 3px color-mix(in srgb, var(--cyan) 22%, transparent); }
