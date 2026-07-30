@@ -1,9 +1,6 @@
 {
-  "version": "v455",
+  "version": "v454",
   "changelog": {
-    "v455": [
-      "Dynamisme mobile réglé définitivement : tous les halos animés en continu (cartes du hub, boutons, icônes, aurore) tournent désormais identiquement sur téléphone et sur ordinateur. Mesuré (CPU ralenti ×6, comme un téléphone d'entrée de gamme) : aucun coût de fluidité"
-    ],
     "v454": [
       "Dynamisme visuel sur téléphone : les effets qui ne s'affichaient qu'au survol de la souris (halo des cartes, boutons, icônes...) réagissent désormais aussi au toucher ; l'onde lumineuse au tap et le halo d'en-tête, tous deux sans coût de performance, sont réactivés sur mobile (les animations réellement coûteuses restent volontairement figées pour garder l'app fluide)"
     ],
