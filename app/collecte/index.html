@@ -201,9 +201,10 @@
         <div class="page-banner-cap"><span class="pb-eye" data-i18n="pb.lang.eye">Les langues</span><span class="pb-title" data-i18n="pb.lang.title">Chaque langue compte</span></div></div>
       <div class="hub-head"><h2 class="view-title" id="lang-title" data-i18n="lang.title">Choisis ta langue 🌍</h2></div>
       <p class="hub-vision" data-i18n="lang.intro">Choisis ta langue, ou ajoute-la si elle n'existe pas encore.</p>
-      <!-- Contrôles TOUJOURS visibles en haut (avant la grille) : recherche + le
-           bouton « déclarer ma langue » bien distinct, pour ne pas avoir à faire
-           défiler toute la liste (utile quand les langues se multiplient). -->
+      <!-- Contrôle TOUJOURS visible en haut (avant la grille) : la recherche, pour ne pas
+           avoir à faire défiler toute la liste (utile quand les langues se multiplient).
+           « Ajouter ma langue » vit désormais EN PREMIÈRE POSITION de la grille elle-même
+           (carte dédiée #lang-add-card, couleur or distincte), pas en bouton séparé. -->
       <div class="lang-controls">
         <div class="lang-search-row">
           <input id="lang-search" class="lang-search" type="search" autocomplete="off"
@@ -214,10 +215,6 @@
             <span data-i18n="lang.search.go">Rechercher</span>
           </button>
         </div>
-        <button id="lang-declare-btn" class="lang-btn lang-declare-cta" type="button">
-          <span aria-hidden="true">➕</span>
-          <span data-i18n="lang.add">Ajouter ma langue</span>
-        </button>
       </div>
       <!-- Jumelage de langues (Phase C) : confirmations en attente pour ce contributeur
            et suggestions de fusion de doublons probables. Rempli par renderMergePanel(). -->

@@ -1288,6 +1288,13 @@ body {
 .lang-kb { margin-top: 3px; font-size: .72rem; color: var(--gold); font-weight: 700; letter-spacing: .02em; }
 .lang-card.is-current .lang-kb::after { content: " · sélectionnée"; color: var(--green); }
 :root[lang="en"] .lang-card.is-current .lang-kb::after { content: " · selected"; }
+/* Carte « ➕ Ajouter ma langue », TOUJOURS en tête de grille : couleur or dédiée
+   (--nav-gold, identique à l'ancien bouton .lang-declare-cta) pour rester immédiatement
+   distincte des vraies langues (cyan par défaut / vert = langue sélectionnée). */
+.lang-card--add { --acc: var(--nav-gold); }
+.lang-card--add .lang-emblem { background: linear-gradient(145deg, var(--nav-gold), #f6d98f); box-shadow: 0 0 14px -4px var(--nav-gold); color: var(--nav-ink); }
+.lang-card--add .lang-name { color: var(--nav-gold); }
+.lang-card--add .lang-autonym { color: var(--nav-gold); }
 /* Pastille d'enrichissement (nb de contributions), compacte, sur la ligne de l'autonyme. */
 .lang-count { flex: none; margin-left: auto; font-size: .72rem; font-weight: 800; white-space: nowrap;
   color: var(--cyan); background: color-mix(in srgb, var(--cyan) 12%, var(--panel));
@@ -1342,8 +1349,12 @@ body {
   box-shadow: 0 0 14px -6px var(--green); }
 .lct-primary { font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .05em;
   background: var(--green); color: #04120b; border-radius: 6px; padding: 1px 6px; }
-.lang-chip-add { border-style: dashed; color: var(--muted); }
-.lang-chip-add:hover { border-color: var(--gold); color: var(--gold); }
+/* Couleur or PERMANENTE (pas seulement au survol) : cette puce doit rester
+   immédiatement reconnaissable au milieu des langues déjà déclarées (demande
+   Brice 2026-07-30), cohérente avec .lang-card--add sur l'écran des langues. */
+.lang-chip-add { border-color: var(--gold); color: var(--gold); font-weight: 700;
+  background: color-mix(in srgb, var(--gold) 12%, var(--panel2)); }
+.lang-chip-add:hover { box-shadow: 0 0 14px -6px var(--gold); }
 
 /* ---- Amorce sonore : premières voix d'une langue créée ---- */
 .amorce-intro { color: var(--muted); font-size: .92rem; line-height: 1.5; margin: 0 0 18px; }

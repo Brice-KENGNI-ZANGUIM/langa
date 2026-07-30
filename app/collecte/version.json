@@ -1,6 +1,9 @@
 {
-  "version": "v456",
+  "version": "v457",
   "changelog": {
+    "v457": [
+      "Choisir sa langue : « Ajouter ma langue » est désormais toujours en première position (écran des langues et « Mes langues d'appartenance » du profil), avec une couleur or bien distincte des langues déjà déclarées, sur ordinateur, téléphone et tablette"
+    ],
     "v456": [
       "Retour en arrière : la réactivation complète des halos animés sur mobile (tentée en v455) ralentissait réellement certains téléphones malgré des mesures qui ne l'annonçaient pas ; on revient au réglage précédent (halos continus les plus coûteux gelés sur mobile, effets au toucher conservés)"
     ],

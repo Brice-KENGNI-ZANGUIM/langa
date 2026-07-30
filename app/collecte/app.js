@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v456";
+const APP_VERSION = "v457";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -197,13 +197,16 @@ function renderProfileLangs() {
   if (!box) return;
   const mine = profileLangues();
   const langs = knownLanguages();
-  box.innerHTML = langs.map((l) => {
-    const on = mine.includes(l.id);
-    const primary = mine[0] === l.id;
-    return `<button type="button" class="lang-chip-toggle${on ? " is-on" : ""}${primary ? " is-primary" : ""}" data-lang="${escapeHtml(l.id)}" aria-pressed="${on}">
-      <span class="lct-name">${escapeHtml(l.nom)}</span>${primary ? `<span class="lct-primary">${t("p.langs.primary")}</span>` : ""}</button>`;
-  }).join("") +
-    `<button type="button" class="lang-chip-toggle lang-chip-add" id="profile-lang-add">➕ <span class="lct-name">${t("lang.add")}</span></button>`;
+  // « Ajouter ma langue » TOUJOURS EN PREMIÈRE POSITION (demande Brice 2026-07-30),
+  // couleur or dédiée et permanente (cf. .lang-chip-add en CSS), pour rester
+  // immédiatement reconnaissable partout où une langue se choisit dans l'app.
+  box.innerHTML = `<button type="button" class="lang-chip-toggle lang-chip-add" id="profile-lang-add">➕ <span class="lct-name">${t("lang.add")}</span></button>` +
+    langs.map((l) => {
+      const on = mine.includes(l.id);
+      const primary = mine[0] === l.id;
+      return `<button type="button" class="lang-chip-toggle${on ? " is-on" : ""}${primary ? " is-primary" : ""}" data-lang="${escapeHtml(l.id)}" aria-pressed="${on}">
+        <span class="lct-name">${escapeHtml(l.nom)}</span>${primary ? `<span class="lct-primary">${t("p.langs.primary")}</span>` : ""}</button>`;
+    }).join("");
   box.querySelectorAll(".lang-chip-toggle[data-lang]").forEach((btn) =>
     btn.addEventListener("click", () => toggleProfileLang(btn.dataset.lang)));
   const add = $("#profile-lang-add");
@@ -2463,9 +2466,21 @@ function renderLangChoice() {
       <span class="lang-kb">${kb}</span>
     </button>`;
   }).join("");
-  // Plus de carte « ➕ » noyée en fin de grille : la déclaration se fait via le
-  // bouton distinct EN HAUT (#lang-declare-btn), toujours visible sans défiler.
-  grid.innerHTML = cards;
+  // Carte « ➕ Ajouter ma langue » TOUJOURS EN PREMIÈRE POSITION (demande Brice
+  // 2026-07-30), couleur or dédiée (--nav-gold, cf. .lang-card--add) pour rester
+  // immédiatement reconnaissable au milieu des vraies langues (cyan/vert). Sans
+  // data-lang : ignorée par filterLangGrid (jamais masquée par la recherche) et
+  // par le binding chooseLang ci-dessous (binding dédié juste après).
+  const addCard = `<button class="lang-card lang-card--add" type="button" role="listitem" id="lang-add-card">
+    <span class="lang-head">
+      <span class="lang-emblem" aria-hidden="true">➕</span>
+      <span class="lang-name">${escapeHtml(t("lang.add"))}</span>
+    </span>
+    <span class="lang-sub"><span class="lang-autonym">${escapeHtml(t("lang.add.sub"))}</span></span>
+  </button>`;
+  grid.innerHTML = addCard + cards;
+  const addBtn = $("#lang-add-card");
+  if (addBtn) addBtn.addEventListener("click", openDeclareForm);
   grid.querySelectorAll(".lang-card[data-lang]").forEach((c) =>
     c.addEventListener("click", () => chooseLang(c.dataset.lang)));
   // Réapplique le filtre courant (utile quand la grille est re-rendue après un
@@ -4327,8 +4342,8 @@ const TOURS = {
   lang: withChrome([
     { sel: "#lang-search", title: "Chercher une langue", text: "Tape le nom d'une langue, une région ou un pays : la liste se filtre à mesure que tu écris. Bien pratique quand beaucoup de langues sont déjà déclarées, pour retrouver la tienne d'un coup d'œil",
       en: { title: "Search a language", text: "Type the name of a language, a region or a country: the list filters as you write. Quite handy when many languages are already declared, to find yours at a glance" } },
-    { sel: "#lang-declare-btn", title: "Déclarer ta langue", text: "Si ta langue n'apparaît pas encore dans la liste, ce bouton ouvre un court formulaire pour la créer. Elle devient aussitôt disponible pour toi et pour toute personne qui la parle : LANGIAL est fait pour accueillir toutes nos langues",
-      en: { title: "Declare your language", text: "If your language doesn't appear in the list yet, this button opens a short form to create it. It becomes immediately available to you and to anyone who speaks it: LANGIAL is made to welcome all our languages" } },
+    { sel: "#lang-add-card", title: "Déclarer ta langue", text: "Si ta langue n'apparaît pas encore dans la liste, cette carte dorée en tête ouvre un court formulaire pour la créer. Elle devient aussitôt disponible pour toi et pour toute personne qui la parle : LANGIAL est fait pour accueillir toutes nos langues",
+      en: { title: "Declare your language", text: "If your language doesn't appear in the list yet, this golden card at the top opens a short form to create it. It becomes immediately available to you and to anyone who speaks it: LANGIAL is made to welcome all our languages" } },
     { sel: "#lang-grid", title: "Choisir ta langue", text: "Chaque carte est une langue déjà présente : touche-la pour contribuer dans cette langue. Le ngiemboon a son clavier dédié avec les tons ; les autres s'écrivent avec le clavier habituel de ton téléphone en attendant le leur",
       en: { title: "Choose your language", text: "Each card is a language already present: tap it to contribute in that language. Ngiemboon has its dedicated keyboard with the tones; the others are written with your phone's usual keyboard while waiting for their own" } },
     { sel: "#lang-merge-panel", title: "Réunir les doublons", text: "Deux personnes ont parfois créé la même langue sous des écritures différentes. LANGIAL te le signale ici : tu peux confirmer une fusion qu'on te propose, accepter une ressemblance repérée automatiquement, ou choisir toi-même deux langues que tu sais identiques et proposer de les réunir. La fusion n'a lieu qu'avec l'accord des personnes concernées, et rien n'est perdu : les orthographes et les régions des deux sont conservées",
@@ -6946,8 +6961,8 @@ function initEvents() {
   ["#ld-nom", "#ld-region", "#ld-pays", "#ld-autonyme", "#ld-alias"].forEach((s) => {
     const e = $(s); if (e) e.addEventListener("input", onDeclareInput);
   });
-  // Écran des langues : recherche + bouton « déclarer » distinct en haut.
-  const ldBtn = $("#lang-declare-btn"); if (ldBtn) ldBtn.addEventListener("click", openDeclareForm);
+  // Écran des langues : recherche en haut (le bouton « déclarer » a migré dans la
+  // grille elle-même, cf. #lang-add-card, câblé à chaque renderLangChoice()).
   const ldSearch = $("#lang-search");
   if (ldSearch) {
     ldSearch.addEventListener("input", (e) => filterLangGrid(e.target.value));
