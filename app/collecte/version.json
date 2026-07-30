@@ -1,6 +1,9 @@
 {
-  "version": "v459",
+  "version": "v460",
   "changelog": {
+    "v460": [
+      "Correctif CRITIQUE (profil fantôme) : un profil pouvait ne JAMAIS apparaître dans la base si le serveur répondait mal une seule fois (coupure réseau, erreur serveur), sans aucune indication ni nouvelle tentative. La remontée du profil est désormais fiable comme celle des langues : tout échec est mis en attente et automatiquement rejoué au prochain démarrage ET dès le retour du réseau, jusqu'à confirmation réelle du serveur"
+    ],
     "v459": [
       "Correctif CRITIQUE : choisir « ➕ Ajouter ma langue » pour la langue paternelle/maternelle pouvait, si le mini-formulaire n'était pas rempli aussitôt, enregistrer une valeur invalide au lieu d'une vraie langue et perturber l'enregistrement du profil ; corrigé et un profil déjà touché se répare tout seul à la prochaine ouverture",
       "Header : le logo, le nom et les boutons « Créer mon profil »/Réglages restent désormais toujours sur une seule ligne, même sur les écrans de téléphone les plus étroits (le texte du bouton se réduit automatiquement s'il manque de place)",

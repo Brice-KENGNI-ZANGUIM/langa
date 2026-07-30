@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v459";
+const APP_VERSION = "v460";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -2210,18 +2210,33 @@ function applyOriginsDefaultOnce() {
   } catch (e) { /* jamais bloquant */ }
 }
 
-/** Remonte le PROFIL courant vers la base (best-effort, offline-safe) : tout profil
-    complété doit apparaître dans l'Excel, même sans la moindre contribution. Upsert
-    idempotent par device_id, sans compter de contribution. */
+// --- Remontée du PROFIL, FIABLE (anti-profil-fantôme, 2026-07-31) --------------------------
+// INCIDENT : un profil rempli en entier pouvait ne JAMAIS apparaître dans la base, sans le
+// moindre signe pour l'utilisateur ni pour nous. Cause : pushUserProfile() avalait purement et
+// simplement tout échec (`.catch(() => {})`), qu'il vienne du réseau ou d'une réponse serveur en
+// erreur — aucune re-tentative, aucune trace. Même patron FIABLE que declareLanguageReliable
+// (déjà éprouvé pour les langues) : un échec est mis en file de RÉESSAI, rejouée au prochain
+// démarrage ET au retour du réseau, jusqu'à confirmation explicite du serveur (r.ok !== false).
+const PENDING_PROFILE_PUSH_KEY = "langa-pending-profilepush";
+function _profilePushPending() { try { return localStorage.getItem(PENDING_PROFILE_PUSH_KEY) === "1"; } catch (e) { return false; } }
+function _setProfilePushPending(on) {
+  try { if (on) localStorage.setItem(PENDING_PROFILE_PUSH_KEY, "1"); else localStorage.removeItem(PENDING_PROFILE_PUSH_KEY); }
+  catch (e) { /* stockage indispo : rien de pire qu'avant (comportement best-effort) */ }
+}
+/** Remonte le PROFIL courant vers la base : tout profil complété doit apparaître dans
+    l'Excel, même sans la moindre contribution. Upsert idempotent par device_id, sans compter
+    de contribution. Relit TOUJOURS loadContributeur() au moment de l'envoi (jamais un instantané
+    figé) : un réessai différé remonte donc l'état le plus à jour, jamais une version périmée. */
 async function pushUserProfile() {
   const c = loadContributeur();
-  if (!c.consentement) return;   // pas de remontée sans consentement explicite
+  if (!c.consentement) { _setProfilePushPending(false); return; }   // pas de remontée sans consentement explicite
   let owner_hash = "";
   try { owner_hash = await ownerHash(); } catch (e) { owner_hash = ""; }   // enregistre/rafraîchit le hash du jeton (rétroactif)
   let device_pubkey = "";
   try { device_pubkey = await ensureDeviceKey(); } catch (e) { device_pubkey = ""; }   // clé publique d'appareil (identité)
+  let r = null;
   try {
-    declareUser({
+    r = await declareUser({
       device_id: deviceId(),
       consentement: !!c.consentement,
       owner_hash,   // Couche 2 : le backend mémorise ce hash pour autoriser plus tard une correction
@@ -2230,8 +2245,19 @@ async function pushUserProfile() {
       // issues d'une contribution. Sinon vide (on ne suppose JAMAIS que l'utilisateur parle nge).
       langues: Array.isArray(c.langues) ? c.langues : [],
       contributeur: c,
-    }).catch(() => {});
-  } catch (e) { /* offline : sans gravité, retenté au prochain enregistrement de profil */ }
+    });
+  } catch (e) { r = null; }
+  // Succès UNIQUEMENT si le serveur confirme explicitement (jamais présumé sur un simple
+  // "la requête est partie") : toute autre issue (réseau coupé, erreur serveur, réponse non
+  // JSON) est mise en file de réessai plutôt que silencieusement perdue.
+  if (r && r.ok !== false) { _setProfilePushPending(false); return; }
+  _setProfilePushPending(true);
+}
+/** Rejoue un profil resté en attente (appelé au boot + au retour du réseau). Idempotent :
+    ne fait rien si rien n'est en attente ou si le consentement a été retiré entre-temps. */
+async function flushPendingProfilePush() {
+  if (!_profilePushPending()) return;
+  try { await pushUserProfile(); } catch (e) { /* ok : reste en attente, rejoué au prochain passage */ }
 }
 
 /** Mot de salutation selon l'HEURE LOCALE de l'appareil (matin/après-midi/soir). */
@@ -2321,6 +2347,9 @@ function enterHub() {
   // Rejoue les déclarations de langue restées en attente (anti-langue-orpheline) : garantit
   // qu'une langue déclarée finit toujours par être enregistrée au backend, même après un échec.
   setTimeout(() => { try { flushPendingLangDecls(); } catch (e) { /* jamais bloquant */ } }, 2200);
+  // Rejoue un PROFIL resté en attente (anti-profil-fantôme, 2026-07-31) : garantit qu'un profil
+  // complété finit toujours par apparaître dans la base, même après un échec réseau/serveur.
+  setTimeout(() => { try { flushPendingProfilePush(); } catch (e) { /* jamais bloquant */ } }, 2400);
   // RECONSTITUTION AUTO en temps réel : à chaque connexion, l'appareil re-déclare ses langues
   // locales pour compléter au backend toute métadonnée manquante (pays, région…), sans écraser.
   setTimeout(() => { try { reconstituteLocalLanguages(); } catch (e) { /* jamais bloquant */ } }, 3000);
@@ -6904,8 +6933,17 @@ function initEvents() {
     _dupOverride = ""; checkSourceDuplicate();
     if (s) keepScroll(() => { try { s.focus({ preventScroll: true }); } catch (e) { /* ok */ } });
   });
-  const rs = $("#btn-resend"); if (rs) rs.addEventListener("click", () => { kickReconcile(); toast(t("toast.resend"), "ok"); });
-  window.addEventListener("online", () => { updateServerBadge(); kickReconcile(); });   // retour réseau → renvoi auto
+  const rs = $("#btn-resend"); if (rs) rs.addEventListener("click", () => {
+    kickReconcile();
+    try { flushPendingLangDecls(); } catch (e) { /* jamais bloquant */ }
+    try { flushPendingProfilePush(); } catch (e) { /* jamais bloquant */ }
+    toast(t("toast.resend"), "ok");
+  });
+  window.addEventListener("online", () => {
+    updateServerBadge(); kickReconcile();
+    try { flushPendingLangDecls(); } catch (e) { /* jamais bloquant */ }
+    try { flushPendingProfilePush(); } catch (e) { /* jamais bloquant */ }
+  });   // retour réseau → renvoi auto (contributions + langues + profil, plus aucun ne restait orphelin)
   window.addEventListener("offline", updateServerBadge);
   // Mode proposer / libre
   $("#mode-prop").addEventListener("click", () => { mode = "proposer"; applyMode(); });
