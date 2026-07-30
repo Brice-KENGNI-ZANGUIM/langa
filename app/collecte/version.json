@@ -1,6 +1,12 @@
 {
-  "version": "v458",
+  "version": "v459",
   "changelog": {
+    "v459": [
+      "Correctif CRITIQUE : choisir « ➕ Ajouter ma langue » pour la langue paternelle/maternelle pouvait, si le mini-formulaire n'était pas rempli aussitôt, enregistrer une valeur invalide au lieu d'une vraie langue et perturber l'enregistrement du profil ; corrigé et un profil déjà touché se répare tout seul à la prochaine ouverture",
+      "Header : le logo, le nom et les boutons « Créer mon profil »/Réglages restent désormais toujours sur une seule ligne, même sur les écrans de téléphone les plus étroits (le texte du bouton se réduit automatiquement s'il manque de place)",
+      "Barre de navigation basse : les libellés (Transcrire/Traduire/Explorer/Demander) ne débordent plus les uns sur les autres sur les très petits écrans",
+      "Indicatifs téléphoniques du profil : liste complétée à l'échelle mondiale (près de 170 pays), avec une option « Autre » en secours pour ne jamais bloquer la création d'un profil"
+    ],
     "v458": [
       "Profil : « Ajouter ma langue » est désormais aussi proposé pour la langue paternelle et la langue maternelle (pas seulement pour la langue de contribution) ; la langue s'ajoute et se sélectionne sur place, sans jamais quitter le profil ni perdre les champs déjà remplis ; correctif : un profil pas encore complet pouvait bloquer par erreur l'ajout d'une langue de contribution"
     ],

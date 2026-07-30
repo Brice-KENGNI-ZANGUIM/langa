@@ -416,6 +416,8 @@ export const STR = {
   "p.email": { fr: "E-mail <span class=\"req\">*</span>", en: "Email <span class=\"req\">*</span>" },
   "p.tel": { fr: "Téléphone (avec indicatif) <span class=\"req\">*</span>", en: "Phone (with country code) <span class=\"req\">*</span>" },
   "p.indicatif.choose": { fr: "Indicatif…", en: "Code…" },
+  "p.indicatif.autre": { fr: "Autre (mon pays n'est pas dans la liste)", en: "Other (my country isn't listed)" },
+  "p.indicatif.autre.ph": { fr: "+xxx (indicatif de ton pays)", en: "+xxx (your country's code)" },
   "p.langs": { fr: "Mes langues d'appartenance <span class=\"req\">*</span> <span class=\"hint-inline\">(touche une langue pour l'ajouter, retouche-la pour en faire la principale)</span>",
                en: "My languages <span class=\"req\">*</span> <span class=\"hint-inline\">(tap a language to add it, tap it again to make it the main one)</span>" },
   "p.langs.primary": { fr: "principale", en: "main" },

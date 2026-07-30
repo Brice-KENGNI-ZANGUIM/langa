@@ -230,7 +230,14 @@ body {
    ligne 2 = boutons de navigation (avec texte). */
 .topbar {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  /* minmax(0, auto), PAS un simple "auto" (incident 2026-07-30, écrans très étroits) : une
+     piste "auto" pure se dimensionne TOUJOURS sur le contenu max (max-content) de la marque
+     et du groupe CTA/Réglages, sans jamais pouvoir rétrécir en dessous — tout rétrécissement
+     posé plus bas sur .brand/.chips-nav--top (min-width:0, ellipsis…) restait donc sans AUCUN
+     effet, la piste de grille les empêchait déjà de se resserrer. minmax(0, auto) autorise la
+     piste elle-même à céder de la place quand l'écran est trop étroit pour tenir le contenu
+     naturel, ce qui laisse enfin agir le rétrécissement des enfants. */
+  grid-template-columns: minmax(0, auto) 1fr minmax(0, auto);
   align-items: center;
   /* Grand écart vertical logo → boutons, petite marge boutons → bordure du bas :
      les lignes de boutons descendent sous le logo et se calent près du bas. */
@@ -246,7 +253,12 @@ body {
 }
 :root[data-theme="dark"] .topbar { background: var(--header-bg), url("icons/bg-pattern-dark.jpg") center top / 240px auto repeat; }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .topbar { background: var(--header-bg), url("icons/bg-pattern-dark.jpg") center top / 240px auto repeat; } }
-.brand { grid-column: 1; grid-row: 1; display: flex; align-items: center; gap: 14px; position: relative; }
+.brand { grid-column: 1; grid-row: 1; display: flex; align-items: center; gap: 14px; position: relative;
+  /* min-width:0 nécessaire (grid ET flex item) pour que le nom LANGIAL puisse un jour se
+     tronquer plutôt que forcer la grille du header à déborder (incident 2026-07-30). */
+  min-width: 0; }
+.brand-mark { flex-shrink: 0; }
+.brand-txt { min-width: 0; }
 /* En-tête cinématique : aurore douce (cyan↔vert) qui dérive derrière la marque, posée
    entre le verre et le texte. Purement décorative, gelée sur mobile + prefers-reduced-motion. */
 .brand::before {
@@ -269,7 +281,11 @@ body {
 }
 .brand-mark img { width: 100%; height: 100%; display: block; border-radius: 16px; }
 .brand-txt h1 { margin: 0; font-size: 2.1rem;
-  font-family: var(--font-mono); font-weight: 600; letter-spacing: -.02em; }
+  font-family: var(--font-mono); font-weight: 600; letter-spacing: -.02em;
+  /* Filet de sécurité ULTIME (en plus des paliers de taille par breakpoint plus bas) : si le nom
+     ne tenait quand même pas (écran extrême, zoom navigateur…), il se tronque proprement au lieu
+     de forcer un débordement/retour à la ligne (incident 2026-07-30). */
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; }
 .brand-txt h1 {
   background: linear-gradient(100deg, #eafcff 0%, var(--cyan) 45%, var(--green) 100%);
   -webkit-background-clip: text; background-clip: text;
@@ -404,7 +420,35 @@ body {
    3 pastilles d'état (.chips-meta, grid-column:3 / grid-row:1), à toutes les largeurs
    (Brice 2026-07-25q). Reste dans un `.chips-nav` pour hériter du style plat des boutons de
    nav sans dupliquer les sélecteurs. */
-.chips-nav--top { grid-column: 3; grid-row: 1; justify-self: end; align-self: center; }
+/* justify-self:stretch (PAS "end", incident 2026-07-30) : avec "end", l'élément se dimensionne
+   sur son contenu NATUREL (max-content) et DÉBORDE de sa piste de grille dès qu'elle est plus
+   étroite que ce contenu — le rétrécissement interne (flex-shrink/ellipsis posé plus bas) ne se
+   déclenche jamais tant que rien ne force réellement la largeur de l'élément. "stretch" fait
+   toujours correspondre sa largeur à celle de la piste (jamais plus, jamais moins) : sur grand
+   écran la piste "auto" vaut déjà le contenu (aucun changement visuel), sur écran étroit la
+   piste rétrécit et CETTE largeur réelle et contrainte force enfin le rétrécissement interne à
+   s'appliquer. `justify-content: flex-end` sur l'élément (qui est lui-même un conteneur flex)
+   rétablit l'alignement à droite qu'assurait auparavant justify-self:end. */
+.chips-nav--top { grid-column: 3; grid-row: 1; justify-self: stretch; justify-content: flex-end; align-self: center; }
+/* JAMAIS sur 2 lignes (Brice 2026-07-30, incident écrans très étroits) : contrairement au
+   groupe de nav du bas (.chips-nav de base, flex-wrap:wrap), ce groupe est TOUJOURS réduit
+   à « Créer mon profil » + Réglages → il doit rester sur l'unique ligne du logo, quelle que
+   soit l'étroitesse de l'écran. Le texte du CTA se réduit puis disparaît (icône seule, cf.
+   media queries plus bas) avant que le moindre retour à la ligne ne devienne nécessaire. */
+.chips-nav--top { flex-wrap: nowrap; min-width: 0; }
+/* Dégradation AUTOMATIQUE et PROPORTIONNELLE (jamais de rupture de mise en page, même sur
+   l'écran le plus étroit) : « Réglages » (icône seule) ne rétrécit JAMAIS ; c'est le libellé
+   du CTA « Créer mon profil » qui absorbe en premier tout manque de place, en se réduisant
+   en douceur (troncature « … ») plutôt que de forcer un retour à la ligne. Le texte complet
+   reste toujours disponible en un clin d'œil ailleurs (même CTA, avec son libellé entier,
+   dans le tiroir de réglages). `min-width:0` est nécessaire à CHAQUE niveau flex pour que le
+   rétrécissement se propage jusqu'au <span> du texte (sinon le min-content bloque tout). */
+#header-create-profile { min-width: 0; flex-shrink: 1; }
+#header-create-profile .chip-ico { flex-shrink: 0; }
+#header-create-profile span:last-child {
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+#settings-toggle { flex-shrink: 0; }
 /* Accueil + Réglages en icône NUE (sans cadre/fond de bouton, Brice 2026-07-26b) : l'illustration
    se pose directement sur le décor, comme un vrai symbole plutôt qu'un bouton habillé. Alignées
    entre elles (même taille, même ligne de base) via .chips-nav--top { display:flex, align-items:
@@ -634,6 +678,11 @@ body {
      ils débordent (jamais de scroll ni de bouton caché), le groupe outils reste à droite. */
   .chips-nav { flex-wrap: wrap; gap: 4px 4px; }
   .chips-nav .chip--btn { flex: 0 0 auto; }
+  /* Le groupe CTA/Réglages (.chips-nav--top) n'est PAS ce groupe de nav du bas : il doit
+     rester nowrap MÊME sous 900px (incident 2026-07-30, cf. règle de base plus haut, ici
+     réaffirmée car cette règle générique `.chips-nav{flex-wrap:wrap}` la première l'emportait
+     par ordre de cascade à spécificité égale). */
+  .chips-nav--top { flex-wrap: nowrap; }
   /* Boutons COMPACTS (coins peu arrondis) : icône visible mais peu de padding pour tenir sur
      2 lignes. Structure imposée : groupe NAV = 1re ligne (pleine largeur), groupe PERSO + outils
      (FR/EN, thème) = 2e ligne, collés ensemble (pas de margin-left:auto qui les séparait). */
@@ -905,6 +954,13 @@ body {
   align-items: center; justify-content: center; gap: 3px; padding: 9.6px 4px 8.4px; text-decoration: none;
   color: var(--muted); font: inherit; font-size: .68rem; font-weight: 600;
   transition: color .16s ease, background .16s ease; }
+/* Libellé tronqué proprement sur écran très étroit (incident 2026-07-30, découvert lors de
+   l'audit responsive) : `align-items:center` (au lieu de stretch) laisse le <span> se
+   dimensionner sur SON PROPRE contenu, qui peut dépasser la part réelle (flex:1 1 0, déjà
+   rétrécie) de l'onglet et déborder visuellement sur l'onglet voisin. `max-width:100%` (le
+   <span> devient enfin sensible à la largeur de son parent) + ellipsis règle ça, sans jamais
+   avoir besoin de connaître à l'avance la largeur exacte de l'écran. */
+.bottom-nav-tab span { display: block; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .bottom-nav-tab:hover { color: var(--text); background: color-mix(in srgb, var(--acc) 8%, transparent); }
 /* Limites NETTES entre chaque bouton (Brice 2026-07-27 : « améliore les limitations entre les
    différents boutons ») : fin filet vertical, adouci aux extrémités (jamais un cadre plein),
@@ -1373,12 +1429,38 @@ body {
 .amorce-word-fr { font-size: 1.9rem; font-weight: 800; color: var(--text); line-height: 1.15; }
 .amorce-word-hint { font-size: .84rem; color: var(--muted); }
 .amorce-rec { display: flex; flex-direction: column; align-items: center; gap: 10px; margin: 18px 0; }
+.amorce-rec[hidden] { display: none; }
 .amorce-rec-status { font-size: .85rem; color: var(--muted); min-height: 1.1em; }
 .amorce-audio { width: min(360px, 100%); }
 .amorce-audio[hidden] { display: none; }
 .amorce-actions { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; }
 .amorce-note { color: var(--muted); font-size: .85rem; text-align: center; margin: 12px 0 0; }
 .amorce-note[hidden] { display: none; }
+/* ---- Choix Transcrire/Traduire de l'amorce (Brice 2026-07-30) --------------------------- */
+/* Capsule cliquable, MÊME patron que FR|EN/clair-sombre (.lang-switch déjà en CSS) : centrée,
+   un peu plus large pour accueillir icône+texte des deux côtés. Aucun état par défaut favorisé
+   visuellement (les deux moitiés partent de la même couleur neutre, cf. règle "aucune valeur
+   par défaut" du projet) ; seule la moitié choisie devient colorée. */
+.amorce-mode-switch { display: flex; margin: 0 auto 4px; cursor: pointer; }
+.amorce-mode-switch .lang-seg { padding: 7px 14px; font-size: .8rem; gap: 6px; }
+.amorce-write { display: flex; justify-content: center; margin: 18px 0; }
+.amorce-write[hidden] { display: none; }
+.amorce-write .field { width: min(360px, 100%); }
+.amorce-write input { text-align: center; font-size: 1.1rem; font-weight: 700; }
+/* Panneau de choix (réutilise .tr-guide/.tr-guide-card, cf. index.html) : deux grandes cartes
+   cliquables au lieu d'une liste de règles passive — un vrai choix, pas juste une lecture. */
+.amorce-mode-options { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 6px; }
+.amorce-mode-opt { flex: 1 1 200px; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  padding: 20px 16px; border-radius: 16px; border: 1.5px solid var(--border); background: var(--panel2);
+  cursor: pointer; text-align: center; font: inherit; color: var(--text);
+  transition: border-color .16s ease, box-shadow .16s ease, transform .12s ease, background .16s ease; }
+.amorce-mode-opt:hover, .amorce-mode-opt:focus-visible { transform: translateY(-3px); outline: none;
+  border-color: var(--cyan); box-shadow: 0 14px 28px -14px var(--cyan), 0 0 20px -8px var(--cyan);
+  background: color-mix(in srgb, var(--cyan) 8%, var(--panel2)); }
+.amorce-mode-opt-ico { width: 44px; height: 44px; object-fit: contain;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
+.amorce-mode-opt-name { font-size: 1.05rem; font-weight: 800; }
+.amorce-mode-opt-desc { font-size: .82rem; color: var(--muted); line-height: 1.4; }
 /* Mise en avant du bouton « Terminer » dès le minimum atteint. */
 .btn--go { border-color: var(--green); color: var(--green); box-shadow: 0 0 18px -6px var(--green); }
 
@@ -1942,6 +2024,8 @@ body {
 .tel-row { display: flex; gap: 8px; flex-wrap: wrap; }
 .tel-ind { flex: 1 1 148px; min-width: 128px; }
 .tel-num { flex: 2 1 150px; }
+.tel-ind-autre { width: 100%; margin-top: 8px; }
+.tel-ind-autre[hidden] { display: none; }
 .gate {
   margin: 0 0 6px; padding: 12px 16px; border-radius: 12px;
   background: rgba(229,192,123,.10); border: 1px solid rgba(229,192,123,.5);

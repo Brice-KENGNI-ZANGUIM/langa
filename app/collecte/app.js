@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v458";
+const APP_VERSION = "v459";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1123,11 +1123,19 @@ function collectContributeur() {
     prenom,
     village_pere: villageValue(),
     village_mere: villageMereValue(),
-    langue_pere: $("#c-langue-pere").value,
-    langue_mere: $("#c-langue-mere").value,
+    // "__new__" (➕ Ajouter ma langue, cf. initLangueOrigineSelects) n'est PAS une vraie
+    // langue : le sélecteur reste sur cette valeur tant que le mini-formulaire n'a pas été
+    // rempli. Correctif CRITIQUE (2026-07-30) : collectContributeur() se déclenche à CHAQUE
+    // frappe/changement sur TOUT le formulaire (listeners globaux), donc dès le clic sur
+    // « Ajouter ma langue » — AVANT toute déclaration — ce littéral "__new__" partait tel quel
+    // vers langue_pere/langue_mere puis, étant une chaîne non vide, rendait profileComplete()
+    // faussement vrai et pouvait être envoyé au backend comme valeur de langue. On stocke une
+    // valeur VIDE tant que le choix n'a pas abouti à une vraie langue.
+    langue_pere: $("#c-langue-pere").value === "__new__" ? "" : $("#c-langue-pere").value,
+    langue_mere: $("#c-langue-mere").value === "__new__" ? "" : $("#c-langue-mere").value,
     role: $("#c-role").value,
     email: $("#c-email").value.trim(),
-    indicatif: $("#c-indicatif").value.trim(),
+    indicatif: _indicatifValue(),
     telephone: $("#c-tel").value.trim(),
     consentement: $("#c-consent").checked,
     // DEUXIÈME consentement (distinct du premier) : autorisation d'affichage public du nom.
@@ -6604,11 +6612,29 @@ function initSelectAutoEnhance() {
 }
 function initIndicatifs() {
   const sel = $("#c-indicatif");
-  // Aucun indicatif par défaut : l'utilisateur choisit lui-même son pays.
+  // Aucun indicatif par défaut : l'utilisateur choisit lui-même son pays. « ✎ Autre »
+  // juste après le placeholder (visible sans défiler ~170 pays) : filet de sécurité ultime
+  // si un territoire manque malgré tout à la liste (cf. #c-indicatif-autre, jamais bloquant).
   sel.innerHTML = `<option value="" disabled selected>${escapeHtml(t("p.indicatif.choose"))}</option>` +
+    `<option value="__other__">✎ ${escapeHtml(t("p.indicatif.autre"))}</option>` +
     (CONFIG.INDICATIFS || []).map((x) =>
       `<option value="${escapeHtml(x.d)}">${x.f} ${escapeHtml(x.p)} (${escapeHtml(x.d)})</option>`
     ).join("");
+}
+/** Bascule l'affichage du champ libre "✎ Autre" (indicatif non listé). */
+function _onIndicatifChange() {
+  const sel = $("#c-indicatif"), box = $("#c-indicatif-autre");
+  if (!sel || !box) return;
+  box.hidden = sel.value !== "__other__";
+  if (!box.hidden) { try { box.focus(); } catch (e) { /* ok */ } }
+}
+/** Valeur EFFECTIVE de l'indicatif : le champ libre prend le relais quand "__other__"
+    est choisi (aucune valeur de la liste fixe n'est alors utilisable telle quelle). */
+function _indicatifValue() {
+  const sel = $("#c-indicatif");
+  if (!sel) return "";
+  if (sel.value === "__other__") return ($("#c-indicatif-autre").value || "").trim();
+  return sel.value.trim();
 }
 /** Langue paternelle/maternelle (double lignage, 2026-07-25) : même registre que « Mes langues
     d'appartenance » (knownLanguages()), aucune présélection. « ➕ Ajouter ma langue » TOUJOURS
@@ -6773,13 +6799,15 @@ function initContributeur() {
 
   const fields = ["#c-nom", "#c-prenom", "#c-village-pere", "#c-village-mere",
     "#c-langue-pere", "#c-langue-mere", "#c-role",
-    "#c-email", "#c-indicatif", "#c-tel", "#c-consent",
+    "#c-email", "#c-indicatif", "#c-indicatif-autre", "#c-tel", "#c-consent",
     "#c-credit-on", "#c-credit-format"];
   fields.forEach((sel) => {
     const el = $(sel);
     el.addEventListener("change", collectContributeur);
     el.addEventListener("input", collectContributeur);
   });
+  // « ✎ Autre » (indicatif non listé, demande Brice 2026-07-30) : révèle le champ libre.
+  $("#c-indicatif").addEventListener("change", _onIndicatifChange);
   // Peuple EN DIRECT « Mes langues d'appartenance » dès le choix d'une langue paternelle/
   // maternelle (pas seulement au clic « Continuer ») : sinon profileComplete() (qui exige
   // désormais au moins une langue d'appartenance) ne pourrait jamais devenir vrai sur un
@@ -6810,7 +6838,21 @@ function fillProfileFields() {
   $("#c-prenom").value = c.prenom || "";
   $("#c-role").value = c.role || "";
   $("#c-email").value = c.email || "";
-  $("#c-indicatif").value = c.indicatif || "";
+  // Restaure l'indicatif : s'il correspond à une option de la liste, sélection directe ;
+  // sinon (valeur saisie via "✎ Autre", ou territoire absent de la liste) → bascule sur
+  // "__other__" et remplit le champ libre, pour ne jamais perdre silencieusement un
+  // indicatif déjà enregistré (un <select>.value qui ne correspond à aucune <option> se
+  // vide silencieusement, sans erreur).
+  const indSel = $("#c-indicatif"), indAutre = $("#c-indicatif-autre");
+  const indVal = c.indicatif || "";
+  const indKnown = indVal && Array.from(indSel.options).some((o) => o.value === indVal);
+  if (indVal && !indKnown) {
+    indSel.value = "__other__";
+    if (indAutre) { indAutre.value = indVal; indAutre.hidden = false; }
+  } else {
+    indSel.value = indVal;
+    if (indAutre) { indAutre.value = ""; indAutre.hidden = true; }
+  }
   $("#c-tel").value = c.telephone || "";
   // Défaut pour un NOUVEAU profil (jamais enregistré) : les deux consentements COCHÉS + crédit
   // « prénom » (choix Brice 2026-07-23 : chacun est crédité publiquement par défaut ; libre de
@@ -6819,8 +6861,11 @@ function fillProfileFields() {
   $("#c-consent").checked = _isNewProfile ? true : !!c.consentement;
   $("#c-village-pere").value = c.village_pere || c.village || "";
   $("#c-village-mere").value = c.village_mere || "";
-  $("#c-langue-pere").value = c.langue_pere || "";
-  $("#c-langue-mere").value = c.langue_mere || "";
+  // Auto-guérison (2026-07-30) : un profil sauvegardé AVANT le correctif ci-dessus a pu
+  // stocker le littéral "__new__" au lieu d'une vraie langue (cf. collectContributeur) ;
+  // on ne le réaffiche jamais tel quel, il redevient un champ vide à compléter.
+  $("#c-langue-pere").value = (c.langue_pere && c.langue_pere !== "__new__") ? c.langue_pere : "";
+  $("#c-langue-mere").value = (c.langue_mere && c.langue_mere !== "__new__") ? c.langue_mere : "";
   $("#c-credit-on").checked = _isNewProfile ? true : !!(c.creditMode && c.creditMode !== "none");
   $("#c-credit-format").value = c.creditMode === "sigle" ? "sigle" : "prenom";
   refreshEnhancedSelects();

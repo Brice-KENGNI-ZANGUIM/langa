@@ -258,8 +258,9 @@
       <div class="card amorce">
         <h2 class="view-title" id="amorce-title">Donne voix à ta langue 🎙️</h2>
         <p class="amorce-intro" id="amorce-intro" data-i18n-html="amorce.intro">Ta langue <b>n'est pas encore créée</b>.
-          Pour qu'elle existe vraiment, enregistre-toi en prononçant au moins <b id="amorce-min">5</b> mots
-          de base à voix haute. Si tu t'arrêtes avant les 5, rien n'est créé.</p>
+          Pour qu'elle existe vraiment, contribue au moins <b id="amorce-min">5</b> mots
+          de base, en transcription (voix) ou en traduction (écrit), comme tu préfères.
+          Si tu t'arrêtes avant les 5, rien n'est créé.</p>
 
         <div class="amorce-progress" aria-hidden="false">
           <div class="amorce-bar"><span id="amorce-bar-fill" class="amorce-bar-fill"></span></div>
@@ -270,13 +271,30 @@
         <div class="amorce-word">
           <span class="amorce-word-cat" id="amorce-cat"></span>
           <span class="amorce-word-fr" id="amorce-fr">…</span>
-          <span class="amorce-word-hint" data-i18n="amorce.word.hint">Prononce ce mot à voix haute dans ta langue</span>
+          <span class="amorce-word-hint" id="amorce-word-hint" data-i18n="amorce.word.hint">Prononce ce mot à voix haute dans ta langue</span>
         </div>
 
-        <div class="amorce-rec">
+        <!-- Choix Transcrire/Traduire (Brice 2026-07-30) : ni l'un ni l'autre n'est choisi
+             automatiquement — l'utilisateur décide, et peut changer d'avis à tout moment
+             pendant les 5 mots (capsule cliquable, même patron que FR|EN/clair|sombre). -->
+        <button type="button" class="amorce-mode-switch lang-switch" id="amorce-mode-switch"
+                data-active="transcribe" aria-label="Changer entre transcrire et traduire" data-i18n-title="amorce.mode.switch.title"
+                title="Changer entre transcrire et traduire">
+          <span class="lang-seg" data-seg="transcribe">🎙️ <span data-i18n="amorce.mode.transcribe.short">Transcrire</span></span>
+          <span class="lang-seg" data-seg="translate">✍️ <span data-i18n="amorce.mode.translate.short">Traduire</span></span>
+        </button>
+
+        <div class="amorce-rec" id="amorce-rec-mode">
           <button id="amorce-rec-btn" class="btn btn--rec" type="button" data-i18n="amorce.rec">● Enregistrer</button>
           <span id="amorce-rec-status" class="amorce-rec-status" aria-live="polite"></span>
           <audio id="amorce-audio" class="amorce-audio" controls hidden></audio>
+        </div>
+
+        <div class="amorce-write" id="amorce-write-mode" hidden>
+          <label class="field">
+            <span data-i18n="amorce.write.label">Traduction dans ta langue</span>
+            <input id="amorce-write-input" type="text" data-i18n-ph="amorce.write.ph" placeholder="Écris le mot ici…" autocomplete="off" />
+          </label>
         </div>
 
         <div class="amorce-actions">
@@ -373,6 +391,11 @@
               <select id="c-indicatif" class="tel-ind" aria-label="Indicatif du pays"></select>
               <input id="c-tel" type="text" inputmode="tel" class="tel-num" placeholder="6XX XX XX XX" autocomplete="off" />
             </div>
+            <!-- Filet de sécurité (2026-07-30) : si le pays n'est pas dans la liste (choix
+                 "✎ Autre"), ce champ libre prend le relais, pour ne JAMAIS bloquer un profil
+                 faute d'indicatif listé. -->
+            <input id="c-indicatif-autre" type="text" class="tel-ind-autre" inputmode="tel"
+                   maxlength="8" data-i18n-ph="p.indicatif.autre.ph" placeholder="+xxx" autocomplete="off" hidden />
           </div>
           <div class="field field--langs">
             <span data-i18n-html="p.langs">Mes langues d'appartenance <span class="req">*</span>
@@ -1340,6 +1363,32 @@
         </div>
       </div>
       <button id="tr-guide-ok" class="btn btn--primary tr-guide-ok" type="button" data-i18n="tr.guide.ok">J'ai compris le principe</button>
+    </div>
+  </div>
+
+  <!-- Choix Transcrire/Traduire pour l'amorce d'une nouvelle langue (Brice 2026-07-30) : même
+       présentation premium que #tr-guide (consignes), mais un vrai CHOIX plutôt que des règles
+       passives — aucun des deux modes n'est présélectionné, l'utilisateur décide. Rappelé au
+       DÉBUT de chaque amorce ; la capsule dans la page permet de changer d'avis ensuite. -->
+  <div id="amorce-mode-choice" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="amorce-mode-title">
+    <div class="tr-guide-card amorce-mode-card">
+      <div class="tr-guide-head">
+        <div class="tr-guide-ico tr-guide-ico--img" aria-hidden="true"><img src="icons/ui/ic-rules.png" alt=""></div>
+        <h2 id="amorce-mode-title" data-i18n="amorce.mode.title">Comment veux-tu donner ces premiers mots ?</h2>
+        <p class="tr-guide-lead" data-i18n="amorce.mode.lead">À toi de choisir : tu pourras changer d'avis à tout moment pendant les 5 mots.</p>
+      </div>
+      <div class="amorce-mode-options">
+        <button type="button" class="amorce-mode-opt" id="amorce-mode-opt-transcribe" data-mode="transcribe">
+          <img class="amorce-mode-opt-ico" src="icons/ui/ic-record.png" alt="" aria-hidden="true">
+          <span class="amorce-mode-opt-name" data-i18n="amorce.mode.transcribe">🎙️ Transcrire</span>
+          <span class="amorce-mode-opt-desc" data-i18n="amorce.mode.transcribe.d">Dis le mot à voix haute : on enregistre ta voix.</span>
+        </button>
+        <button type="button" class="amorce-mode-opt" id="amorce-mode-opt-translate" data-mode="translate">
+          <img class="amorce-mode-opt-ico" src="icons/ui/ic-write.png" alt="" aria-hidden="true">
+          <span class="amorce-mode-opt-name" data-i18n="amorce.mode.translate">✍️ Traduire</span>
+          <span class="amorce-mode-opt-desc" data-i18n="amorce.mode.translate.d">Écris la traduction du mot dans ta langue.</span>
+        </button>
+      </div>
     </div>
   </div>
 
