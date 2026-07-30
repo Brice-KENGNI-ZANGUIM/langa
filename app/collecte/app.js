@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v460";
+const APP_VERSION = "v461";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1410,6 +1410,7 @@ function closeAllOverlays() {
   endTour();
   closeSettingsDrawer();
   closePresent();
+  _amorceCloseModeChoice();
 }
 function showView(name) {
   closeAllOverlays();
@@ -2957,6 +2958,11 @@ let _amStartTs = 0;
 let _amorceBuffer = [];        // enregistrements d'amorce en attente de finalisation
 let _amorcePendingNote = "";   // note du formulaire de déclaration, gardée pour la déclaration finale
 let _declareCtx = null;        // origine de la déclaration en cours : "profile" | "lang"
+// Choix Transcrire/Traduire de l'amorce (Brice 2026-07-30) : "transcribe" | "translate" | null
+// (null = pas encore choisi, le panneau de choix bloque tant que rien n'est sélectionné). Ni
+// l'un ni l'autre n'est présélectionné par défaut ; l'utilisateur peut changer d'avis à
+// n'importe quel mot via la capsule #amorce-mode-switch.
+let _amorceMode = null;
 
 function startAmorce(desc) {
   _amorceLang = desc;
@@ -2964,11 +2970,42 @@ function startAmorce(desc) {
   _amorceIdx = 0;
   _amorceDone = 0;
   _amorceSaved = new Set();
+  _amorceMode = null;
   _amResetRec();
   const g = $("#amorce-goal"); if (g) g.textContent = String(AMORCE_MIN);
   const m = $("#amorce-min"); if (m) m.textContent = String(AMORCE_MIN);
   renderAmorce();
   showView("amorce");
+  _amorceOpenModeChoice();   // demande le mode AVANT de laisser contribuer au 1er mot
+}
+/** Ouvre le panneau de choix Transcrire/Traduire (au début de chaque amorce). */
+function _amorceOpenModeChoice() {
+  const box = $("#amorce-mode-choice"); if (box) box.hidden = false;
+}
+function _amorceCloseModeChoice() {
+  const box = $("#amorce-mode-choice"); if (box) box.hidden = true;
+}
+/** Choisit (ou change) le mode de contribution de l'amorce ; réaffiche la bonne zone
+    (enregistrement vocal ou saisie écrite) et efface toute saisie du mot en cours, puisqu'on
+    change de nature de contribution pour ce mot. */
+function _amorceSetMode(mode) {
+  _amorceMode = mode === "translate" ? "translate" : "transcribe";
+  _amResetRec();
+  const wi = $("#amorce-write-input"); if (wi) wi.value = "";
+  _amorceCloseModeChoice();
+  _amorceApplyMode();
+}
+/** Reflète _amorceMode dans l'UI : capsule active, zone visible (voix XOR texte), bouton
+    Valider correctement (dés)activé selon ce que CE mode exige. */
+function _amorceApplyMode() {
+  const sw = $("#amorce-mode-switch"); if (sw) sw.dataset.active = _amorceMode || "transcribe";
+  const isWrite = _amorceMode === "translate";
+  const rec = $("#amorce-rec-mode"); if (rec) rec.hidden = isWrite;
+  const write = $("#amorce-write-mode"); if (write) write.hidden = !isWrite;
+  const hint = $("#amorce-word-hint");
+  if (hint) hint.textContent = isWrite ? t("amorce.word.hint.write") : t("amorce.word.hint");
+  const v = $("#amorce-validate");
+  if (v) v.disabled = isWrite ? !(($("#amorce-write-input").value || "").trim()) : !_amBlob;
 }
 function amorceWord() { return _amorceQueue[_amorceIdx] || null; }
 function _amResetRec() {
@@ -3006,10 +3043,8 @@ function renderAmorce() {
     fin.classList.toggle("amorce-stop", !ok);
     fin.textContent = ok ? t("amorce.create") : t("amorce.stoplater");
   }
-  _amResetRecUiOnly();
-}
-function _amResetRecUiOnly() {
-  const v = $("#amorce-validate"); if (v) v.disabled = !_amBlob;
+  const wi = $("#amorce-write-input"); if (wi) wi.value = "";   // nouveau mot → champ texte vidé
+  _amorceApplyMode();
 }
 async function amorceRecToggle() {
   if (_amRec && _amRec.state === "recording") { amorceStopRec(); return; }
@@ -3055,8 +3090,17 @@ function amorceStopRec() {
     ne perd rien. */
 async function amorceValidate() {
   const w = amorceWord();
-  if (!w || !_amBlob) return;
-  await saveAmorceContribution(_amorceLang.id, w, _amBlob, _amDur);
+  if (!w) return;
+  // Deux modes possibles (ni l'un ni l'autre choisi par défaut, cf. _amorceSetMode) : la
+  // TRADUCTION écrite exige un texte non vide ; la TRANSCRIPTION exige un enregistrement.
+  if (_amorceMode === "translate") {
+    const txt = ($("#amorce-write-input").value || "").trim();
+    if (!txt) return;
+    await saveAmorceContribution(_amorceLang.id, w, null, 0, txt);
+  } else {
+    if (!_amBlob) return;
+    await saveAmorceContribution(_amorceLang.id, w, _amBlob, _amDur, "");
+  }
   if (!_amorceSaved.has(w.id)) { _amorceSaved.add(w.id); _amorceDone++; }
   celebrate($("#amorce-validate"));
   const reached = _amorceDone === AMORCE_MIN;
@@ -3121,7 +3165,7 @@ async function _amorceEnd() {
   try { history.replaceState(null, "", target); } catch (e) { /* ok */ }
   location.reload();
 }
-async function saveAmorceContribution(langId, word, blob, durMs) {
+async function saveAmorceContribution(langId, word, blob, durMs, targetText) {
   const c = loadContributeur();
   const rec = {
     client_id: (crypto.randomUUID && crypto.randomUUID()) || "c-" + Date.now() + "-" + word.id,
@@ -3130,7 +3174,7 @@ async function saveAmorceContribution(langId, word, blob, durMs) {
     source_lang: "fr",
     target_lang: langId,
     source_text: word.fr,
-    target_text: "",
+    target_text: targetText || "",
     domaine: "amorce",
     note: "",
     amorce_id: word.id,
@@ -7160,6 +7204,14 @@ function initEvents() {
   const amSkip = $("#amorce-skip"); if (amSkip) amSkip.addEventListener("click", amorceSkip);
   const amVal = $("#amorce-validate"); if (amVal) amVal.addEventListener("click", amorceValidate);
   const amFin = $("#amorce-finish"); if (amFin) amFin.addEventListener("click", amorceFinish);
+  // Choix Transcrire/Traduire de l'amorce (Brice 2026-07-30) : panneau initial + capsule de
+  // changement d'avis, jamais l'un des deux favorisé par défaut.
+  const amOptT = $("#amorce-mode-opt-transcribe"); if (amOptT) amOptT.addEventListener("click", () => _amorceSetMode("transcribe"));
+  const amOptR = $("#amorce-mode-opt-translate"); if (amOptR) amOptR.addEventListener("click", () => _amorceSetMode("translate"));
+  const amSwitch = $("#amorce-mode-switch"); if (amSwitch) amSwitch.addEventListener("click", () => _amorceSetMode(_amorceMode === "translate" ? "transcribe" : "translate"));
+  const amWrite = $("#amorce-write-input"); if (amWrite) amWrite.addEventListener("input", () => {
+    const v = $("#amorce-validate"); if (v) v.disabled = !amWrite.value.trim();
+  });
   const ldCancel = $("#ld-cancel"); if (ldCancel) ldCancel.addEventListener("click", () => {
     const er = $("#ld-error"); if (er) er.hidden = true;
     restoreDeclareHome();       // rend le formulaire à l'écran des langues (il a pu être déplacé dans le profil)

@@ -1,6 +1,9 @@
 {
-  "version": "v460",
+  "version": "v461",
   "changelog": {
+    "v461": [
+      "Créer une nouvelle langue (5 premiers mots) : possibilité de choisir librement entre transcrire (voix) et traduire (écrit) pour chaque mot, avec un panneau de présentation clair au début et une capsule pour changer d'avis à tout moment ; aucun des deux modes n'est plus imposé par défaut"
+    ],
     "v460": [
       "Correctif CRITIQUE (profil fantôme) : un profil pouvait ne JAMAIS apparaître dans la base si le serveur répondait mal une seule fois (coupure réseau, erreur serveur), sans aucune indication ni nouvelle tentative. La remontée du profil est désormais fiable comme celle des langues : tout échec est mis en attente et automatiquement rejoué au prochain démarrage ET dès le retour du réseau, jusqu'à confirmation réelle du serveur"
     ],
