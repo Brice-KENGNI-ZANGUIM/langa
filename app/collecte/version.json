@@ -1,6 +1,9 @@
 {
-  "version": "v454",
+  "version": "v456",
   "changelog": {
+    "v456": [
+      "Retour en arrière : la réactivation complète des halos animés sur mobile (tentée en v455) ralentissait réellement certains téléphones malgré des mesures qui ne l'annonçaient pas ; on revient au réglage précédent (halos continus les plus coûteux gelés sur mobile, effets au toucher conservés)"
+    ],
     "v454": [
       "Dynamisme visuel sur téléphone : les effets qui ne s'affichaient qu'au survol de la souris (halo des cartes, boutons, icônes...) réagissent désormais aussi au toucher ; l'onde lumineuse au tap et le halo d'en-tête, tous deux sans coût de performance, sont réactivés sur mobile (les animations réellement coûteuses restent volontairement figées pour garder l'app fluide)"
     ],
