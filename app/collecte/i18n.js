@@ -411,6 +411,7 @@ export const STR = {
   "p.langue.pere": { fr: "Langue paternelle <span class=\"req\">*</span>", en: "Paternal language <span class=\"req\">*</span>" },
   "p.langue.mere": { fr: "Langue maternelle <span class=\"req\">*</span>", en: "Maternal language <span class=\"req\">*</span>" },
   "p.langue.choose": { fr: "Choisir…", en: "Choose…" },
+  "p.origin.newlang.ok": { fr: "{nom} est ajoutée et sélectionnée.", en: "{nom} added and selected." },
   "p.role": { fr: "Rôle <span class=\"req\">*</span>", en: "Role <span class=\"req\">*</span>" },
   "p.email": { fr: "E-mail <span class=\"req\">*</span>", en: "Email <span class=\"req\">*</span>" },
   "p.tel": { fr: "Téléphone (avec indicatif) <span class=\"req\">*</span>", en: "Phone (with country code) <span class=\"req\">*</span>" },

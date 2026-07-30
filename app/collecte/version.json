@@ -1,6 +1,9 @@
 {
-  "version": "v457",
+  "version": "v458",
   "changelog": {
+    "v458": [
+      "Profil : « Ajouter ma langue » est désormais aussi proposé pour la langue paternelle et la langue maternelle (pas seulement pour la langue de contribution) ; la langue s'ajoute et se sélectionne sur place, sans jamais quitter le profil ni perdre les champs déjà remplis ; correctif : un profil pas encore complet pouvait bloquer par erreur l'ajout d'une langue de contribution"
+    ],
     "v457": [
       "Choisir sa langue : « Ajouter ma langue » est désormais toujours en première position (écran des langues et « Mes langues d'appartenance » du profil), avec une couleur or bien distincte des langues déjà déclarées, sur ordinateur, téléphone et tablette"
     ],

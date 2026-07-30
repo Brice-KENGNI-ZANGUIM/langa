@@ -340,6 +340,20 @@
               <option value="" disabled selected data-i18n="p.langue.choose">Choisir…</option>
             </select>
           </div>
+          <!-- Mini-déclaration LÉGÈRE (sans amorce sonore) partagée par les deux sélecteurs
+               d'origine : on n'exige pas d'être locuteur de la langue de son père/sa mère pour
+               pouvoir la nommer, contrairement à « Mes langues d'appartenance » (celle-là, on la
+               parle et on l'enrichit). Même patron que #req-newlang (porte Demander). -->
+          <div id="origin-newlang" class="field field--wide req-newlang" hidden>
+            <span data-i18n="req.newlang.h">Ajouter la langue (elle n'est pas dans la liste)</span>
+            <div class="req-newlang-grid">
+              <input id="origin-nl-nom" type="text" maxlength="40" data-i18n-ph="req.newlang.nom" placeholder="Nom de la langue (ex. Ghomala)" autocomplete="off" />
+              <input id="origin-nl-region" type="text" maxlength="80" data-i18n-ph="req.newlang.region" placeholder="Région / localité" autocomplete="off" />
+              <input id="origin-nl-pays" type="text" maxlength="40" data-i18n-ph="req.newlang.pays" placeholder="Pays" autocomplete="off" />
+              <button id="origin-nl-declare" class="btn btn--sm btn--primary" type="button" data-i18n="req.newlang.declare">Déclarer et choisir</button>
+            </div>
+            <p id="origin-nl-error" class="lock-hint" hidden></p>
+          </div>
           <div class="field">
             <span data-i18n-html="p.role">Rôle <span class="req">*</span></span>
             <select id="c-role">
