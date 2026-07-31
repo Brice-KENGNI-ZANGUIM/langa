@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v462";
+const APP_VERSION = "v463";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -7244,9 +7244,10 @@ function initEvents() {
   // changement d'avis, jamais l'un des deux favorisé par défaut.
   const amOptT = $("#amorce-mode-opt-transcribe"); if (amOptT) amOptT.addEventListener("click", () => _amorceSetMode("transcribe"));
   const amOptR = $("#amorce-mode-opt-translate"); if (amOptR) amOptR.addEventListener("click", () => _amorceSetMode("translate"));
-  // Échappatoire du panneau de choix (audit robustesse 2026-07-31) : abandonne proprement
-  // plutôt que de forcer un choix quand l'utilisateur ne veut plus créer cette langue du tout.
-  const amModeCancel = $("#amorce-mode-cancel"); if (amModeCancel) amModeCancel.addEventListener("click", () => { _amorceCloseModeChoice(); _amorceAbort(); });
+  // Pas d'échappatoire ici, volontairement (Brice 2026-07-31) : la création d'une langue est de
+  // toute façon conditionnée à ≥5 mots (AMORCE_MIN, cf. amorceFinish/_amorceAbort) — c'est SUR
+  // L'ÉCRAN D'AMORCE, une fois un mode choisi, que l'abandon reste possible (bouton "Abandonner"
+  // sous le seuil). Ce panneau-ci ne fait QUE choisir COMMENT contribuer, jamais SI on contribue.
   const amSwitch = $("#amorce-mode-switch"); if (amSwitch) amSwitch.addEventListener("click", () => _amorceSetMode(_amorceMode === "translate" ? "transcribe" : "translate"));
   const amWrite = $("#amorce-write-input"); if (amWrite) amWrite.addEventListener("input", () => {
     const v = $("#amorce-validate"); if (v) v.disabled = !amWrite.value.trim();

@@ -281,7 +281,6 @@ export const STR = {
   "amorce.mode.switch.title": { fr: "Changer entre transcrire et traduire", en: "Switch between transcribe and translate" },
   "amorce.write.label": { fr: "Traduction dans ta langue", en: "Translation in your language" },
   "amorce.write.ph": { fr: "Écris le mot ici…", en: "Write the word here…" },
-  "amorce.mode.cancel": { fr: "Annuler, je ne veux plus créer cette langue", en: "Cancel, I no longer want to create this language" },
   "amorce.rec": { fr: "● Enregistrer", en: "● Record" },
   "amorce.rec.stop": { fr: "■ Arrêter", en: "■ Stop" },
   "amorce.rec.wip": { fr: "Enregistrement…", en: "Recording…" },

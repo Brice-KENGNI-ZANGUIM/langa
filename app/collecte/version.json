@@ -1,6 +1,9 @@
 {
-  "version": "v462",
+  "version": "v463",
   "changelog": {
+    "v463": [
+      "Panneau Transcrire/Traduire de l'amorce : retrait du bouton « Annuler » (le principe reste inchangé : aucune langue n'est créée avant au moins 5 mots contribués, l'abandon reste possible sur l'écran de l'amorce lui-même)"
+    ],
     "v462": [
       "Robustesse hors-ligne : les bugs signalés et les corrections/traductions proposées ne peuvent plus disparaître silencieusement en cas de panne réseau ou serveur, avec réessai automatique comme pour le profil ; ajout d'une option « Annuler » sur le panneau Transcrire/Traduire pour ne jamais forcer un choix"
     ],

@@ -1461,7 +1461,6 @@ body {
   filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); }
 .amorce-mode-opt-name { font-size: 1.05rem; font-weight: 800; }
 .amorce-mode-opt-desc { font-size: .82rem; color: var(--muted); line-height: 1.4; }
-.amorce-mode-cancel { display: block; width: fit-content; margin: 18px auto 0; color: var(--muted); }
 /* Mise en avant du bouton « Terminer » dès le minimum atteint. */
 .btn--go { border-color: var(--green); color: var(--green); box-shadow: 0 0 18px -6px var(--green); }
 
