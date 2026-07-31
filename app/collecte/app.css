@@ -3027,14 +3027,6 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .req-answer-box[hidden] { display: none; }
 .req-answer-input { flex: 1 1 220px; min-width: 0; }
 @media (max-width: 520px) { .req-answer-input { flex-basis: 100%; } .req-count { margin-left: 0; } }
-/* Déclaration LÉGÈRE d'une langue absente, depuis le formulaire Demander. */
-.req-newlang { padding: 12px 14px; border-radius: 12px;
-  border: 1px dashed color-mix(in srgb, var(--cyan) 45%, var(--border));
-  background: color-mix(in srgb, var(--cyan) 6%, var(--panel2)); }
-.req-newlang[hidden] { display: none; }
-.req-newlang > span { font-size: .82rem; color: var(--muted); font-weight: 600; }
-.req-newlang-grid { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; align-items: center; }
-.req-newlang-grid input { flex: 1 1 150px; min-width: 0; }
 
 /* ---- Visite guidée (projecteur + bulle « Étape N sur N ») ----
    z-index au-dessus du tiroir de réglages (2147483600) : « Aide » se lance DEPUIS le tiroir

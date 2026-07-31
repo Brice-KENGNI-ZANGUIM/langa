@@ -1,6 +1,10 @@
 {
-  "version": "v463",
+  "version": "v464",
   "changelog": {
+    "v464": [
+      "Création de langue UNIFIÉE : « Ajouter ma langue » ouvre partout (langue paternelle, maternelle, langue d'une demande, langues d'appartenance) le MÊME formulaire complet suivi des 5 mots obligatoires — plus aucun mini-formulaire allégé qui créait une langue non enrichie. La langue créée se place automatiquement dans le champ d'où on l'a lancée",
+      "Bouton « Continuer » du profil : quand il reste grisé, un message indique désormais EXACTEMENT quels champs il reste à remplir (au lieu d'un simple « complète tous les champs »)"
+    ],
     "v463": [
       "Panneau Transcrire/Traduire de l'amorce : retrait du bouton « Annuler » (le principe reste inchangé : aucune langue n'est créée avant au moins 5 mots contribués, l'abandon reste possible sur l'écran de l'amorce lui-même)"
     ],

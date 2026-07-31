@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v463";
+const APP_VERSION = "v464";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -211,7 +211,8 @@ function renderProfileLangs() {
     btn.addEventListener("click", () => toggleProfileLang(btn.dataset.lang)));
   const add = $("#profile-lang-add");
   // Déclarer une nouvelle langue SANS quitter le profil : le formulaire unique s'ouvre en place.
-  if (add) add.addEventListener("click", openDeclareInProfile);
+  // La langue créée rejoint « Mes langues d'appartenance » (aucun champ cible → arg vide).
+  if (add) add.addEventListener("click", () => openDeclareInProfile());
 }
 
 // --- État ----------------------------------------------------------------
@@ -1158,20 +1159,30 @@ function isEmailValid(e) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || "").trim());
 }
 function profileComplete() {
+  return profileMissingFields().length === 0;
+}
+/** Liste PRÉCISE des champs obligatoires encore manquants (libellés lisibles, i18n), dans
+    l'ordre du formulaire. Sert à la fois de source unique pour profileComplete() ET à afficher
+    à l'utilisateur EXACTEMENT ce qui bloque (incident 2026-07-31 : un utilisateur qui avait
+    « rempli toutes les cases » restait bloqué sans savoir lequel manquait — typiquement la
+    langue paternelle/maternelle laissée sur « ➕ Ajouter ma langue » sans déclaration, qui
+    AFFICHE un libellé mais vaut "" en réalité). */
+function profileMissingFields() {
   const c = loadContributeur();
-  return !!(c.nom && c.prenom && c.role &&
-            c.indicatif && c.telephone && c.consentement &&
-            isEmailValid(c.email) &&   // e-mail marqué « * » → réellement exigé (format valide)
-            // Double lignage (2026-07-25) : obligatoire pour un profil neuf. Un profil déjà
-            // existant qui n'a que l'ancien "village" est complété UNE fois par
-            // applyOriginsDefaultOnce() (appelée au boot, avant tout appel à profileComplete())
-            // — jamais bloqué rétroactivement.
-            (c.village_pere || c.village) && c.village_mere && c.langue_pere && c.langue_mere &&
-            // « Mes langues d'appartenance » (2026-07-27, redemandé par Brice après correction du
-            // conflit 2026-07-26) : reconstituteProfileLangues() garde désormais TOUJOURS au
-            // moins langue_pere/langue_mere en plancher (jamais vidée en dessous), donc ce champ
-            // ne peut plus jamais retomber à zéro après une création de profil complète.
-            profileLangues().length > 0);
+  const miss = [];
+  if (!c.nom) miss.push(t("p.miss.nom"));
+  if (!c.prenom) miss.push(t("p.miss.prenom"));
+  if (!(c.village_pere || c.village)) miss.push(t("p.miss.village_pere"));
+  if (!c.langue_pere) miss.push(t("p.miss.langue_pere"));
+  if (!c.village_mere) miss.push(t("p.miss.village_mere"));
+  if (!c.langue_mere) miss.push(t("p.miss.langue_mere"));
+  if (!c.role) miss.push(t("p.miss.role"));
+  if (!isEmailValid(c.email)) miss.push(t("p.miss.email"));   // marqué « * » → format valide exigé
+  if (!c.indicatif) miss.push(t("p.miss.indicatif"));
+  if (!c.telephone) miss.push(t("p.miss.telephone"));
+  if (profileLangues().length === 0) miss.push(t("p.miss.langues"));
+  if (!c.consentement) miss.push(t("p.miss.consent"));
+  return miss;
 }
 // Seuil LÉGER pour l'AFFICHAGE des popups (informer/inviter) : le téléphone/indicatif ne sont
 // exigés que pour CONTRIBUER (le clic sur un popup revérifie profileComplete via requireProfile).
@@ -2699,9 +2710,25 @@ function restoreDeclareHome() {
     profil ENCORE incomplet de déclarer sa langue de contribution manquante — exiger
     profileComplete() ici était circulaire (bloquait la déclaration de la langue qui sert
     justement à compléter le profil). */
-function openDeclareInProfile() {
+// ASSIGNATION DIFFÉRÉE après création de langue (survit au reload de fin d'amorce) : quand la
+// création est lancée depuis un sélecteur précis (langue paternelle/maternelle du profil, ou
+// langue d'une demande), la langue nouvellement créée doit venir s'y placer une fois les 5 mots
+// donnés. On persiste QUEL champ remplir, appliqué dans _amorceEnd (cf. plus bas).
+const PENDING_LANG_ASSIGN_KEY = "langa-pending-langassign";
+function _setPendingLangAssign(field) {
+  try { if (field) localStorage.setItem(PENDING_LANG_ASSIGN_KEY, field); else localStorage.removeItem(PENDING_LANG_ASSIGN_KEY); }
+  catch (e) { /* stockage indispo : la création reste valide, seule l'auto-sélection est perdue */ }
+}
+function _pendingLangAssign() { try { return localStorage.getItem(PENDING_LANG_ASSIGN_KEY) || ""; } catch (e) { return ""; } }
+/** Ouvre le formulaire UNIQUE de création de langue (#lang-declare) EN PLACE dans le profil,
+    suivi de l'amorce ≥5 mots (aucune langue n'est jamais créée sans ces 5 contributions — règle
+    Brice). `assignField` (facultatif) = "langue_pere" | "langue_mere" : la langue créée s'y place
+    automatiquement à la fin. Sans `assignField`, la langue rejoint « Mes langues d'appartenance »
+    (comportement historique du bouton ➕ de cette section). */
+function openDeclareInProfile(assignField) {
   _captureDeclareHome();
   _declareCtx = "profile";
+  _setPendingLangAssign(assignField || "");
   const dc = $("#lang-declare"), host = $("#profile-declare-host");
   if (dc && host) { host.appendChild(dc); dc.hidden = false; dc.scrollIntoView({ behavior: "smooth", block: "nearest" }); }
   const n = $("#ld-nom"); if (n) { try { n.focus(); } catch (e) { /* ok */ } }
@@ -2882,7 +2909,6 @@ function declareQuery() {
 }
 let _ldSimTimer = 0;
 let _ldConfirmDup = false;
-let _reqNlConfirmDup = false;   // même garde anti-doublon pour la déclaration depuis la page Demander
 /** Affiche les langues DÉJÀ présentes qui ressemblent à la saisie (pour éviter les
  *  doublons : Nguiemboon / Nguiembor / Nguiembow…). Rendu SÛR (textContent). */
 function updateLangSuggestions() {
@@ -3166,6 +3192,7 @@ function _amorceAbort() {
     cacheRemoteLanguages(others);
   }
   _amorceBuffer = []; _amorcePendingNote = ""; _amorceLang = null;
+  _setPendingLangAssign("");   // abandon : aucune langue créée → aucune assignation à faire
   toast(t("amorce.cancelled"), "warn");
   showView(_declareCtx === "profile" ? "profile" : "hub");
   _declareCtx = null;
@@ -3182,12 +3209,25 @@ async function _amorceEnd() {
   // avorterait la requête et la langue resterait orpheline). En cas d'échec, file de réessai.
   await declareLanguageReliable(Object.assign({ note: _amorcePendingNote || "" }, desc, { statut }));
   addProfileLangue(desc.id);            // la langue devient une langue d'appartenance
+  // Assignation différée (2026-07-31) : si la création a été lancée depuis « Langue paternelle/
+  // maternelle », la langue fraîchement créée vient s'y placer. Persisté sur le contributeur AVANT
+  // le reload, donc fillProfileFields() la réaffiche automatiquement au rechargement du profil.
+  const assign = _pendingLangAssign();
+  if (assign === "langue_pere" || assign === "langue_mere") {
+    const cc = loadContributeur(); cc[assign] = desc.id; saveContributeur(cc);
+  }
+  // Depuis la porte Demander : on mémorise la langue créée pour la présélectionner au retour
+  // sur Demander (cf. enterDemander), et on y retourne directement après le reload.
+  let reqReturn = false;
+  if (assign === "req_langue") { try { localStorage.setItem("langa-pending-reqlang", desc.id); } catch (e) { /* ok */ } reqReturn = true; }
+  _setPendingLangAssign("");
   _amorceBuffer = []; _amorcePendingNote = "";
   try { kickReconcile(); } catch (e) { /* le boot renverra de toute façon */ }
   // La langue devient la langue courante ; on recharge pour tout reconstruire (corpus, clavier,
-  // Explorer). Retour au profil si la déclaration en venait, sinon l'accueil.
+  // Explorer). Retour au profil si la déclaration en venait, à Demander si c'était son origine,
+  // sinon l'accueil.
   setCurrentLangId(desc.id);
-  const target = _declareCtx === "profile" ? "#/profil" : "#/accueil";
+  const target = reqReturn ? "#/demander" : (_declareCtx === "profile" ? "#/profil" : "#/accueil");
   _declareCtx = null;
   try { history.replaceState(null, "", target); } catch (e) { /* ok */ }
   location.reload();
@@ -4136,12 +4176,11 @@ function _fillReqLangSelects() {
   const sel = $("#req-langue");
   if (sel) {
     const prev = sel.value;   // préserve un choix déjà fait (ex. après déclaration d'une langue)
-    // Aucune valeur par défaut : l'utilisateur DOIT choisir lui-même.
-    // « Déclarer une nouvelle langue » en tête (déclaration LÉGÈRE, sans amorce,
-    // car le demandeur n'est pas forcément locuteur), avant la liste des langues.
+    // Aucune valeur par défaut : l'utilisateur DOIT choisir lui-même. « ➕ Ajouter ma langue »
+    // en tête route vers le formulaire UNIQUE de création + amorce ≥5 mots (unifié 2026-07-31).
     sel.innerHTML =
       `<option value="" disabled${prev ? "" : " selected"}>${escapeHtml(t("req.langue.choose"))}</option>` +
-      `<option value="__new__">➕ ${escapeHtml(t("req.newlang.opt"))}</option>` +
+      `<option value="__new__">➕ ${escapeHtml(t("lang.add"))}</option>` +
       opts;
     sel.value = prev || "";
   }
@@ -4149,54 +4188,33 @@ function _fillReqLangSelects() {
   if (f) { const cur = f.value; f.innerHTML = `<option value="">${escapeHtml(t("req.filter.all"))}</option>` + opts; f.value = cur || ""; }
   refreshEnhancedSelects();
 }
-function _onReqLangueChange() {
-  const sel = $("#req-langue"), box = $("#req-newlang");
-  if (!sel || !box) return;
-  box.hidden = sel.value !== "__new__";
-  if (!box.hidden) { const n = $("#req-nl-nom"); if (n) n.focus(); }
-}
-// Même règle que slugLang (sigle ISO/≤3 lettres, unique) pour la déclaration légère (porte Demander).
+// Même règle que slugLang (sigle ISO/≤3 lettres, unique).
 function _slugLang(nom) { return slugLang(nom); }
-/** Déclaration LÉGÈRE d'une langue depuis la porte Demander : enregistre la langue
-    (nom, région, pays) SANS amorce, l'ajoute au registre local, et la sélectionne. */
-async function _declareNewLangForRequest() {
-  const nom = ($("#req-nl-nom").value || "").trim();
-  const region = ($("#req-nl-region").value || "").trim();
-  const pays = ($("#req-nl-pays").value || "").trim();
-  const err = $("#req-nl-error");
-  if (!nom || !region) { if (err) { err.hidden = false; err.textContent = t("req.newlang.err"); } return; }
-  const known = knownLanguages();
-  // HARMONISATION avec le formulaire principal (submitDeclareLang) : même garde ANTI-DOUBLON.
-  // Si une langue déjà connue ressemble fortement à la saisie, on invite à la CHOISIR dans la
-  // liste plutôt que d'en créer une en double ; un 2e clic force la création malgré tout.
-  const strong = findSimilarLanguages({ nom, region, pays, autonyme: "", alias: [] }, known, { minScore: 0.7, limit: 3 });
-  if (strong.length && !_reqNlConfirmDup) {
-    if (err) { err.hidden = false; err.textContent = ti("req.newlang.dup", { noms: strong.map((s) => s.lang.nom).join(", ") }); }
-    _reqNlConfirmDup = true;
-    return;
-  }
-  _reqNlConfirmDup = false;
-  if (err) err.hidden = true;
-  let id = _slugLang(nom);
-  // évite une collision d'id (suffixe incrémental)
-  let base = id, k = 2; while (known.some((l) => l.id === id)) { id = base + k; k++; }
-  const rec = { id, nom, region, pays, autonyme: "", alias: [], famille: "", clavier: "defaut", statut: "active" };
-  const btn = $("#req-nl-declare"); if (btn) btn.disabled = true;
-  try {
-    declareLanguageReliable({ id, nom, region, pays, device_id: deviceId() });   // fiable (file de réessai si échec)
-    addKnownLanguage(rec);                                                     // registre local immédiat
-    _fillReqLangSelects();
-    const sel = $("#req-langue"); if (sel) { sel.value = id; refreshEnhancedSelects(); }
-    _onReqLangueChange();
-    $("#req-nl-nom").value = ""; $("#req-nl-region").value = ""; $("#req-nl-pays").value = "";
-    toast(ti("req.newlang.ok", { nom }), "ok");
-  } catch (e) { toast(t("req.fail"), "warn"); }
-  finally { if (btn) btn.disabled = false; }
+/** « ➕ Ajouter ma langue » depuis la porte Demander : route vers le formulaire UNIQUE de
+    création de langue + amorce ≥5 mots (unifié 2026-07-31 — plus de mini-form léger). La langue
+    créée sera présélectionnée au retour sur Demander (assignation différée "req_langue"). */
+function _onReqLangueChange() {
+  const sel = $("#req-langue");
+  if (!sel || sel.value !== "__new__") return;
+  sel.value = "";
+  refreshEnhancedSelects();
+  _setPendingLangAssign("req_langue");
+  openDeclareForm();
 }
 async function enterDemander(targetReqId) {
   if (!requireProfile(t("req.needprofile"))) return;
   if (_currentView !== "demander") _reqReturn = _currentView;
   _fillReqLangSelects();
+  // Présélection après création d'une langue depuis cette porte (assignation différée) : la
+  // langue tout juste créée devient le choix courant de la demande.
+  try {
+    const pend = localStorage.getItem("langa-pending-reqlang") || "";
+    if (pend) {
+      const sel = $("#req-langue");
+      if (sel && Array.from(sel.options).some((o) => o.value === pend)) { sel.value = pend; refreshEnhancedSelects(); }
+      localStorage.removeItem("langa-pending-reqlang");
+    }
+  } catch (e) { /* ok */ }
   // Venant d'une notification ciblant une demande précise : on lève le filtre de langue
   // pour être certain que la demande visée figure dans la liste.
   if (targetReqId) { const f = $("#req-filter-lang"); if (f) { f.value = ""; refreshEnhancedSelects(); } }
@@ -5500,9 +5518,16 @@ async function onCorrRec(btn) {
 
 /** Bouton « Continuer / Enregistrer » de la vue profil. */
 function updateProfileGate() {
-  const ok = profileComplete();
+  const missing = profileMissingFields();
+  const ok = missing.length === 0;
   const btn = $("#btn-profile-continue"); if (btn) btn.disabled = !ok;
-  const lock = $("#profile-lock"); if (lock) lock.hidden = ok;
+  const lock = $("#profile-lock");
+  if (lock) {
+    lock.hidden = ok;
+    // Message PRÉCIS : liste les champs qui manquent réellement, plutôt qu'un « complète tous
+    // les champs » générique qui laissait l'utilisateur deviner (incident 2026-07-31).
+    if (!ok) lock.textContent = "🔒 " + ti("profile.lock.missing", { fields: missing.join(", ") });
+  }
 }
 
 /** Reflet visuel du consentement : halo qui respire tant que non coché,
@@ -6757,71 +6782,19 @@ function initLangueOrigineSelects() {
   const mere = $("#c-langue-mere");
   if (mere) { const prev = mere.value; mere.innerHTML = opts; if (prev && prev !== "__new__") mere.value = prev; }
 }
-// --- Déclaration LÉGÈRE d'une langue depuis « Langue paternelle/maternelle » --------------
-// Même esprit que la déclaration légère de la porte Demander (_declareNewLangForRequest) :
-// nommer la langue de son père ou de sa mère n'exige PAS d'en être soi-même locuteur, donc
-// PAS d'amorce sonore obligatoire ici (contrairement à « Mes langues d'appartenance », qu'on
-// parle et qu'on vient enrichir). Se fait EN PLACE dans le profil, sans navigation ni recharge :
-// rien de ce qui a déjà été saisi dans le formulaire n'est donc jamais en danger d'être perdu.
-let _originNlTarget = null;      // "pere" | "mere" : quel sélecteur a ouvert le mini-formulaire
-let _originNlConfirmDup = false;
+// --- « Ajouter ma langue » depuis « Langue paternelle/maternelle » -------------------------
+// UNIFIÉ (Brice 2026-07-31) : plus AUCUN mini-formulaire dédié. On route vers le formulaire
+// UNIQUE de création de langue (#lang-declare) + l'amorce ≥5 mots, exactement comme partout
+// ailleurs — aucune langue ne peut être créée sans ses 5 contributions. La langue créée vient
+// se placer dans le champ (langue_pere/mere) qui a lancé la création (assignation différée).
 function _onOriginLangueChange(which) {
   const sel = $(which === "mere" ? "#c-langue-mere" : "#c-langue-pere");
-  const box = $("#origin-newlang");
-  if (!sel || !box) return;
-  if (sel.value === "__new__") {
-    _originNlTarget = which;
-    box.hidden = false;
-    const n = $("#origin-nl-nom"); if (n) { try { n.focus(); } catch (e) { /* ok */ } }
-    box.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  } else if (_originNlTarget === which) {
-    box.hidden = true;
-    _originNlTarget = null;
-  }
-}
-async function _declareNewOriginLang() {
-  const target = _originNlTarget;
-  const selId = target === "mere" ? "#c-langue-mere" : "#c-langue-pere";
-  const nom = ($("#origin-nl-nom").value || "").trim();
-  const region = ($("#origin-nl-region").value || "").trim();
-  const pays = ($("#origin-nl-pays").value || "").trim();
-  const err = $("#origin-nl-error");
-  if (!nom || !region) { if (err) { err.hidden = false; err.textContent = t("req.newlang.err"); } return; }
-  const known = knownLanguages();
-  // Même garde ANTI-DOUBLON que les autres déclarations légères (Demander) : un 2e clic
-  // confirme malgré la ressemblance plutôt que de bloquer.
-  const strong = findSimilarLanguages({ nom, region, pays, autonyme: "", alias: [] }, known, { minScore: 0.7, limit: 3 });
-  if (strong.length && !_originNlConfirmDup) {
-    if (err) { err.hidden = false; err.textContent = ti("req.newlang.dup", { noms: strong.map((s) => s.lang.nom).join(", ") }); }
-    _originNlConfirmDup = true;
-    return;
-  }
-  _originNlConfirmDup = false;
-  if (err) err.hidden = true;
-  let id = _slugLang(nom);
-  let base = id, k = 2; while (known.some((l) => l.id === id)) { id = base + k; k++; }
-  const rec = { id, nom, region, pays, autonyme: "", alias: [], famille: "", clavier: "defaut", statut: "active" };
-  const btn = $("#origin-nl-declare"); if (btn) btn.disabled = true;
-  try {
-    declareLanguageReliable({ id, nom, region, pays, device_id: deviceId() });   // fiable (file de réessai si échec)
-    addKnownLanguage(rec);                                                     // registre local immédiat
-    initLangueOrigineSelects();                                                 // les 2 listes intègrent la nouvelle langue
-    const sel = $(selId);
-    if (sel) {
-      sel.value = id;
-      refreshEnhancedSelects();
-      // Même effet que choisir une langue existante (cf. listener câblé dans initContributeur) :
-      // elle rejoint aussitôt « Mes langues d'appartenance », et le profil est persisté.
-      addProfileLangue(id);
-      renderProfileLangs();
-      collectContributeur();
-    }
-    const box = $("#origin-newlang"); if (box) box.hidden = true;
-    _originNlTarget = null;
-    $("#origin-nl-nom").value = ""; $("#origin-nl-region").value = ""; $("#origin-nl-pays").value = "";
-    toast(ti("p.origin.newlang.ok", { nom }), "ok");
-  } catch (e) { toast(t("req.fail"), "warn"); }
-  finally { if (btn) btn.disabled = false; }
+  if (!sel || sel.value !== "__new__") return;
+  // On remet le sélecteur sur le placeholder : "__new__" n'est pas une vraie valeur, et la
+  // langue réelle sera posée ici automatiquement à la fin de l'amorce (cf. _amorceEnd).
+  sel.value = "";
+  refreshEnhancedSelects();
+  openDeclareInProfile(which === "mere" ? "langue_mere" : "langue_pere");
 }
 // --- Infobulles par champ (ⓘ) : une aide COURTE et ciblée sur chaque champ du
 // profil et de la déclaration de langue, en complément de la visite guidée (qui,
@@ -6924,16 +6897,15 @@ function initContributeur() {
   ["#c-langue-pere", "#c-langue-mere"].forEach((sel) => {
     $(sel).addEventListener("change", () => {
       const v = $(sel).value;
-      // "__new__" (➕ Ajouter ma langue) n'est PAS une vraie langue : géré séparément
-      // ci-dessous (_onOriginLangueChange ouvre le mini-formulaire de déclaration).
+      // "__new__" (➕ Ajouter ma langue) n'est PAS une vraie langue : traité par
+      // _onOriginLangueChange ci-dessous (ouvre le formulaire UNIQUE de création + amorce).
       if (v && v !== "__new__") { addProfileLangue(v); renderProfileLangs(); }
     });
   });
-  // « ➕ Ajouter ma langue » dans les sélecteurs père/maternel (demande Brice 2026-07-30) :
-  // ouvre le mini-formulaire léger #origin-newlang EN PLACE, sans jamais quitter le profil.
+  // « ➕ Ajouter ma langue » dans les sélecteurs père/maternel : route vers le formulaire UNIQUE
+  // de création de langue (#lang-declare) + amorce ≥5 mots (Brice 2026-07-31, plus de mini-form dédié).
   $("#c-langue-pere").addEventListener("change", () => _onOriginLangueChange("pere"));
   $("#c-langue-mere").addEventListener("change", () => _onOriginLangueChange("mere"));
-  const originNlBtn = $("#origin-nl-declare"); if (originNlBtn) originNlBtn.addEventListener("click", _declareNewOriginLang);
   mountFieldTips();                        // infobulles ⓘ sur le profil ET la déclaration de langue
   document.addEventListener("click", onFieldTipClick);   // popover (un seul ouvert à la fois)
 }
@@ -7136,8 +7108,6 @@ function initEvents() {
   const rFilt = $("#req-filter-lang"); if (rFilt) rFilt.addEventListener("change", renderRequests);
   const rList = $("#req-list"); if (rList) rList.addEventListener("click", onReqListClick);
   const rLang = $("#req-langue"); if (rLang) rLang.addEventListener("change", _onReqLangueChange);
-  const rNl = $("#req-nl-declare"); if (rNl) rNl.addEventListener("click", _declareNewLangForRequest);
-  ["#req-nl-nom", "#req-nl-region", "#req-nl-pays"].forEach((s) => { const el = $(s); if (el) el.addEventListener("input", () => { _reqNlConfirmDup = false; const e = $("#req-nl-error"); if (e) e.hidden = true; }); });
   const upNow = $("#update-now"); if (upNow) upNow.addEventListener("click", doUpdate);
   const upLater = $("#update-later"); if (upLater) upLater.addEventListener("click", () => {
     const dep = $("#update-ver") ? $("#update-ver").textContent.trim() : "";
