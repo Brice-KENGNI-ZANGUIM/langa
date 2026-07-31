@@ -61,7 +61,7 @@
   .masthead{display:flex; flex-direction:column; gap:15px; min-width:0}
   /* Wordmark en SVG (dégradé natif) → aucun artefact de bord comme avec
      background-clip:text à l'export PDF. */
-  .mast-title{display:block; height:118px; width:454px; align-self:flex-start; overflow:visible}
+  .mast-title{display:block; height:118px; width:454px; max-width:100%; align-self:flex-start; overflow:visible}
   .eyebrow{font-size:31px; font-weight:700; letter-spacing:.28em; text-transform:uppercase; color:var(--brass)}
   .eyebrow .nge{text-transform:none; color:var(--cy)}
   .emblem{width:186px; height:186px; flex:0 0 auto; filter:drop-shadow(0 16px 34px rgba(15,118,110,.5))}
@@ -177,7 +177,7 @@
     .wrap{padding:36px 20px 30px}
     .top{align-items:center; gap:12px}
     .masthead{flex:1 1 auto; min-width:0}
-    .mast-title{height:73px}
+    .mast-title{width:auto; height:73px}
     .eyebrow{font-size:18px; letter-spacing:.12em}
     .emblem{width:116px; height:116px}
     .hero{margin-top:16px}
