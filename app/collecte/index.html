@@ -1389,6 +1389,11 @@
           <span class="amorce-mode-opt-desc" data-i18n="amorce.mode.translate.d">Écris la traduction du mot dans ta langue.</span>
         </button>
       </div>
+      <!-- Échappatoire (audit robustesse 2026-07-31) : ce panneau plein écran bloquait toute
+           interaction avec le reste de la page (comme les autres .tr-guide) SANS offrir de
+           sortie si l'utilisateur ne veut choisir ni l'un ni l'autre — seul modale de l'app
+           dans ce cas. Abandonne proprement (rien n'est créé, cf. _amorceAbort()). -->
+      <button type="button" class="chip chip--btn amorce-mode-cancel" id="amorce-mode-cancel" data-i18n="amorce.mode.cancel">Annuler, je ne veux plus créer cette langue</button>
     </div>
   </div>
 

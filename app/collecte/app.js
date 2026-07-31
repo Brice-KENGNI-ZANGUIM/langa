@@ -66,7 +66,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v461";
+const APP_VERSION = "v462";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -1664,6 +1664,25 @@ function saveLocalBug(bug) {
   const arr = localBugs();
   if (!arr.some((b) => b.id === bug.id)) { arr.push(bug); localStorage.setItem("bugsSignales", JSON.stringify(arr)); }
 }
+/** Marque un bug local comme confirmé par le serveur (arrête ses réessais). */
+function _markLocalBugSynced(id) {
+  try {
+    const arr = localBugs();
+    const b = arr.find((x) => x.id === id);
+    if (b) { b._synced = true; localStorage.setItem("bugsSignales", JSON.stringify(arr)); }
+  } catch (e) { /* ok */ }
+}
+/** Anti-bug-fantôme (2026-07-31, même incident que le profil) : postBug() était un
+    best-effort qui avalait tout échec SANS jamais réessayer — un signalement pouvait rester
+    local pour toujours pendant qu'un toast « envoyé ✓ » affirmait le contraire. Rejoue tout
+    bug pas encore confirmé (appelé au boot + retour réseau + bouton « Renvoyer »). */
+async function flushPendingBugs() {
+  const pending = localBugs().filter((b) => b && b.id && !b._synced);
+  for (const b of pending) {
+    try { const r = await postBug(b); if (r && r.ok !== false) _markLocalBugSynced(b.id); }
+    catch (e) { /* reste en attente, rejoué au prochain passage */ }
+  }
+}
 function bugCardHtml(bug) {
   const resolu = bug.statut === "resolu";
   // Variante anglaise des champs textuels quand la langue d'interface est l'anglais.
@@ -1757,8 +1776,13 @@ async function submitBug() {
   $("#bug-titre").value = ""; $("#bug-desc").value = "";
   $("#bug-status").textContent = t("bug.saved");
   await renderBugs();
-  try { await postBug(bug); } catch (e) { /* best-effort ; resignalé à la prochaine ouverture */ }
-  toast(t("toast.bug.sent"), "ok");
+  // Le toast reflète ce qui s'est RÉELLEMENT passé (jamais un "envoyé ✓" présumé) : en cas
+  // d'échec, le bug reste visible localement et sera rejoué automatiquement (flushPendingBugs,
+  // au prochain démarrage ou retour réseau) — même garantie que le profil et les langues.
+  let r = null;
+  try { r = await postBug(bug); } catch (e) { r = null; }
+  if (r && r.ok !== false) { _markLocalBugSynced(bug.id); toast(t("toast.bug.sent"), "ok"); }
+  else toast(t("toast.bug.pending"), "warn");
 }
 
 /** Ouvre la vue profil. edit=true → mode modification (depuis l'app). */
@@ -2351,6 +2375,9 @@ function enterHub() {
   // Rejoue un PROFIL resté en attente (anti-profil-fantôme, 2026-07-31) : garantit qu'un profil
   // complété finit toujours par apparaître dans la base, même après un échec réseau/serveur.
   setTimeout(() => { try { flushPendingProfilePush(); } catch (e) { /* jamais bloquant */ } }, 2400);
+  // Rejoue les BUGS signalés restés en attente (même incident, 2026-07-31) : un signalement
+  // resté local à cause d'un échec réseau/serveur finit toujours par atteindre le suivi commun.
+  setTimeout(() => { try { flushPendingBugs(); } catch (e) { /* jamais bloquant */ } }, 2600);
   // RECONSTITUTION AUTO en temps réel : à chaque connexion, l'appareil re-déclare ses langues
   // locales pour compléter au backend toute métadonnée manquante (pays, région…), sans écraser.
   setTimeout(() => { try { reconstituteLocalLanguages(); } catch (e) { /* jamais bloquant */ } }, 3000);
@@ -5393,12 +5420,19 @@ async function onProposeSubmit(btn) {
     payload = Object.assign(base, { texte });
   }
   btn.disabled = true;
-  try {
-    await postSuggestion(payload);
+  // Vérifie EXPLICITEMENT r.ok (pas seulement l'absence d'exception, 2026-07-31) : un serveur
+  // qui répond sans lever d'erreur mais avec {ok:false} affichait quand même "envoyé ✓" et
+  // effaçait l'enregistrement/le texte proposé, sans aucun moyen de le renvoyer.
+  let r = null;
+  try { r = await postSuggestion(payload); } catch (e) { r = null; }
+  if (r && r.ok !== false) {
     panel._corrBlob = null; panel._corrDur = 0;
     await reloadCorrections(panel.closest(".entry"));
     toast(t("toast.propose.ok"), "ok");
-  } catch (e) { btn.disabled = false; toast(t("toast.send.fail"), "warn"); }
+  } else {
+    btn.disabled = false;
+    toast(t("toast.send.fail"), "warn");
+  }
 }
 function blobToBase64Corr(blob) {
   return new Promise((res, rej) => {
@@ -6981,13 +7015,15 @@ function initEvents() {
     kickReconcile();
     try { flushPendingLangDecls(); } catch (e) { /* jamais bloquant */ }
     try { flushPendingProfilePush(); } catch (e) { /* jamais bloquant */ }
+    try { flushPendingBugs(); } catch (e) { /* jamais bloquant */ }
     toast(t("toast.resend"), "ok");
   });
   window.addEventListener("online", () => {
     updateServerBadge(); kickReconcile();
     try { flushPendingLangDecls(); } catch (e) { /* jamais bloquant */ }
     try { flushPendingProfilePush(); } catch (e) { /* jamais bloquant */ }
-  });   // retour réseau → renvoi auto (contributions + langues + profil, plus aucun ne restait orphelin)
+    try { flushPendingBugs(); } catch (e) { /* jamais bloquant */ }
+  });   // retour réseau → renvoi auto (contributions + langues + profil + bugs, plus aucun orphelin)
   window.addEventListener("offline", updateServerBadge);
   // Mode proposer / libre
   $("#mode-prop").addEventListener("click", () => { mode = "proposer"; applyMode(); });
@@ -7208,6 +7244,9 @@ function initEvents() {
   // changement d'avis, jamais l'un des deux favorisé par défaut.
   const amOptT = $("#amorce-mode-opt-transcribe"); if (amOptT) amOptT.addEventListener("click", () => _amorceSetMode("transcribe"));
   const amOptR = $("#amorce-mode-opt-translate"); if (amOptR) amOptR.addEventListener("click", () => _amorceSetMode("translate"));
+  // Échappatoire du panneau de choix (audit robustesse 2026-07-31) : abandonne proprement
+  // plutôt que de forcer un choix quand l'utilisateur ne veut plus créer cette langue du tout.
+  const amModeCancel = $("#amorce-mode-cancel"); if (amModeCancel) amModeCancel.addEventListener("click", () => { _amorceCloseModeChoice(); _amorceAbort(); });
   const amSwitch = $("#amorce-mode-switch"); if (amSwitch) amSwitch.addEventListener("click", () => _amorceSetMode(_amorceMode === "translate" ? "transcribe" : "translate"));
   const amWrite = $("#amorce-write-input"); if (amWrite) amWrite.addEventListener("input", () => {
     const v = $("#amorce-validate"); if (v) v.disabled = !amWrite.value.trim();

@@ -1,6 +1,9 @@
 {
-  "version": "v461",
+  "version": "v462",
   "changelog": {
+    "v462": [
+      "Robustesse hors-ligne : les bugs signalés et les corrections/traductions proposées ne peuvent plus disparaître silencieusement en cas de panne réseau ou serveur, avec réessai automatique comme pour le profil ; ajout d'une option « Annuler » sur le panneau Transcrire/Traduire pour ne jamais forcer un choix"
+    ],
     "v461": [
       "Créer une nouvelle langue (5 premiers mots) : possibilité de choisir librement entre transcrire (voix) et traduire (écrit) pour chaque mot, avec un panneau de présentation clair au début et une capsule pour changer d'avis à tout moment ; aucun des deux modes n'est plus imposé par défaut"
     ],
