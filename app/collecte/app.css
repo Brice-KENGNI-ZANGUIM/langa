@@ -5,10 +5,23 @@
    (aucun flash au chargement). Toutes les surfaces passent par des variables. */
 :root, :root[data-theme="light"] {
   color-scheme: light;
-  /* Largeur maximale du contenu (conteneur .wrap + pied). Élargie pour occuper
-     davantage l'espace horizontal sur PC (marges latérales fortement réduites) ;
-     sur les écrans < cette valeur, le contenu reste pleinement fluide (mobile intact). */
-  --wrap-max: 1320px;
+  /* Trois paliers de largeur PC (Brice 2026-08-01, en dégradé plutôt qu'un simple binaire large/
+     étroit) : en-tête large (≈ l'ancienne largeur du corpus) → corpus intermédiaire → barre de
+     navigation basse la plus étroite. Sous ces valeurs (mobile/tablette), max() les neutralise
+     TOUJOURS face au clamp() d'origine (cf. usages plus bas) : rendu téléphone strictement
+     inchangé, zéro régression sur ce qui était déjà validé côté mobile.
+     Rétrécissement général ×0.8 (Brice 2026-08-01, 2e passe) appliqué aux trois valeurs d'origine
+     (980/1320/640) : 784/1056/512. Le RAPPORT entre les trois paliers reste identique (le milieu
+     exact entre --app-max et --header-max), seule l'échelle absolue change.
+     Corpus (conteneur .wrap + pied de page, PARTOUT : même composant réutilisé sur toutes les
+     vues et sur le pied de page classique des pages informatives). */
+  --wrap-max: 784px;
+  /* En-tête : le plus large des trois, immersif, jamais aussi resserré qu'une simple rangée de
+     boutons. */
+  --header-max: 1056px;
+  /* Barre de navigation basse : la plus étroite des trois, densité façon app mobile même sur
+     très grand écran PC. */
+  --app-max: 512px;
   /* Polices (voir fonts.css, embarquées hors-ligne). Titres = display géométrique
      (Space Grotesk) ; logo + étiquettes techniques (version, tags, URL) = mono
      (IBM Plex Mono) ; corps de texte = Noto Sans (lisible, couverture ngiemboon). */
@@ -242,7 +255,13 @@ body {
   /* Grand écart vertical logo → boutons, petite marge boutons → bordure du bas :
      les lignes de boutons descendent sous le logo et se calent près du bas. */
   gap: 18px 12px;
-  padding: 12px clamp(14px, 4vw, 36px) 6px;
+  /* Fond/bordure du bandeau restent PLEINE LARGEUR (inchangé) ; seul le CONTENU (marque +
+     boutons) se recentre sur grand écran via un padding qui grandit au-delà de --header-max —
+     jamais en dessous (max() perd toujours face au clamp() d'origine tant que l'écran est plus
+     étroit, donc mobile/tablette rendus à l'identique d'avant). --header-max (le plus large des
+     3 paliers) plutôt que --app-max : la bande de marque reste la plus large des trois zones
+     (Brice 2026-08-01), le corpus et la barre basse se resserrant eux davantage. */
+  padding: 12px max(clamp(14px, 4vw, 36px), calc((100% - var(--header-max)) / 2)) 6px;
   border-bottom: 1px solid var(--border);
   /* Header en verre : fond SEMI-TRANSPARENT posé sur son PROPRE motif (plus dense que le
      body → le header se distingue) + flou marqué. Variante sombre plus bas. */
@@ -920,7 +939,16 @@ body {
    semi-transparent, sans le flou) alors que ça fonctionne sur PC — bug connu du compositing
    mobile. Fix : le flou vit sur un pseudo-élément ENFANT (::after) qui remplit le panneau ;
    .bottom-nav lui-même ne porte QUE la forme (coins ronds + overflow:hidden qui le découpe). */
-.bottom-nav { position: fixed; left: clamp(10px, 3vw, 22px); right: clamp(10px, 3vw, 22px);
+/* Marges latérales : identiques à l'existant tant que l'écran est plus étroit que --app-max
+   (max() perd toujours face au clamp() d'origine en dessous, mobile/tablette inchangés) ; au-delà,
+   grandissent pour RECENTRER la barre à --app-max — même densité de boutons que sur téléphone au
+   lieu de s'étirer sur toute la largeur d'un grand écran PC (Brice 2026-08-01). Les onglets
+   (flex:1 1 0) continuent de remplir toute la largeur DE LA BARRE elle-même, donc aucun vide
+   visible à l'intérieur du panneau (contrainte posée le 2026-07-28, toujours respectée : c'est le
+   panneau qui rétrécit, pas un bloc plus étroit dedans). */
+.bottom-nav { position: fixed;
+  left: max(clamp(10px, 3vw, 22px), calc((100% - var(--app-max)) / 2));
+  right: max(clamp(10px, 3vw, 22px), calc((100% - var(--app-max)) / 2));
   bottom: max(10px, env(safe-area-inset-bottom)); z-index: 500;
   border-radius: 24px; overflow: hidden;
   border: 1px solid color-mix(in srgb, var(--cyan) 30%, var(--border));
