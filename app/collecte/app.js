@@ -1582,18 +1582,17 @@ function openAbout() {
   renderTestimonials();
 }
 // « Ils parlent de nous » : avis RÉELS d'utilisateurs, chargés depuis le backend (publication
-// AUTO avec garde-fous côté serveur : longueur, gros mots, 1 par appareil). Section masquée tant
-// qu'il n'y en a aucun (jamais de faux avis ni d'encart vide). Les contributeurs actifs sont
-// invités à en laisser un (file de popups + bouton « Laisser un mot »).
+// AUTO avec garde-fous côté serveur : longueur, gros mots, 1 par appareil). La rubrique reste
+// TOUJOURS visible (titre + zone), même sans aucun avis : un état vide honnête invite alors à
+// être le·la premier·ère (jamais de faux témoignage inventé pour combler l'espace). Les
+// contributeurs actifs sont en plus invités à en laisser un (file de popups + bouton dédié).
 let _testimonials = [];
 async function renderTestimonials() {
   const grid = $("#about-say"), head = $("#about-sec-say");
   if (!grid || !head) return;
   try { _testimonials = await fetchTestimonials(30); } catch (e) { _testimonials = []; }
   const items = (_testimonials || []).filter((x) => x && (x.texte || "").trim());
-  const has = items.length > 0;
-  head.hidden = !has; grid.hidden = !has;
-  if (!has) { grid.innerHTML = ""; return; }
+  if (!items.length) { grid.innerHTML = `<div class="say-empty">${escapeHtml(t("say.empty.p"))}</div>`; return; }
   grid.innerHTML = items.map((x) => {
     const meta = [x.role, x.langue ? _langNameById(x.langue) : ""].filter(Boolean).join(" · ");
     return `<figure class="say-card">

@@ -870,9 +870,10 @@
       </div>
 
       <!-- « Ils parlent de nous » : témoignages RÉELS d'utilisateurs, rendus depuis des données.
-           Masqué tant qu'il n'y a aucun avis réel (on n'invente JAMAIS de faux témoignage). -->
-      <h3 class="about-sec" id="about-sec-say" data-i18n="about.say.h" hidden>Ils parlent de nous</h3>
-      <div class="say-grid" id="about-say" hidden></div>
+           Tant qu'il n'y en a aucun, un état vide honnête est affiché (jamais de faux témoignage
+           inventé) : cf. renderTestimonials() dans app.js. -->
+      <h3 class="about-sec" id="about-sec-say" data-i18n="about.say.h">Ils parlent de nous</h3>
+      <div class="say-grid" id="about-say"></div>
       <div class="say-invite">
         <button id="testi-open" class="btn btn--ghost" type="button"><img class="testi-open-ico" src="icons/ui/ic-testi.png" alt="" aria-hidden="true"><span data-i18n="testi.open">Laisser un mot sur LANGIAL</span></button>
       </div>

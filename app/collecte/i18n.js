@@ -368,6 +368,8 @@ export const STR = {
   "thanks.ok": { fr: "Continuer", en: "Continue" },
   "about.say.h": { fr: "Ils parlent de nous", en: "What people say" },
   "say.anon": { fr: "Un membre de la communauté", en: "A community member" },
+  "say.empty.p": { fr: "Les premiers retours de la communauté apparaîtront ici. Sois peut-être le premier à laisser un mot.",
+                    en: "The community's first words will appear here. Maybe be the first to leave one." },
   // Témoignages « Laisser un mot » (publication auto avec garde-fous)
   "testi.open": { fr: "Laisser un mot sur LANGIAL", en: "Leave a word about LANGIAL" },
   "testi.title": { fr: "Ton mot sur LANGIAL", en: "Your word about LANGIAL" },
