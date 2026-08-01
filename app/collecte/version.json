@@ -1,6 +1,11 @@
 {
-  "version": "v464",
+  "version": "v465",
   "changelog": {
+    "v465": [
+      "La rubrique « Ils parlent de nous » (page À propos) reste désormais toujours visible, avec une invitation à être le/la premier(ère) à laisser un mot tant qu'elle est encore vide (elle disparaissait complètement avant)",
+      "Sur grand écran (ordinateur) : l'en-tête et la barre de navigation basse ne s'étirent plus sur toute la largeur de l'écran, pour un rendu plus resserré, plus proche de l'expérience téléphone",
+      "Le flyer téléchargeable : le nom LANGIAL ne chevauche plus le logo sur téléphone"
+    ],
     "v464": [
       "Création de langue UNIFIÉE : « Ajouter ma langue » ouvre partout (langue paternelle, maternelle, langue d'une demande, langues d'appartenance) le MÊME formulaire complet suivi des 5 mots obligatoires — plus aucun mini-formulaire allégé qui créait une langue non enrichie. La langue créée se place automatiquement dans le champ d'où on l'a lancée",
       "Bouton « Continuer » du profil : quand il reste grisé, un message indique désormais EXACTEMENT quels champs il reste à remplir (au lieu d'un simple « complète tous les champs »)"
