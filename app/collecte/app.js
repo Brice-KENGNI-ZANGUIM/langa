@@ -67,7 +67,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v474";
+const APP_VERSION = "v475";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -6360,7 +6360,20 @@ async function checkForUpdate() {
 // là-bas, et aucun .apk possible) : instructions manuelles (Partager -> Sur l'écran d'accueil).
 const _isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
 const _isAndroid = () => /android/i.test(navigator.userAgent);
-const _isStandalone = () => window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+// `display-mode: standalone` ment parfois (renvoie false) dans une TWA Android : le seul
+// signal fiable dans ce cas précis est le referrer `android-app://<package>` à l'ouverture.
+// Il n'est présent QUE sur la toute première navigation de la session TWA (absent après un
+// rechargement déclenché par le service worker) → mémorisé en sessionStorage pour tenir tout
+// le reste de la session.
+const TWA_PACKAGE = "com.langial.twa";
+function _isStandalone() {
+  if (window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true) return true;
+  if (document.referrer.indexOf("android-app://" + TWA_PACKAGE) === 0) {
+    try { sessionStorage.setItem("twaSession", "1"); } catch (e) {}
+    return true;
+  }
+  try { return sessionStorage.getItem("twaSession") === "1"; } catch (e) { return false; }
+}
 const INSTALL_DISMISS_DAYS = 14;
 /** Déclenche le téléchargement du .apk signé (même fichier que le lien de la page À propos). */
 function downloadApk() {

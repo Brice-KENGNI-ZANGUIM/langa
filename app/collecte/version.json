@@ -1,6 +1,9 @@
 {
-  "version": "v474",
+  "version": "v475",
   "changelog": {
+    "v475": [
+      "Correction : les boutons « Installer » (en-tête, accueil, à propos) restaient visibles une fois l'application déjà installée sur Android, à cause d'un signal de détection peu fiable dans ce mode précis ; ils disparaissent maintenant correctement dès que l'application est ouverte depuis son icône"
+    ],
     "v474": [
       "Toutes les fenêtres popup de l'application (compte, installation, témoignage, gate profil, confirmation de langue...) reprennent maintenant la même charte graphique que le reste du site : titre en dégradé cyan-vert, ornements de coin dorés, et surtout une vraie marge intérieure (le texte et les boutons ne touchent plus jamais le bord de la fenêtre)"
     ],
