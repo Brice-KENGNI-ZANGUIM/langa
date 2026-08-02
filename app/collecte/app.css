@@ -13,9 +13,12 @@
      Rétrécissement général ×0.8 (Brice 2026-08-01, 2e passe) appliqué aux trois valeurs d'origine
      (980/1320/640) : 784/1056/512. Le RAPPORT entre les trois paliers reste identique (le milieu
      exact entre --app-max et --header-max), seule l'échelle absolue change.
-     Corpus (conteneur .wrap + pied de page, PARTOUT : même composant réutilisé sur toutes les
+     Corpus élargi (Brice 2026-08-03) : occupe désormais les 3/4 de l'espace vide entre son
+     étendue d'alors (784px) et celle du header (--header-max, 1056px), soit 784 + 0.75×(1056-784)
+     = 988px — le corpus se rapproche donc nettement du header sans jamais l'atteindre ni le
+     dépasser (conteneur .wrap + pied de page, PARTOUT : même composant réutilisé sur toutes les
      vues et sur le pied de page classique des pages informatives). */
-  --wrap-max: 784px;
+  --wrap-max: 988px;
   /* En-tête : le plus large des trois, immersif, jamais aussi resserré qu'une simple rangée de
      boutons. */
   --header-max: 1056px;
@@ -482,6 +485,10 @@ body {
 .chip-bare { display: inline-flex; align-items: center; justify-content: center; line-height: 0;
   background: none; border: none; padding: 0; margin: 0; cursor: pointer; text-decoration: none;
   -webkit-tap-highlight-color: transparent; }
+/* Même piège de spécificité que .chip (cf. plus haut, ligne ~344) : display:inline-flex écrasait
+   l'attribut [hidden] → le bouton « Installer » du header restait visible dans l'app déjà
+   installée (Brice 2026-08-03). On rend la main à [hidden]. */
+.chip-bare[hidden] { display: none !important; }
 .chip-bare-ico { display: block; width: 59px; height: 59px;
   filter: drop-shadow(0 2px 6px rgba(0,0,0,.35));
   transition: transform .16s ease, filter .16s ease; }
@@ -2893,7 +2900,11 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .install-banner .update-title { color: var(--text); }
 .install-banner .btn--primary { background: var(--cyan); border-color: var(--cyan); color: #04121a; }
 /* Boutons « Installer » persistants (accueil / à propos, 2026-08-02) : accent cyan, cohérent
-   avec la bannière et le header, jamais confondu avec un bouton d'action de contribution. */
+   avec la bannière et le header, jamais confondu avec un bouton d'action de contribution.
+   Filet de sécurité [hidden] (même piège de spécificité qu'ailleurs dans ce fichier) : .chip[hidden]
+   suffit déjà normalement, ceci garantit le masquage même si une règle plus spécifique s'ajoute
+   un jour spécifiquement sur .install-cta. */
+.install-cta[hidden] { display: none !important; }
 .install-cta { border-color: var(--cyan) !important; color: var(--cyan) !important; margin-top: 12px; }
 .install-cta:hover { background: color-mix(in srgb, var(--cyan) 12%, transparent) !important; }
 /* QR code de la modale d'installation (repli PC) : carré, cadre net, toujours lisible quel que

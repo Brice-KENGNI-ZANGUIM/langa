@@ -1,6 +1,10 @@
 {
-  "version": "v475",
+  "version": "v476",
   "changelog": {
+    "v476": [
+      "Sur PC, le corpus (corps de page) est élargi : il occupe maintenant les 3/4 de l'espace vide qui le séparait du header, au lieu de rester nettement plus étroit que lui",
+      "Correction : le correctif v475 ne suffisait pas pour le bouton « Installer » du header (un style plus spécifique écrasait silencieusement son masquage) ; masquage désormais aussi revérifié à chaque retour au premier plan de l'application, pas seulement au tout premier lancement"
+    ],
     "v475": [
       "Correction : les boutons « Installer » (en-tête, accueil, à propos) restaient visibles une fois l'application déjà installée sur Android, à cause d'un signal de détection peu fiable dans ce mode précis ; ils disparaissent maintenant correctement dès que l'application est ouverte depuis son icône"
     ],

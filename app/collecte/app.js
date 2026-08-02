@@ -67,7 +67,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v475";
+const APP_VERSION = "v476";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -7341,6 +7341,11 @@ function initEvents() {
   if (_isIOS() || _isAndroid()) setTimeout(maybeShowInstallBanner, 4000);
   // Points d'entrée persistants (header/accueil/à propos) + modale (QR/instructions).
   refreshInstallButtons();
+  // Reprise depuis l'arrière-plan (Android restaure la page sans rejouer ce script de démarrage,
+  // bfcache) : on revérifie à chaque retour au premier plan, jamais figé sur l'état du tout
+  // premier lancement.
+  addEventListener("pageshow", refreshInstallButtons);
+  addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") refreshInstallButtons(); });
   ["#btn-install-header", "#btn-install-hub", "#btn-install-about"].forEach((s) => {
     const el = $(s); if (el) el.addEventListener("click", handleInstallClick);
   });
