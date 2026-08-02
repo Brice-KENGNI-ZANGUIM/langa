@@ -1,6 +1,9 @@
 {
-  "version": "v473",
+  "version": "v474",
   "changelog": {
+    "v474": [
+      "Toutes les fenêtres popup de l'application (compte, installation, témoignage, gate profil, confirmation de langue...) reprennent maintenant la même charte graphique que le reste du site : titre en dégradé cyan-vert, ornements de coin dorés, et surtout une vraie marge intérieure (le texte et les boutons ne touchent plus jamais le bord de la fenêtre)"
+    ],
     "v473": [
       "Assistant d'installation Android habillé aux couleurs de la marque (titre en dégradé, ornements de coin, icônes, barre de progression) ; sur téléphone, le corps de la page (« corpus ») est un peu plus large (94% au lieu de 90%)"
     ],

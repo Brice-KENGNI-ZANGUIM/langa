@@ -1680,9 +1680,40 @@ body {
   justify-content: center; padding: 4vmin; overflow-y: auto;
   background: color-mix(in srgb, var(--bg) 80%, transparent); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .tr-guide[hidden] { display: none; }
+/* Charte graphique commune à TOUTE fenêtre modale de l'app (Brice 2026-08-02 : « ça doit marier
+   parfaitement avec le design, la coloration, le style graphique... partout où c'est nécessaire »)
+   — ornements de coin dorés façon Ndop (même motif que .card partout ailleurs dans l'app) et
+   marge intérieure garantie (cf. règles de padding plus bas) : plus jamais de texte/bouton collé
+   au bord, quelle que soit la modale (tour guidé, gate profil, confirmation langue, témoignage,
+   installation, compte...). */
 .tr-guide-card { width: 100%; max-width: 480px; box-sizing: border-box; margin: auto; overflow: hidden; text-align: center;
-  background: var(--panel); border: 1px solid color-mix(in srgb, var(--cyan) 34%, var(--border));
+  --corner-orn: url("icons/orn-corner.webp");
+  background:
+    var(--corner-orn) left 8px top 8px / 18px 17px no-repeat,
+    var(--corner-orn) right 8px top 8px / 18px 17px no-repeat,
+    var(--corner-orn) left 8px bottom 8px / 18px 17px no-repeat,
+    var(--corner-orn) right 8px bottom 8px / 18px 17px no-repeat,
+    var(--panel);
+  border: 1px solid color-mix(in srgb, var(--cyan) 34%, var(--border));
   border-radius: 22px; box-shadow: 0 28px 70px -22px rgba(0,0,0,.55), 0 0 50px -26px var(--cyan); }
+/* Titre en dégradé cyan -> vert, même traitement que le mot-symbole LANGIAL du header : chaque
+   fenêtre porte la signature visuelle de la marque, jamais un simple texte plat. */
+.tr-guide-card h2 {
+  background: linear-gradient(100deg, #eafcff 0%, var(--cyan) 45%, var(--green) 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: var(--cyan);
+}
+:root[data-theme="light"] .tr-guide-card h2 { background: linear-gradient(100deg, var(--cyan) 0%, var(--green) 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+/* Marge intérieure garantie pour tout ce qui vit SOUS l'en-tête (.tr-guide-head a déjà la
+   sienne) : plus aucun champ de formulaire, bouton ou message ne touche le bord de la carte. */
+.tr-guide-card > .pg-actions, .tr-guide-card > .field, .tr-guide-card > .acc-panel,
+.tr-guide-card > .instw-steps, .tr-guide-card > .instw-progress, .tr-guide-card > .lock-hint,
+.tr-guide-card > .acc-ok, .tr-guide-card > .testi-who, .tr-guide-card > .amorce-mode-options {
+  margin-left: 22px; margin-right: 22px;
+}
+.tr-guide-card > .pg-actions:last-child, .tr-guide-card > .field:last-child,
+.tr-guide-card > .lock-hint:last-child, .tr-guide-card > .acc-ok:last-child,
+.tr-guide-card > .amorce-mode-options:last-child { margin-bottom: 22px; }
 /* Deux variantes (Transcrire / Traduire) : on n'affiche que celle de l'activité. */
 .tr-guide-variant { display: none; }
 .tr-guide-card[data-show="transcribe"] .tr-guide-variant[data-guide="transcribe"],
