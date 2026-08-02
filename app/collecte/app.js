@@ -67,7 +67,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v471";
+const APP_VERSION = "v472";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -6377,6 +6377,10 @@ function maybeShowInstallBanner() {
   // jour : une seule carte flottante à la fois (même emplacement bas-droite qu'elles).
   const upB = $("#update-banner"); if (upB && !upB.hidden) return;
   const incB = $("#incite-banner"); if (incB && !incB.hidden) return;
+  // Jamais par-dessus l'assistant d'installation lui-même (celui-ci propose déjà mieux : voir
+  // openInstallWizard()) ni la modale QR/instructions.
+  const instw = $("#install-wizard"); if (instw && !instw.hidden) return;
+  const instm = $("#install-modal"); if (instm && !instm.hidden) return;
   const ios = _isIOS();
   if (!ios && !_isAndroid()) return;   // PC : pas de bannière automatique (les boutons proposent le QR)
   const sub = $("#install-sub"); if (sub) sub.textContent = t(ios ? "install.ios.sub" : "install.sub");
@@ -6399,10 +6403,37 @@ const _isMobileUA = () => /android|iphone|ipad|ipod|mobile/i.test(navigator.user
 function handleInstallClick() {
   if (_isStandalone()) { toast(t("install.already")); return; }
   if (_isIOS()) { openInstallModal("ios"); return; }
-  if (_isAndroid()) { downloadApk(); return; }
+  if (_isAndroid()) { openInstallWizard(); return; }
   if (_isMobileUA()) { openInstallModal("manual"); return; }
   openInstallModal("qr");
 }
+// Minuteurs de l'assistant, annulés à la fermeture (jamais une étape qui « avance » toute seule
+// dans le dos de l'utilisateur après qu'il a fermé la fenêtre).
+let _instwTimers = [];
+function _instwSetState(id, state) {
+  const el = $(id); if (!el) return;
+  el.dataset.state = state;
+  const num = el.querySelector(".instw-num");
+  if (num) num.textContent = state === "done" ? "✓" : id.slice(-1);
+}
+/** Assistant guidé (Brice 2026-08-02, « une interface façon installeur Windows ») : télécharge
+    automatiquement le .apk à l'ouverture, puis fait progresser visuellement les 2 gestes que
+    Android impose (ouvrir le fichier, appuyer sur Installer) — jamais une fausse détection de
+    progression réelle (impossible à savoir depuis une page web), juste un minutage raisonnable
+    pour un fichier de ~2 Mo, assez généreux pour rester vrai dans l'immense majorité des cas. */
+function openInstallWizard() {
+  const m = $("#install-wizard"); if (!m) return;
+  _hideInstallBanner();
+  _instwTimers.forEach(clearTimeout); _instwTimers = [];
+  _instwSetState("#instw-step-1", "active");
+  _instwSetState("#instw-step-2", "pending");
+  _instwSetState("#instw-step-3", "pending");
+  m.hidden = false;
+  downloadApk();
+  _instwTimers.push(setTimeout(() => { _instwSetState("#instw-step-1", "done"); _instwSetState("#instw-step-2", "active"); }, 1800));
+  _instwTimers.push(setTimeout(() => { _instwSetState("#instw-step-2", "done"); _instwSetState("#instw-step-3", "active"); }, 5000));
+}
+function closeInstallWizard() { const m = $("#install-wizard"); if (m) m.hidden = true; _instwTimers.forEach(clearTimeout); _instwTimers = []; }
 function openInstallModal(variant) {
   const m = $("#install-modal"); if (!m) return;
   const lead = $("#instm-lead"), qr = $("#instm-qr");
@@ -7295,6 +7326,8 @@ function initEvents() {
     const el = $(s); if (el) el.addEventListener("click", handleInstallClick);
   });
   const instClose = $("#instm-close"); if (instClose) instClose.addEventListener("click", closeInstallModal);
+  const instwClose = $("#instw-close"); if (instwClose) instwClose.addEventListener("click", closeInstallWizard);
+  const instwRedownload = $("#instw-redownload"); if (instwRedownload) instwRedownload.addEventListener("click", downloadApk);
   // Compte par mot de passe : boutons d'ouverture de la modale + bascule interne + soumission.
   const btnSecure = $("#btn-secure-account"); if (btnSecure) btnSecure.addEventListener("click", () => openAccountModal("secure"));
   const btnLoginAcc = $("#btn-login-account"); if (btnLoginAcc) btnLoginAcc.addEventListener("click", () => openAccountModal("login"));

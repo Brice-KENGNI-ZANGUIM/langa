@@ -2870,6 +2870,23 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .instm-qr { display: block; width: 180px; height: 180px; margin: 14px auto 4px; border-radius: 12px;
   border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
 .instm-qr[hidden] { display: none; }
+
+/* Assistant d'installation Android (2026-08-02) : 3 étapes verticales, même langage visuel que
+   .onboard-step (pastille numérotée, vert = fait, cyan = en cours) mais avec une description sur
+   2 lignes (besoin de plus de place que le ruban compact de l'accueil). */
+.instw-steps { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+.instw-step { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 12px;
+  background: var(--panel); border: 1px solid var(--border); transition: border-color .2s ease, background .2s ease; }
+.instw-num { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; display: inline-flex;
+  align-items: center; justify-content: center; font-weight: 800; font-size: .82rem;
+  background: color-mix(in srgb, var(--muted) 18%, var(--panel)); color: var(--muted); }
+.instw-txt { display: flex; flex-direction: column; gap: 2px; }
+.instw-txt b { font-size: .9rem; color: var(--text); }
+.instw-txt span { font-size: .78rem; color: var(--muted); line-height: 1.4; }
+.instw-step[data-state="active"] { border-color: var(--cyan); box-shadow: 0 0 16px -6px var(--cyan); }
+.instw-step[data-state="active"] .instw-num { background: var(--cyan); color: #04121a; }
+.instw-step[data-state="done"] { border-color: color-mix(in srgb, var(--green) 45%, var(--border)); opacity: .85; }
+.instw-step[data-state="done"] .instw-num { background: var(--green); color: #04160d; }
 @media (max-width: 560px) { .install-banner { right: 12px; left: 12px; bottom: calc(66px + 12px); width: auto; } }
 @media (prefers-reduced-motion: reduce) { .install-banner { animation: updIn .3s ease both; } }
 

@@ -1,6 +1,9 @@
 {
-  "version": "v471",
+  "version": "v472",
   "changelog": {
+    "v472": [
+      "Installation Android : une fenêtre guide maintenant l'utilisateur pas à pas (téléchargement automatique, puis les 2 gestes qu'Android impose), façon assistant d'installation"
+    ],
     "v471": [
       "Installation Android : tous les boutons « Installer » téléchargent maintenant directement le fichier .apk vérifié (vraie installation), au lieu de passer par l'invite du navigateur qui pouvait parfois ne créer qu'un simple raccourci d'écran d'accueil"
     ],
