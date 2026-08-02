@@ -488,13 +488,21 @@ body {
 .chip-bare:hover .chip-bare-ico { transform: translateY(-2px) scale(1.06);
   filter: drop-shadow(0 0 10px color-mix(in srgb, var(--cyan) 60%, transparent)); }
 .chip-bare:active .chip-bare-ico { transform: translateY(0) scale(.96); }
+/* Variante emoji (bouton « Installer » du header, 2026-08-02) : mêmes gabarits que
+   .chip-bare-ico (59/52/45px), en police au lieu d'une image. */
+.chip-bare-emoji { display: block; width: 59px; height: 59px; font-size: 34px; line-height: 59px; text-align: center;
+  filter: drop-shadow(0 2px 6px rgba(0,0,0,.35)); transition: transform .16s ease, filter .16s ease; }
+.chip-bare:hover .chip-bare-emoji { transform: translateY(-2px) scale(1.06); }
+.chip-bare:active .chip-bare-emoji { transform: translateY(0) scale(.96); }
 @media (max-width: 900px) {
   .chips-nav--top { gap: 7px; }
   .chip-bare-ico { width: 52px; height: 52px; }
+  .chip-bare-emoji { width: 52px; height: 52px; font-size: 30px; line-height: 52px; }
 }
 @media (max-width: 560px) {
   .chips-nav--top { gap: 6px; }
   .chip-bare-ico { width: 45px; height: 45px; }
+  .chip-bare-emoji { width: 45px; height: 45px; font-size: 26px; line-height: 45px; }
 }
 /* z-index AU-DESSUS des popups flottants (incitation/notif, 2147483500) : ouvrir le tiroir ne
    doit jamais laisser un popup déjà affiché flotter par-dessus lui — le popup reste VISIBLE,
@@ -2090,6 +2098,16 @@ body {
 .lock-hint[hidden] { display: none; }
 .lock-hint b { color: #f4d68a; }
 
+/* Compte par mot de passe (2026-08-02) : lien texte discret (mot de passe oublié) + message de
+   succès (vert, même patron que .lock-hint mais accent --green). */
+.acc-link { background: none; border: none; color: var(--muted); font: inherit; font-size: .82rem;
+  cursor: pointer; text-decoration: underline; padding: 8px 0 0; display: block; }
+.acc-link:hover { color: var(--text); }
+.acc-ok { margin: 10px 0 0; padding: 9px 12px; border-radius: 10px;
+  background: color-mix(in srgb, var(--green) 12%, transparent); border: 1px solid color-mix(in srgb, var(--green) 45%, var(--border));
+  color: var(--green); font-size: .82rem; line-height: 1.45; }
+.acc-ok[hidden] { display: none; }
+
 /* --- Footer --- */
 .site-footer {
   flex-shrink: 0;   /* toujours ancré en bas, ne se comprime jamais */
@@ -2843,6 +2861,15 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .install-ico { flex: 0 0 auto; font-size: 1.5rem; line-height: 1; margin-top: 2px; }
 .install-banner .update-title { color: var(--text); }
 .install-banner .btn--primary { background: var(--cyan); border-color: var(--cyan); color: #04121a; }
+/* Boutons « Installer » persistants (accueil / à propos, 2026-08-02) : accent cyan, cohérent
+   avec la bannière et le header, jamais confondu avec un bouton d'action de contribution. */
+.install-cta { border-color: var(--cyan) !important; color: var(--cyan) !important; margin-top: 12px; }
+.install-cta:hover { background: color-mix(in srgb, var(--cyan) 12%, transparent) !important; }
+/* QR code de la modale d'installation (repli PC) : carré, cadre net, toujours lisible quel que
+   soit le thème (fond blanc fixe du PNG généré, jamais transparent). */
+.instm-qr { display: block; width: 180px; height: 180px; margin: 14px auto 4px; border-radius: 12px;
+  border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
+.instm-qr[hidden] { display: none; }
 @media (max-width: 560px) { .install-banner { right: 12px; left: 12px; bottom: calc(66px + 12px); width: auto; } }
 @media (prefers-reduced-motion: reduce) { .install-banner { animation: updIn .3s ease both; } }
 

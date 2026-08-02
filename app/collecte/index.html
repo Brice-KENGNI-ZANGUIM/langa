@@ -102,6 +102,12 @@
       <!-- Réglages, icône SEULE (sans texte NI cadre/fond de bouton) : symbole illustré
            directement posé sur le décor, universellement reconnu (icône dédiée = menu/réglages).
            Accueil déplacé au centre de la barre basse (2026-07-26, Brice), cf. plus bas. -->
+      <!-- Installer l'application (Brice 2026-08-02) : icône SEULE comme Réglages, visible
+           partout SAUF si déjà installée (masquée en JS, cf. refreshInstallButtons()). -->
+      <button id="btn-install-header" class="chip-bare" type="button" data-i18n-title="install.title"
+              title="Installer l'application" aria-label="Installer l'application">
+        <span class="chip-bare-emoji" aria-hidden="true">📲</span>
+      </button>
       <button id="settings-toggle" class="chip-bare" type="button" data-i18n-title="chip.settings.title"
               title="Réglages" aria-label="Réglages" aria-haspopup="dialog" aria-controls="settings-drawer" aria-expanded="false">
         <img class="chip-bare-ico" src="icons/ui/hi-menu.png" alt="" aria-hidden="true">
@@ -136,6 +142,13 @@
             <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="hub.card.profile">Créer mon profil</span></button>
           <a id="btn-open-profile" class="chip chip--btn settings-link" href="#/profil" hidden>
             <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="chip.profile">Profil</span></a>
+          <!-- Compte par mot de passe : OPTIONNEL (Brice 2026-08-02), jamais bloquant. « Sécuriser »
+               pose un mot de passe sur la personne de CET appareil ; « Se connecter » migre un
+               NOUVEL appareil vers un compte déjà sécurisé ailleurs (historique retrouvé). -->
+          <button id="btn-secure-account" class="chip chip--btn settings-link" type="button">
+            <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="account.secure">🔐 Sécuriser mon compte</span></button>
+          <button id="btn-login-account" class="chip chip--btn settings-link" type="button">
+            <img class="chip-ico" src="icons/ui/hi-profile.png" alt="" aria-hidden="true"><span data-i18n="account.login">🔑 Se connecter</span></button>
         </div>
         <div class="settings-section">
           <h3 data-i18n="settings.sec.interface">Interface</h3>
@@ -437,6 +450,10 @@
       <div class="hub-head">
         <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-home.png" alt="" aria-hidden="true"><span id="hub-title">Bonjour 👋🏾</span></h2>
         <p class="hub-vision" data-i18n-html="hub.vision">LANGIAL, c'est l'<b>héritage</b> de nos langues d'Afrique : ceux qui savent <b>transmettent</b>, chacun <b>apprend</b>, pour qu'elles ne s'oublient jamais.</p>
+        <!-- Installer l'application (Brice 2026-08-02) : en tête d'accueil, masqué si déjà
+             installée (cf. refreshInstallButtons() dans app.js). -->
+        <button id="btn-install-hub" class="chip chip--btn install-cta" type="button">
+          <span data-i18n="install.cta">📲 Installer l'application</span></button>
       </div>
       <!-- Repère d'accueil (Brice 2026-07-25) : 3 étapes pour un nouvel arrivant qui ne sait pas
            par où commencer. Visible seulement tant que le profil n'est pas complet ; disparaît
@@ -813,6 +830,8 @@
       <div class="about-head">
         <h2 class="view-title view-title--ico"><img class="title-ico" src="icons/ui/hi-about.png" alt="" aria-hidden="true"><span data-i18n="about.title">À propos de LANGIAL</span></h2>
         <p class="contrib-why" data-i18n-html="about.lead"><b>LANGIAL</b> a pour ambition de donner une <b>voix numérique</b> à nos langues d'Afrique, portées par leurs communautés.</p>
+        <button id="btn-install-about" class="chip chip--btn install-cta" type="button">
+          <span data-i18n="install.cta">📲 Installer l'application</span></button>
       </div>
 
       <div class="card about-vision">
@@ -1467,6 +1486,87 @@
       </div>
     </div>
   </div>
+
+  <!-- Installer l'application : modale à 3 variantes (Brice 2026-08-02) — sur PC/ordinateur,
+       aucune invite native ne place l'app sur un TÉLÉPHONE (le but recherché) : on montre un QR
+       code à scanner à la place. Sur mobile sans invite native (iOS Safari, ou un autre
+       navigateur qui ne supporte pas beforeinstallprompt) : instructions manuelles. -->
+  <div id="install-modal" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="instm-title">
+    <div class="tr-guide-card">
+      <div class="tr-guide-head">
+        <div class="tr-guide-ico tr-guide-ico--img" aria-hidden="true"><img src="icons/logo.svg" alt=""></div>
+        <h2 id="instm-title" data-i18n="install.title">Installe LANGIAL</h2>
+        <p class="tr-guide-lead" id="instm-lead"></p>
+      </div>
+      <img id="instm-qr" class="instm-qr" src="icons/qr-install.png" alt="QR code vers langial.com" hidden />
+      <div class="pg-actions">
+        <button id="instm-close" class="btn btn--primary" type="button" data-i18n="install.ios.ok">J'ai compris</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compte par mot de passe (OPTIONNEL, Brice 2026-08-02) : 3 panneaux dans UNE seule modale
+       (sécuriser / se connecter / mot de passe oublié), bascule interne sans rouvrir un autre
+       overlay. Jamais bloquant : fermable à tout moment, le profil par appareil continue de
+       fonctionner sans qu'aucun de ces panneaux ne soit jamais rempli. -->
+  <div id="account-modal" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="acc-title">
+    <div class="tr-guide-card acc-card">
+      <div class="tr-guide-head">
+        <div class="tr-guide-ico tr-guide-ico--img" aria-hidden="true"><img src="icons/ui/hi-profile.png" alt=""></div>
+        <h2 id="acc-title">Sécuriser mon compte</h2>
+        <p class="tr-guide-lead" id="acc-lead"></p>
+      </div>
+
+      <div id="acc-panel-secure" class="acc-panel">
+        <label class="field field--wide"><span class="field-lbl" data-i18n="account.f.email">E-mail</span>
+          <input id="acc-secure-email" type="email" autocomplete="email" maxlength="120" /></label>
+        <label class="field field--wide"><span class="field-lbl" data-i18n="account.f.password">Mot de passe (8 caractères minimum)</span>
+          <input id="acc-secure-password" type="password" autocomplete="new-password" maxlength="100" /></label>
+        <label class="field field--wide"><span class="field-lbl" data-i18n="account.f.password2">Confirme le mot de passe</span>
+          <input id="acc-secure-password2" type="password" autocomplete="new-password" maxlength="100" /></label>
+      </div>
+
+      <div id="acc-panel-login" class="acc-panel" hidden>
+        <label class="field field--wide"><span class="field-lbl" data-i18n="account.f.email">E-mail</span>
+          <input id="acc-login-email" type="email" autocomplete="email" maxlength="120" /></label>
+        <label class="field field--wide"><span class="field-lbl" data-i18n="account.f.password">Mot de passe</span>
+          <input id="acc-login-password" type="password" autocomplete="current-password" maxlength="100" /></label>
+        <button id="acc-goto-forgot" type="button" class="acc-link" data-i18n="account.forgot.link">Mot de passe oublié ?</button>
+      </div>
+
+      <div id="acc-panel-forgot" class="acc-panel" hidden>
+        <label class="field field--wide"><span class="field-lbl" data-i18n="account.f.email">E-mail</span>
+          <input id="acc-forgot-email" type="email" autocomplete="email" maxlength="120" /></label>
+      </div>
+
+      <p class="lock-hint acc-error" id="acc-error" hidden></p>
+      <p class="acc-ok" id="acc-ok-msg" hidden></p>
+
+      <div class="pg-actions">
+        <button id="acc-submit" class="btn btn--primary" type="button">Sécuriser →</button>
+        <button id="acc-switch" type="button" class="btn btn--ghost">Se connecter à la place</button>
+        <button id="acc-cancel" class="btn btn--ghost" type="button" data-i18n="account.cancel">Annuler</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Réinitialisation de mot de passe (lien reçu par e-mail, #/compte-reset?email=…&token=…) :
+       vue routée à part (pas une modale) car atteinte par un lien EXTERNE, potentiellement sans
+       aucun profil déjà chargé sur cet appareil. -->
+  <section id="view-compte-reset" class="view" hidden>
+    <div class="card">
+      <h2 class="view-title" data-i18n="account.reset.title">Choisis un nouveau mot de passe</h2>
+      <label class="field field--wide"><span class="field-lbl" data-i18n="account.f.password">Nouveau mot de passe (8 caractères minimum)</span>
+        <input id="reset-password" type="password" autocomplete="new-password" maxlength="100" /></label>
+      <label class="field field--wide"><span class="field-lbl" data-i18n="account.f.password2">Confirme le mot de passe</span>
+        <input id="reset-password2" type="password" autocomplete="new-password" maxlength="100" /></label>
+      <p class="lock-hint acc-error" id="reset-error" hidden></p>
+      <p class="acc-ok" id="reset-ok-msg" hidden></p>
+      <div class="pg-actions">
+        <button id="reset-submit" class="btn btn--primary" type="button" data-i18n="account.reset.submit">Changer le mot de passe →</button>
+      </div>
+    </div>
+  </section>
 
   <script type="module" src="./build/app.js"></script>
 </body>

@@ -333,6 +333,20 @@ export function postRequest(r) { return postOp(Object.assign({ op: "request" }, 
 /** Répond à une demande : devient une contribution (alimente Explorer) + notifie le demandeur. */
 export function postAnswer(a) { return postOp(Object.assign({ op: "answer_request" }, a)); }
 
+// --- Compte par mot de passe (OPTIONNEL, Brice 2026-08-02) : identité par appareil comme avant
+// PAR DÉFAUT, un mot de passe est une action volontaire en plus (« sécuriser mon compte »), qui
+// permet de se reconnecter depuis un nouvel appareil et d'y migrer automatiquement l'historique
+// déjà lié au person_id. ---
+/** Pose (ou change) le mot de passe de LA PERSONNE derrière CET appareil. */
+export function accountSetPassword(rec) { return postOp(Object.assign({ op: "account_set_password" }, rec)); }
+/** Connexion e-mail + mot de passe : migre automatiquement CET appareil vers la personne. */
+export function accountLogin(rec) { return postOp(Object.assign({ op: "account_login" }, rec)); }
+/** Demande de réinitialisation (un e-mail est envoyé si le compte existe ; réponse toujours
+    { ok: true } côté public, anti-énumération). */
+export function accountForgot(rec) { return postOp(Object.assign({ op: "account_forgot" }, rec)); }
+/** Réinitialisation effective (token reçu par e-mail + nouveau mot de passe). */
+export function accountReset(rec) { return postOp(Object.assign({ op: "account_reset" }, rec)); }
+
 /** POST d'une opération communautaire (suggest/vote), même canal que les contributions. */
 async function postOp(payload) {
   const base = endpoint();

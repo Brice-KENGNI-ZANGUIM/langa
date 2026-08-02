@@ -25,7 +25,8 @@ import { reconcile, checkServer, serverStats, modeGoogle, browseLibrary,
   proposeMerge, respondMerge, mergesForDevice, fetchNotifications,
   fetchRequests, fetchRequestsToTranslate, postRequest, postAnswer, translateWord,
   submitTestimonial, fetchTestimonials, updateContribution, markNotifRead,
-  fetchTheme, setThemeRemote, setLangueActiveRemote } from "./sync.js";
+  fetchTheme, setThemeRemote, setLangueActiveRemote,
+  accountSetPassword, accountLogin, accountForgot, accountReset } from "./sync.js";
 // PROPOSITIONS (1,37 Mo, dont ~68k mots de dictionnaire) n'est utilisé QUE dans le flux
 // Traduire/Transcrire (et l'incitation), jamais pour le rendu de l'accueil. On l'importe
 // DYNAMIQUEMENT → son parse ne bloque plus le premier rendu (démarrage nettement plus rapide,
@@ -66,7 +67,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v467";
+const APP_VERSION = "v468";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -191,6 +192,91 @@ function toggleProfileLang(id) {
   saveContributeur(c);
   renderProfileLangs();
 }
+// --- Compte par mot de passe (OPTIONNEL, Brice 2026-08-02) ------------------------------------
+// Une seule modale, 3 panneaux (sécuriser / se connecter / mot de passe oublié) : bascule
+// interne, jamais un rechargement de page pour changer de panneau. Jamais bloquant : fermable à
+// tout moment, le profil par appareil continue de fonctionner sans qu'aucun panneau ne soit
+// jamais rempli (cf. mémoire pwa-compte-mot-de-passe).
+let _accMode = "secure";
+function _accSetPanel(mode) {
+  _accMode = mode;
+  ["secure", "login", "forgot"].forEach((m) => { const p = $("#acc-panel-" + m); if (p) p.hidden = m !== mode; });
+  const err = $("#acc-error"); if (err) err.hidden = true;
+  const ok = $("#acc-ok-msg"); if (ok) ok.hidden = true;
+  const title = $("#acc-title"), lead = $("#acc-lead"), submit = $("#acc-submit"), sw = $("#acc-switch");
+  const CFG = {
+    secure: { title: "account.secure.title", lead: "account.secure.lead", submit: "account.submit.secure", sw: "account.switch.login" },
+    login: { title: "account.login.title", lead: "account.login.lead", submit: "account.submit.login", sw: "account.switch.secure" },
+    forgot: { title: "account.forgot.title", lead: "account.forgot.lead", submit: "account.submit.forgot", sw: "account.switch.back" },
+  }[mode];
+  if (title) title.textContent = t(CFG.title);
+  if (lead) lead.textContent = t(CFG.lead);
+  if (submit) submit.textContent = t(CFG.submit);
+  if (sw) sw.textContent = t(CFG.sw);
+}
+/** Ouvre la modale de compte sur le panneau demandé, champs vidés (e-mail préremplice depuis le
+    profil existant s'il y en a un : un service en plus, jamais une contrainte). */
+function openAccountModal(mode) {
+  const m = $("#account-modal"); if (!m) return;
+  const c = loadContributeur();
+  const secEmail = $("#acc-secure-email"); if (secEmail) secEmail.value = c.email || "";
+  ["#acc-login-email", "#acc-forgot-email", "#acc-secure-password", "#acc-secure-password2", "#acc-login-password"]
+    .forEach((s) => { const el = $(s); if (el) el.value = ""; });
+  _accSetPanel(mode);
+  m.hidden = false;
+}
+function closeAccountModal() { const m = $("#account-modal"); if (m) m.hidden = true; }
+function _accShowError(msg) { const e = $("#acc-error"); if (e) { e.textContent = msg; e.hidden = false; } const ok = $("#acc-ok-msg"); if (ok) ok.hidden = true; }
+function _accShowOk(msg) { const ok = $("#acc-ok-msg"); if (ok) { ok.textContent = msg; ok.hidden = false; } const e = $("#acc-error"); if (e) e.hidden = true; }
+async function _accSubmit() {
+  const submit = $("#acc-submit"); if (submit) submit.disabled = true;
+  try {
+    if (_accMode === "secure") {
+      const email = (($("#acc-secure-email") || {}).value || "").trim();
+      const p1 = ($("#acc-secure-password") || {}).value || "";
+      const p2 = ($("#acc-secure-password2") || {}).value || "";
+      if (!email) { _accShowError(t("account.err.email")); return; }
+      if (p1.length < 8 || p1 !== p2) { _accShowError(t("account.err.password2")); return; }
+      const r = await accountSetPassword({ device_id: deviceId(), email, password: p1 });
+      if (r && r.ok) {
+        const c = loadContributeur(); c.email = email; saveContributeur(c);
+        _accShowOk(t("account.ok.secure"));
+      } else _accShowError((r && r.error) || "?");
+    } else if (_accMode === "login") {
+      const email = (($("#acc-login-email") || {}).value || "").trim();
+      const pw = ($("#acc-login-password") || {}).value || "";
+      if (!email || !pw) { _accShowError(t("account.err.email")); return; }
+      let device_pubkey = ""; try { device_pubkey = await ensureDeviceKey(); } catch (e) { /* ok */ }
+      const r = await accountLogin({ email, password: pw, device_id: deviceId(), device_pubkey });
+      if (r && r.ok) {
+        // Réhydrate le profil local avec celui RENVOYÉ par le serveur (retrouvé, jamais recréé) :
+        // c'est exactement la migration automatique promise (Brice 2026-08-02).
+        const c = loadContributeur();
+        Object.assign(c, r.profile || {});
+        saveContributeur(c);
+        _accShowOk(t("account.ok.login"));
+        // Rechargement complet : le plus simple et sûr pour que TOUTES les vues (mes
+        // contributions, notifications…) reflètent l'historique qui vient d'être retrouvé.
+        setTimeout(() => location.reload(), 1200);
+      } else _accShowError((r && r.error) || "?");
+    } else {
+      const email = (($("#acc-forgot-email") || {}).value || "").trim();
+      if (!email) { _accShowError(t("account.err.email")); return; }
+      await accountForgot({ email });
+      _accShowOk(t("account.ok.forgot"));   // toujours ok (anti-énumération), cf. backend
+    }
+  } finally { if (submit) submit.disabled = false; }
+}
+
+/** Ouvre la vue de réinitialisation de mot de passe (lien reçu par e-mail, #/compte-reset?
+    email=…&token=…). Champs vidés à chaque ouverture (jamais de valeur qui traîne). */
+function openCompteReset() {
+  showView("compte_reset");
+  const err = $("#reset-error"); if (err) err.hidden = true;
+  const ok = $("#reset-ok-msg"); if (ok) ok.hidden = true;
+  ["#reset-password", "#reset-password2"].forEach((s) => { const el = $(s); if (el) el.value = ""; });
+}
+
 /** Peint les puces des langues d'appartenance dans le formulaire de profil. */
 function renderProfileLangs() {
   const box = $("#profile-langs");
@@ -1304,7 +1390,10 @@ const VIEW_OF_ROUTE = { accueil: "hub", traduire: "app", transcrire: "app",
   explorer: "explore", apropos: "about", bugs: "bugs", profil: "profile", langue: "lang",
   notifications: "notifs", demander: "demander",
   // Pages légales : 4 routes → une même vue, ancrée sur la bonne section.
-  "mentions-legales": "legal", "confidentialite": "legal", "cgu": "legal", "cgv": "legal" };
+  "mentions-legales": "legal", "confidentialite": "legal", "cgu": "legal", "cgv": "legal",
+  // Réinitialisation de mot de passe (lien reçu par e-mail, 2026-08-02) : atteinte de l'EXTÉRIEUR,
+  // jamais navigable depuis l'intérieur de l'app (pas d'entrée dans ROUTE_OF_VIEW).
+  "compte-reset": "compte_reset" };
 // Correspondance route ↔ section légale.
 const LEGAL_ROUTE_SEC = { "mentions-legales": "mentions", "confidentialite": "confidentialite", "cgu": "cgu", "cgv": "cgv" };
 const LEGAL_SEC_ROUTE = { mentions: "mentions-legales", confidentialite: "confidentialite", cgu: "cgu", cgv: "cgv" };
@@ -1365,6 +1454,7 @@ function routeTo(route) {
     case "langue": openLangChoice(); break;
     case "mentions-legales": case "confidentialite": case "cgu": case "cgv":
       openLegal(LEGAL_ROUTE_SEC[route]); break;
+    case "compte-reset": openCompteReset(); break;
     default: goHome();
   }
 }
@@ -1439,6 +1529,7 @@ function showView(name) {
   const nv = $("#view-notifs"); if (nv) nv.hidden = name !== "notifs";
   const dmv = $("#view-demander"); if (dmv) dmv.hidden = name !== "demander";
   const glv = $("#view-legal"); if (glv) glv.hidden = name !== "legal";
+  const crv = $("#view-compte-reset"); if (crv) crv.hidden = name !== "compte_reset";
   const nav = $("#main-nav");
   // Les 4 onglets d'activité sont désormais accessibles SYSTÉMATIQUEMENT, sur TOUTES les pages
   // sans exception, y compris l'accueil (choix Brice 2026-07-23 : avant masqués sur le hub).
@@ -6283,6 +6374,45 @@ function maybeShowInstallBanner() {
 }
 function _hideInstallBanner() { const bn = $("#install-banner"); if (bn) bn.hidden = true; }
 
+// ===== Points d'entrée persistants « Installer » (header / accueil / à propos, 2026-08-02) =====
+// Contrairement à la bannière ci-dessus (proposée automatiquement, dismissible), ces boutons
+// restent accessibles en permanence — retirés seulement une fois l'app RÉELLEMENT installée.
+const _isMobileUA = () => /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
+/** Un seul point d'entrée pour TOUS les boutons « Installer » (header/accueil/à propos/bannière) :
+    - invite native disponible (Android/Chrome/Edge, PC ou mobile) → vraie boîte de dialogue ;
+    - iOS Safari (jamais d'invite native) → instructions « Partager -> Sur l'écran d'accueil » ;
+    - autre mobile sans invite (ex. Firefox Android) → instructions génériques de navigateur ;
+    - PC/ordinateur sans invite → QR code (installer ici ne mettrait PAS l'app sur le TÉLÉPHONE,
+      le but recherché) : le scanner ouvre l'app sur le téléphone, où l'installation a un sens. */
+function handleInstallClick() {
+  if (_isStandalone()) { toast(t("install.already")); return; }
+  if (_deferredInstallPrompt) {
+    const p = _deferredInstallPrompt;
+    _deferredInstallPrompt = null;
+    p.prompt();
+    p.userChoice.finally(refreshInstallButtons);
+    return;
+  }
+  if (_isIOS()) { openInstallModal("ios"); return; }
+  if (_isMobileUA()) { openInstallModal("manual"); return; }
+  openInstallModal("qr");
+}
+function openInstallModal(variant) {
+  const m = $("#install-modal"); if (!m) return;
+  const lead = $("#instm-lead"), qr = $("#instm-qr");
+  if (lead) lead.textContent = t(variant === "qr" ? "install.qr.lead" : variant === "ios" ? "install.ios.sub" : "install.manual.lead");
+  if (qr) qr.hidden = variant !== "qr";
+  m.hidden = false;
+}
+function closeInstallModal() { const m = $("#install-modal"); if (m) m.hidden = true; }
+/** Masque TOUS les points d'entrée d'installation (header/accueil/à propos/bannière) une fois
+    l'app RÉELLEMENT installée (standalone) — jamais affichés pour rien. */
+function refreshInstallButtons() {
+  const hide = _isStandalone();
+  ["#btn-install-header", "#btn-install-hub", "#btn-install-about"].forEach((s) => { const el = $(s); if (el) el.hidden = hide; });
+  if (hide) _hideInstallBanner();
+}
+
 // Cœur partagé (bouton « Mettre à jour » ET vérificateur d'après-coup) : purge les
 // caches, active le nouveau SW, puis recharge UNE fois quand il a pris le contrôle
 // (controllerchange), avec un filet de sécurité temporisé. Combiné au SW qui récupère
@@ -7143,7 +7273,7 @@ function initEvents() {
   // Bannière d'installation PWA : Chrome/Edge (Android/desktop) déclenchent beforeinstallprompt ;
   // iOS Safari ne le fait jamais (on tente juste après le boot à la place, cf. plus bas).
   addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); _deferredInstallPrompt = e; maybeShowInstallBanner(); });
-  addEventListener("appinstalled", () => { _deferredInstallPrompt = null; _hideInstallBanner(); });
+  addEventListener("appinstalled", () => { _deferredInstallPrompt = null; _hideInstallBanner(); refreshInstallButtons(); });
   const instNow = $("#install-now"); if (instNow) instNow.addEventListener("click", async () => {
     if (_isIOS()) { localStorage.setItem("installDismissedAt", String(Date.now())); _hideInstallBanner(); return; }
     if (!_deferredInstallPrompt) { _hideInstallBanner(); return; }
@@ -7157,6 +7287,38 @@ function initEvents() {
     _hideInstallBanner();
   });
   if (_isIOS()) setTimeout(maybeShowInstallBanner, 4000);
+  // Points d'entrée persistants (header/accueil/à propos) + modale (QR/instructions).
+  refreshInstallButtons();
+  ["#btn-install-header", "#btn-install-hub", "#btn-install-about"].forEach((s) => {
+    const el = $(s); if (el) el.addEventListener("click", handleInstallClick);
+  });
+  const instClose = $("#instm-close"); if (instClose) instClose.addEventListener("click", closeInstallModal);
+  // Compte par mot de passe : boutons d'ouverture de la modale + bascule interne + soumission.
+  const btnSecure = $("#btn-secure-account"); if (btnSecure) btnSecure.addEventListener("click", () => openAccountModal("secure"));
+  const btnLoginAcc = $("#btn-login-account"); if (btnLoginAcc) btnLoginAcc.addEventListener("click", () => openAccountModal("login"));
+  const accCancel = $("#acc-cancel"); if (accCancel) accCancel.addEventListener("click", closeAccountModal);
+  const accSwitch = $("#acc-switch"); if (accSwitch) accSwitch.addEventListener("click", () => {
+    _accSetPanel(_accMode === "forgot" ? "login" : (_accMode === "secure" ? "login" : "secure"));
+  });
+  const accGotoForgot = $("#acc-goto-forgot"); if (accGotoForgot) accGotoForgot.addEventListener("click", () => _accSetPanel("forgot"));
+  const accSubmit = $("#acc-submit"); if (accSubmit) accSubmit.addEventListener("click", _accSubmit);
+  // Réinitialisation de mot de passe (vue routée #/compte-reset, lien reçu par e-mail).
+  const resetSubmit = $("#reset-submit"); if (resetSubmit) resetSubmit.addEventListener("click", async () => {
+    const email = (hashParam("email") || "").trim();
+    const token = (hashParam("token") || "").trim();
+    const errEl = $("#reset-error"), okEl = $("#reset-ok-msg");
+    if (errEl) errEl.hidden = true; if (okEl) okEl.hidden = true;
+    if (!email || !token) { if (errEl) { errEl.textContent = t("account.reset.err.link"); errEl.hidden = false; } return; }
+    const p1 = ($("#reset-password") || {}).value || "";
+    const p2 = ($("#reset-password2") || {}).value || "";
+    if (p1.length < 8 || p1 !== p2) { if (errEl) { errEl.textContent = t("account.err.password2"); errEl.hidden = false; } return; }
+    resetSubmit.disabled = true;
+    try {
+      const r = await accountReset({ email, token, password: p1 });
+      if (r && r.ok) { if (okEl) { okEl.textContent = t("account.reset.ok"); okEl.hidden = false; } }
+      else if (errEl) { errEl.textContent = (r && r.error) || t("account.reset.err.link"); errEl.hidden = false; }
+    } finally { resetSubmit.disabled = false; }
+  });
   // Vérifie une nouvelle version : au retour sur l'app + périodiquement.
   document.addEventListener("visibilitychange", () => { if (!document.hidden) checkForUpdate(); });
   setInterval(checkForUpdate, 120000);
