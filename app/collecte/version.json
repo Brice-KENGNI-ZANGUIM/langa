@@ -1,6 +1,9 @@
 {
-  "version": "v466",
+  "version": "v467",
   "changelog": {
+    "v467": [
+      "Sur téléphone : correctif du v466 — le logo et le bouton Réglages étaient rognés par le bord de l'écran (en-tête à 100% pile, aucune marge). En-tête ramené à ~94%, corpus à 90% (au lieu de 95%), barre de navigation basse à 80% (au lieu de 85%)"
+    ],
     "v466": [
       "Sur téléphone : le corps de la page occupe désormais 95% de la largeur, l'en-tête 100%, la barre de navigation basse 85% (au lieu de tenir tous à la même largeur approximative)"
     ],
