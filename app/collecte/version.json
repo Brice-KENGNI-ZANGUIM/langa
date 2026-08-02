@@ -1,6 +1,9 @@
 {
-  "version": "v465",
+  "version": "v466",
   "changelog": {
+    "v466": [
+      "Sur téléphone : le corps de la page occupe désormais 95% de la largeur, l'en-tête 100%, la barre de navigation basse 85% (au lieu de tenir tous à la même largeur approximative)"
+    ],
     "v465": [
       "La rubrique « Ils parlent de nous » (page À propos) reste désormais toujours visible, avec une invitation à être le/la premier(ère) à laisser un mot tant qu'elle est encore vide (elle disparaissait complètement avant)",
       "Sur grand écran (ordinateur) : l'en-tête et la barre de navigation basse ne s'étirent plus sur toute la largeur de l'écran, pour un rendu plus resserré, plus proche de l'expérience téléphone",
