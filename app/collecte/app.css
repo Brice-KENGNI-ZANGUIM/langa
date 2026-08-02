@@ -730,6 +730,11 @@ body {
 /* Téléphone étroit : la marque et les deux pastilles d'état doivent tenir sur UNE ligne,
    avec leur libellé (« en ligne », « Drive : prêt ») et le point clignotant. */
 @media (max-width: 560px) {
+  /* Hiérarchie de largeur voulue sur téléphone (Brice 2026-08-02) : header pleine largeur
+     (100%, aucune marge latérale), corpus légèrement en retrait (95%, réglé après la règle
+     de base .wrap plus bas dans ce fichier pour bien l'emporter dans la cascade), barre basse
+     plus resserrée (90%, réglée plus bas avec .bottom-nav). */
+  .topbar { padding-left: 0; padding-right: 0; }
   .brand-mark { width: 42px; height: 42px; }
   .brand-txt h1 { font-size: 1.62rem; white-space: nowrap; }
   /* Nav TÉLÉPHONE : boutons COMPACTS, taille naturelle, AVEC leur icône (ni géants
@@ -772,6 +777,12 @@ body {
   display: flex; flex-direction: column; gap: 18px;
   flex: 1 0 auto;   /* occupe l'espace restant → pousse le footer en bas d'écran */
   width: 100%;
+}
+@media (max-width: 560px) {
+  /* Corpus à 95% de la largeur sur téléphone (Brice 2026-08-02), entre le header (100%,
+     cf. .topbar) et la barre basse (90%, cf. .bottom-nav). Placé APRÈS la règle de base
+     ci-dessus pour l'emporter dans la cascade (même spécificité, ordre de source décisif). */
+  .wrap { padding-left: 2.5%; padding-right: 2.5%; }
 }
 .card {
   /* Ornements de coin : un vrai motif Ndop doré (extrait de motif-ornaments.png), pré-cuit à ~45 %
@@ -1041,6 +1052,10 @@ body {
 @media (max-width: 560px) {
   .bottom-nav-tab { font-size: .6rem; padding: 8.4px 2px 7.2px; }
   .bottom-nav-ico { width: auto; height: 25.2px; }
+  /* Barre basse resserrée à 85% de la largeur sur téléphone (Brice 2026-08-02, ajusté de 90%
+     à 85% le même jour), la plus étroite des 3 paliers (header 100% / corpus 95% / nav 85%,
+     cf. .topbar et .wrap). */
+  .bottom-nav { left: 7.5%; right: 7.5%; }
 }
 /* Accueil, INCRUSTÉ au centre de la barre basse (2026-07-26, Brice), entre Traduire et Explorer :
    ICÔNE SEULE, aucun cadre/fond associé (Brice : « juste l'icône ») — même matière que la barre,
