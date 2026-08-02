@@ -1514,29 +1514,30 @@
        qu'Android impose (ouvrir le fichier, appuyer sur Installer) — aucun site ne peut les
        automatiser, c'est une protection du téléphone lui-même. -->
   <div id="install-wizard" class="tr-guide" hidden role="dialog" aria-modal="true" aria-labelledby="instw-title">
-    <div class="tr-guide-card">
+    <div class="tr-guide-card instw-card">
       <div class="tr-guide-head">
         <div class="tr-guide-ico tr-guide-ico--img" aria-hidden="true"><img src="icons/logo.svg" alt=""></div>
-        <h2 id="instw-title" data-i18n="instw.title">Installation de LANGIAL</h2>
+        <h2 id="instw-title" class="instw-title" data-i18n="instw.title">Installation de LANGIAL</h2>
         <p class="tr-guide-lead" data-i18n="instw.lead">3 étapes toutes simples, ça prend quelques secondes.</p>
       </div>
+      <div class="instw-progress"><span class="instw-progress-fill" id="instw-progress-fill"></span></div>
       <div class="instw-steps">
         <div class="instw-step" id="instw-step-1" data-state="active">
-          <span class="instw-num">1</span>
+          <span class="instw-num" data-ico="📥">📥</span>
           <div class="instw-txt">
             <b data-i18n="instw.s1.t">Téléchargement du fichier</b>
             <span data-i18n="instw.s1.d">Démarre automatiquement…</span>
           </div>
         </div>
         <div class="instw-step" id="instw-step-2" data-state="pending">
-          <span class="instw-num">2</span>
+          <span class="instw-num" data-ico="📂">📂</span>
           <div class="instw-txt">
             <b data-i18n="instw.s2.t">Ouvre le fichier téléchargé</b>
             <span data-i18n="instw.s2.d">Dans tes téléchargements (en bas de l'écran, ou dans l'app « Fichiers »)</span>
           </div>
         </div>
         <div class="instw-step" id="instw-step-3" data-state="pending">
-          <span class="instw-num">3</span>
+          <span class="instw-num" data-ico="📲">📲</span>
           <div class="instw-txt">
             <b data-i18n="instw.s3.t">Appuie sur « Installer »</b>
             <span data-i18n="instw.s3.d">Android te le demande une seule fois : c'est normal et sûr</span>

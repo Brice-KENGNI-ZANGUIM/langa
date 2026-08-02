@@ -789,11 +789,11 @@ body {
   width: 100%;
 }
 @media (max-width: 560px) {
-  /* Corpus à 90% de la largeur sur téléphone (Brice 2026-08-02, ajusté de 95% à 90% le même
-     jour), entre le header (~94%, cf. .topbar) et la barre basse (80%, cf. .bottom-nav). Placé
-     APRÈS la règle de base ci-dessus pour l'emporter dans la cascade (même spécificité, ordre
-     de source décisif). */
-  .wrap { padding-left: 5%; padding-right: 5%; }
+  /* Corpus à 94% de la largeur sur téléphone (Brice 2026-08-02 : 95% -> 90% (trouvé trop
+     étroit) -> 94%, même marge que le header ~94%), la barre basse restant la plus resserrée
+     (80%, cf. .bottom-nav). Placé APRÈS la règle de base ci-dessus pour l'emporter dans la
+     cascade (même spécificité, ordre de source décisif). */
+  .wrap { padding-left: 3%; padding-right: 3%; }
 }
 .card {
   /* Ornements de coin : un vrai motif Ndop doré (extrait de motif-ornaments.png), pré-cuit à ~45 %
@@ -2871,22 +2871,50 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   border: 1px solid var(--border); box-shadow: 0 8px 24px rgba(0,0,0,.35); }
 .instm-qr[hidden] { display: none; }
 
-/* Assistant d'installation Android (2026-08-02) : 3 étapes verticales, même langage visuel que
-   .onboard-step (pastille numérotée, vert = fait, cyan = en cours) mais avec une description sur
-   2 lignes (besoin de plus de place que le ruban compact de l'accueil). */
-.instw-steps { display: flex; flex-direction: column; gap: 10px; margin: 14px 0; }
+/* Assistant d'installation Android (2026-08-02, enrichi le même jour à la demande de Brice
+   « très bien désigné, stylisé et coloré ») : mêmes codes visuels premium que le reste de l'app
+   (ornements de coin façon .card, titre en dégradé cyan->vert façon logo, pastilles à icônes
+   plutôt que de simples chiffres, halo pulsé sur l'étape active, barre de progression). */
+.instw-card {
+  --corner-orn: url("icons/orn-corner.webp");
+  background:
+    var(--corner-orn) left 8px top 8px / 18px 17px no-repeat,
+    var(--corner-orn) right 8px top 8px / 18px 17px no-repeat,
+    var(--corner-orn) left 8px bottom 8px / 18px 17px no-repeat,
+    var(--corner-orn) right 8px bottom 8px / 18px 17px no-repeat,
+    var(--panel);
+}
+.instw-title {
+  background: linear-gradient(100deg, #eafcff 0%, var(--cyan) 45%, var(--green) 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: var(--cyan);
+}
+:root[data-theme="light"] .instw-title { background: linear-gradient(100deg, var(--cyan) 0%, var(--green) 100%);
+  -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+.instw-progress { height: 8px; border-radius: 999px; background: var(--panel2); border: 1px solid var(--border);
+  overflow: hidden; margin: 4px 0 16px; }
+.instw-progress-fill { display: block; height: 100%; width: 6%; border-radius: 999px;
+  background: linear-gradient(90deg, var(--cyan), var(--green)); transition: width .5s cubic-bezier(.2,.8,.2,1); }
+.instw-steps { display: flex; flex-direction: column; gap: 10px; margin: 0 0 14px; }
 .instw-step { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 12px;
-  background: var(--panel); border: 1px solid var(--border); transition: border-color .2s ease, background .2s ease; }
-.instw-num { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; display: inline-flex;
-  align-items: center; justify-content: center; font-weight: 800; font-size: .82rem;
-  background: color-mix(in srgb, var(--muted) 18%, var(--panel)); color: var(--muted); }
-.instw-txt { display: flex; flex-direction: column; gap: 2px; }
+  background: var(--panel); border: 1px solid var(--border); transition: border-color .2s ease, background .2s ease, box-shadow .2s ease; }
+.instw-num { flex: 0 0 auto; width: 32px; height: 32px; border-radius: 50%; display: inline-flex;
+  align-items: center; justify-content: center; font-weight: 800; font-size: 1.05rem; line-height: 1;
+  background: color-mix(in srgb, var(--muted) 18%, var(--panel)); color: var(--muted);
+  filter: grayscale(60%) opacity(.8); transition: filter .2s ease, background .2s ease, box-shadow .2s ease; }
+.instw-txt { display: flex; flex-direction: column; gap: 2px; text-align: left; }
 .instw-txt b { font-size: .9rem; color: var(--text); }
 .instw-txt span { font-size: .78rem; color: var(--muted); line-height: 1.4; }
-.instw-step[data-state="active"] { border-color: var(--cyan); box-shadow: 0 0 16px -6px var(--cyan); }
-.instw-step[data-state="active"] .instw-num { background: var(--cyan); color: #04121a; }
-.instw-step[data-state="done"] { border-color: color-mix(in srgb, var(--green) 45%, var(--border)); opacity: .85; }
-.instw-step[data-state="done"] .instw-num { background: var(--green); color: #04160d; }
+.instw-step[data-state="active"] { border-color: var(--cyan); background: color-mix(in srgb, var(--cyan) 8%, var(--panel));
+  animation: instwPulse 1.8s ease-in-out infinite; }
+.instw-step[data-state="active"] .instw-num { background: color-mix(in srgb, var(--cyan) 22%, var(--panel));
+  filter: none; box-shadow: 0 0 14px -2px var(--cyan); }
+.instw-step[data-state="done"] { border-color: color-mix(in srgb, var(--green) 45%, var(--border)); opacity: .8; }
+.instw-step[data-state="done"] .instw-num { background: var(--green); color: #04160d; filter: none; font-size: 1rem; }
+@keyframes instwPulse {
+  0%, 100% { box-shadow: 0 0 16px -6px var(--cyan); }
+  50% { box-shadow: 0 0 24px -4px var(--cyan); }
+}
+@media (prefers-reduced-motion: reduce) { .instw-step[data-state="active"] { animation: none; } }
 @media (max-width: 560px) { .install-banner { right: 12px; left: 12px; bottom: calc(66px + 12px); width: auto; } }
 @media (prefers-reduced-motion: reduce) { .install-banner { animation: updIn .3s ease both; } }
 

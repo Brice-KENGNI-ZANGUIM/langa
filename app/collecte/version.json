@@ -1,6 +1,9 @@
 {
-  "version": "v472",
+  "version": "v473",
   "changelog": {
+    "v473": [
+      "Assistant d'installation Android habillé aux couleurs de la marque (titre en dégradé, ornements de coin, icônes, barre de progression) ; sur téléphone, le corps de la page (« corpus ») est un peu plus large (94% au lieu de 90%)"
+    ],
     "v472": [
       "Installation Android : une fenêtre guide maintenant l'utilisateur pas à pas (téléchargement automatique, puis les 2 gestes qu'Android impose), façon assistant d'installation"
     ],

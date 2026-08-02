@@ -67,7 +67,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v472";
+const APP_VERSION = "v473";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -6414,7 +6414,12 @@ function _instwSetState(id, state) {
   const el = $(id); if (!el) return;
   el.dataset.state = state;
   const num = el.querySelector(".instw-num");
-  if (num) num.textContent = state === "done" ? "✓" : id.slice(-1);
+  if (num) num.textContent = state === "done" ? "✓" : num.dataset.ico;
+}
+/** Fait avancer la barre de progression (6% de base, jamais 0%, pour qu'elle reste visible
+    dès l'ouverture) : 1/3 étapes en cours = 1/3 de la barre, etc. */
+function _instwSetProgress(pct) {
+  const fill = $("#instw-progress-fill"); if (fill) fill.style.width = pct + "%";
 }
 /** Assistant guidé (Brice 2026-08-02, « une interface façon installeur Windows ») : télécharge
     automatiquement le .apk à l'ouverture, puis fait progresser visuellement les 2 gestes que
@@ -6428,10 +6433,11 @@ function openInstallWizard() {
   _instwSetState("#instw-step-1", "active");
   _instwSetState("#instw-step-2", "pending");
   _instwSetState("#instw-step-3", "pending");
+  _instwSetProgress(6);
   m.hidden = false;
   downloadApk();
-  _instwTimers.push(setTimeout(() => { _instwSetState("#instw-step-1", "done"); _instwSetState("#instw-step-2", "active"); }, 1800));
-  _instwTimers.push(setTimeout(() => { _instwSetState("#instw-step-2", "done"); _instwSetState("#instw-step-3", "active"); }, 5000));
+  _instwTimers.push(setTimeout(() => { _instwSetState("#instw-step-1", "done"); _instwSetState("#instw-step-2", "active"); _instwSetProgress(40); }, 1800));
+  _instwTimers.push(setTimeout(() => { _instwSetState("#instw-step-2", "done"); _instwSetState("#instw-step-3", "active"); _instwSetProgress(75); }, 5000));
 }
 function closeInstallWizard() { const m = $("#install-wizard"); if (m) m.hidden = true; _instwTimers.forEach(clearTimeout); _instwTimers = []; }
 function openInstallModal(variant) {
