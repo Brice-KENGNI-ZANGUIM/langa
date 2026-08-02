@@ -67,7 +67,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v470";
+const APP_VERSION = "v471";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -6349,14 +6349,25 @@ async function checkForUpdate() {
 }
 
 // ===== Bannière « installer l'application » (PWA, Brice 2026-08-02) ========================
-// beforeinstallprompt (Android/Chrome/Edge desktop) permet un vrai bouton « Installer ».
-// iOS Safari ne déclenche JAMAIS cet événement (aucune API d'installation programmatique
-// là-bas) : on détecte l'UA et on affiche des instructions manuelles (Partager -> Sur l'écran
-// d'accueil) à la place, avec un simple bouton « J'ai compris » pour la refermer.
-let _deferredInstallPrompt = null;
+// CHOIX DÉLIBÉRÉ (Brice 2026-08-02, après coup : « je veux une vraie installation complète, pas
+// un raccourci ») : sur Android, on ne s'appuie JAMAIS sur beforeinstallprompt/.prompt() pour
+// les boutons persistants — son résultat n'est pas garanti (le navigateur peut décider de ne
+// proposer qu'un simple raccourci d'écran d'accueil au lieu d'une vraie app, badge du navigateur
+// visible sur l'icône, jamais listée dans Paramètres > Apps). Le fichier .apk signé par nos soins
+// (cf. android-twa/), lui, est une VRAIE installation native à coup sûr, vérifiée de bout en bout
+// (signature, alignement, icône). C'est donc l'unique chemin proposé sur Android.
+// iOS Safari ne déclenche JAMAIS beforeinstallprompt (aucune API d'installation programmatique
+// là-bas, et aucun .apk possible) : instructions manuelles (Partager -> Sur l'écran d'accueil).
 const _isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+const _isAndroid = () => /android/i.test(navigator.userAgent);
 const _isStandalone = () => window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
 const INSTALL_DISMISS_DAYS = 14;
+/** Déclenche le téléchargement du .apk signé (même fichier que le lien de la page À propos). */
+function downloadApk() {
+  const a = document.createElement("a");
+  a.href = "downloads/LANGIAL.apk"; a.download = "LANGIAL.apk";
+  document.body.appendChild(a); a.click(); a.remove();
+}
 function maybeShowInstallBanner() {
   if (_isStandalone()) return;   // déjà installée (lancée depuis l'écran d'accueil) : jamais proposée
   const banner = $("#install-banner"); if (!banner) return;
@@ -6367,7 +6378,7 @@ function maybeShowInstallBanner() {
   const upB = $("#update-banner"); if (upB && !upB.hidden) return;
   const incB = $("#incite-banner"); if (incB && !incB.hidden) return;
   const ios = _isIOS();
-  if (!ios && !_deferredInstallPrompt) return;   // rien à proposer (navigateur non pris en charge)
+  if (!ios && !_isAndroid()) return;   // PC : pas de bannière automatique (les boutons proposent le QR)
   const sub = $("#install-sub"); if (sub) sub.textContent = t(ios ? "install.ios.sub" : "install.sub");
   const btn = $("#install-now"); if (btn) btn.textContent = t(ios ? "install.ios.ok" : "install.now");
   banner.hidden = false;
@@ -6379,21 +6390,16 @@ function _hideInstallBanner() { const bn = $("#install-banner"); if (bn) bn.hidd
 // restent accessibles en permanence — retirés seulement une fois l'app RÉELLEMENT installée.
 const _isMobileUA = () => /android|iphone|ipad|ipod|mobile/i.test(navigator.userAgent);
 /** Un seul point d'entrée pour TOUS les boutons « Installer » (header/accueil/à propos/bannière) :
-    - invite native disponible (Android/Chrome/Edge, PC ou mobile) → vraie boîte de dialogue ;
-    - iOS Safari (jamais d'invite native) → instructions « Partager -> Sur l'écran d'accueil » ;
-    - autre mobile sans invite (ex. Firefox Android) → instructions génériques de navigateur ;
-    - PC/ordinateur sans invite → QR code (installer ici ne mettrait PAS l'app sur le TÉLÉPHONE,
-      le but recherché) : le scanner ouvre l'app sur le téléphone, où l'installation a un sens. */
+    - Android → téléchargement direct du .apk signé (vraie installation garantie, cf. commentaire
+      plus haut) ;
+    - iOS Safari (aucun .apk possible, aucune invite native) → instructions manuelles ;
+    - PC/ordinateur → QR code (installer ici ne mettrait PAS l'app sur le TÉLÉPHONE, le but
+      recherché) : le scanner ouvre le site sur le téléphone, d'où le même bouton propose alors
+      directement le .apk. */
 function handleInstallClick() {
   if (_isStandalone()) { toast(t("install.already")); return; }
-  if (_deferredInstallPrompt) {
-    const p = _deferredInstallPrompt;
-    _deferredInstallPrompt = null;
-    p.prompt();
-    p.userChoice.finally(refreshInstallButtons);
-    return;
-  }
   if (_isIOS()) { openInstallModal("ios"); return; }
+  if (_isAndroid()) { downloadApk(); return; }
   if (_isMobileUA()) { openInstallModal("manual"); return; }
   openInstallModal("qr");
 }
@@ -7270,23 +7276,19 @@ function initEvents() {
     if (dep) localStorage.setItem("updateDismissed", dep);   // écartée pour CETTE version (une plus récente rouvrira)
     _hideBanner();
   });
-  // Bannière d'installation PWA : Chrome/Edge (Android/desktop) déclenchent beforeinstallprompt ;
-  // iOS Safari ne le fait jamais (on tente juste après le boot à la place, cf. plus bas).
-  addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); _deferredInstallPrompt = e; maybeShowInstallBanner(); });
-  addEventListener("appinstalled", () => { _deferredInstallPrompt = null; _hideInstallBanner(); refreshInstallButtons(); });
-  const instNow = $("#install-now"); if (instNow) instNow.addEventListener("click", async () => {
-    if (_isIOS()) { localStorage.setItem("installDismissedAt", String(Date.now())); _hideInstallBanner(); return; }
-    if (!_deferredInstallPrompt) { _hideInstallBanner(); return; }
-    try { _deferredInstallPrompt.prompt(); await _deferredInstallPrompt.userChoice; } catch (e) { /* ignoré : on referme quoi qu'il arrive */ }
-    _deferredInstallPrompt = null;
+  // Bannière d'installation : jamais beforeinstallprompt (cf. commentaire plus haut, résultat non
+  // garanti) — Android télécharge directement le .apk vérifié, iOS affiche les instructions.
+  addEventListener("appinstalled", refreshInstallButtons);
+  const instNow = $("#install-now"); if (instNow) instNow.addEventListener("click", () => {
     localStorage.setItem("installDismissedAt", String(Date.now()));
     _hideInstallBanner();
+    handleInstallClick();
   });
   const instLater = $("#install-later"); if (instLater) instLater.addEventListener("click", () => {
     localStorage.setItem("installDismissedAt", String(Date.now()));
     _hideInstallBanner();
   });
-  if (_isIOS()) setTimeout(maybeShowInstallBanner, 4000);
+  if (_isIOS() || _isAndroid()) setTimeout(maybeShowInstallBanner, 4000);
   // Points d'entrée persistants (header/accueil/à propos) + modale (QR/instructions).
   refreshInstallButtons();
   ["#btn-install-header", "#btn-install-hub", "#btn-install-about"].forEach((s) => {

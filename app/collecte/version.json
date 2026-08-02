@@ -1,6 +1,9 @@
 {
-  "version": "v470",
+  "version": "v471",
   "changelog": {
+    "v471": [
+      "Installation Android : tous les boutons « Installer » téléchargent maintenant directement le fichier .apk vérifié (vraie installation), au lieu de passer par l'invite du navigateur qui pouvait parfois ne créer qu'un simple raccourci d'écran d'accueil"
+    ],
     "v470": [
       "Correctif de l'icône de l'application (Android + installation navigateur) : le logo pouvait être rogné par le masque d'icône de certains téléphones (cercle/coins arrondis selon le fabricant) faute d'une marge de sécurité suffisante ; le logo est maintenant toujours entièrement visible, quelle que soit la forme du masque"
     ],
