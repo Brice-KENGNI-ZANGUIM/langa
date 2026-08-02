@@ -1,6 +1,9 @@
 {
-  "version": "v468",
+  "version": "v469",
   "changelog": {
+    "v469": [
+      "Téléchargement direct du fichier Android (.apk) sur la page À propos, pour installer sans passer par un store"
+    ],
     "v468": [
       "Installer l'application : bouton dans l'en-tête, sur l'accueil et sur la page À propos (en plus du bandeau proposé automatiquement) ; sur ordinateur, un QR code permet de l'installer directement sur le téléphone en le scannant",
       "Nouveau : sécuriser son compte avec un e-mail + mot de passe (facultatif, dans Réglages > Mon compte) pour retrouver ses contributions en se connectant depuis un autre téléphone, avec récupération par e-mail en cas d'oubli"

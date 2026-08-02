@@ -929,6 +929,7 @@ export const STR = {
   "install.qr.lead": { fr: "Sur ordinateur, installer ne place pas l'appli sur ton téléphone : scanne ce code avec l'appareil photo de ton téléphone pour l'ouvrir et l'installer dessus.", en: "On a computer, installing doesn't put the app on your phone: scan this code with your phone's camera to open it and install it there." },
   "install.manual.lead": { fr: "Ouvre le menu de ton navigateur, puis « Ajouter à l'écran d'accueil » (ou « Installer l'application »).", en: "Open your browser's menu, then \"Add to Home Screen\" (or \"Install app\")." },
   "install.already": { fr: "L'application est déjà installée sur cet appareil.", en: "The app is already installed on this device." },
+  "install.apk": { fr: "⬇️ Télécharger le fichier Android (.apk)", en: "⬇️ Download the Android file (.apk)" },
   "account.secure": { fr: "🔐 Sécuriser mon compte", en: "🔐 Secure my account" },
   "account.login": { fr: "🔑 Se connecter", en: "🔑 Log in" },
   "account.secure.title": { fr: "Sécuriser mon compte", en: "Secure my account" },

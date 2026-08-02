@@ -1,0 +1,10 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.langial.twa",
+    "sha256_cert_fingerprints": [
+      "8D:09:10:D5:F2:7A:E7:EE:14:DB:B5:34:78:C3:2F:BC:23:F6:80:71:56:30:B9:76:53:1A:8D:02:0B:84:79:BB"
+    ]
+  }
+}]
