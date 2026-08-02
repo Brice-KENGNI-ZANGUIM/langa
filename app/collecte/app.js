@@ -6256,6 +6256,33 @@ async function checkForUpdate() {
   }
   banner.hidden = false;
 }
+
+// ===== Bannière « installer l'application » (PWA, Brice 2026-08-02) ========================
+// beforeinstallprompt (Android/Chrome/Edge desktop) permet un vrai bouton « Installer ».
+// iOS Safari ne déclenche JAMAIS cet événement (aucune API d'installation programmatique
+// là-bas) : on détecte l'UA et on affiche des instructions manuelles (Partager -> Sur l'écran
+// d'accueil) à la place, avec un simple bouton « J'ai compris » pour la refermer.
+let _deferredInstallPrompt = null;
+const _isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) && !window.MSStream;
+const _isStandalone = () => window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+const INSTALL_DISMISS_DAYS = 14;
+function maybeShowInstallBanner() {
+  if (_isStandalone()) return;   // déjà installée (lancée depuis l'écran d'accueil) : jamais proposée
+  const banner = $("#install-banner"); if (!banner) return;
+  const dismissedAt = +localStorage.getItem("installDismissedAt") || 0;
+  if (Date.now() - dismissedAt < INSTALL_DISMISS_DAYS * 86400000) return;   // écartée récemment
+  // Jamais en concurrence avec la bannière de mise à jour (plus urgente) ni l'invitation du
+  // jour : une seule carte flottante à la fois (même emplacement bas-droite qu'elles).
+  const upB = $("#update-banner"); if (upB && !upB.hidden) return;
+  const incB = $("#incite-banner"); if (incB && !incB.hidden) return;
+  const ios = _isIOS();
+  if (!ios && !_deferredInstallPrompt) return;   // rien à proposer (navigateur non pris en charge)
+  const sub = $("#install-sub"); if (sub) sub.textContent = t(ios ? "install.ios.sub" : "install.sub");
+  const btn = $("#install-now"); if (btn) btn.textContent = t(ios ? "install.ios.ok" : "install.now");
+  banner.hidden = false;
+}
+function _hideInstallBanner() { const bn = $("#install-banner"); if (bn) bn.hidden = true; }
+
 // Cœur partagé (bouton « Mettre à jour » ET vérificateur d'après-coup) : purge les
 // caches, active le nouveau SW, puis recharge UNE fois quand il a pris le contrôle
 // (controllerchange), avec un filet de sécurité temporisé. Combiné au SW qui récupère
@@ -7113,6 +7140,23 @@ function initEvents() {
     if (dep) localStorage.setItem("updateDismissed", dep);   // écartée pour CETTE version (une plus récente rouvrira)
     _hideBanner();
   });
+  // Bannière d'installation PWA : Chrome/Edge (Android/desktop) déclenchent beforeinstallprompt ;
+  // iOS Safari ne le fait jamais (on tente juste après le boot à la place, cf. plus bas).
+  addEventListener("beforeinstallprompt", (e) => { e.preventDefault(); _deferredInstallPrompt = e; maybeShowInstallBanner(); });
+  addEventListener("appinstalled", () => { _deferredInstallPrompt = null; _hideInstallBanner(); });
+  const instNow = $("#install-now"); if (instNow) instNow.addEventListener("click", async () => {
+    if (_isIOS()) { localStorage.setItem("installDismissedAt", String(Date.now())); _hideInstallBanner(); return; }
+    if (!_deferredInstallPrompt) { _hideInstallBanner(); return; }
+    try { _deferredInstallPrompt.prompt(); await _deferredInstallPrompt.userChoice; } catch (e) { /* ignoré : on referme quoi qu'il arrive */ }
+    _deferredInstallPrompt = null;
+    localStorage.setItem("installDismissedAt", String(Date.now()));
+    _hideInstallBanner();
+  });
+  const instLater = $("#install-later"); if (instLater) instLater.addEventListener("click", () => {
+    localStorage.setItem("installDismissedAt", String(Date.now()));
+    _hideInstallBanner();
+  });
+  if (_isIOS()) setTimeout(maybeShowInstallBanner, 4000);
   // Vérifie une nouvelle version : au retour sur l'app + périodiquement.
   document.addEventListener("visibilitychange", () => { if (!document.hidden) checkForUpdate(); });
   setInterval(checkForUpdate, 120000);

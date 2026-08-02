@@ -1196,6 +1196,22 @@
     </div>
   </div>
 
+  <!-- Invitation à installer l'application (PWA) : proposée quand le navigateur le permet
+       (beforeinstallprompt, Android/desktop) ou avec les instructions manuelles sur iOS Safari
+       (aucun événement natif là-bas). Jamais affichée si l'app tourne déjà en mode installé. -->
+  <div id="install-banner" class="install-banner" hidden role="alertdialog"
+       aria-live="polite" aria-label="Installer l'application">
+    <span class="install-ico" aria-hidden="true">📲</span>
+    <div class="update-body">
+      <div class="update-title" data-i18n="install.title">Installe LANGIAL</div>
+      <p id="install-sub" class="update-sub" data-i18n="install.sub">Garde l'appli sur ton écran d'accueil, accessible en un tap, sans jamais retaper l'adresse.</p>
+      <div class="update-actions">
+        <button id="install-now" class="btn btn--primary update-btn" type="button" data-i18n="install.now">📲 Installer</button>
+        <button id="install-later" class="update-later" type="button" data-i18n="install.later">Plus tard</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Invitation à contribuer (nudge quotidien personnalisé) : un mot que tu n'as pas
        encore fait dans ta langue, en t'appuyant sur ce qu'un autre a déjà partagé. -->
   <div id="incite-banner" class="incite-banner" hidden role="dialog" aria-live="polite"

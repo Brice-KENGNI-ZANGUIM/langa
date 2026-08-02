@@ -919,6 +919,12 @@ export const STR = {
   // — Bannière de mise à jour —
   "update.sub": { fr: "Une nouvelle version est disponible.", en: "A new version is available." },
   "update.detected": { fr: "Repérée le {when}.", en: "Detected on {when}." },
+  "install.title": { fr: "Installe LANGIAL", en: "Install LANGIAL" },
+  "install.sub": { fr: "Garde l'appli sur ton écran d'accueil, accessible en un tap, sans jamais retaper l'adresse.", en: "Keep the app on your home screen, one tap away, no need to type the address again." },
+  "install.ios.sub": { fr: "Appuie sur Partager (icône ⬆️ dans Safari), puis « Sur l'écran d'accueil ».", en: "Tap Share (the ⬆️ icon in Safari), then \"Add to Home Screen\"." },
+  "install.now": { fr: "📲 Installer", en: "📲 Install" },
+  "install.ios.ok": { fr: "J'ai compris", en: "Got it" },
+  "install.later": { fr: "Plus tard", en: "Later" },
   "update.wip": { fr: "Mise à jour…", en: "Updating…" },
   "loader.txt": { fr: "Chargement…", en: "Loading…" },
   "pb.home.eye": { fr: "Bienvenue", en: "Welcome" },

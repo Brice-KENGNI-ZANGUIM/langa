@@ -2828,6 +2828,24 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   .update-dot, .update-btn { animation: none; }
 }
 
+/* --- Bannière « installer l'application » (même patron que .update-banner, accent CYAN pour
+   la distinguer visuellement du bleu « mise à jour ») --- */
+.install-banner[hidden] { display: none !important; }
+.install-banner {
+  position: fixed; z-index: 2147483590; right: 18px; bottom: calc(74px + 14px);
+  width: min(414px, calc(100vw - 32px));
+  display: flex; gap: 12px; align-items: flex-start;
+  padding: 16px 18px; border-radius: 18px;
+  background: var(--card-bg); border: 1px solid var(--cyan);
+  box-shadow: 0 18px 50px rgba(0,0,0,.45), 0 0 26px color-mix(in srgb, var(--cyan) 40%, transparent);
+  animation: updIn .45s cubic-bezier(.2,.8,.2,1) both;
+}
+.install-ico { flex: 0 0 auto; font-size: 1.5rem; line-height: 1; margin-top: 2px; }
+.install-banner .update-title { color: var(--text); }
+.install-banner .btn--primary { background: var(--cyan); border-color: var(--cyan); color: #04121a; }
+@media (max-width: 560px) { .install-banner { right: 12px; left: 12px; bottom: calc(66px + 12px); width: auto; } }
+@media (prefers-reduced-motion: reduce) { .install-banner { animation: updIn .3s ease both; } }
+
 /* Invitation à contribuer (nudge quotidien) : carte flottante douce en bas. Entrée
    animée UNE fois (pas d'animation continue → conforme à la politique perf). */
 .incite-banner[hidden] { display: none !important; }
