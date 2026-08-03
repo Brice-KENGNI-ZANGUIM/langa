@@ -51,7 +51,7 @@ function ensurePropositions() {
 import { CONFIG } from "./config.js";
 import { currentLang, getCurrentLangId, setCurrentLangId, usesDedicatedKeyboard,
   hasChosenLang, knownLanguages, cacheRemoteLanguages, langAlphabet, langLexicon, addKnownLanguage } from "./languages.js";
-import { applyI18n, getUiLang, setUiLang, t, ti, tToast } from "./i18n.js";
+import { applyI18n, detectAndInitUiLang, getUiLang, setUiLang, t, ti, tToast } from "./i18n.js";
 // legal.js (textes légaux) et export.js (formats d'export) : chargés à la demande, uniquement
 // à l'ouverture de la vue légale / au clic d'export (voir openLegal / downloadDict).
 import { shareCardText, shareTitle, mountShareBar } from "./share.js";
@@ -67,7 +67,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v476";
+const APP_VERSION = "v477";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -6374,33 +6374,43 @@ function _isStandalone() {
   }
   try { return sessionStorage.getItem("twaSession") === "1"; } catch (e) { return false; }
 }
-const INSTALL_DISMISS_DAYS = 14;
 /** Déclenche le téléchargement du .apk signé (même fichier que le lien de la page À propos). */
 function downloadApk() {
   const a = document.createElement("a");
   a.href = "downloads/LANGIAL.apk"; a.download = "LANGIAL.apk";
   document.body.appendChild(a); a.click(); a.remove();
 }
-function maybeShowInstallBanner() {
-  if (_isStandalone()) return;   // déjà installée (lancée depuis l'écran d'accueil) : jamais proposée
-  const banner = $("#install-banner"); if (!banner) return;
-  const dismissedAt = +localStorage.getItem("installDismissedAt") || 0;
-  if (Date.now() - dismissedAt < INSTALL_DISMISS_DAYS * 86400000) return;   // écartée récemment
-  // Jamais en concurrence avec la bannière de mise à jour (plus urgente) ni l'invitation du
-  // jour : une seule carte flottante à la fois (même emplacement bas-droite qu'elles).
-  const upB = $("#update-banner"); if (upB && !upB.hidden) return;
-  const incB = $("#incite-banner"); if (incB && !incB.hidden) return;
-  // Jamais par-dessus l'assistant d'installation lui-même (celui-ci propose déjà mieux : voir
-  // openInstallWizard()) ni la modale QR/instructions.
-  const instw = $("#install-wizard"); if (instw && !instw.hidden) return;
-  const instm = $("#install-modal"); if (instm && !instm.hidden) return;
-  const ios = _isIOS();
-  if (!ios && !_isAndroid()) return;   // PC : pas de bannière automatique (les boutons proposent le QR)
-  const sub = $("#install-sub"); if (sub) sub.textContent = t(ios ? "install.ios.sub" : "install.sub");
-  const btn = $("#install-now"); if (btn) btn.textContent = t(ios ? "install.ios.ok" : "install.now");
-  banner.hidden = false;
+// L'invitation à installer n'est plus une bannière à part, permanente, monopolisant l'espace
+// (Brice 2026-08-03 : « il ne faut pas le rendre permanent... il doit être circulaire comme
+// tous les autres et ne pas occuper l'espace à lui seul »). Elle rejoint désormais la MÊME file
+// `_pq` que l'incitation à contribuer/le mot du jour/les demandes/les notifications : un popup
+// de plus en rotation (~POPUP_ROTATE_MS chacun), jamais seule à l'écran, jusqu'à ce que
+// l'utilisateur agisse (Installer, Plus tard ou ✕ = sourdine 24h, tous partagés avec les autres).
+function installDue() {
+  if (_isStandalone()) return false;         // déjà installée : jamais proposée
+  if (!_isIOS() && !_isAndroid()) return false;   // PC : pas de popup auto (les boutons proposent le QR)
+  if (_popupIsMuted("install")) return false;
+  return true;
 }
-function _hideInstallBanner() { const bn = $("#install-banner"); if (bn) bn.hidden = true; }
+/** ENFILE l'invitation à installer si due (la file l'affiche, en alternance avec les autres). */
+function maybeShowInstallPopup() {
+  if (!installDue()) return;
+  enqueuePopup("install", renderInstallPopup);
+}
+function renderInstallPopup() {
+  const bn = $("#incite-banner"); if (!bn) return;
+  bn.dataset.ptype = "install";
+  const ico = bn.querySelector(".incite-ico"); if (ico) ico.innerHTML = '<span aria-hidden="true">📲</span>';
+  const ios = _isIOS();
+  const msg = $("#incite-msg"); if (msg) msg.textContent = t(ios ? "install.ios.sub" : "install.sub");
+  const go = $("#incite-go");
+  if (go) {
+    go.textContent = t(ios ? "install.ios.ok" : "install.now");
+    go.onclick = () => { bn.hidden = true; dismissPopup("install"); handleInstallClick(); };
+  }
+  const lis = $("#incite-listen"); if (lis) { lis.hidden = true; lis.onclick = null; }
+  bn.hidden = false;
+}
 
 // ===== Points d'entrée persistants « Installer » (header / accueil / à propos, 2026-08-02) =====
 // Contrairement à la bannière ci-dessus (proposée automatiquement, dismissible), ces boutons
@@ -6441,7 +6451,7 @@ function _instwSetProgress(pct) {
     pour un fichier de ~2 Mo, assez généreux pour rester vrai dans l'immense majorité des cas. */
 function openInstallWizard() {
   const m = $("#install-wizard"); if (!m) return;
-  _hideInstallBanner();
+  dismissPopup("install");
   _instwTimers.forEach(clearTimeout); _instwTimers = [];
   _instwSetState("#instw-step-1", "active");
   _instwSetState("#instw-step-2", "pending");
@@ -6455,6 +6465,7 @@ function openInstallWizard() {
 function closeInstallWizard() { const m = $("#install-wizard"); if (m) m.hidden = true; _instwTimers.forEach(clearTimeout); _instwTimers = []; }
 function openInstallModal(variant) {
   const m = $("#install-modal"); if (!m) return;
+  dismissPopup("install");
   const lead = $("#instm-lead"), qr = $("#instm-qr");
   if (lead) lead.textContent = t(variant === "qr" ? "install.qr.lead" : variant === "ios" ? "install.ios.sub" : "install.manual.lead");
   if (qr) qr.hidden = variant !== "qr";
@@ -6466,7 +6477,7 @@ function closeInstallModal() { const m = $("#install-modal"); if (m) m.hidden = 
 function refreshInstallButtons() {
   const hide = _isStandalone();
   ["#btn-install-header", "#btn-install-hub", "#btn-install-about"].forEach((s) => { const el = $(s); if (el) el.hidden = hide; });
-  if (hide) _hideInstallBanner();
+  if (hide) dismissPopup("install");
 }
 
 // Cœur partagé (bouton « Mettre à jour » ET vérificateur d'après-coup) : purge les
@@ -7326,19 +7337,12 @@ function initEvents() {
     if (dep) localStorage.setItem("updateDismissed", dep);   // écartée pour CETTE version (une plus récente rouvrira)
     _hideBanner();
   });
-  // Bannière d'installation : jamais beforeinstallprompt (cf. commentaire plus haut, résultat non
+  // Invitation à installer : jamais beforeinstallprompt (cf. commentaire plus haut, résultat non
   // garanti) — Android télécharge directement le .apk vérifié, iOS affiche les instructions.
+  // Popup de plus dans la file `_pq` partagée (Brice 2026-08-03), « Plus tard »/✕ déjà câblés
+  // génériquement (cf. #incite-later/#incite-close) : rien à ajouter ici pour ces boutons.
   addEventListener("appinstalled", refreshInstallButtons);
-  const instNow = $("#install-now"); if (instNow) instNow.addEventListener("click", () => {
-    localStorage.setItem("installDismissedAt", String(Date.now()));
-    _hideInstallBanner();
-    handleInstallClick();
-  });
-  const instLater = $("#install-later"); if (instLater) instLater.addEventListener("click", () => {
-    localStorage.setItem("installDismissedAt", String(Date.now()));
-    _hideInstallBanner();
-  });
-  if (_isIOS() || _isAndroid()) setTimeout(maybeShowInstallBanner, 4000);
+  if (_isIOS() || _isAndroid()) setTimeout(() => { try { maybeShowInstallPopup(); } catch (e) { /* jamais bloquant */ } }, 4000);
   // Points d'entrée persistants (header/accueil/à propos) + modale (QR/instructions).
   refreshInstallButtons();
   // Reprise depuis l'arrière-plan (Android restaure la page sans rejouer ce script de démarrage,
@@ -7534,6 +7538,7 @@ function showAppLoader() {
 
 async function main() {
   setTimeout(hideAppLoader, 6000);   // filet : jamais bloqué sur le voile même si une étape traîne
+  detectAndInitUiLang();   // 1re visite seulement : langue d'interface adaptée au navigateur AVANT le 1er rendu
   initTheme();
   const ver = $("#app-ver");
   if (ver) ver.textContent = APP_VERSION;

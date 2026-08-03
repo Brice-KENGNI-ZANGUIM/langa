@@ -2884,21 +2884,8 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   .update-dot, .update-btn { animation: none; }
 }
 
-/* --- Bannière « installer l'application » (même patron que .update-banner, accent CYAN pour
-   la distinguer visuellement du bleu « mise à jour ») --- */
-.install-banner[hidden] { display: none !important; }
-.install-banner {
-  position: fixed; z-index: 2147483590; right: 18px; bottom: calc(74px + 14px);
-  width: min(414px, calc(100vw - 32px));
-  display: flex; gap: 12px; align-items: flex-start;
-  padding: 16px 18px; border-radius: 18px;
-  background: var(--card-bg); border: 1px solid var(--cyan);
-  box-shadow: 0 18px 50px rgba(0,0,0,.45), 0 0 26px color-mix(in srgb, var(--cyan) 40%, transparent);
-  animation: updIn .45s cubic-bezier(.2,.8,.2,1) both;
-}
-.install-ico { flex: 0 0 auto; font-size: 1.5rem; line-height: 1; margin-top: 2px; }
-.install-banner .update-title { color: var(--text); }
-.install-banner .btn--primary { background: var(--cyan); border-color: var(--cyan); color: #04121a; }
+/* L'invitation à installer (Brice 2026-08-03) a rejoint la file `_pq` partagée : elle réutilise
+   .incite-banner (cf. plus haut, data-ptype="install"), plus de patron dédié ici. */
 /* Boutons « Installer » persistants (accueil / à propos, 2026-08-02) : accent cyan, cohérent
    avec la bannière et le header, jamais confondu avec un bouton d'action de contribution.
    Filet de sécurité [hidden] (même piège de spécificité qu'ailleurs dans ce fichier) : .chip[hidden]
@@ -2957,8 +2944,6 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
   50% { box-shadow: 0 0 24px -4px var(--cyan); }
 }
 @media (prefers-reduced-motion: reduce) { .instw-step[data-state="active"] { animation: none; } }
-@media (max-width: 560px) { .install-banner { right: 12px; left: 12px; bottom: calc(66px + 12px); width: auto; } }
-@media (prefers-reduced-motion: reduce) { .install-banner { animation: updIn .3s ease both; } }
 
 /* Invitation à contribuer (nudge quotidien) : carte flottante douce en bas. Entrée
    animée UNE fois (pas d'animation continue → conforme à la politique perf). */
@@ -2991,6 +2976,7 @@ body.kb-docked { padding-bottom: var(--kb-h, 50vh); }
 .incite-banner[data-ptype="activity"]   { --pop-acc: var(--violet); }
 .incite-banner[data-ptype="request"]    { --pop-acc: var(--cyan); }
 .incite-banner[data-ptype="wod"]        { --pop-acc: var(--cyan); }   /* Mot du jour : même accent cyan qu'avant (R10) */
+.incite-banner[data-ptype="install"]    { --pop-acc: var(--cyan); }   /* Installer : même accent cyan que les boutons persistants */
 .incite-banner[data-ptype="wod"] .incite-ico img,
 .incite-banner[data-ptype="request"] .incite-ico img { width: 34px; height: 34px; object-fit: contain; }
 .incite-ico { flex: 0 0 auto; font-size: 1.7rem; line-height: 1.2;

@@ -20,6 +20,48 @@ export function setUiLang(l) {
   localStorage.setItem(LS_UI, l === "en" ? "en" : "fr");
 }
 
+// ===== Détection automatique de la langue d'interface (Brice 2026-08-03) =====================
+// But : qu'un visiteur anglophone qui ne comprend pas le français tombe DIRECTEMENT sur une
+// interface en anglais dès sa toute première visite, sans avoir à chercher comment la changer.
+// Seule la PREMIÈRE visite est concernée (aucune valeur encore posée en localStorage) : un choix
+// déjà fait — manuellement via la bascule FR|EN, ou par une détection précédente — n'est JAMAIS
+// écrasé ensuite.
+//
+// Sources testées, dans l'ordre (uniquement des signaux LOCAUX au navigateur : jamais de cookies
+// tiers ni d'appel réseau externe — techniquement impossible pour une page web d'y accéder, et de
+// toute façon contraire à l'esprit vie-privée du projet) :
+//   1. navigator.languages : la liste ORDONNÉE des langues préférées telle que configurée par
+//      l'utilisateur dans son navigateur/système — le signal le plus complet et le plus fiable ;
+//   2. navigator.language : repli si la liste ci-dessus est indisponible (vieux navigateurs) ;
+//   3. Intl.DateTimeFormat().resolvedOptions().locale : repli supplémentaire pour les navigateurs
+//      très restrictifs côté vie privée qui ne renseignent que celui-ci.
+// Chaque candidat est réduit à son sous-tag primaire ("en-US" -> "en") ; on retient le PREMIER qui
+// correspond à une langue d'interface supportée (fr/en). Si aucun ne correspond, on ne touche à
+// rien (repli sur le français, langue source de l'app).
+function _primarySubtag(tag) {
+  return String(tag || "").toLowerCase().split(/[-_]/)[0];
+}
+function _detectPreferredUiLang() {
+  const candidates = [];
+  try { if (Array.isArray(navigator.languages)) candidates.push(...navigator.languages); } catch (e) { /* ok */ }
+  try { if (navigator.language) candidates.push(navigator.language); } catch (e) { /* ok */ }
+  try { const loc = Intl.DateTimeFormat().resolvedOptions().locale; if (loc) candidates.push(loc); } catch (e) { /* ok */ }
+  for (const c of candidates) {
+    const sub = _primarySubtag(c);
+    if (sub === "en" || sub === "fr") return sub;
+  }
+  return null;   // aucune source exploitable -> on ne touche à rien
+}
+/** À appeler UNE fois, tout au début du boot (avant applyI18n) : pose la langue détectée
+    SEULEMENT si aucun choix n'a jamais été fait sur cet appareil. */
+export function detectAndInitUiLang() {
+  let already;
+  try { already = localStorage.getItem(LS_UI); } catch (e) { already = "x"; }   // storage indispo -> ne jamais re-détecter
+  if (already) return;   // choix déjà posé (manuel ou détection précédente) : jamais écrasé
+  const detected = _detectPreferredUiLang();
+  if (detected) setUiLang(detected);
+}
+
 // Table de traduction. Le français est la SOURCE (toujours présent) ; l'anglais
 // complète. Une clé sans entrée `en` retombe sur le français (aucun trou visible).
 export const STR = {

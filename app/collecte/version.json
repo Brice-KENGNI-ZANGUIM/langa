@@ -1,6 +1,10 @@
 {
-  "version": "v476",
+  "version": "v477",
   "changelog": {
+    "v477": [
+      "L'invitation à installer l'application n'est plus une bannière permanente qui monopolise l'espace : elle rejoint la même rotation que les autres popups (invitation à contribuer, mot du jour...), apparaît puis cède la place en alternance jusqu'à ce qu'une action soit prise",
+      "La langue de l'interface (français/anglais) s'adapte désormais automatiquement à la langue du navigateur dès la toute première visite : un visiteur anglophone tombe directement sur une interface en anglais, sans avoir à la changer lui-même (un choix déjà fait, manuel ou automatique, n'est jamais écrasé ensuite)"
+    ],
     "v476": [
       "Sur PC, le corpus (corps de page) est élargi : il occupe maintenant les 3/4 de l'espace vide qui le séparait du header, au lieu de rester nettement plus étroit que lui",
       "Correction : le correctif v475 ne suffisait pas pour le bouton « Installer » du header (un style plus spécifique écrasait silencieusement son masquage) ; masquage désormais aussi revérifié à chaque retour au premier plan de l'application, pas seulement au tout premier lancement"
