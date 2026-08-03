@@ -67,7 +67,7 @@ const nfc = (s) => (s || "").normalize("NFC");
 // Version affichée dans l'en-tête : permet de vérifier d'un coup d'œil que le
 // téléphone charge bien la DERNIÈRE version (et non une copie en cache). À garder
 // synchrone avec CACHE dans sw.js.
-const APP_VERSION = "v477";
+const APP_VERSION = "v478";
 // Espace courant : "translate" (Traduire) ou "transcribe" (Transcrire).
 let activity = "translate";
 // Vue affichée (pour la visite guidée contextuelle). Défaut NEUTRE (null) : au boot,
@@ -370,10 +370,15 @@ function applyLanguage() {
   const b2 = $("#dir-nge2fr"); if (b2) b2.textContent = dLang2;
   const o1 = document.querySelector('#filter-direction option[value="fr2nge"]'); if (o1) o1.textContent = dFr2;
   const o2 = document.querySelector('#filter-direction option[value="nge2fr"]'); if (o2) o2.textContent = dLang2;
+  // Tant qu'aucune langue n'a été choisie par l'utilisateur, `L` n'est que le repli TECHNIQUE
+  // sur la graine du registre (cf. getCurrentLangId()) — jamais un choix réel : lui donner un nom
+  // précis ici donnerait l'impression fausse qu'on l'oblige à travailler dans une langue qui
+  // n'est pas la sienne (Brice 2026-08-03). Formulation générique tant que rien n'est déclaré.
+  const chosen = hasChosenLang();
   const dT = document.querySelector('.hub-card[data-go="translate"] .hub-desc');
-  if (dT) dT.textContent = t("hub.desc.translate").replace("{lang}", L.nom);
+  if (dT) dT.textContent = chosen ? t("hub.desc.translate").replace("{lang}", L.nom) : t("hub.desc.translate.generic");
   const dS = document.querySelector('.hub-card[data-go="transcribe"] .hub-desc');
-  if (dS) dS.textContent = t("hub.desc.transcribe").replace("{lang}", L.nom);
+  if (dS) dS.textContent = chosen ? t("hub.desc.transcribe").replace("{lang}", L.nom) : t("hub.desc.transcribe.generic");
   const dE = document.querySelector('.hub-card[data-go="explore"] .hub-desc');
   if (dE) dE.textContent = t("hub.card.explore.desc");
   const chipName = $("#lang-chip-name"); if (chipName) chipName.textContent = hasChosenLang() ? L.nom : t("chip.langues");
@@ -4497,8 +4502,8 @@ const TOURS = {
       en: { title: "Open the activities", text: "Once the fields marked with a star are filled, this button unlocks everything: translate, transcribe and explore. As long as a required piece of information is missing, it stays greyed out to show you what's left to do" } },
   ]),
   hub: withChrome([
-    { sel: ".hub-card[data-go='translate']", title: "Traduire un mot", text: "Tu donnes l'équivalent d'un mot ou d'une phrase, dans un sens ou dans l'autre (français ↔ ngiemboon). Ajouter ta voix par-dessus est un bonus précieux, mais le texte seul suffit déjà pour commencer",
-      en: { title: "Translate a word", text: "You give the equivalent of a word or a sentence, one way or the other (French ↔ ngiemboon). Adding your voice on top is a precious bonus, but the text alone is already enough to start" } },
+    { sel: ".hub-card[data-go='translate']", title: "Traduire un mot", text: "Tu donnes l'équivalent d'un mot ou d'une phrase, dans un sens ou dans l'autre (français ↔ ta langue). Ajouter ta voix par-dessus est un bonus précieux, mais le texte seul suffit déjà pour commencer",
+      en: { title: "Translate a word", text: "You give the equivalent of a word or a sentence, one way or the other (French ↔ your language). Adding your voice on top is a precious bonus, but the text alone is already enough to start" } },
     { sel: ".hub-card[data-go='transcribe']", title: "Prêter ta voix", text: "Ici la prononciation est la vedette : tu enregistres comment un mot se dit vraiment. Le texte peut t'être soufflé, mais c'est ta voix qui capture ce qu'aucune orthographe ne rendra jamais tout à fait",
       en: { title: "Lend your voice", text: "Here pronunciation is the star: you record how a word is really said. The text can be suggested to you, but it's your voice that captures what no spelling will ever fully render" } },
     { sel: ".hub-card[data-go='explore']", title: "Explorer la bibliothèque", text: "Tu parcours ce que la communauté a déjà rassemblé : lire, écouter les prononciations, et proposer une meilleure version quand tu en connais une. Le moyen idéal d'apprendre tout en contribuant",
@@ -6397,6 +6402,16 @@ function maybeShowInstallPopup() {
   if (!installDue()) return;
   enqueuePopup("install", renderInstallPopup);
 }
+// La rotation PARTAGÉE (_pqTimer) ne s'active qu'à partir de 2 popups en attente (cf.
+// _pqRestartTimer) : seule en file (ex. aucune autre incitation due ce jour-là), l'invitation à
+// installer restait donc affichée indéfiniment (Brice 2026-08-03 : « le popup s'affiche toujours
+// indéfiniment sans disparaître pour laisser la place aux autres »). Un cycle dédié à CE type
+// précis prend le relais, INDÉPENDANT de la file partagée : après INSTALL_POPUP_SHOW_MS elle
+// cède sa place (aux autres s'il y en a, sinon l'écran se libère simplement), puis revient se
+// reproposer après une pause — jamais permanente, même seule.
+const INSTALL_POPUP_SHOW_MS = 60000;
+const INSTALL_POPUP_REST_MS = 60000;
+let _installCycleTimer = 0;
 function renderInstallPopup() {
   const bn = $("#incite-banner"); if (!bn) return;
   bn.dataset.ptype = "install";
@@ -6406,10 +6421,16 @@ function renderInstallPopup() {
   const go = $("#incite-go");
   if (go) {
     go.textContent = t(ios ? "install.ios.ok" : "install.now");
-    go.onclick = () => { bn.hidden = true; dismissPopup("install"); handleInstallClick(); };
+    go.onclick = () => { clearTimeout(_installCycleTimer); bn.hidden = true; dismissPopup("install"); handleInstallClick(); };
   }
   const lis = $("#incite-listen"); if (lis) { lis.hidden = true; lis.onclick = null; }
   bn.hidden = false;
+  clearTimeout(_installCycleTimer);
+  _installCycleTimer = setTimeout(() => {
+    if (_pqCurrent !== "install") return;   // déjà passé à autre chose entre-temps : rien à faire
+    dismissPopup("install");
+    setTimeout(() => { try { maybeShowInstallPopup(); } catch (e) { /* jamais bloquant */ } }, INSTALL_POPUP_REST_MS);
+  }, INSTALL_POPUP_SHOW_MS);
 }
 
 // ===== Points d'entrée persistants « Installer » (header / accueil / à propos, 2026-08-02) =====

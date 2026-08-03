@@ -1,6 +1,10 @@
 {
-  "version": "v477",
+  "version": "v478",
   "changelog": {
+    "v478": [
+      "Correction : quand aucune autre invitation n'était due, le popup « Installer » restait affiché sans jamais s'effacer (la rotation partagée ne s'active qu'à partir de 2 popups en attente) ; il cède maintenant toujours sa place après une minute, même seul, puis revient se reproposer après une pause",
+      "Sur la page d'accueil, les descriptions de Transcrire et Traduire ne nomment plus une langue précise (« Ngiemboon ») tant que l'utilisateur n'a lui-même choisi aucune langue : formulation générique (« dans ta langue ») pour ne jamais donner l'impression fausse qu'on l'oblige à travailler dans une langue qui n'est pas la sienne"
+    ],
     "v477": [
       "L'invitation à installer l'application n'est plus une bannière permanente qui monopolise l'espace : elle rejoint la même rotation que les autres popups (invitation à contribuer, mot du jour...), apparaît puis cède la place en alternance jusqu'à ce qu'une action soit prise",
       "La langue de l'interface (français/anglais) s'adapte désormais automatiquement à la langue du navigateur dès la toute première visite : un visiteur anglophone tombe directement sur une interface en anglais, sans avoir à la changer lui-même (un choix déjà fait, manuel ou automatique, n'est jamais écrasé ensuite)"

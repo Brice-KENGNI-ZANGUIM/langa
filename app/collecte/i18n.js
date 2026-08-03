@@ -367,6 +367,14 @@ export const STR = {
                           en: "Give the translation of a word or phrase (French ↔ {lang}). You can add your voice too, it helps." },
   "hub.desc.transcribe": { fr: "Enregistre ta voix qui prononce un mot ou une phrase en {lang}. Le texte peut être proposé, la voix est l'essentiel.",
                            en: "Record your voice pronouncing a word or phrase in {lang}. The text can be suggested, the voice is what matters." },
+  // Variantes GÉNÉRIQUES (aucune langue encore choisie, Brice 2026-08-03) : jamais nommer une
+  // langue précise (le repli technique sur la langue graine du registre n'est pas un choix de
+  // l'utilisateur) tant qu'il n'a rien déclaré lui-même, sous peine de lui donner l'impression
+  // qu'on l'oblige à travailler dans une langue qui n'est pas la sienne.
+  "hub.desc.translate.generic": { fr: "Donne la traduction d'un mot ou d'une phrase dans ta langue. Tu peux ajouter ta voix, c'est un plus.",
+                                  en: "Give the translation of a word or phrase in your language. You can add your voice too, it helps." },
+  "hub.desc.transcribe.generic": { fr: "Enregistre ta voix qui prononce un mot ou une phrase dans ta langue. Le texte peut être proposé, la voix est l'essentiel.",
+                                   en: "Record your voice pronouncing a word or phrase in your language. The text can be suggested, the voice is what matters." },
 
   // — À propos —
   "about.title": { fr: "À propos de LANGIAL", en: "About LANGIAL" },
